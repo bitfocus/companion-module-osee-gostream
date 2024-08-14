@@ -1,26 +1,29 @@
 {
-	"id": "your-module-name",
-	"name": "your-module-name",
-	"shortname": "module-shortname",
-	"description": "A short one line description of your module",
-	"version": "0.0.0",
+	"id": "osee-gostreamdeck",
+	"name": "osee-gostreamdeck",
+	"shortname": "gostreamdeck",
+	"description": "Companion module for GoStreamDeck",
+	"version": "1.0.1",
 	"license": "MIT",
-	"repository": "git+https://github.com/bitfocus/companion-module-your-module-name.git",
-	"bugs": "https://github.com/bitfocus/companion-module-your-module-name/issues",
+	"repository": "git+https://github.com/bitfocus/companion-module-osee-gostream.git",
+	"bugs": "https://github.com/bitfocus/companion-module-osee-gostream/issues",
 	"maintainers": [
 		{
-			"name": "Your name",
-			"email": "Your email"
+			"name": "Carlos Valente",
+			"email": "mail@ontime.no"
+		},
+		{
+			"name": "Fabian Posenau"
 		}
 	],
+	"legacyIds": [],
 	"runtime": {
 		"type": "node18",
 		"api": "nodejs-ipc",
 		"apiVersion": "0.0.0",
-		"entrypoint": "../main.js"
+		"entrypoint": "../dist/index.js"
 	},
-	"legacyIds": [],
-	"manufacturer": "Your company",
-	"products": ["Your product"],
-	"keywords": []
+	"manufacturer": "OSEE",
+	"products": ["GoStreamDeck"],
+	"keywords": ["GoStreamDeck", "companion"]
 }

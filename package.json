@@ -1,21 +1,49 @@
 {
-	"name": "your-module-name",
-	"version": "0.1.0",
-	"main": "main.js",
-	"scripts": {
-		"format": "prettier -w .",
-		"package": "companion-module-build"
-	},
+	"name": "osee-gostreamdeck",
+	"version": "1.0.1",
+	"main": "/dist/index.js",
 	"license": "MIT",
+	"prettier": "@companion-module/tools/.prettierrc.json",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/bitfocus/companion-module-your-module-name.git"
+		"url": "git+https://github.com/bitfocus/companion-module-osee-gostream.git"
+	},
+	"scripts": {
+		"prepare": "husky install",
+		"dev": "yarn build:watch",
+		"build": "rimraf dist && yarn build:main",
+		"build:main": "tsc -p tsconfig.build.json",
+		"build:watch": "tsc -p tsconfig.build.json --watch",
+		"lint": "eslint ./src --ext .ts",
+		"lint:raw": "eslint --ext .ts --ext .js --ignore-pattern dist --ignore-pattern pkg",
+		"format": "prettier -w .",
+		"postinstall": "yarn build"
+	},
+	"engines": {
+		"node": ">=18.12.0"
 	},
 	"dependencies": {
-		"@companion-module/base": "~1.7.0"
+		"@companion-module/base": "~1.2.1",
+		"socket.io-client": "^4.5.1"
 	},
 	"devDependencies": {
-		"@companion-module/tools": "^1.4.2"
+		"@companion-module/tools": "^1.1.0",
+		"@types/node": "^18.14.0",
+		"@typescript-eslint/eslint-plugin": "^5.53.0",
+		"@typescript-eslint/parser": "^5.53.0",
+		"eslint": "^8.34.0",
+		"eslint-plugin-prettier": "^4.0.0",
+		"husky": "^7.0.4",
+		"lint-staged": "^13.1.2",
+		"prettier": "^2.8.4",
+		"typescript": "~4.9.5"
 	},
-	"prettier": "@companion-module/tools/.prettierrc.json"
+	"lint-staged": {
+		"*.{js,json,md}": [
+			"prettier --write"
+		],
+		"*.ts": [
+			"yarn lint --fix"
+		]
+	}
 }
