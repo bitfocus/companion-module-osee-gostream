@@ -1,5 +1,5 @@
 {
-	"name": "osee-gostreamdeck",
+	"name": "osee-gostream",
 	"version": "1.0.1",
 	"main": "/dist/index.js",
 	"license": "MIT",
