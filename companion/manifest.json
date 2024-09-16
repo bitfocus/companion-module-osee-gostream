@@ -1,8 +1,8 @@
 {
-	"id": "osee-gostreamdeck",
-	"name": "osee-gostreamdeck",
-	"shortname": "gostreamdeck",
-	"description": "Companion module for GoStreamDeck",
+	"id": "osee-gostream",
+	"name": "osee-gostream",
+	"shortname": "gostream",
+	"description": "Companion module for GoStream Devices",
 	"version": "1.0.1",
 	"license": "MIT",
 	"repository": "git+https://github.com/bitfocus/companion-module-osee-gostream.git",
@@ -16,7 +16,7 @@
 			"name": "Fabian Posenau"
 		}
 	],
-	"legacyIds": [],
+	"legacyIds": ["osee-gostreamdeck"],
 	"runtime": {
 		"type": "node18",
 		"api": "nodejs-ipc",

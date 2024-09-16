@@ -1,4 +1,4 @@
-# companion-module-getontime-ontime
+# companion-module-osee-gostream
 
 This module is created for use with GoStream Devices.
 
