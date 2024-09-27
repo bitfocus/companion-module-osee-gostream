@@ -1021,6 +1021,31 @@ function feedbacks(self) {
             return self.states.PlayBackState.PlaybackBar;
         },
     };
+    feedbacks[enums_1.feedbackId.PlayFile] = {
+        type: 'boolean',
+        name: 'PlayFile: feedback based on current loaded video file',
+        description: 'Change style of bank if video file is loaded',
+        options: [
+            {
+                type: 'dropdown',
+                label: 'Video file',
+                id: 'PlayFileID',
+		choices: (0, self.states.PlayBackState.PlayFileList.map((s, index) => ({
+        id: index,
+        label: s,
+		    }))),
+                default: 0,
+            },
+        ],
+        defaultStyle: {
+            color: (0, base_1.combineRgb)(0, 0, 0),
+            bgcolor: (0, base_1.combineRgb)(255, 255, 0),
+        },
+        callback: (_feedback) => {
+            return _feedback.options.PlayFileID === self.states.PlayBackState.PlayFile;
+        },
+    };
+    
     //Record
     feedbacks[enums_1.feedbackId.Record] = {
         type: 'boolean',

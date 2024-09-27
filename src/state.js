@@ -73,6 +73,11 @@ function Create() {
             PlaybackRepeat: false,
             PlaybackPause: false,
             PlaybackBar: false,
+	    PlayFile: 0,
+	    PlayFileList: [
+		'istockphoto-2040250570-640_adpp_is.mp4',
+		'istockphoto-1990022733-640_adpp_is.mp4',
+	    ],
         },
         RecordState: false,
         LiveState: 0,

@@ -25,6 +25,11 @@ function variables(_self) {
     });
     values['PlayState'] = 'Play';
     variables.push({
+        name: 'Loaded video file',
+        variableId: `PlayFile`,
+    });
+    values['PlayFile'] = '';
+    variables.push({
         name: 'Recording duration (hh:mm)',
         variableId: 'record_duration_hm',
     });
@@ -42,6 +47,14 @@ function updatePlayStatedVariables(_self, state) {
     _self.setVariableValues(newValues);
 }
 exports.updatePlayStatedVariables = updatePlayStatedVariables;
+
+function updatePlayFileVariables(_self, file) {
+    const newValues = {};
+    newValues['PlayFile'] = file;
+    _self.setVariableValues(newValues);
+}
+exports.updatePlayFileVariables = updatePlayFileVariables;
+    
 function updateRecordVariables(_self, time) {
     const newValues = {};
     newValues['record_duration_hm'] = time;

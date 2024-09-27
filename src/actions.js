@@ -2850,6 +2850,26 @@ function PlaybackActions(_self) {
                 await (0, connection_1.sendCommand)(enums_1.ActionId.PlaybackMode, enums_1.ReqType.Set, [getOptNumber(action, 'ModeID')]);
             },
         },
+	[enums_1.ActionId.PlayFile]: {
+            name: 'Playback:Set selected file',
+            options: [
+		{
+                    type: 'dropdown',
+                    label: 'PlayFile',
+                    id: 'PlayFileID',
+		    required: true,
+		    choices: (0, _self.states.PlayBackState.PlayFileList.map((s, index) => ({
+        id: index,
+        label: s,
+		    }))),
+                    default: 0,
+                },
+            ],
+            callback: async (action) => {
+		let opt = action.options.PlayFileID;
+                await (0, connection_1.sendCommand)(enums_1.ActionId.PlayFile, enums_1.ReqType.Set, [_self.states.PlayBackState.PlayFileList[opt]]);
+            },
+        },
         [enums_1.ActionId.PlaybackRepeat]: {
             name: 'Playback:Set playback Repeat',
             options: [

@@ -136,7 +136,7 @@ exports.connect = connect;
 function ParaData(msg_data, self) {
     let jsonContent = (0, util_1.UpackDatas)(msg_data);
     let jsonStr = jsonContent.toString("utf8");
-    console.log(jsonStr);
+    //console.log(jsonStr);
     var json = JSON.parse(jsonStr);
     if (json !== null && json.id !== "" && Array.isArray(json.value)) {
         switch (json.id) {
@@ -367,6 +367,10 @@ function ParaData(msg_data, self) {
             case enums_1.ActionId.PlaybackBar:
                 self.states.PlayBackState.PlaybackBar = json.value[0] === 1 ? true : false;
                 break;
+	    case enums_1.ActionId.PlayFile:
+     	        self.states.PlayBackState.PlayFile = self.states.PlayBackState.PlayFileList.indexOf(json.value[0])
+	        variables_1.updatePlayFileVariables(self, json.value[0]);
+	        break;
             //Record
             case enums_1.ActionId.RecordTime:
                 let time = json.value[0];
@@ -529,10 +533,9 @@ async function sendCommand(id, type, value) {
     if (tcp !== null) {
         let obj = { id: id, type: type, value: value };
         let json = JSON.stringify(obj);
-        //self.log('debug', json);
         let bufs = Buffer.from(json, "utf-8");
         let send_data = (0, util_1.PackData)(bufs);
-        console.log(send_data.toString('hex').match(/.{1,2}/g)?.join(' '));
+        //console.log(send_data.toString('hex').match(/.{1,2}/g)?.join(' '));
         var sign = await tcp.send(send_data);
         // if (type == ReqType.Set) {
         // 	self.checkFeedbacks();

@@ -158,6 +158,7 @@ var ActionId;
     ActionId["PlaybackRepeat"] = "playbackRepeat";
     ActionId["PlaybackPause"] = "playbackPause";
     ActionId["PlaybackBar"] = "playbackBar";
+    ActionId["PlayFile"] = "playFile";
     //Settings
     ActionId["SrcName"] = "srcName";
     ActionId["MvMeter"] = "mvMeter";
@@ -259,6 +260,7 @@ var feedbackId;
     feedbackId["PlaybackRepeat"] = "playbackRepeat";
     feedbackId["PlaybackPause"] = "playbackPause";
     feedbackId["PlaybackBar"] = "playbackBar";
+    feedbackId["PlayFile"] = "playFile";
     //Record
     feedbackId["Record"] = "record";
     //Live
