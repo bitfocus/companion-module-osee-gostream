@@ -1,5 +1,4 @@
 
-//Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.Create = void 0;
 function Create() {
     return {
@@ -74,10 +73,9 @@ function Create() {
             PlaybackPause: false,
             PlaybackBar: false,
 	    PlayFile: 0,
-	    PlayFileList: [
-		'istockphoto-2040250570-640_adpp_is.mp4',
-		'istockphoto-1990022733-640_adpp_is.mp4',
-	    ],
+	    // Not really state variable, hold videofile list
+	    // TODO: place somewhere more logical
+	    PlayFileList: [],  
         },
         RecordState: false,
         LiveState: 0,

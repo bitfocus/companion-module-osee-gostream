@@ -159,6 +159,7 @@ var ActionId;
     ActionId["PlaybackPause"] = "playbackPause";
     ActionId["PlaybackBar"] = "playbackBar";
     ActionId["PlayFile"] = "playFile";
+    ActionId["PlaybackList"] = "playbackList";
     //Settings
     ActionId["SrcName"] = "srcName";
     ActionId["MvMeter"] = "mvMeter";

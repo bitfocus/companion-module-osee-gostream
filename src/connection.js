@@ -7,15 +7,7 @@ const util_1 = require("./util.js");
 const model_1 = require("./model.js");
 const variables_1 = require("./variables.js");
 
-//Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.sendCommand = exports.disconnectSocket = exports.ReqStateData = exports.connect = void 0;
-//const base_1 = __webpack_require__(/*! @companion-module/base */ "./node_modules/@companion-module/base/dist/index.js");
-//const config_1 = __webpack_require__(/*! ./config */ "./dist/config.js");
-//const enums_1 = __webpack_require__(/*! ./enums */ "./dist/enums.js");
-//const choices_1 = __webpack_require__(/*! ./choices */ "./dist/choices.js");
-//const util_1 = __webpack_require__(/*! ./util */ "./dist/util.js");
-//const model_1 = __webpack_require__(/*! ./model */ "./dist/model.js");
-//const variables_1 = __webpack_require__(/*! ./variables */ "./dist/variables.js");
 let tcp = null;
 let Working_byte_resp_lens = null;
 function connect(self) {
@@ -135,9 +127,11 @@ function connect(self) {
 exports.connect = connect;
 function ParaData(msg_data, self) {
     let jsonContent = (0, util_1.UpackDatas)(msg_data);
+    //console.log("jsonContent", jsonContent)
     let jsonStr = jsonContent.toString("utf8");
     //console.log(jsonStr);
     var json = JSON.parse(jsonStr);
+    //console.log(json);
     if (json !== null && json.id !== "" && Array.isArray(json.value)) {
         switch (json.id) {
             case enums_1.ActionId.PvwIndex:
@@ -370,7 +364,13 @@ function ParaData(msg_data, self) {
 	    case enums_1.ActionId.PlayFile:
      	        self.states.PlayBackState.PlayFile = self.states.PlayBackState.PlayFileList.indexOf(json.value[0])
 	        variables_1.updatePlayFileVariables(self, json.value[0]);
-	        break;
+	    break;
+	case enums_1.ActionId.PlaybackList:
+	    self.states.PlayBackState.PlayFileList = self.states.PlayBackState.PlayFileList.concat(json.value);
+	    // Re-initialize actions and feedbackls so that dropdown are updated
+	    self.init_actions();
+	    self.init_feedbacks();
+	    break;
             //Record
             case enums_1.ActionId.RecordTime:
                 let time = json.value[0];
@@ -511,6 +511,7 @@ function ReqStateData() {
     sendCommand(enums_1.ActionId.PlaybackRepeat, enums_1.ReqType.Get);
     sendCommand(enums_1.ActionId.PlaybackPause, enums_1.ReqType.Get);
     sendCommand(enums_1.ActionId.PlaybackBar, enums_1.ReqType.Get);
+    sendCommand(enums_1.ActionId.PlaybackList, enums_1.ReqType.Get);
     //Record
     sendCommand(enums_1.ActionId.Record, enums_1.ReqType.Get);
     sendCommand(enums_1.ActionId.Live, enums_1.ReqType.Get);

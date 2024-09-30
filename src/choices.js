@@ -1,5 +1,4 @@
 
-//Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.SourcesToChoices = exports.getChoicesByStill = exports.getChoicesByMacro = exports.getChoicesByAudioSourceType = exports.getChoices = void 0;
 const model_1 = require("./model.js");
 const enums_1 = require("./enums.js");

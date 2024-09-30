@@ -1,9 +1,8 @@
 
-//Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.GoSteamDeckInstance = void 0;
 const base_1 = require("@companion-module/base");
-const config_1 = require(/*! ./config */ "./config.js");
-const GoSteamDeckV1_1 = require(/*! ./GoSteamDeckV1 */ "./GoStreamdeckV1.js");
+const config_1 = require("./config.js");
+const GoSteamDeckV1_1 = require("./GoStreamdeckV1.js");
 class GoSteamDeckInstance extends base_1.InstanceBase {
     config;
     gostreamdeck;

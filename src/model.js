@@ -1,5 +1,4 @@
 
-//Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.SettingsOutSourceChoices = exports.SettingsOutSourceParamChoices = exports.SettingsOutFormatChoices = exports.SettingsAuxSourceChoices = exports.SettingsColorChoices = exports.SettingsMicInputChoices = exports.SettingsMvLayoutChoices = exports.SettingsMvMeterChoices = exports.SettingsUMDSrcChoices = exports.StreamingChoices = exports.OtherAudioSourcesEnableChoices = exports.AudioSourcesEnableChoices = exports.OtherAudioSourcesChoices = exports.AudioInputSourcesChoices = exports.AudioMicChoices = exports.KeyResizeSizeChoices = exports.UpStreamKeyTypeChoices = exports.SuperSourceBorderChoices = exports.SuperSourceMaskChoices = exports.SuperSourceStyleChoices = exports.ColorSwitchChoices = exports.KeySwitchChoices = exports.WipeDirectionChoices = exports.SwitchChoices = exports.TransitionStyleChoice = exports.OtherDipSourceModels = exports.OtherDSKSourceModels = exports.OtherSourceModels = exports.SourceModels = void 0;
 const enums_1 = require(/*! ./enums */ "./enums.js");
 exports.SourceModels = [
@@ -160,9 +159,8 @@ exports.SettingsOutFormatChoices = [
     { id: 4, label: '1080p60' },
 ];
 exports.SettingsOutSourceParamChoices = [
-    //0~4，1080p24,1080p25,1080p30,
     { id: 0, label: 'HDMI1' },
-    {id:'1',label:'HDMI2'},
+    {id: 1,label:'HDMI2'},
     { id: 2, label: 'UVC' }
 ];
 exports.SettingsOutSourceChoices = [
