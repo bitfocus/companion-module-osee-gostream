@@ -1,13 +1,12 @@
 "use strict"
 
-//Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.actions = void 0;
 const base_1 = require("@companion-module/base");
-const connection_1 = require(/*! ./connection */ "./connection.js");
-const choices_1 = require(/*! ./choices */ "./choices.js");
-const enums_1 = require(/*! ./enums */ "./enums.js");
-const model_1 = require(/*! ./model */ "./model.js");
-//import { TransitionKeyeState } from './state'
+const connection_1 = require("./connection.js");
+const choices_1 = require("./choices.js");
+const enums_1 = require("./enums.js");
+const model_1 = require("./model.js");
+
 /**
  * Returns all implemented actions.
  * @param self reference to the BaseInstance
@@ -916,7 +915,7 @@ function SuperSourceActions(_self) {
             },
         },
         [enums_1.ActionId.SuperSourceControlStyle]: {
-            name: 'Super Source:Super Source Background',
+            name: 'Super Source:Super Source Style',
             options: [
                 {
                     type: 'dropdown',
