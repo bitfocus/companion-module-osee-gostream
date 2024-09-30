@@ -9,7 +9,7 @@ exports.SourceModels = [
 ];
 exports.OtherSourceModels = [
     { inputId: 4, longName: 'Aux', shortName: 'Aux' },
-    { inputId: 5, longName: 'Black', shortName: 'BLK' },
+    { inputId: 5, longName: 'S/SRC', shortName: 'SSRC' },
     { inputId: 6, longName: 'Still1', shortName: 'STL1' },
     { inputId: 7, longName: 'Still2', shortName: 'STL2' },
 ];
