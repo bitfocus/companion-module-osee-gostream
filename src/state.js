@@ -75,7 +75,7 @@ function Create() {
 	    PlayFile: 0,
 	    // Not really state variable, hold videofile list
 	    // TODO: place somewhere more logical
-	    PlayFileList: [],  
+	    PlayFileList: [],
         },
         RecordState: false,
         LiveState: 0,
@@ -91,7 +91,8 @@ function Create() {
                 hdmi2: { id: 0, label: 'Input1' },
                 uvc: { id: 0, label: 'Input1' },
             },
-	    SettingsInputWindowLayout: 0
+	    SettingsInputWindowLayout: 0,
+	    MvMeter: [0, 0, 0, 0, 0, 0],
         },
         StillProp: {
             Still1: 0,

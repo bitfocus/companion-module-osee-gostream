@@ -389,6 +389,9 @@ function ParaData(msg_data, self) {
 	    case enums_1.ActionId.InputWindowLayout:
 	        self.states.SettingsProp.SettingsInputWindowLayout = json.value[0];
 	    break;
+	case enums_1.ActionId.MvMeter:
+	    self.states.SettingsProp.MvMeter[json.value[0]] = json.value[1];
+	    break;
             case enums_1.ActionId.OutSource:
                 let outType = json.value[0];
                 let outTypeValue = json.value[1];
@@ -524,6 +527,12 @@ function ReqStateData() {
     sendCommand(enums_1.ActionId.OutSource, enums_1.ReqType.Get, [1]);
     sendCommand(enums_1.ActionId.OutSource, enums_1.ReqType.Get, [2]);
     sendCommand(enums_1.ActionId.InputWindowLayout, enums_1.ReqType.Get);
+    sendCommand(enums_1.ActionId.MvMeter, enums_1.ReqType.Get, [0]);
+    sendCommand(enums_1.ActionId.MvMeter, enums_1.ReqType.Get, [1]);
+    sendCommand(enums_1.ActionId.MvMeter, enums_1.ReqType.Get, [2]);
+    sendCommand(enums_1.ActionId.MvMeter, enums_1.ReqType.Get, [3]);
+    sendCommand(enums_1.ActionId.MvMeter, enums_1.ReqType.Get, [4]);
+    sendCommand(enums_1.ActionId.MvMeter, enums_1.ReqType.Get, [5]);
     //Macro
     sendCommand(enums_1.ActionId.GetMacroInfoAll, enums_1.ReqType.Get);
 }

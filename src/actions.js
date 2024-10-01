@@ -3003,7 +3003,13 @@ function SettingsActions(_self) {
                 },
             ],
             callback: async (action) => {
-                await (0, connection_1.sendCommand)(enums_1.ActionId.SrcName, enums_1.ReqType.Set, [getOptNumber(action, 'SrcID'), getOptNumber(action, 'MvMeterEnable')]);
+		let src = getOptNumber(action, 'SrcID');
+		let enable = getOptNumber(action, 'MvMeterEnable');
+		if(enable === 2) {
+		    // Toggle
+		    enable = _self.states.SettingsProp.MvMeter[src] === 1 ? 0 : 1;
+		}	    
+                await (0, connection_1.sendCommand)(enums_1.ActionId.MvMeter, enums_1.ReqType.Set, [src, enable]);
             },
         },
         [enums_1.ActionId.MvLayout]: {
