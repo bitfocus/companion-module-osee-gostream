@@ -151,7 +151,6 @@ exports.SettingsAuxSourceChoices = [
     { id: 2, label: 'ndi' },
 ];
 exports.SettingsOutFormatChoices = [
-    //0~4，1080p24,1080p25,1080p30,
     { id: 0, label: '1080p23.98'},
     { id: 1, label: '1080p24' },
     { id: 2, label: '1080p25' },
