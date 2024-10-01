@@ -152,11 +152,14 @@ exports.SettingsAuxSourceChoices = [
 ];
 exports.SettingsOutFormatChoices = [
     //0~4，1080p24,1080p25,1080p30,
-    { id: 0, label: '1080p24' },
-    { id: 1, label: '1080p25' },
-    { id: 2, label: '1080p30' },
-    { id: 3, label: '1080p50' },
-    { id: 4, label: '1080p60' },
+    { id: 0, label: '1080p23.98'},
+    { id: 1, label: '1080p24' },
+    { id: 2, label: '1080p25' },
+    { id: 3, label: '1080p29.97' },
+    { id: 4, label: '1080p30' },
+    { id: 5, label: '1080p50' },
+    { id: 6, label: '1080p59.94' },
+    { id: 7, label: '1080p60' },
 ];
 exports.SettingsOutSourceParamChoices = [
     { id: 0, label: 'HDMI1' },
