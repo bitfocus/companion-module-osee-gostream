@@ -3190,8 +3190,8 @@ function SettingsActions(_self) {
                     label: 'Quality',
                     id: 'Quality',
                     choices: [
-                        { id: '0', label: 'hight' },
-                        { id: '1', label: 'mid' },
+                        { id: '0', label: 'high' },
+                        { id: '1', label: 'medium' },
                         { id: '2', label: 'low' }
                     ],
                     default: 0,
