@@ -3,25 +3,22 @@
 	"name": "osee-gostreamdeck",
 	"shortname": "gostreamdeck",
 	"description": "Companion module for GoStreamDeck",
-	"version": "1.0.1",
+	"version": "1.0.0",
 	"license": "MIT",
 	"repository": "git+https://github.com/bitfocus/companion-module-osee-gostream.git",
 	"bugs": "https://github.com/bitfocus/companion-module-osee-gostream/issues",
 	"maintainers": [
-		{
-			"name": "Carlos Valente",
-			"email": "mail@ontime.no"
-		},
-		{
-			"name": "Fabian Posenau"
-		}
+               {
+			"name": "Johan Falkenström",
+			"email": "johan.falkenstrom@gmail.com"
+	       }
 	],
 	"legacyIds": [],
 	"runtime": {
 		"type": "node18",
 		"api": "nodejs-ipc",
 		"apiVersion": "0.0.0",
-		"entrypoint": "../dist/index.js"
+		"entrypoint": "../src/index.js"
 	},
 	"manufacturer": "OSEE",
 	"products": ["GoStreamDeck"],
