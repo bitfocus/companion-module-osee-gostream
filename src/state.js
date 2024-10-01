@@ -90,7 +90,8 @@ function Create() {
                 hdmi1: { id: 0, label: 'Input1' },
                 hdmi2: { id: 0, label: 'Input1' },
                 uvc: { id: 0, label: 'Input1' },
-            }
+            },
+	    SettingsInputWindowLayout: 0
         },
         StillProp: {
             Still1: 0,

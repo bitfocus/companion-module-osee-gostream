@@ -3021,6 +3021,21 @@ function SettingsActions(_self) {
                 await (0, connection_1.sendCommand)(enums_1.ActionId.MvLayout, enums_1.ReqType.Set, [getOptNumber(action, 'MvLayout')]);
             },
         },
+	[enums_1.ActionId.InputWindowLayout]: {
+            name:' Settings:Set Input Window Mv Layout',
+            options: [
+                {
+                    type: 'dropdown',
+                    label: 'style',
+                    id: 'StyleId',
+                    choices: model_1.SettingsInputWindowLayoutChoices,
+                    default: 0,
+                },
+            ],
+            callback: async (action) => {
+		await (0, connection_1.sendCommand)(enums_1.ActionId.InputWindowLayout, enums_1.ReqType.Set, [getOptNumber(action, 'StyleId')]);
+            },
+        },
         [enums_1.ActionId.Marker]: {
             name: 'Settings:Set Marker',
             options: [

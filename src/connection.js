@@ -385,7 +385,10 @@ function ParaData(msg_data, self) {
             //Settings
             case enums_1.ActionId.AuxSource:
                 self.states.SettingsProp.AuxSource = json.value[0];
-                break;
+            break;
+	    case enums_1.ActionId.InputWindowLayout:
+	        self.states.SettingsProp.SettingsInputWindowLayout = json.value[0];
+	    break;
             case enums_1.ActionId.OutSource:
                 let outType = json.value[0];
                 let outTypeValue = json.value[1];
@@ -520,6 +523,7 @@ function ReqStateData() {
     sendCommand(enums_1.ActionId.OutSource, enums_1.ReqType.Get, [0]);
     sendCommand(enums_1.ActionId.OutSource, enums_1.ReqType.Get, [1]);
     sendCommand(enums_1.ActionId.OutSource, enums_1.ReqType.Get, [2]);
+    sendCommand(enums_1.ActionId.InputWindowLayout, enums_1.ReqType.Get);
     //Macro
     sendCommand(enums_1.ActionId.GetMacroInfoAll, enums_1.ReqType.Get);
 }

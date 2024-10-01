@@ -1,5 +1,5 @@
 
-exports.SettingsOutSourceChoices = exports.SettingsOutSourceParamChoices = exports.SettingsOutFormatChoices = exports.SettingsAuxSourceChoices = exports.SettingsColorChoices = exports.SettingsMicInputChoices = exports.SettingsMvLayoutChoices = exports.SettingsMvMeterChoices = exports.SettingsUMDSrcChoices = exports.StreamingChoices = exports.OtherAudioSourcesEnableChoices = exports.AudioSourcesEnableChoices = exports.OtherAudioSourcesChoices = exports.AudioInputSourcesChoices = exports.AudioMicChoices = exports.KeyResizeSizeChoices = exports.UpStreamKeyTypeChoices = exports.SuperSourceBorderChoices = exports.SuperSourceMaskChoices = exports.SuperSourceStyleChoices = exports.ColorSwitchChoices = exports.KeySwitchChoices = exports.WipeDirectionChoices = exports.SwitchChoices = exports.TransitionStyleChoice = exports.OtherDipSourceModels = exports.OtherDSKSourceModels = exports.OtherSourceModels = exports.SourceModels = void 0;
+exports.SettingsOutSourceChoices = exports.SettingsOutSourceParamChoices = exports.SettingsOutFormatChoices = exports.SettingsAuxSourceChoices = exports.SettingsColorChoices = exports.SettingsMicInputChoices = exports.SettingsMvLayoutChoices = exports.SettingsInputWindowLayoutChoices = exports.SettingsMvMeterChoices = exports.SettingsUMDSrcChoices = exports.StreamingChoices = exports.OtherAudioSourcesEnableChoices = exports.AudioSourcesEnableChoices = exports.OtherAudioSourcesChoices = exports.AudioInputSourcesChoices = exports.AudioMicChoices = exports.KeyResizeSizeChoices = exports.UpStreamKeyTypeChoices = exports.SuperSourceBorderChoices = exports.SuperSourceMaskChoices = exports.SuperSourceStyleChoices = exports.ColorSwitchChoices = exports.KeySwitchChoices = exports.WipeDirectionChoices = exports.SwitchChoices = exports.TransitionStyleChoice = exports.OtherDipSourceModels = exports.OtherDSKSourceModels = exports.OtherSourceModels = exports.SourceModels = void 0;
 const enums_1 = require(/*! ./enums */ "./enums.js");
 exports.SourceModels = [
     { inputId: 0, longName: 'Input1', shortName: 'In1' },
@@ -129,6 +129,10 @@ exports.SettingsMvMeterChoices = [
 exports.SettingsMvLayoutChoices = [
     { id: 0, label: 'PGM|PVW' },
     { id: 1, label: 'PVW|PGM' },
+];
+exports.SettingsInputWindowLayoutChoices = [
+    { id: 0, label: 'Style 1' },
+    {id: 1,label:'Style 2'},
 ];
 exports.SettingsMicInputChoices = [
     { id: 0, label: 'mic+power' },

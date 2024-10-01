@@ -164,6 +164,7 @@ var ActionId;
     ActionId["SrcName"] = "srcName";
     ActionId["MvMeter"] = "mvMeter";
     ActionId["MvLayout"] = "mvLayout";
+    ActionId["InputWindowLayout"] = "inputWindowLayout";
     ActionId["Marker"] = "marker";
     ActionId["MicInput"] = "micInput";
     ActionId["RecordFileName"] = "recordFileName";
@@ -266,6 +267,8 @@ var feedbackId;
     feedbackId["Record"] = "record";
     //Live
     feedbackId["Live"] = "live";
+    // Settings
+    feedbackId["InputWindowLayout"] = "inputWindowLayout";
 })(feedbackId = exports.feedbackId || (exports.feedbackId = {}));
 var variableId;
 (function (variableId) {

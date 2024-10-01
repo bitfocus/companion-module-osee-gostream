@@ -460,6 +460,32 @@ function feedbacks(self) {
             }
         }
     };
+    feedbacks[enums_1.feedbackId.InputWindowLayout] = {
+        type: 'boolean',
+        name: 'Settings:Input Window Mv Layout',
+        description: 'Update style based on input window mv layout style',
+        options: [
+            {
+                type: 'dropdown',
+                label: 'Type:',
+                id: 'StyleID',
+                choices: model_1.SettingsInputWindowLayoutChoices,
+                default: 0,
+            },
+        ],
+        defaultStyle: {
+            color: (0, base_1.combineRgb)(0, 0, 0),
+            bgcolor: (0, base_1.combineRgb)(0, 255, 0),
+        },
+        callback: (_feedback) => {
+	    return self.states.SettingsProp.SettingsInputWindowLayout === _feedback.options.StyleID
+        },
+	learn: (_feedback) => {
+            return {
+		StyleID: self.states.SettingsProp.SettingsInputWindowLayout,
+            };  
+	},
+    };
     feedbacks[enums_1.feedbackId.SettingOutSource] =
         {
             type: 'boolean',
