@@ -2041,10 +2041,10 @@ function PIPActions(_self) {
                 },
             ],
             callback: async (action) => {
-                let value = 0.25;
+                let value = 0;
                 let info = model_1.KeyResizeSizeChoices.find(s => s.id === action.options.PipSize);
                 if (info !== null && info !== undefined) {
-                    value = Number(info.label);
+                    value = Number(info.id);
                 }
                 await (0, connection_1.sendCommand)(enums_1.ActionId.PipSize, enums_1.ReqType.Set, [value]);
             },
