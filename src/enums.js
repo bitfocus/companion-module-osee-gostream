@@ -15,7 +15,7 @@ var ActionId;
     ActionId["TransitionIndex"] = "transitionIndex";
     ActionId["TransitionRate"] = "transitionRate";
     ActionId["TransitionDipSource"] = "transitionDipSource";
-    //TransitionWipePattern='transitionWipePattern',
+    ActionId["TransitionWipePattern"] = "transitionWipePattern";
     ActionId["TransitionWipeXPosition"] = "transitionWipeXPosition";
     ActionId["TransitionWipeYPosition"] = "transitionWipeYPosition";
     ActionId["TransitionWipeDirection"] = "transitionWipeDirection";

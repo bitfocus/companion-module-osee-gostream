@@ -235,7 +235,25 @@ function TransitionActions(_self) {
                 (0, connection_1.sendCommand)(enums_1.ActionId.TransitionDipSource, enums_1.ReqType.Set, [getOptNumber(action, 'TransitionDipSource')]);
             },
         },
-        [enums_1.ActionId.TransitionWipeXPosition]: {
+        [enums_1.ActionId.TransitionWipePattern]: {
+            name: 'Transition:Change Wipe Pattern',
+            options: [
+                {
+                    type: 'number',
+                    label: 'Wipe Pattern',
+                    id: 'WipePatternID',
+                    min: 0,
+                    max: 17,
+                    default: 0,
+                    range: true,
+                    step: 1,
+                },
+            ],
+        callback: async (action) => {
+	    await (0, connection_1.sendCommand)(enums_1.ActionId.TransitionWipePattern, enums_1.ReqType.Set, [getOptNumber(action, 'WipePatternID')]);
+            },
+        },
+	[enums_1.ActionId.TransitionWipeXPosition]: {
             name: 'Transition:Change Wipe X Position',
             options: [
                 {
