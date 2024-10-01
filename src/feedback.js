@@ -395,21 +395,21 @@ function feedbacks(self) {
         name: 'Still: Select pic index',
         description: '',
         options: [
-            // {
-            // 	type: 'dropdown',
-            // 	label: 'Still',
-            // 	id: 'Stillindex',
-            // 	choices: [
-            // 		{id:0,label:'Still1'},
-            // 		{id:1,label:'Still2'}
-            // 	],
-            // 	default: 0,
-            // },
+            {
+             	type: 'dropdown',
+             	label: 'Still',
+             	id: 'StillIndex',
+             	choices: [
+             		{id:0,label:'Still1'},
+             		{id:1,label:'Still2'}
+             	],
+             	default: 0,
+            },
             {
                 type: 'dropdown',
-                label: 'Pic index (1-32)',
+                label: 'Pic index (0-32)',
                 id: 'PicIndex',
-                default: 1,
+                default: 0,
                 choices: (0, choices_1.getChoicesByStill)(),
             }
         ],
@@ -418,8 +418,12 @@ function feedbacks(self) {
             bgcolor: (0, base_1.combineRgb)(255, 255, 0),
         },
         callback: (_feedback) => {
-            let picIndex = Number(_feedback.options.PicIndex);
-            return self.states.StillProp.Still1 === picIndex;
+            let stillIndex = Number(_feedback.options.StillIndex);
+	    let picIndex = Number(_feedback.options.PicIndex);
+	    if(stillIndex === 0)
+		return self.states.StillProp.Still1 === picIndex;
+	    else
+		return self.states.StillProp.Still2 === picIndex;
         },
     };
     feedbacks[enums_1.feedbackId.DskSourceFill] = {

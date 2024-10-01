@@ -2567,7 +2567,7 @@ function StillGeneratorActions(_self) {
                 },
                 {
                     type: 'dropdown',
-                    label: 'Pic index (1-32)',
+                    label: 'Pic index (0-31)',
                     id: 'PicIndex',
                     choices: (0, choices_1.getChoicesByStill)(),
                     default: 0,

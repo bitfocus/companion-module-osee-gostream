@@ -78,8 +78,8 @@ function getChoicesByMacro() {
 exports.getChoicesByMacro = getChoicesByMacro;
 function getChoicesByStill() {
     let Source = [];
-    for (var i = 0; i < 31; i++) {
-        Source.push({ id: i.toString(), label: 'Pic' + (i + 1).toString() });
+    for (var i = 0; i <= 31; i++) {
+        Source.push({ id: i.toString(), label: 'Pic' + i.toString() });
     }
     return Source;
 }
