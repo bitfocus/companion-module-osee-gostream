@@ -1,316 +1,307 @@
-var ActionId;
-(function (ActionId) {
-	ActionId['PgmIndex'] = 'pgmIndex'
-	ActionId['PvwIndex'] = 'pvwIndex'
+export var ActionId = {
+	"PgmIndex": "pgmIndex",
+	"PvwIndex": "pvwIndex",
 	//Transition
-	ActionId['CutTransition'] = 'cutTransition'
-	ActionId['AutoTransition'] = 'autoTransition'
-	ActionId['FTB'] = 'ftb'
-	ActionId['FtbAudioAFV'] = 'ftbAudioAFV'
-	ActionId['FtbRate'] = 'ftbRate'
-	ActionId['Prev'] = 'prev'
-	ActionId['TransitionIndex'] = 'transitionIndex'
-	ActionId['TransitionRate'] = 'transitionRate'
-	ActionId['TransitionDipSource'] = 'transitionDipSource'
-	ActionId['TransitionWipePattern'] = 'transitionWipePattern'
-	ActionId['TransitionWipeXPosition'] = 'transitionWipeXPosition'
-	ActionId['TransitionWipeYPosition'] = 'transitionWipeYPosition'
-	ActionId['TransitionWipeDirection'] = 'transitionWipeDirection'
-	ActionId['TransitionWipeSymmetry'] = 'transitionWipeSymmetry'
-	ActionId['TransitionWipeSoftness'] = 'transitionWipeSoftness'
-	ActionId['TransitionWipeBorder'] = 'transitionWipeBorder'
-	ActionId['TransitionWipeFillSource'] = 'transitionWipeFillSource'
-	ActionId['TransitionSourceBG'] = 'transitionSourceBG'
-	ActionId['TransitionSource'] = 'transitionSource'
+	"CutTransition": "cutTransition",
+	"AutoTransition": "autoTransition",
+	"FTB": "ftb",
+	"FtbAudioAFV": "ftbAudioAFV",
+	"FtbRate": "ftbRate",
+	"Prev": "prev",
+	"TransitionIndex": "transitionIndex",
+	"TransitionRate": "transitionRate",
+	"TransitionDipSource": "transitionDipSource",
+	"TransitionWipePattern": "transitionWipePattern",
+	"TransitionWipeXPosition": "transitionWipeXPosition",
+	"TransitionWipeYPosition": "transitionWipeYPosition",
+	"TransitionWipeDirection": "transitionWipeDirection",
+	"TransitionWipeSymmetry": "transitionWipeSymmetry",
+	"TransitionWipeSoftness": "transitionWipeSoftness",
+	"TransitionWipeBorder": "transitionWipeBorder",
+	"TransitionWipeFillSource": "transitionWipeFillSource",
+	"TransitionSourceBG": "transitionSourceBG",
+	"TransitionSource": "transitionSource",
 	//DSK
-	ActionId['KeyOnAir'] = 'keyOnAir'
-	ActionId['DskOnAir'] = 'dskOnAir'
-	ActionId['DskSourceFillKey'] = 'dskSourceFillKey'
-	ActionId['DskSourceFill'] = 'dskSourceFill'
-	ActionId['DskSourceKey'] = 'dskSourceKey'
-	ActionId['DskMaskEnable'] = 'dskMaskEnable'
-	ActionId['DskMaskHStart'] = 'dskMaskHStart'
-	ActionId['DskMaskVStart'] = 'dskMaskVStart'
-	ActionId['DskMaskHEnd'] = 'dskMaskHEnd'
-	ActionId['DskMaskVEnd'] = 'dskMaskVEnd'
-	ActionId['DskControlShapedKey'] = 'dskControlShapedKey'
-	ActionId['DskControlClip'] = 'dskControlClip'
-	ActionId['DskControlGain'] = 'dskControlGain'
-	ActionId['DskControlInvert'] = 'dskControlInvert'
-	ActionId['DskRate'] = 'dskRate'
-	ActionId['ColorHue'] = 'colorHue'
-	ActionId['ColorSaturation'] = 'colorSaturation'
-	ActionId['ColorBrightness'] = 'colorBrightness'
+	"KeyOnAir": "keyOnAir",
+	"DskOnAir": "dskOnAir",
+	"DskSourceFillKey": "dskSourceFillKey",
+	"DskSourceFill": "dskSourceFill",
+	"DskSourceKey": "dskSourceKey",
+	"DskMaskEnable": "dskMaskEnable",
+	"DskMaskHStart": "dskMaskHStart",
+	"DskMaskVStart": "dskMaskVStart",
+	"DskMaskHEnd": "dskMaskHEnd",
+	"DskMaskVEnd": "dskMaskVEnd",
+	"DskControlShapedKey": "dskControlShapedKey",
+	"DskControlClip": "dskControlClip",
+	"DskControlGain": "dskControlGain",
+	"DskControlInvert": "dskControlInvert",
+	"DskRate": "dskRate",
+	"ColorHue": "colorHue",
+	"ColorSaturation": "colorSaturation",
+	"ColorBrightness": "colorBrightness",
 	//Super Source
-	ActionId['SuperSourceEnable'] = 'superSourceEnable'
-	ActionId['SuperSourceSource1'] = 'superSourceSource1'
-	ActionId['SuperSourceSource2'] = 'superSourceSource2'
-	ActionId['SuperSourceBackground'] = 'superSourceBackground'
-	ActionId['SuperSourceControlStyle'] = 'superSourceControlStyle'
-	ActionId['SuperSourceControlYPosition'] = 'superSourceControlYPosition'
-	ActionId['SuperSourceMaskEnable'] = 'superSourceMaskEnable'
-	ActionId['SuperSourceMaskHStart'] = 'superSourceMaskHStart'
-	ActionId['SuperSourceMaskVStart'] = 'superSourceMaskVStart'
-	ActionId['SuperSourceMaskHEnd'] = 'superSourceMaskHEnd'
-	ActionId['SuperSourceMaskVEnd'] = 'superSourceMaskVEnd'
-	ActionId['SuperSourceBorderWidth'] = 'superSourceBorderWidth'
-	ActionId['SuperSourceBorderHue'] = 'superSourceBorderHue'
-	ActionId['SuperSourceBorderSaturation'] = 'superSourceBorderSaturation'
-	ActionId['SuperSourceBorderBrightness'] = 'superSourceBorderBrightness'
+	"SuperSourceEnable": "superSourceEnable",
+	"SuperSourceSource1": "superSourceSource1",
+	"SuperSourceSource2": "superSourceSource2",
+	"SuperSourceBackground": "superSourceBackground",
+	"SuperSourceControlStyle": "superSourceControlStyle",
+	"SuperSourceControlYPosition": "superSourceControlYPosition",
+	"SuperSourceMaskEnable": "superSourceMaskEnable",
+	"SuperSourceMaskHStart": "superSourceMaskHStart",
+	"SuperSourceMaskVStart": "superSourceMaskVStart",
+	"SuperSourceMaskHEnd": "superSourceMaskHEnd",
+	"SuperSourceMaskVEnd": "superSourceMaskVEnd",
+	"SuperSourceBorderWidth": "superSourceBorderWidth",
+	"SuperSourceBorderHue": "superSourceBorderHue",
+	"SuperSourceBorderSaturation": "superSourceBorderSaturation",
+	"SuperSourceBorderBrightness": "superSourceBorderBrightness",
 	//UpStream Key
-	ActionId['UpStreamKeyFillKeyType'] = 'upStreamKeyFillKeyType'
-	ActionId['UpStreamKeyType'] = 'upStreamKeyType'
-	ActionId['LumaKeySourceFill'] = 'lumaKeySourceFill'
-	ActionId['LumaKeySourceKey'] = 'lumaKeySourceKey'
-	ActionId['LumaKeyMaskEnable'] = 'lumaKeyMaskEnable'
-	ActionId['LumaKeyMaskHStart'] = 'lumaKeyMaskHStart'
-	ActionId['LumaKeyMaskVStart'] = 'lumaKeyMaskVStart'
-	ActionId['LumaKeyMaskHEnd'] = 'lumaKeyMaskHEnd'
-	ActionId['LumaKeyMaskVEnd'] = 'lumaKeyMaskVEnd'
-	ActionId['LumaKeyControlShapedKey'] = 'lumaKeyControlShapedKey'
-	ActionId['LumaKeyControlClip'] = 'lumaKeyControlClip'
-	ActionId['LumaKeyControlGain'] = 'lumaKeyControlGain'
-	ActionId['LumaKeyControlInvert'] = 'lumaKeyControlInvert'
-	ActionId['LumaKeyResizeEnable'] = 'lumaKeyResizeEnable'
-	ActionId['LumaKeyResizeSize'] = 'lumaKeyResizeSize'
-	ActionId['LumaKeyResizeXPosition'] = 'lumaKeyResizeXPosition'
-	ActionId['LumaKeyResizeYPosition'] = 'lumaKeyResizeYPosition'
-	ActionId['ChromaKeyFill'] = 'chromaKeyFill'
-	ActionId['ChromaKeyMaskEnable'] = 'chromaKeyMaskEnable'
-	ActionId['ChromaKeyMaskHStart'] = 'chromaKeyMaskHStart'
-	ActionId['ChromaKeyMaskVStart'] = 'chromaKeyMaskVStart'
-	ActionId['ChromaKeyMaskHEnd'] = 'chromaKeyMaskHEnd'
-	ActionId['ChromaKeyMaskVEnd'] = 'chromaKeyMaskVEnd'
-	ActionId['ChromaKeyResizeEnable'] = 'chromaKeyResizeEnable'
-	ActionId['ChromaKeyResizeSize'] = 'chromaKeyResizeSize'
-	ActionId['ChromaKeyResizeXPosition'] = 'chromaKeyResizeXPosition'
-	ActionId['ChromaKeyResizeYPosition'] = 'chromaKeyResizeYPosition'
-	ActionId['ChromaKeyControlSMPXPosition'] = 'chromaKeyControlSMPXPosition'
-	ActionId['ChromaKeyControlSMPYPosition'] = 'chromaKeyControlSMPYPosition'
-	ActionId['ChromaKeyControlSample'] = 'chromaKeyControlSample'
-	ActionId['ChromaKeyControlColor'] = 'chromaKeyControlColor'
-	ActionId['ChromaKeyControlForeground'] = 'chromaKeyControlForeground'
-	ActionId['ChromaKeyControlBackground'] = 'chromaKeyControlBackground'
-	ActionId['ChromaKeyControlKeyEdge'] = 'chromaKeyControlKeyEdge'
-	ActionId['KeyPatternSourceFill'] = 'keyPatternSourceFill'
-	ActionId['KeyPatternWipePattern'] = 'keyPatternWipePattern'
-	ActionId['KeyPatternWipeSize'] = 'keyPatternWipeSize'
-	ActionId['KeyPatternWipeXPosition'] = 'keyPatternWipeXPosition'
-	ActionId['KeyPatternWipeYPosition'] = 'keyPatternWipeYPosition'
-	ActionId['KeyPatternWipeSymmetry'] = 'keyPatternWipeSymmetry'
-	ActionId['KeyPatternWipeSoftness'] = 'keyPatternWipeSoftness'
-	ActionId['KeyPatternMaskEnable'] = 'keyPatternMaskEnable'
-	ActionId['KeyPatternMaskHStart'] = 'keyPatternMaskHStart'
-	ActionId['KeyPatternMaskVStart'] = 'keyPatternMaskVStart'
-	ActionId['KeyPatternMaskHEnd'] = 'keyPatternMaskHEnd'
-	ActionId['KeyPatternMaskVEnd'] = 'keyPatternMaskVEnd'
-	ActionId['KeyPatternResizeEnable'] = 'keyPatternResizeEnable'
-	ActionId['KeyPatternResizeSize'] = 'keyPatternResizeSize'
-	ActionId['KeyPatternResizeXPosition'] = 'keyPatternResizeXPosition'
-	ActionId['KeyPatternResizeYPosition'] = 'keyPatternResizeYPosition'
-	ActionId['PipSource'] = 'pipSource'
-	ActionId['PipSize'] = 'pipSize'
-	ActionId['PipXPosition'] = 'pipXPosition'
-	ActionId['PipYPosition'] = 'pipYPosition'
-	ActionId['PipMaskEnable'] = 'pipMaskEnable'
-	ActionId['PipMaskHStart'] = 'pipMaskHStart'
-	ActionId['PipMaskVStart'] = 'pipMaskVStart'
-	ActionId['PipMaskHEnd'] = 'pipMaskHEnd'
-	ActionId['PipMaskVEnd'] = 'pipMaskVEnd'
-	ActionId['PipBorderEnable'] = 'pipBorderEnable'
-	ActionId['PipBorderWidth'] = 'pipBorderWidth'
-	ActionId['PipBorderHue'] = 'pipBorderHue'
-	ActionId['PipBorderSaturation'] = 'pipBorderSaturation'
-	ActionId['PipBorderBrightness'] = 'pipBorderBrightness'
+	"UpStreamKeyFillKeyType": "upStreamKeyFillKeyType",
+	"UpStreamKeyType": "upStreamKeyType",
+	"LumaKeySourceFill": "lumaKeySourceFill",
+	"LumaKeySourceKey": "lumaKeySourceKey",
+	"LumaKeyMaskEnable": "lumaKeyMaskEnable",
+	"LumaKeyMaskHStart": "lumaKeyMaskHStart",
+	"LumaKeyMaskVStart": "lumaKeyMaskVStart",
+	"LumaKeyMaskHEnd": "lumaKeyMaskHEnd",
+	"LumaKeyMaskVEnd": "lumaKeyMaskVEnd",
+	"LumaKeyControlShapedKey": "lumaKeyControlShapedKey",
+	"LumaKeyControlClip": "lumaKeyControlClip",
+	"LumaKeyControlGain": "lumaKeyControlGain",
+	"LumaKeyControlInvert": "lumaKeyControlInvert",
+	"LumaKeyResizeEnable": "lumaKeyResizeEnable",
+	"LumaKeyResizeSize": "lumaKeyResizeSize",
+	"LumaKeyResizeXPosition": "lumaKeyResizeXPosition",
+	"LumaKeyResizeYPosition": "lumaKeyResizeYPosition",
+	"ChromaKeyFill": "chromaKeyFill",
+	"ChromaKeyMaskEnable": "chromaKeyMaskEnable",
+	"ChromaKeyMaskHStart": "chromaKeyMaskHStart",
+	"ChromaKeyMaskVStart": "chromaKeyMaskVStart",
+	"ChromaKeyMaskHEnd": "chromaKeyMaskHEnd",
+	"ChromaKeyMaskVEnd": "chromaKeyMaskVEnd",
+	"ChromaKeyResizeEnable": "chromaKeyResizeEnable",
+	"ChromaKeyResizeSize": "chromaKeyResizeSize",
+	"ChromaKeyResizeXPosition": "chromaKeyResizeXPosition",
+	"ChromaKeyResizeYPosition": "chromaKeyResizeYPosition",
+	"ChromaKeyControlSMPXPosition": "chromaKeyControlSMPXPosition",
+	"ChromaKeyControlSMPYPosition": "chromaKeyControlSMPYPosition",
+	"ChromaKeyControlSample": "chromaKeyControlSample",
+	"ChromaKeyControlColor": "chromaKeyControlColor",
+	"ChromaKeyControlForeground": "chromaKeyControlForeground",
+	"ChromaKeyControlBackground": "chromaKeyControlBackground",
+	"ChromaKeyControlKeyEdge": "chromaKeyControlKeyEdge",
+	"KeyPatternSourceFill": "keyPatternSourceFill",
+	"KeyPatternWipePattern": "keyPatternWipePattern",
+	"KeyPatternWipeSize": "keyPatternWipeSize",
+	"KeyPatternWipeXPosition": "keyPatternWipeXPosition",
+	"KeyPatternWipeYPosition": "keyPatternWipeYPosition",
+	"KeyPatternWipeSymmetry": "keyPatternWipeSymmetry",
+	"KeyPatternWipeSoftness": "keyPatternWipeSoftness",
+	"KeyPatternMaskEnable": "keyPatternMaskEnable",
+	"KeyPatternMaskHStart": "keyPatternMaskHStart",
+	"KeyPatternMaskVStart": "keyPatternMaskVStart",
+	"KeyPatternMaskHEnd": "keyPatternMaskHEnd",
+	"KeyPatternMaskVEnd": "keyPatternMaskVEnd",
+	"KeyPatternResizeEnable": "keyPatternResizeEnable",
+	"KeyPatternResizeSize": "keyPatternResizeSize",
+	"KeyPatternResizeXPosition": "keyPatternResizeXPosition",
+	"KeyPatternResizeYPosition": "keyPatternResizeYPosition",
+	"PipSource": "pipSource",
+	"PipSize": "pipSize",
+	"PipXPosition": "pipXPosition",
+	"PipYPosition": "pipYPosition",
+	"PipMaskEnable": "pipMaskEnable",
+	"PipMaskHStart": "pipMaskHStart",
+	"PipMaskVStart": "pipMaskVStart",
+	"PipMaskHEnd": "pipMaskHEnd",
+	"PipMaskVEnd": "pipMaskVEnd",
+	"PipBorderEnable": "pipBorderEnable",
+	"PipBorderWidth": "pipBorderWidth",
+	"PipBorderHue": "pipBorderHue",
+	"PipBorderSaturation": "pipBorderSaturation",
+	"PipBorderBrightness": "pipBorderBrightness",
 	//Audio Mixer
-	ActionId['AudioTransition'] = 'audioTransition'
-	ActionId['AudioFader'] = 'audioFader'
-	ActionId['AudioBalance'] = 'audioBalance'
-	ActionId['AudioInput'] = 'audioInput'
-	ActionId['AudioEnable'] = 'audioEnable'
-	ActionId['AudioEnable1'] = 'audioEnable1'
-	ActionId['AudioDelay'] = 'audioDelay'
-	ActionId['AudioMonitorLevel'] = 'audioMonitorLevel'
-	ActionId['AudioMonitorSource'] = 'audioMonitorSource'
+	"AudioTransition": "audioTransition",
+	"AudioFader": "audioFader",
+	"AudioBalance": "audioBalance",
+	"AudioInput": "audioInput",
+	"AudioEnable": "audioEnable",
+	"AudioEnable1": "audioEnable1",
+	"AudioDelay": "audioDelay",
+	"AudioMonitorLevel": "audioMonitorLevel",
+	"AudioMonitorSource": "audioMonitorSource",
 	//Still Generator
-	ActionId['StillSelection'] = 'stillSelection'
-	ActionId['StillRemove'] = 'stillRemove'
-	ActionId['StillLoadIndex'] = 'stillLoadIndex'
-	ActionId['StillLoadImage'] = 'stillLoadImage'
+	"StillSelection": "stillSelection",
+	"StillRemove": "stillRemove",
+	"StillLoadIndex": "stillLoadIndex",
+	"StillLoadImage": "stillLoadImage",
 	//Macro
-	ActionId['MacroRecord'] = 'macroRecord'
-	ActionId['MacroInfo'] = 'macroInfo'
-	ActionId['GetMacroInfoAll'] = 'getMacroInfoAll'
-	ActionId['MacroRun'] = 'macroRun'
-	ActionId['RemoveMacro'] = 'removeMacro'
-	ActionId['MacroSleep'] = 'macroSleep'
+	"MacroRecord": "macroRecord",
+	"MacroInfo": "macroInfo",
+	"GetMacroInfoAll": "getMacroInfoAll",
+	"MacroRun": "macroRun",
+	"RemoveMacro": "removeMacro",
+	"MacroSleep": "macroSleep",
 	//Streaming
-	ActionId['StreamOutput'] = 'streamOutput'
-	ActionId['StreamPlatform'] = 'streamPlatform'
-	ActionId['StreamServer'] = 'streamServer'
-	ActionId['StreamUrl'] = 'streamUrl'
+	"StreamOutput": "streamOutput",
+	"StreamPlatform": "streamPlatform",
+	"StreamServer": "streamServer",
+	"StreamUrl": "streamUrl",
 	//Playback
-	ActionId['PlayModeRepeatPause'] = 'playModeRepeatPause'
-	ActionId['PlaybackMode'] = 'playbackMode'
-	ActionId['PlaybackRepeat'] = 'playbackRepeat'
-	ActionId['PlaybackPause'] = 'playbackPause'
-	ActionId['PlaybackBar'] = 'playbackBar'
-	ActionId['PlayFile'] = 'playFile'
-	ActionId['PlaybackList'] = 'playbackList'
+	"PlayModeRepeatPause": "playModeRepeatPause",
+	"PlaybackMode": "playbackMode",
+	"PlaybackRepeat": "playbackRepeat",
+	"PlaybackPause": "playbackPause",
+	"PlaybackBar": "playbackBar",
+	"PlayFile": "playFile",
+	"PlaybackList": "playbackList",
 	//Settings
-	ActionId['SrcName'] = 'srcName'
-	ActionId['MvMeter'] = 'mvMeter'
-	ActionId['MvLayout'] = 'mvLayout'
-	ActionId['InputWindowLayout'] = 'inputWindowLayout'
-	ActionId['Marker'] = 'marker'
-	ActionId['MicInput'] = 'micInput'
-	ActionId['RecordFileName'] = 'recordFileName'
-	ActionId['SrcSelection'] = 'srcSelection'
-	ActionId['AuxSource'] = 'auxSource'
-	ActionId['OutFormat'] = 'outFormat'
-	ActionId['OutputColorSpace'] = 'outputColorSpace'
-	ActionId['OutSource'] = 'outSource'
-	ActionId['NetworkProtocol'] = 'networkProtocol'
-	ActionId['NetworkIpAddress'] = 'networkIpAddress'
-	ActionId['NetworkSubnetMask'] = 'networkSubnetMask'
-	ActionId['NetworkGateway'] = 'networkGateway'
-	ActionId['NetworkPrimaryDNS'] = 'networkPrimaryDNS'
-	ActionId['NetworkSecondaryDNS'] = 'networkSecondaryDNS'
-	ActionId['Quality'] = 'quality'
-	ActionId['Panel'] = 'panel'
-	ActionId['SdFormat'] = 'sdFormat'
-	ActionId['SystemReset'] = 'systemReset'
-	ActionId['Record'] = 'record'
-	ActionId['RecordStatus'] = 'recordStatus'
-	ActionId['RecordTime'] = 'recordTime'
-	ActionId['SdCardStatus'] = 'sdCardStatus'
-	ActionId['SdFree'] = 'sdFree'
-	ActionId['Live'] = 'live'
-	ActionId['LiveStatus'] = 'liveStatus'
-	ActionId['LiveInfo'] = 'liveInfo'
-})
+	"SrcName": "srcName",
+	"MvMeter": "mvMeter",
+	"MvLayout": "mvLayout",
+	"InputWindowLayout": "inputWindowLayout",
+	"Marker": "marker",
+	"MicInput": "micInput",
+	"RecordFileName": "recordFileName",
+	"SrcSelection": "srcSelection",
+	"AuxSource": "auxSource",
+	"OutFormat": "outFormat",
+	"OutputColorSpace": "outputColorSpace",
+	"OutSource": "outSource",
+	"NetworkProtocol": "networkProtocol",
+	"NetworkIpAddress": "networkIpAddress",
+	"NetworkSubnetMask": "networkSubnetMask",
+	"NetworkGateway": "networkGateway",
+	"NetworkPrimaryDNS": "networkPrimaryDNS",
+	"NetworkSecondaryDNS": "networkSecondaryDNS",
+	"Quality": "quality",
+	"Panel": "panel",
+	"SdFormat": "sdFormat",
+	"SystemReset": "systemReset",
+	"Record": "record",
+	"RecordStatus": "recordStatus",
+	"RecordTime": "recordTime",
+	"SdCardStatus": "sdCardStatus",
+	"SdFree": "sdFree",
+	"Live": "live",
+	"LiveStatus": "liveStatus",
+	"LiveInfo": "liveInfo"
+};
 
-var ReqType
-;(function (ReqType) {
-	ReqType['Get'] = 'get'
-	ReqType['Set'] = 'set'
-	ReqType['Push'] = 'pus'
-})
+export let ReqType = {
+	"Get": "get",
+	"Set": "set",
+	"Push": "pus"
+};
 
-var ActionType;
-(function (ActionType) {
-	ActionType[(ActionType['Unknown'] = 0)] = 'Unknown'
-	ActionType[(ActionType['Heart'] = 1)] = 'Heart'
-	ActionType[(ActionType['Program'] = 2)] = 'Program'
-	ActionType[(ActionType['Preview'] = 3)] = 'Preview'
-	ActionType[(ActionType['TransitionStyle'] = 4)] = 'TransitionStyle'
-	ActionType['TransitionDipSource'] = '5'
-	ActionType['TransitionWipeFillSource'] = '6'
-	ActionType['DskSourceFill'] = '7'
-	ActionType['SuperSourceSource'] = '8'
-	ActionType['LumaKeySourceKey'] = '9'
-	ActionType['ChromaKeySourceKey'] = '10'
-	ActionType['KeyPatternSourceKey'] = '11'
-	ActionType['PipSource'] = '12'
-	ActionType['AudioFader'] = '13'
-	ActionType['AudioMonitorSource'] = '14'
-	ActionType['SettingsoutSource'] = '15'
-	ActionType['AudioEnable'] = '16'
-	ActionType['AudioEnableSource'] = '17'
-})
+export let ActionType = {
+	"Unknown": "Unknown",
+	"Heart": "Heart",
+	"Program": "Program",
+	"Preview": "Preview",
+	"TransitionStyle": "TransitionStyle",
+	"TransitionDipSource": "5",
+	"TransitionWipeFillSource": "6",
+	"DskSourceFill": "7",
+	"SuperSourceSource": "8",
+	"LumaKeySourceKey": "9",
+	"ChromaKeySourceKey": "10",
+	"KeyPatternSourceKey": "11",
+	"PipSource": "12",
+	"AudioFader": "13",
+	"AudioMonitorSource": "14",
+	"SettingsoutSource": "15",
+	"AudioEnable": "16",
+	"AudioEnableSource": "17"
+};
 
-var feedbackId
-;(function (feedbackId) {
-	feedbackId['PreviewBG'] = 'preview_bg'
-	feedbackId['PreviewBG2'] = 'preview_bg_2'
-	feedbackId['PreviewBG3'] = 'preview_bg_3'
-	feedbackId['PreviewBG4'] = 'preview_bg_4'
-	feedbackId['ProgramBG'] = 'program_bg'
-	feedbackId['ProgramBG2'] = 'program_bg_2'
-	feedbackId['ProgramBG3'] = 'program_bg_3'
-	feedbackId['ProgramBG4'] = 'program_bg_4'
-	feedbackId['TransitionStyle'] = 'TransitionStyle'
-	feedbackId['InTransition'] = 'inTransition'
-	feedbackId['Cut'] = 'cut'
-	feedbackId['Prev'] = 'prev'
-	feedbackId['TransitionRate'] = 'transitionRate'
-	feedbackId['TransitionKeySwitch'] = 'transitionKeySwitch'
-	feedbackId['TransitionSelection'] = 'transitionSelection'
-	feedbackId['KeyOnAir'] = 'keyOnAir'
-	feedbackId['DskOnAir'] = 'dskOnAir'
-	feedbackId['SettingOutSource'] = 'settingOutSource'
-	feedbackId['Macro'] = 'macro'
-	feedbackId['Still'] = 'still'
-	feedbackId['FadeToBlackIsBlack'] = 'fadeToBlackIsBlack'
-	feedbackId['FadeToBlackRate'] = 'fadeToBlackRate'
-	feedbackId['FTBAFV'] = 'FTBAFV'
-	feedbackId['AuxBG'] = 'auxBG'
-	feedbackId['UpStreamKeyType'] = 'upStreamKeyType'
-	feedbackId['DskSourceFill'] = 'dskSourceFill'
-	feedbackId['KeySourceFill'] = 'keySourceFill'
-	feedbackId['SuperSourceEnable'] = 'superSourceEnable'
-	feedbackId['SuperSourceSelect'] = 'superSourceSelect'
-	feedbackId['SuperSourceControlStyle'] = 'superSourceControlStyle'
-	feedbackId['SuperSourceMask'] = 'superSourceMask'
+export let feedbackId = {
+	"PreviewBG": "preview_bg",
+	"PreviewBG2": "preview_bg_2",
+	"PreviewBG3": "preview_bg_3",
+	"PreviewBG4": "preview_bg_4",
+	"ProgramBG": "program_bg",
+	"ProgramBG2": "program_bg_2",
+	"ProgramBG3": "program_bg_3",
+	"ProgramBG4": "program_bg_4",
+	"TransitionStyle": "TransitionStyle",
+	"InTransition": "inTransition",
+	"Cut": "cut",
+	"Prev": "prev",
+	"TransitionRate": "transitionRate",
+	"TransitionKeySwitch": "transitionKeySwitch",
+	"TransitionSelection": "transitionSelection",
+	"KeyOnAir": "keyOnAir",
+	"DskOnAir": "dskOnAir",
+	"SettingOutSource": "settingOutSource",
+	"Macro": "macro",
+	"Still": "still",
+	"FadeToBlackIsBlack": "fadeToBlackIsBlack",
+	"FadeToBlackRate": "fadeToBlackRate",
+	"FTBAFV": "FTBAFV",
+	"AuxBG": "auxBG",
+	"UpStreamKeyType": "upStreamKeyType",
+	"DskSourceFill": "dskSourceFill",
+	"KeySourceFill": "keySourceFill",
+	"SuperSourceEnable": "superSourceEnable",
+	"SuperSourceSelect": "superSourceSelect",
+	"SuperSourceControlStyle": "superSourceControlStyle",
+	"SuperSourceMask": "superSourceMask",
 	//AudioMixer
-	feedbackId['AudioEnable'] = 'audioEnable'
-	feedbackId['AudioTransition'] = 'audioTransition'
+	"AudioEnable": "audioEnable",
+	"AudioTransition": "audioTransition",
 	//Streamming
-	feedbackId['StreamOutput'] = 'streamOutput'
+	"StreamOutput": "streamOutput",
 	//Playback
-	feedbackId['PlaybackMode'] = 'playbackMode'
-	feedbackId['PlaybackRepeat'] = 'playbackRepeat'
-	feedbackId['PlaybackPause'] = 'playbackPause'
-	feedbackId['PlaybackBar'] = 'playbackBar'
-	feedbackId['PlayFile'] = 'playFile'
+	"PlaybackMode": "playbackMode",
+	"PlaybackRepeat": "playbackRepeat",
+	"PlaybackPause": "playbackPause",
+	"PlaybackBar": "playbackBar",
+	"PlayFile": "playFile",
 	//Record
-	feedbackId['Record'] = 'record'
+	"Record": "record",
 	//Live
-	feedbackId['Live'] = 'live'
+	"Live": "live",
 	// Settings
-	feedbackId['InputWindowLayout'] = 'inputWindowLayout'
-})
+	"InputWindowLayout": "inputWindowLayout"
+};
 
-var variableId
-;(function (variableId) {
-	variableId['PlayState'] = 'playState'
-	variableId['Clock'] = 'clock'
-	variableId['TimerStart'] = 'timer_start'
-	variableId['TimerFinish'] = 'timer_finish'
-	variableId['TimerDelay'] = 'timer_delay'
-	variableId['Time'] = 'time'
-	variableId['TimeHM'] = 'time_hm'
-	variableId['TimeH'] = 'time_h'
-	variableId['TimeM'] = 'time_m'
-	variableId['TimeS'] = 'time_s'
-	variableId['TitleNow'] = 'titleNow'
-	variableId['SubtitleNow'] = 'subtitleNow'
-	variableId['SpeakerNow'] = 'speakerNow'
-	variableId['NoteNow'] = 'noteNow'
-	variableId['TitleNext'] = 'titleNext'
-	variableId['SubtitleNext'] = 'subtitleNext'
-	variableId['SpeakerNext'] = 'speakerNext'
-	variableId['NoteNext'] = 'noteNext'
-	variableId['OnAir'] = 'onAir'
-	variableId['SpeakerMessage'] = 'speakerMessage'
-	variableId['PublicMessage'] = 'publicMessage'
-	variableId['LowerMessage'] = 'lowerMessage'
-})
+export let variableId = {
+	"PlayState": "playState",
+	"Clock": "clock",
+	"TimerStart": "timer_start",
+	"TimerFinish": "timer_finish",
+	"TimerDelay": "timer_delay",
+	"Time": "time",
+	"TimeHM": "time_hm",
+	"TimeH": "time_h",
+	"TimeM": "time_m",
+	"TimeS": "time_s",
+	"TitleNow": "titleNow",
+	"SubtitleNow": "subtitleNow",
+	"SpeakerNow": "speakerNow",
+	"NoteNow": "noteNow",
+	"TitleNext": "titleNext",
+	"SubtitleNext": "subtitleNext",
+	"SpeakerNext": "speakerNext",
+	"NoteNext": "noteNext",
+	"OnAir": "onAir",
+	"SpeakerMessage": "speakerMessage",
+	"PublicMessage": "publicMessage",
+	"LowerMessage": "lowerMessage"
+};
 
-var SourceType;
-(function (SourceType) {
-	SourceType[(SourceType['Input1'] = 0)] = 'Input1'
-	SourceType[(SourceType['Input2'] = 1)] = 'Input2'
-	SourceType[(SourceType['Input3'] = 2)] = 'Input3'
-	SourceType[(SourceType['Input4'] = 3)] = 'Input4'
-	SourceType[(SourceType['Aux'] = 4)] = 'Aux'
-})
+export let SourceType = {
+	"Input1": "Input1",
+	"Input2": "Input2",
+	"Input3": "Input3",
+	"Input4": "Input4",
+	"Aux": "Aux"
+};
 
-var TransitionStyle;
-(function (TransitionStyle) {
-	TransitionStyle[(TransitionStyle['MIX'] = 0)] = 'MIX'
-	TransitionStyle[(TransitionStyle['DIP'] = 1)] = 'DIP'
-	TransitionStyle[(TransitionStyle['WIPE'] = 2)] = 'WIPE'
-})
-
-export { ActionId, ActionType, TransitionStyle, SourceType, variableId, feedbackId, ReqType }
+export let TransitionStyle = {
+       "MIX": 0,
+       "DIP": 1,
+       "WIPE": 2
+};
