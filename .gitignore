@@ -1,9 +1,7 @@
 node_modules/
-dist/
 package-lock.json
-.DS_STORE
-
-.idea
 /pkg
 /pkg.tgz
-DEBUG-PACKAGED
+dist/
+DEBUG-*
+/.yarn

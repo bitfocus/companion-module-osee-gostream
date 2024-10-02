@@ -2,7 +2,7 @@
 
 Should work with all models of GoStreamDeck.
 
-Firmware versions 7.5.2 and later are known to work, other versions may experience problems.  
+Firmware versions 7.5.2 and later are known to work, other versions may experience problems.
 
 Devices must be controlled over a network, USB control is NOT supported.
 

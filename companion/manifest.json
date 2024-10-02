@@ -8,17 +8,17 @@
 	"repository": "git+https://github.com/bitfocus/companion-module-osee-gostream.git",
 	"bugs": "https://github.com/bitfocus/companion-module-osee-gostream/issues",
 	"maintainers": [
-               {
+		{
 			"name": "Johan Falkenström",
 			"email": "johan.falkenstrom@gmail.com"
-	       }
+		}
 	],
 	"legacyIds": [],
 	"runtime": {
 		"type": "node18",
 		"api": "nodejs-ipc",
 		"apiVersion": "0.0.0",
-		"entrypoint": "../src/index.js"
+		"entrypoint": "../dist/index.js"
 	},
 	"manufacturer": "OSEE",
 	"products": ["GoStreamDeck"],
