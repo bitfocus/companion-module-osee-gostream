@@ -9,6 +9,7 @@ import {
     SettingsInputWindowLayoutChoices,
     SettingsOutSourceParamChoices,
     SettingsAuxSourceChoices,
+    SettingsColorChoices,
     SuperSourceStyleChoices,
     KeySwitchChoices,
     SwitchChoices
@@ -539,6 +540,43 @@ function feedbacks(self) {
 				}
 			}
 		},
+	}
+    	feedbacks[feedbackId.OutputColorSpace] = {
+		type: 'boolean',
+		name: 'Setting: Output color space',
+		description: 'If the colorspace of specified output is the selected, change style of the bank',
+	    options: [
+		{
+		    type: 'dropdown',
+		    label: 'Output',
+		    id: 'OutputId',
+		    choices: [
+			{ id: '0', label: 'out1' },
+			{ id: '1', label: 'out2' },
+		    ],
+		    default: 0,
+		},
+		{
+		    type: 'dropdown',
+		    label: 'ColorSpace',
+		    id: 'OutputColorSpaceId',
+		    choices: SettingsColorChoices,
+		    default: 0,
+		}
+		],
+		defaultStyle: {
+			color: combineRgb(0, 0, 0),
+			bgcolor: combineRgb(0, 255, 0),
+		},
+	    callback: (_feedback) => {
+		    return self.states.SettingsProp.OutputColorSpace[_feedback.options.OutputId] === _feedback.options.OutputColorSpaceId;
+		},
+	    learn: (_feedback) => {
+		return {
+					..._feedback.options,
+					OutputColorSpaceId: self.states.SettingsProp.OutputColorSpace[_feedback.options.OutputId]
+		}
+	    }
 	}
 	feedbacks[feedbackId.Macro] = {
 		type: 'boolean',

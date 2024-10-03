@@ -8,7 +8,7 @@ import { TransitionStyleChoice, SuperSourceStyleChoices } from './model'
 
 let tcp : any = null    // TCPHelper
 let Working_byte_resp_lens : any = null  // BUFFER
-function connect(self) {
+export function connect(self) {
 	if (tcp !== null) {
 		tcp.destroy()
 	}
@@ -120,8 +120,8 @@ function connect(self) {
 		}
 	})
 }
-exports.connect = connect
-function ParaData(msg_data, self) {
+
+export function ParaData(msg_data, self) {
 	let jsonContent = UpackDatas(msg_data)
 	//console.log("jsonContent", jsonContent)
 	let jsonStr = jsonContent.toString('utf8')
@@ -382,7 +382,11 @@ function ParaData(msg_data, self) {
 						self.states.SettingsProp.OutSource.uvc = selectSource
 					}
 				}
-				break
+		        break
+		case ActionId.OutputColorSpace:
+		    console.log("COLOR SPACE", json.value);
+		    self.states.SettingsProp.OutputColorSpace[json.value[0]] = json.value[1];
+		    break
 			//macro
 			case ActionId.MacroInfo:
 				let obj = {
@@ -431,7 +435,7 @@ function ParaData(msg_data, self) {
 		self.log('error', json.error_info)
 	}
 }
-function ReqStateData() {
+export function ReqStateData() {
 	sendCommand(ActionId.PgmIndex, ReqType.Get)
 	sendCommand(ActionId.PvwIndex, ReqType.Get)
 	sendCommand(ActionId.AutoTransition, ReqType.Get)
@@ -501,18 +505,19 @@ function ReqStateData() {
 	sendCommand(ActionId.MvMeter, ReqType.Get, [2])
 	sendCommand(ActionId.MvMeter, ReqType.Get, [3])
 	sendCommand(ActionId.MvMeter, ReqType.Get, [4])
-	sendCommand(ActionId.MvMeter, ReqType.Get, [5])
+        sendCommand(ActionId.MvMeter, ReqType.Get, [5])
+    	sendCommand(ActionId.OutputColorSpace, ReqType.Get)
 	//Macro
 	sendCommand(ActionId.GetMacroInfoAll, ReqType.Get)
 }
-exports.ReqStateData = ReqStateData
-function disconnectSocket() {
+
+export function disconnectSocket() {
 	if (tcp !== null) {
 		tcp.destroy()
 	}
 }
-exports.disconnectSocket = disconnectSocket
-async function sendCommand(id : string, type : any, value?: any) {
+
+export async function sendCommand(id : string, type : any, value?: any) {
 	if (tcp !== null) {
 		let obj = { id: id, type: type, value: value }
 		let json = JSON.stringify(obj)
@@ -527,4 +532,3 @@ async function sendCommand(id : string, type : any, value?: any) {
 	}
 	return false
 }
-export { sendCommand, connect, disconnectSocket }
