@@ -6,8 +6,8 @@ import { getChoices, Choice } from './choices'
 import { updatePlayStatedVariables, updatePlayFileVariables, updateRecordVariables } from './variables'
 import { TransitionStyleChoice, SuperSourceStyleChoices } from './model'
 
-let tcp : any = null    // TCPHelper
-let Working_byte_resp_lens : any = null  // BUFFER
+let tcp: any = null // TCPHelper
+let Working_byte_resp_lens: any = null // BUFFER
 export function connect(self) {
 	if (tcp !== null) {
 		tcp.destroy()
@@ -96,7 +96,7 @@ export function connect(self) {
 				//console.log('2222222');
 				ParaData(bytes_right_packages, self)
 			}
-		    Working_byte_resp_lens = null
+			Working_byte_resp_lens = null
 			index = msg_data.indexOf(0xeb)
 			// console.log('12312312312');
 			// console.log(index);
@@ -131,13 +131,13 @@ export function ParaData(msg_data, self) {
 	if (json !== null && json.id !== '' && Array.isArray(json.value)) {
 		switch (json.id) {
 			case ActionId.PvwIndex:
-		    var select : Choice  = getChoices(ActionType.Preview).find((s) => s.id === json.value[0])
+				var select: Choice = getChoices(ActionType.Preview).find((s) => s.id === json.value[0])
 				if (select !== undefined) {
 					self.states.selectPrevInput = select
 				}
 				break
 			case ActionId.PgmIndex:
-		    var select : Choice = getChoices(ActionType.Program).find((s) => s.id === json.value[0])
+				var select: Choice = getChoices(ActionType.Program).find((s) => s.id === json.value[0])
 				if (select !== undefined) {
 					self.states.selectPgmInput = select
 				}
@@ -210,11 +210,11 @@ export function ParaData(msg_data, self) {
 				break
 			//DSK
 			case ActionId.DskSourceFill:
-		    var select : Choice = getChoices(ActionType.DskSourceFill).find((s) => s.id === json.value[0])
+				var select: Choice = getChoices(ActionType.DskSourceFill).find((s) => s.id === json.value[0])
 				if (select !== undefined) self.states.DSKState.DSKSourceFill = select
 				break
 			case ActionId.DskSourceKey:
-		    var select : Choice = getChoices(ActionType.DskSourceFill).find((s) => s.id === json.value[0])
+				var select: Choice = getChoices(ActionType.DskSourceFill).find((s) => s.id === json.value[0])
 				if (select !== undefined) self.states.DSKState.DSKSourceKeyFill = select
 				break
 			case ActionId.DskControlInvert:
@@ -231,19 +231,19 @@ export function ParaData(msg_data, self) {
 				self.states.SuperSourcePorp.SSEnable = json.value[0] === 1 ? true : false
 				break
 			case ActionId.SuperSourceSource1:
-		    var select : Choice = getChoices(ActionType.SuperSourceSource).find((s) => s.id === json.value[0])
+				var select: Choice = getChoices(ActionType.SuperSourceSource).find((s) => s.id === json.value[0])
 				if (select !== undefined) self.states.SuperSourcePorp.SuperSourceSource1 = select
 				break
 			case ActionId.SuperSourceSource2:
-		    var select : Choice = getChoices(ActionType.SuperSourceSource).find((s) => s.id === json.value[0])
+				var select: Choice = getChoices(ActionType.SuperSourceSource).find((s) => s.id === json.value[0])
 				if (select !== undefined) self.states.SuperSourcePorp.SuperSourceSource2 = select
 				break
 			case ActionId.SuperSourceBackground:
-		    var select : Choice = getChoices(ActionType.SuperSourceSource).find((s) => s.id === json.value[0])
+				var select: Choice = getChoices(ActionType.SuperSourceSource).find((s) => s.id === json.value[0])
 				if (select !== undefined) self.states.SuperSourcePorp.SuperSourceBackground = select
 				break
 			case ActionId.SuperSourceControlStyle:
-		                var sschoice = SuperSourceStyleChoices.find((s) => s.id === json.value[0])
+				var sschoice = SuperSourceStyleChoices.find((s) => s.id === json.value[0])
 				if (sschoice !== undefined) self.states.SuperSourcePorp.SuperSourceControlStyle = sschoice
 				break
 			case ActionId.SuperSourceMaskEnable:
@@ -326,7 +326,7 @@ export function ParaData(msg_data, self) {
 				self.states.PlayBackState.PlaybackRepeat = json.value[0] === 1 ? true : false
 				break
 			case ActionId.PlaybackPause:
-		    self.states.PlayBackState.PlaybackPause = json.value[0] === 1 ? true : false;
+				self.states.PlayBackState.PlaybackPause = json.value[0] === 1 ? true : false
 				updatePlayStatedVariables(self, self.states.PlayBackState.PlaybackPause)
 				break
 			case ActionId.PlaybackBar:
@@ -344,7 +344,7 @@ export function ParaData(msg_data, self) {
 				break
 			//Record
 			case ActionId.RecordTime:
-		                let time = json.value[0];
+				let time = json.value[0]
 				updateRecordVariables(self, time)
 				break
 			case ActionId.Record:
@@ -366,9 +366,7 @@ export function ParaData(msg_data, self) {
 			case ActionId.OutSource:
 				let outType = json.value[0]
 				let outTypeValue = json.value[1]
-				var selectSource = getChoices(ActionType.SettingsoutSource).find(
-					(s) => s.id === outTypeValue,
-				)
+				var selectSource = getChoices(ActionType.SettingsoutSource).find((s) => s.id === outTypeValue)
 				if (outType === 0) {
 					if (selectSource !== undefined) {
 						self.states.SettingsProp.OutSource.hdmi1 = selectSource
@@ -382,11 +380,11 @@ export function ParaData(msg_data, self) {
 						self.states.SettingsProp.OutSource.uvc = selectSource
 					}
 				}
-		        break
-		case ActionId.OutputColorSpace:
-		    console.log("COLOR SPACE", json.value);
-		    self.states.SettingsProp.OutputColorSpace[json.value[0]] = json.value[1];
-		    break
+				break
+			case ActionId.OutputColorSpace:
+				console.log('COLOR SPACE', json.value)
+				self.states.SettingsProp.OutputColorSpace[json.value[0]] = json.value[1]
+				break
 			//macro
 			case ActionId.MacroInfo:
 				let obj = {
@@ -505,8 +503,8 @@ export function ReqStateData() {
 	sendCommand(ActionId.MvMeter, ReqType.Get, [2])
 	sendCommand(ActionId.MvMeter, ReqType.Get, [3])
 	sendCommand(ActionId.MvMeter, ReqType.Get, [4])
-        sendCommand(ActionId.MvMeter, ReqType.Get, [5])
-    	sendCommand(ActionId.OutputColorSpace, ReqType.Get)
+	sendCommand(ActionId.MvMeter, ReqType.Get, [5])
+	sendCommand(ActionId.OutputColorSpace, ReqType.Get)
 	//Macro
 	sendCommand(ActionId.GetMacroInfoAll, ReqType.Get)
 }
@@ -517,7 +515,7 @@ export function disconnectSocket() {
 	}
 }
 
-export async function sendCommand(id : string, type : any, value?: any) {
+export async function sendCommand(id: string, type: any, value?: any) {
 	if (tcp !== null) {
 		let obj = { id: id, type: type, value: value }
 		let json = JSON.stringify(obj)

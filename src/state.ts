@@ -1,4 +1,3 @@
-
 function Create() {
 	return {
 		selectPrevInput: { id: 0, label: 'Input1' },
@@ -91,8 +90,8 @@ function Create() {
 				uvc: { id: 0, label: 'Input1' },
 			},
 			SettingsInputWindowLayout: 0,
-		    MvMeter: [0, 0, 0, 0, 0, 0],
-		    OutputColorSpace: [0, 0]
+			MvMeter: [0, 0, 0, 0, 0, 0],
+			OutputColorSpace: [0, 0],
 		},
 		StillProp: {
 			Still1: 0,
@@ -104,4 +103,3 @@ function Create() {
 	}
 }
 export { Create }
-

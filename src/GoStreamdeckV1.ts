@@ -8,26 +8,26 @@ import { disconnectSocket, connect } from './connection'
 class GoStreamDeckV1 {
 	instance
 	constructor(instance) {
-	    this.instance = instance;
-	    this.instance.states = Create();
+		this.instance = instance
+		this.instance.states = Create()
 	}
 	getVariables() {
-	    return variables(this.instance);
+		return variables(this.instance)
 	}
 	getActions() {
-	    return actions(this.instance);
+		return actions(this.instance)
 	}
 	getFeedbacks() {
-	    return feedbacks(this.instance);
+		return feedbacks(this.instance)
 	}
 	getPresets() {
-	    return presets(this.instance);
+		return presets(this.instance)
 	}
 	connect() {
-	    return connect(this.instance);
+		return connect(this.instance)
 	}
 	disconnectSocket() {
-	    return disconnectSocket();
+		return disconnectSocket()
 	}
 }
 

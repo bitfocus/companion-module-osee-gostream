@@ -26,8 +26,8 @@ class GoSteamDeckInstance extends InstanceBase<Config> {
 		this.updateStatus(InstanceStatus.Disconnected)
 		this.log('debug', 'destroy ' + this.id)
 	}
-    
-    public getConfigFields(): SomeCompanionConfigField[] {
+
+	public getConfigFields(): SomeCompanionConfigField[] {
 		return GetConfigFields()
 	}
 	async configUpdated(config) {
@@ -69,6 +69,5 @@ class GoSteamDeckInstance extends InstanceBase<Config> {
 		this.setPresetDefinitions(this.gostreamdeck.getPresets())
 	}
 }
-export { GoSteamDeckInstance };
-runEntrypoint(GoSteamDeckInstance, []);
-
+export { GoSteamDeckInstance }
+runEntrypoint(GoSteamDeckInstance, [])

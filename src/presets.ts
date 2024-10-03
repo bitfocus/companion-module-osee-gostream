@@ -1,15 +1,16 @@
 import { combineRgb } from '@companion-module/base'
 import { ActionId, ActionType, feedbackId } from './enums'
 import { getChoices } from './choices'
-import { TransitionStyleChoice,
-	 AudioInputSourcesChoices,
-	 AudioMicChoices,
-	 KeySwitchChoices,
-	 SettingsOutSourceParamChoices,
-	 SettingsAuxSourceChoices,
-	 StreamingChoices
-       } from './model'
-import { MacroFeedbackType } from './feedback'    
+import {
+	TransitionStyleChoice,
+	AudioInputSourcesChoices,
+	AudioMicChoices,
+	KeySwitchChoices,
+	SettingsOutSourceParamChoices,
+	SettingsAuxSourceChoices,
+	StreamingChoices,
+} from './model'
+import { MacroFeedbackType } from './feedback'
 const rateOptions = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0]
 const ptzSize = '18'
 function presets(_self) {
@@ -1742,4 +1743,3 @@ function presets(_self) {
 }
 
 export { presets }
-

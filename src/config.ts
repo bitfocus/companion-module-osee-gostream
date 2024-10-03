@@ -2,13 +2,13 @@ import { Regex, SomeCompanionConfigField } from '@companion-module/base'
 export const portDefault = 19010
 
 export interface Config {
-       host: string
-       port: number
-       reconnect: boolean
-       reconnectInterval: number
+	host: string
+	port: number
+	reconnect: boolean
+	reconnectInterval: number
 }
 
-export function GetConfigFields() : SomeCompanionConfigField[] {
+export function GetConfigFields(): SomeCompanionConfigField[] {
 	return [
 		{
 			label: 'Information',
@@ -59,4 +59,3 @@ export function GetConfigFields() : SomeCompanionConfigField[] {
 		},
 	]
 }
-

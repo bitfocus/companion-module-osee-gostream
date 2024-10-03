@@ -3,36 +3,36 @@ import { sendCommand } from './connection'
 import { ActionId, ActionType, SourceType, ReqType, TransitionStyle } from './enums'
 import { getChoices, getChoicesByMacro, getChoicesByStill, SourcesToChoices } from './choices'
 import {
-    SettingsAuxSourceChoices,
-    SettingsOutFormatChoices,
-    SettingsColorChoices,
-    SettingsOutSourceParamChoices,
-    SettingsMicInputChoices,
-    SettingsMvMeterChoices,
-    SettingsMvLayoutChoices,
-    SettingsInputWindowLayoutChoices,
-    SwitchChoices,
-    AudioMicChoices,
-    SettingsUMDSrcChoices,
-    StreamingChoices,
-    AudioInputSourcesChoices,
-    KeyResizeSizeChoices,
-    SuperSourceBorderChoices,
-    SuperSourceMaskChoices,
-    UpStreamKeyTypeChoices,
-    SuperSourceStyleChoices,
-    WipeDirectionChoices,
-    KeySwitchChoices,
-    ColorSwitchChoices,
-    TransitionStyleChoice,
-    SourceModels
+	SettingsAuxSourceChoices,
+	SettingsOutFormatChoices,
+	SettingsColorChoices,
+	SettingsOutSourceParamChoices,
+	SettingsMicInputChoices,
+	SettingsMvMeterChoices,
+	SettingsMvLayoutChoices,
+	SettingsInputWindowLayoutChoices,
+	SwitchChoices,
+	AudioMicChoices,
+	SettingsUMDSrcChoices,
+	StreamingChoices,
+	AudioInputSourcesChoices,
+	KeyResizeSizeChoices,
+	SuperSourceBorderChoices,
+	SuperSourceMaskChoices,
+	UpStreamKeyTypeChoices,
+	SuperSourceStyleChoices,
+	WipeDirectionChoices,
+	KeySwitchChoices,
+	ColorSwitchChoices,
+	TransitionStyleChoice,
+	SourceModels,
 } from './model'
 
 /**
  * Returns all implemented actions.
  * @param self reference to the BaseInstance
  * @constructor
-* @returns CompanionActions
+ * @returns CompanionActions
  */
 function actions(_self) {
 	const actions = {
@@ -146,9 +146,9 @@ function TransitionActions(_self) {
 					} else {
 						paramOpt = 1
 					}
-					;sendCommand(ActionId.FtbAudioAFV, ReqType.Set, [paramOpt])
+					sendCommand(ActionId.FtbAudioAFV, ReqType.Set, [paramOpt])
 				} else {
-					;sendCommand(ActionId.FtbAudioAFV, ReqType.Set, [opt])
+					sendCommand(ActionId.FtbAudioAFV, ReqType.Set, [opt])
 				}
 				//sendCommand(ActionId.FtbAudioAFV, ReqType.Set, [getOptNumber(action, 'FtbAudioAFV')]);
 			},
@@ -167,7 +167,7 @@ function TransitionActions(_self) {
 				},
 			],
 			callback: (action) => {
-				;sendCommand(ActionId.FtbRate, ReqType.Set, [getOptNumber(action, 'FtbRate')])
+				sendCommand(ActionId.FtbRate, ReqType.Set, [getOptNumber(action, 'FtbRate')])
 			},
 		},
 		[ActionId.Prev]: {
@@ -190,9 +190,9 @@ function TransitionActions(_self) {
 					} else {
 						paramOpt = 1
 					}
-					;sendCommand(ActionId.Prev, ReqType.Set, [paramOpt])
+					sendCommand(ActionId.Prev, ReqType.Set, [paramOpt])
 				} else {
-					;sendCommand(ActionId.Prev, ReqType.Set, [opt])
+					sendCommand(ActionId.Prev, ReqType.Set, [opt])
 				}
 			},
 		},
@@ -208,9 +208,7 @@ function TransitionActions(_self) {
 				},
 			],
 			callback: (action) => {
-				;sendCommand(ActionId.TransitionIndex, ReqType.Set, [
-					getOptNumber(action, 'TransitionStyle'),
-				])
+				sendCommand(ActionId.TransitionIndex, ReqType.Set, [getOptNumber(action, 'TransitionStyle')])
 				//sendCommand(ActionId.TransitionIndex, ReqType.Get);
 			},
 		},
@@ -236,7 +234,7 @@ function TransitionActions(_self) {
 				},
 			],
 			callback: (action) => {
-				;sendCommand(ActionId.TransitionRate, ReqType.Set, [
+				sendCommand(ActionId.TransitionRate, ReqType.Set, [
 					getOptNumber(action, 'TransitionStyle'),
 					getOptNumber(action, 'TransitionRate'),
 				])
@@ -254,9 +252,7 @@ function TransitionActions(_self) {
 				},
 			],
 			callback: (action) => {
-				;sendCommand(ActionId.TransitionDipSource, ReqType.Set, [
-					getOptNumber(action, 'TransitionDipSource'),
-				])
+				sendCommand(ActionId.TransitionDipSource, ReqType.Set, [getOptNumber(action, 'TransitionDipSource')])
 			},
 		},
 		[ActionId.TransitionWipePattern]: {
@@ -274,9 +270,7 @@ function TransitionActions(_self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.TransitionWipePattern, ReqType.Set, [
-					getOptNumber(action, 'WipePatternID'),
-				])
+				await sendCommand(ActionId.TransitionWipePattern, ReqType.Set, [getOptNumber(action, 'WipePatternID')])
 			},
 		},
 		[ActionId.TransitionWipeXPosition]: {
@@ -294,9 +288,7 @@ function TransitionActions(_self) {
 				},
 			],
 			callback: (action) => {
-				;sendCommand(ActionId.TransitionWipeXPosition, ReqType.Set, [
-					getOptNumber(action, 'XPosition'),
-				])
+				sendCommand(ActionId.TransitionWipeXPosition, ReqType.Set, [getOptNumber(action, 'XPosition')])
 			},
 		},
 		[ActionId.TransitionWipeYPosition]: {
@@ -314,9 +306,7 @@ function TransitionActions(_self) {
 				},
 			],
 			callback: (action) => {
-				;sendCommand(ActionId.TransitionWipeYPosition, ReqType.Set, [
-					getOptNumber(action, 'YPosition'),
-				])
+				sendCommand(ActionId.TransitionWipeYPosition, ReqType.Set, [getOptNumber(action, 'YPosition')])
 			},
 		},
 		[ActionId.TransitionWipeDirection]: {
@@ -331,9 +321,7 @@ function TransitionActions(_self) {
 				},
 			],
 			callback: (action) => {
-				;sendCommand(ActionId.TransitionWipeDirection, ReqType.Set, [
-					getOptNumber(action, 'WipeDirection'),
-				])
+				sendCommand(ActionId.TransitionWipeDirection, ReqType.Set, [getOptNumber(action, 'WipeDirection')])
 			},
 		},
 		[ActionId.TransitionWipeSymmetry]: {
@@ -350,9 +338,7 @@ function TransitionActions(_self) {
 				},
 			],
 			callback: (action) => {
-				;sendCommand(ActionId.TransitionWipeSymmetry, ReqType.Set, [
-					getOptNumber(action, 'WipeSymmetry'),
-				])
+				sendCommand(ActionId.TransitionWipeSymmetry, ReqType.Set, [getOptNumber(action, 'WipeSymmetry')])
 			},
 		},
 		[ActionId.TransitionWipeSoftness]: {
@@ -369,9 +355,7 @@ function TransitionActions(_self) {
 				},
 			],
 			callback: (action) => {
-				;sendCommand(ActionId.TransitionWipeSoftness, ReqType.Set, [
-					getOptNumber(action, 'WipeSoftness'),
-				])
+				sendCommand(ActionId.TransitionWipeSoftness, ReqType.Set, [getOptNumber(action, 'WipeSoftness')])
 			},
 		},
 		[ActionId.TransitionWipeBorder]: {
@@ -388,9 +372,7 @@ function TransitionActions(_self) {
 				},
 			],
 			callback: (action) => {
-				;sendCommand(ActionId.TransitionWipeBorder, ReqType.Set, [
-					getOptNumber(action, 'WipeBorder'),
-				])
+				sendCommand(ActionId.TransitionWipeBorder, ReqType.Set, [getOptNumber(action, 'WipeBorder')])
 			},
 		},
 		[ActionId.TransitionWipeFillSource]: {
@@ -405,9 +387,7 @@ function TransitionActions(_self) {
 				},
 			],
 			callback: (action) => {
-				;sendCommand(ActionId.TransitionWipeFillSource, ReqType.Set, [
-					getOptNumber(action, 'WipeFillSource'),
-				])
+				sendCommand(ActionId.TransitionWipeFillSource, ReqType.Set, [getOptNumber(action, 'WipeFillSource')])
 			},
 		},
 	}
@@ -597,9 +577,7 @@ function DSKActions(_self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.DskSourceFill, ReqType.Set, [
-					getOptNumber(action, 'DSKFill'),
-				])
+				await sendCommand(ActionId.DskSourceFill, ReqType.Set, [getOptNumber(action, 'DSKFill')])
 			},
 		},
 		[ActionId.DskSourceKey]: {
@@ -614,9 +592,7 @@ function DSKActions(_self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.DskSourceKey, ReqType.Set, [
-					getOptNumber(action, 'DSKKey'),
-				])
+				await sendCommand(ActionId.DskSourceKey, ReqType.Set, [getOptNumber(action, 'DSKKey')])
 			},
 		},
 		[ActionId.DskMaskEnable]: {
@@ -659,9 +635,7 @@ function DSKActions(_self) {
 			],
 			callback: async (action) => {
 				//_self.states.dskOnAir=true;
-				await sendCommand(ActionId.DskMaskHStart, ReqType.Set, [
-					getOptNumber(action, 'HStart'),
-				])
+				await sendCommand(ActionId.DskMaskHStart, ReqType.Set, [getOptNumber(action, 'HStart')])
 			},
 		},
 		[ActionId.DskMaskVStart]: {
@@ -678,9 +652,7 @@ function DSKActions(_self) {
 			],
 			callback: async (action) => {
 				//_self.states.dskOnAir=true;
-				await sendCommand(ActionId.DskMaskVStart, ReqType.Set, [
-					getOptNumber(action, 'VStart'),
-				])
+				await sendCommand(ActionId.DskMaskVStart, ReqType.Set, [getOptNumber(action, 'VStart')])
 			},
 		},
 		[ActionId.DskMaskHEnd]: {
@@ -697,9 +669,7 @@ function DSKActions(_self) {
 			],
 			callback: async (action) => {
 				//_self.states.dskOnAir=true;
-				await sendCommand(ActionId.DskMaskHEnd, ReqType.Set, [
-					getOptNumber(action, 'HEnd'),
-				])
+				await sendCommand(ActionId.DskMaskHEnd, ReqType.Set, [getOptNumber(action, 'HEnd')])
 			},
 		},
 		[ActionId.DskMaskVEnd]: {
@@ -715,9 +685,7 @@ function DSKActions(_self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.DskMaskVEnd, ReqType.Set, [
-					getOptNumber(action, 'VEnd'),
-				])
+				await sendCommand(ActionId.DskMaskVEnd, ReqType.Set, [getOptNumber(action, 'VEnd')])
 			},
 		},
 		[ActionId.DskControlShapedKey]: {
@@ -759,9 +727,7 @@ function DSKActions(_self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.DskControlClip, ReqType.Set, [
-					getOptNumber(action, 'Clip'),
-				])
+				await sendCommand(ActionId.DskControlClip, ReqType.Set, [getOptNumber(action, 'Clip')])
 			},
 		},
 		[ActionId.DskControlGain]: {
@@ -777,9 +743,7 @@ function DSKActions(_self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.DskControlGain, ReqType.Set, [
-					getOptNumber(action, 'Gain'),
-				])
+				await sendCommand(ActionId.DskControlGain, ReqType.Set, [getOptNumber(action, 'Gain')])
 			},
 		},
 		[ActionId.DskControlInvert]: {
@@ -823,9 +787,7 @@ function DSKActions(_self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.DskRate, ReqType.Set, [
-					getOptNumber(action, 'dskRate'),
-				])
+				await sendCommand(ActionId.DskRate, ReqType.Set, [getOptNumber(action, 'dskRate')])
 			},
 		},
 	}
@@ -954,9 +916,7 @@ function SuperSourceActions(_self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.SuperSourceSource1, ReqType.Set, [
-					getOptNumber(action, 'SuperSourceSource1'),
-				])
+				await sendCommand(ActionId.SuperSourceSource1, ReqType.Set, [getOptNumber(action, 'SuperSourceSource1')])
 			},
 		},
 		[ActionId.SuperSourceSource2]: {
@@ -971,9 +931,7 @@ function SuperSourceActions(_self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.SuperSourceSource2, ReqType.Set, [
-					getOptNumber(action, 'SuperSourceSource2'),
-				])
+				await sendCommand(ActionId.SuperSourceSource2, ReqType.Set, [getOptNumber(action, 'SuperSourceSource2')])
 			},
 		},
 		[ActionId.SuperSourceBackground]: {
@@ -988,9 +946,7 @@ function SuperSourceActions(_self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.SuperSourceBackground, ReqType.Set, [
-					getOptNumber(action, 'SuperSourceBackground'),
-				])
+				await sendCommand(ActionId.SuperSourceBackground, ReqType.Set, [getOptNumber(action, 'SuperSourceBackground')])
 			},
 		},
 		[ActionId.SuperSourceControlStyle]: {
@@ -1005,9 +961,7 @@ function SuperSourceActions(_self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.SuperSourceControlStyle, ReqType.Set, [
-					getOptNumber(action, 'SuperSourceStyle'),
-				])
+				await sendCommand(ActionId.SuperSourceControlStyle, ReqType.Set, [getOptNumber(action, 'SuperSourceStyle')])
 			},
 		},
 		[ActionId.SuperSourceControlYPosition]: {
@@ -1311,9 +1265,7 @@ function UpStreamKeyActions(_self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.UpStreamKeyType, ReqType.Set, [
-					getOptNumber(action, 'USKType'),
-				])
+				await sendCommand(ActionId.UpStreamKeyType, ReqType.Set, [getOptNumber(action, 'USKType')])
 			},
 		},
 		...LumaKeyActions(_self),
@@ -1337,9 +1289,7 @@ function LumaKeyActions(_self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.LumaKeySourceFill, ReqType.Set, [
-					getOptNumber(action, 'KeyFill'),
-				])
+				await sendCommand(ActionId.LumaKeySourceFill, ReqType.Set, [getOptNumber(action, 'KeyFill')])
 			},
 		},
 		[ActionId.LumaKeySourceKey]: {
@@ -1354,9 +1304,7 @@ function LumaKeyActions(_self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.LumaKeySourceKey, ReqType.Set, [
-					getOptNumber(action, 'LumaKeySourceKey'),
-				])
+				await sendCommand(ActionId.LumaKeySourceKey, ReqType.Set, [getOptNumber(action, 'LumaKeySourceKey')])
 			},
 		},
 		[ActionId.LumaKeyMaskEnable]: {
@@ -1371,9 +1319,7 @@ function LumaKeyActions(_self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.LumaKeyMaskEnable, ReqType.Set, [
-					getOptNumber(action, 'LumaKeyMaskEnable'),
-				])
+				await sendCommand(ActionId.LumaKeyMaskEnable, ReqType.Set, [getOptNumber(action, 'LumaKeyMaskEnable')])
 			},
 		},
 		[ActionId.LumaKeyMaskHStart]: {
@@ -1389,9 +1335,7 @@ function LumaKeyActions(_self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.LumaKeyMaskHStart, ReqType.Set, [
-					getOptNumber(action, 'LumaKeyMaskHStart'),
-				])
+				await sendCommand(ActionId.LumaKeyMaskHStart, ReqType.Set, [getOptNumber(action, 'LumaKeyMaskHStart')])
 			},
 		},
 		[ActionId.LumaKeyMaskVStart]: {
@@ -1407,9 +1351,7 @@ function LumaKeyActions(_self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.LumaKeyMaskVStart, ReqType.Set, [
-					getOptNumber(action, 'LumaKeyMaskVStart'),
-				])
+				await sendCommand(ActionId.LumaKeyMaskVStart, ReqType.Set, [getOptNumber(action, 'LumaKeyMaskVStart')])
 			},
 		},
 		[ActionId.LumaKeyMaskHEnd]: {
@@ -1425,9 +1367,7 @@ function LumaKeyActions(_self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.LumaKeyMaskHEnd, ReqType.Set, [
-					getOptNumber(action, 'LumaKeyMaskHEnd'),
-				])
+				await sendCommand(ActionId.LumaKeyMaskHEnd, ReqType.Set, [getOptNumber(action, 'LumaKeyMaskHEnd')])
 			},
 		},
 		[ActionId.LumaKeyMaskVEnd]: {
@@ -1443,9 +1383,7 @@ function LumaKeyActions(_self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.LumaKeyMaskVEnd, ReqType.Set, [
-					getOptNumber(action, 'LumaKeyMaskVEnd'),
-				])
+				await sendCommand(ActionId.LumaKeyMaskVEnd, ReqType.Set, [getOptNumber(action, 'LumaKeyMaskVEnd')])
 			},
 		},
 		[ActionId.LumaKeyControlShapedKey]: {
@@ -1478,9 +1416,7 @@ function LumaKeyActions(_self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.LumaKeyControlClip, ReqType.Set, [
-					getOptNumber(action, 'LumaKeyControlClip'),
-				])
+				await sendCommand(ActionId.LumaKeyControlClip, ReqType.Set, [getOptNumber(action, 'LumaKeyControlClip')])
 			},
 		},
 		[ActionId.LumaKeyControlGain]: {
@@ -1496,9 +1432,7 @@ function LumaKeyActions(_self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.LumaKeyControlGain, ReqType.Set, [
-					getOptNumber(action, 'LumaKeyControlGain'),
-				])
+				await sendCommand(ActionId.LumaKeyControlGain, ReqType.Set, [getOptNumber(action, 'LumaKeyControlGain')])
 			},
 		},
 		[ActionId.LumaKeyControlInvert]: {
@@ -1513,9 +1447,7 @@ function LumaKeyActions(_self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.LumaKeyControlInvert, ReqType.Set, [
-					getOptNumber(action, 'LumaKeyControlInvert'),
-				])
+				await sendCommand(ActionId.LumaKeyControlInvert, ReqType.Set, [getOptNumber(action, 'LumaKeyControlInvert')])
 			},
 		},
 		[ActionId.LumaKeyResizeEnable]: {
@@ -1530,9 +1462,7 @@ function LumaKeyActions(_self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.LumaKeyResizeEnable, ReqType.Set, [
-					getOptNumber(action, 'LumaKeyResizeEnable'),
-				])
+				await sendCommand(ActionId.LumaKeyResizeEnable, ReqType.Set, [getOptNumber(action, 'LumaKeyResizeEnable')])
 			},
 		},
 		[ActionId.LumaKeyResizeSize]: {
@@ -1612,9 +1542,7 @@ function ChromaKeyActions(_self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.ChromaKeyFill, ReqType.Set, [
-					getOptNumber(action, 'KeyFill'),
-				])
+				await sendCommand(ActionId.ChromaKeyFill, ReqType.Set, [getOptNumber(action, 'KeyFill')])
 			},
 		},
 		[ActionId.ChromaKeyMaskEnable]: {
@@ -1629,9 +1557,7 @@ function ChromaKeyActions(_self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.ChromaKeyMaskEnable, ReqType.Set, [
-					getOptNumber(action, 'ChromaKeyMaskEnable'),
-				])
+				await sendCommand(ActionId.ChromaKeyMaskEnable, ReqType.Set, [getOptNumber(action, 'ChromaKeyMaskEnable')])
 			},
 		},
 		[ActionId.ChromaKeyMaskHStart]: {
@@ -1647,9 +1573,7 @@ function ChromaKeyActions(_self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.ChromaKeyMaskHStart, ReqType.Set, [
-					getOptNumber(action, 'ChromaKeyMaskHStart'),
-				])
+				await sendCommand(ActionId.ChromaKeyMaskHStart, ReqType.Set, [getOptNumber(action, 'ChromaKeyMaskHStart')])
 			},
 		},
 		[ActionId.ChromaKeyMaskVStart]: {
@@ -1665,9 +1589,7 @@ function ChromaKeyActions(_self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.ChromaKeyMaskVStart, ReqType.Set, [
-					getOptNumber(action, 'ChromaKeyMaskVStart'),
-				])
+				await sendCommand(ActionId.ChromaKeyMaskVStart, ReqType.Set, [getOptNumber(action, 'ChromaKeyMaskVStart')])
 			},
 		},
 		[ActionId.ChromaKeyMaskHEnd]: {
@@ -1683,9 +1605,7 @@ function ChromaKeyActions(_self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.ChromaKeyMaskHEnd, ReqType.Set, [
-					getOptNumber(action, 'ChromaKeyMaskHEnd'),
-				])
+				await sendCommand(ActionId.ChromaKeyMaskHEnd, ReqType.Set, [getOptNumber(action, 'ChromaKeyMaskHEnd')])
 			},
 		},
 		[ActionId.ChromaKeyMaskVEnd]: {
@@ -1701,9 +1621,7 @@ function ChromaKeyActions(_self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.ChromaKeyMaskVEnd, ReqType.Set, [
-					getOptNumber(action, 'ChromaKeyMaskVEnd'),
-				])
+				await sendCommand(ActionId.ChromaKeyMaskVEnd, ReqType.Set, [getOptNumber(action, 'ChromaKeyMaskVEnd')])
 			},
 		},
 		[ActionId.ChromaKeyResizeEnable]: {
@@ -1718,9 +1636,7 @@ function ChromaKeyActions(_self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.ChromaKeyResizeEnable, ReqType.Set, [
-					getOptNumber(action, 'ChromaKeyResizeEnable'),
-				])
+				await sendCommand(ActionId.ChromaKeyResizeEnable, ReqType.Set, [getOptNumber(action, 'ChromaKeyResizeEnable')])
 			},
 		},
 		[ActionId.ChromaKeyResizeSize]: {
@@ -1928,9 +1844,7 @@ function KeyPatternActions(_self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.KeyPatternSourceFill, ReqType.Set, [
-					getOptNumber(action, 'KeyFill'),
-				])
+				await sendCommand(ActionId.KeyPatternSourceFill, ReqType.Set, [getOptNumber(action, 'KeyFill')])
 			},
 		},
 		[ActionId.KeyPatternWipePattern]: {
@@ -1948,9 +1862,7 @@ function KeyPatternActions(_self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.KeyPatternWipePattern, ReqType.Set, [
-					getOptNumber(action, 'KeyPatternWipePattern'),
-				])
+				await sendCommand(ActionId.KeyPatternWipePattern, ReqType.Set, [getOptNumber(action, 'KeyPatternWipePattern')])
 			},
 		},
 		[ActionId.KeyPatternWipeSize]: {
@@ -1966,9 +1878,7 @@ function KeyPatternActions(_self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.KeyPatternWipeSize, ReqType.Set, [
-					getOptNumber(action, 'KeyPatternWipeSize'),
-				])
+				await sendCommand(ActionId.KeyPatternWipeSize, ReqType.Set, [getOptNumber(action, 'KeyPatternWipeSize')])
 			},
 		},
 		[ActionId.KeyPatternWipeXPosition]: {
@@ -2059,9 +1969,7 @@ function KeyPatternActions(_self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.KeyPatternMaskEnable, ReqType.Set, [
-					getOptNumber(action, 'KeyPatternMaskEnable'),
-				])
+				await sendCommand(ActionId.KeyPatternMaskEnable, ReqType.Set, [getOptNumber(action, 'KeyPatternMaskEnable')])
 			},
 		},
 		[ActionId.KeyPatternMaskHStart]: {
@@ -2077,9 +1985,7 @@ function KeyPatternActions(_self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.KeyPatternMaskHStart, ReqType.Set, [
-					getOptNumber(action, 'KeyPatternMaskHStart'),
-				])
+				await sendCommand(ActionId.KeyPatternMaskHStart, ReqType.Set, [getOptNumber(action, 'KeyPatternMaskHStart')])
 			},
 		},
 		[ActionId.KeyPatternMaskVStart]: {
@@ -2095,9 +2001,7 @@ function KeyPatternActions(_self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.KeyPatternMaskVStart, ReqType.Set, [
-					getOptNumber(action, 'KeyPatternMaskVStart'),
-				])
+				await sendCommand(ActionId.KeyPatternMaskVStart, ReqType.Set, [getOptNumber(action, 'KeyPatternMaskVStart')])
 			},
 		},
 		[ActionId.KeyPatternMaskHEnd]: {
@@ -2113,9 +2017,7 @@ function KeyPatternActions(_self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.KeyPatternMaskHEnd, ReqType.Set, [
-					getOptNumber(action, 'KeyPatternMaskHEnd'),
-				])
+				await sendCommand(ActionId.KeyPatternMaskHEnd, ReqType.Set, [getOptNumber(action, 'KeyPatternMaskHEnd')])
 			},
 		},
 		[ActionId.KeyPatternMaskVEnd]: {
@@ -2131,9 +2033,7 @@ function KeyPatternActions(_self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.KeyPatternMaskVEnd, ReqType.Set, [
-					getOptNumber(action, 'KeyPatternMaskVEnd'),
-				])
+				await sendCommand(ActionId.KeyPatternMaskVEnd, ReqType.Set, [getOptNumber(action, 'KeyPatternMaskVEnd')])
 			},
 		},
 		[ActionId.KeyPatternResizeEnable]: {
@@ -2230,9 +2130,7 @@ function PIPActions(_self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.PipSource, ReqType.Set, [
-					getOptNumber(action, 'KeyFill'),
-				])
+				await sendCommand(ActionId.PipSource, ReqType.Set, [getOptNumber(action, 'KeyFill')])
 			},
 		},
 		[ActionId.PipSize]: {
@@ -2270,9 +2168,7 @@ function PIPActions(_self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.PipXPosition, ReqType.Set, [
-					getOptNumber(action, 'PipXPosition'),
-				])
+				await sendCommand(ActionId.PipXPosition, ReqType.Set, [getOptNumber(action, 'PipXPosition')])
 			},
 		},
 		[ActionId.PipYPosition]: {
@@ -2290,9 +2186,7 @@ function PIPActions(_self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.PipYPosition, ReqType.Set, [
-					getOptNumber(action, 'PipYPosition'),
-				])
+				await sendCommand(ActionId.PipYPosition, ReqType.Set, [getOptNumber(action, 'PipYPosition')])
 			},
 		},
 		[ActionId.PipMaskEnable]: {
@@ -2307,9 +2201,7 @@ function PIPActions(_self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.PipMaskEnable, ReqType.Set, [
-					getOptNumber(action, 'PipMaskEnable'),
-				])
+				await sendCommand(ActionId.PipMaskEnable, ReqType.Set, [getOptNumber(action, 'PipMaskEnable')])
 			},
 		},
 		[ActionId.PipMaskHStart]: {
@@ -2325,9 +2217,7 @@ function PIPActions(_self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.PipMaskHStart, ReqType.Set, [
-					getOptNumber(action, 'PipMaskHStart'),
-				])
+				await sendCommand(ActionId.PipMaskHStart, ReqType.Set, [getOptNumber(action, 'PipMaskHStart')])
 			},
 		},
 		[ActionId.PipMaskVStart]: {
@@ -2343,9 +2233,7 @@ function PIPActions(_self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.PipMaskVStart, ReqType.Set, [
-					getOptNumber(action, 'PipMaskVStart'),
-				])
+				await sendCommand(ActionId.PipMaskVStart, ReqType.Set, [getOptNumber(action, 'PipMaskVStart')])
 			},
 		},
 		[ActionId.PipMaskHEnd]: {
@@ -2361,9 +2249,7 @@ function PIPActions(_self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.PipMaskHEnd, ReqType.Set, [
-					getOptNumber(action, 'PipMaskHEnd'),
-				])
+				await sendCommand(ActionId.PipMaskHEnd, ReqType.Set, [getOptNumber(action, 'PipMaskHEnd')])
 			},
 		},
 		[ActionId.PipMaskVEnd]: {
@@ -2379,9 +2265,7 @@ function PIPActions(_self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.PipMaskVEnd, ReqType.Set, [
-					getOptNumber(action, 'PipMaskVEnd'),
-				])
+				await sendCommand(ActionId.PipMaskVEnd, ReqType.Set, [getOptNumber(action, 'PipMaskVEnd')])
 			},
 		},
 		[ActionId.PipBorderEnable]: {
@@ -2396,9 +2280,7 @@ function PIPActions(_self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.PipBorderEnable, ReqType.Set, [
-					getOptNumber(action, 'PipBorderEnable'),
-				])
+				await sendCommand(ActionId.PipBorderEnable, ReqType.Set, [getOptNumber(action, 'PipBorderEnable')])
 			},
 		},
 		[ActionId.PipBorderWidth]: {
@@ -2414,9 +2296,7 @@ function PIPActions(_self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.PipBorderWidth, ReqType.Set, [
-					getOptNumber(action, 'PipBorderWidth'),
-				])
+				await sendCommand(ActionId.PipBorderWidth, ReqType.Set, [getOptNumber(action, 'PipBorderWidth')])
 			},
 		},
 		[ActionId.PipBorderHue]: {
@@ -2432,9 +2312,7 @@ function PIPActions(_self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.PipBorderHue, ReqType.Set, [
-					getOptNumber(action, 'PipBorderHue'),
-				])
+				await sendCommand(ActionId.PipBorderHue, ReqType.Set, [getOptNumber(action, 'PipBorderHue')])
 			},
 		},
 		[ActionId.PipBorderSaturation]: {
@@ -2450,9 +2328,7 @@ function PIPActions(_self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.PipBorderSaturation, ReqType.Set, [
-					getOptNumber(action, 'PipBorderSaturation'),
-				])
+				await sendCommand(ActionId.PipBorderSaturation, ReqType.Set, [getOptNumber(action, 'PipBorderSaturation')])
 			},
 		},
 		[ActionId.PipBorderBrightness]: {
@@ -2468,9 +2344,7 @@ function PIPActions(_self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.PipBorderBrightness, ReqType.Set, [
-					getOptNumber(action, 'PipBorderBrightness'),
-				])
+				await sendCommand(ActionId.PipBorderBrightness, ReqType.Set, [getOptNumber(action, 'PipBorderBrightness')])
 			},
 		},
 	}
@@ -2750,9 +2624,7 @@ function AudioMixerActions(_self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.AudioMonitorLevel, ReqType.Set, [
-					getOptNumber(action, 'AudioLevel'),
-				])
+				await sendCommand(ActionId.AudioMonitorLevel, ReqType.Set, [getOptNumber(action, 'AudioLevel')])
 			},
 		},
 		[ActionId.AudioMonitorSource]: {
@@ -2767,9 +2639,7 @@ function AudioMixerActions(_self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.AudioMonitorSource, ReqType.Set, [
-					getOptNumber(action, 'AudioSource'),
-				])
+				await sendCommand(ActionId.AudioMonitorSource, ReqType.Set, [getOptNumber(action, 'AudioSource')])
 			},
 		},
 	}
@@ -2899,9 +2769,7 @@ function MacroActions(_self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.RemoveMacro, ReqType.Set, [
-					getOptNumber(action, 'MacroIndex'),
-				])
+				await sendCommand(ActionId.RemoveMacro, ReqType.Set, [getOptNumber(action, 'MacroIndex')])
 			},
 		},
 		[ActionId.MacroRun]: {
@@ -2945,9 +2813,7 @@ function MacroActions(_self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.MacroSleep, ReqType.Set, [
-					getOptNumber(action, 'MacroSleep'),
-				])
+				await sendCommand(ActionId.MacroSleep, ReqType.Set, [getOptNumber(action, 'MacroSleep')])
 			},
 		},
 	}
@@ -3072,7 +2938,7 @@ function PlaybackActions(_self) {
 						paramOpt,
 					])
 				} else {
-					;sendCommand(ActionId.PlayModeRepeatPause, ReqType.Set, [
+					sendCommand(ActionId.PlayModeRepeatPause, ReqType.Set, [
 						getOptNumber(action, 'ModeID'),
 						getOptNumber(action, 'repeatId'),
 						opt,
@@ -3095,9 +2961,7 @@ function PlaybackActions(_self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.PlaybackMode, ReqType.Set, [
-					getOptNumber(action, 'ModeID'),
-				])
+				await sendCommand(ActionId.PlaybackMode, ReqType.Set, [getOptNumber(action, 'ModeID')])
 			},
 		},
 		[ActionId.PlayFile]: {
@@ -3109,17 +2973,15 @@ function PlaybackActions(_self) {
 					id: 'PlayFileID',
 					required: true,
 					choices: _self.states.PlayBackState.PlayFileList.map((s, index) => ({
-							id: index,
-							label: s,
-						})),
+						id: index,
+						label: s,
+					})),
 					default: 0,
 				},
 			],
 			callback: async (action) => {
 				let opt = action.options.PlayFileID
-				await sendCommand(ActionId.PlayFile, ReqType.Set, [
-					_self.states.PlayBackState.PlayFileList[opt],
-				])
+				await sendCommand(ActionId.PlayFile, ReqType.Set, [_self.states.PlayBackState.PlayFileList[opt]])
 			},
 		},
 		[ActionId.PlaybackRepeat]: {
@@ -3144,7 +3006,7 @@ function PlaybackActions(_self) {
 					}
 					await sendCommand(ActionId.PlaybackRepeat, ReqType.Set, [paramOpt])
 				} else {
-					;sendCommand(ActionId.PlaybackRepeat, ReqType.Set, [opt])
+					sendCommand(ActionId.PlaybackRepeat, ReqType.Set, [opt])
 				}
 			},
 		},
@@ -3174,7 +3036,7 @@ function PlaybackActions(_self) {
 					}
 					await sendCommand(ActionId.PlaybackPause, ReqType.Set, [paramOpt])
 				} else {
-					;sendCommand(ActionId.PlaybackPause, ReqType.Set, [opt])
+					sendCommand(ActionId.PlaybackPause, ReqType.Set, [opt])
 				}
 			},
 		},
@@ -3274,9 +3136,7 @@ function SettingsActions(_self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.MvLayout, ReqType.Set, [
-					getOptNumber(action, 'MvLayout'),
-				])
+				await sendCommand(ActionId.MvLayout, ReqType.Set, [getOptNumber(action, 'MvLayout')])
 			},
 		},
 		[ActionId.InputWindowLayout]: {
@@ -3291,9 +3151,7 @@ function SettingsActions(_self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.InputWindowLayout, ReqType.Set, [
-					getOptNumber(action, 'StyleId'),
-				])
+				await sendCommand(ActionId.InputWindowLayout, ReqType.Set, [getOptNumber(action, 'StyleId')])
 			},
 		},
 		[ActionId.Marker]: {
@@ -3308,9 +3166,7 @@ function SettingsActions(_self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.Marker, ReqType.Set, [
-					getOptNumber(action, 'Marker'),
-				])
+				await sendCommand(ActionId.Marker, ReqType.Set, [getOptNumber(action, 'Marker')])
 			},
 		},
 		[ActionId.MicInput]: {
@@ -3350,9 +3206,7 @@ function SettingsActions(_self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.RecordFileName, ReqType.Set, [
-					getOptString(action, 'RecordFileName'),
-				])
+				await sendCommand(ActionId.RecordFileName, ReqType.Set, [getOptString(action, 'RecordFileName')])
 			},
 		},
 		[ActionId.SrcSelection]: {
@@ -3392,9 +3246,7 @@ function SettingsActions(_self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.AuxSource, ReqType.Set, [
-					getOptNumber(action, 'auxSourceID'),
-				])
+				await sendCommand(ActionId.AuxSource, ReqType.Set, [getOptNumber(action, 'auxSourceID')])
 			},
 		},
 		[ActionId.OutFormat]: {
@@ -3409,9 +3261,7 @@ function SettingsActions(_self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.OutFormat, ReqType.Set, [
-					getOptNumber(action, 'OutFormat'),
-				])
+				await sendCommand(ActionId.OutFormat, ReqType.Set, [getOptNumber(action, 'OutFormat')])
 			},
 		},
 		[ActionId.OutputColorSpace]: {
@@ -3572,7 +3422,7 @@ function LiveActions(_self) {
 	}
 	return actions
 }
-function getOptNumber(action : any, key : string, defVal? : any) {
+function getOptNumber(action: any, key: string, defVal?: any) {
 	const rawVal = action.options[key]
 	if (defVal !== undefined && rawVal === undefined) return defVal
 	const val = Number(rawVal)
@@ -3581,7 +3431,7 @@ function getOptNumber(action : any, key : string, defVal? : any) {
 	}
 	return val
 }
-function getOptString(action : any, key : any, defVal? : any) {
+function getOptString(action: any, key: any, defVal?: any) {
 	const rawVal = action.options[key]
 	if (defVal !== undefined && rawVal === undefined) return defVal
 	const val = String(rawVal)

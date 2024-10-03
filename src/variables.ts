@@ -1,10 +1,8 @@
-
-
 import { ActionType } from './enums'
 import { getChoices } from './choices'
 
 function variables(_self) {
-    const variables : any[] = []
+	const variables: any[] = []
 	const values = {}
 	variables.push({
 		name: 'IP address of GoStreamDeck',

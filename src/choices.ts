@@ -1,19 +1,21 @@
 import { ActionType } from './enums'
-import { SourceModels,
-	 OtherSourceModels,
-	 OtherDipSourceModels,
-	 OtherDSKSourceModels,
-	 AudioMicChoices,
-	 AudioInputSourcesChoices,
-	 OtherAudioSourcesChoices,
-         AudioSourcesEnableChoices,
-	 OtherAudioSourcesEnableChoices,
-       SettingsOutSourceChoices } from './model'
+import {
+	SourceModels,
+	OtherSourceModels,
+	OtherDipSourceModels,
+	OtherDSKSourceModels,
+	AudioMicChoices,
+	AudioInputSourcesChoices,
+	OtherAudioSourcesChoices,
+	AudioSourcesEnableChoices,
+	OtherAudioSourcesEnableChoices,
+	SettingsOutSourceChoices,
+} from './model'
 
 type Choice = {
-    id: string,
-    label: string
-};
+	id: string
+	label: string
+}
 
 function getChoices(type) {
 	switch (type) {
@@ -82,7 +84,7 @@ function getChoicesByAudioSourceType(value) {
 }
 
 function getChoicesByMacro() {
-    let Source : Choice[] = []
+	let Source: Choice[] = []
 	for (var i = 0; i < 100; i++) {
 		Source.push({ id: i.toString(), label: 'Macro' + (i + 1).toString() })
 	}
@@ -90,7 +92,7 @@ function getChoicesByMacro() {
 }
 
 function getChoicesByStill() {
-    let Source : Choice[] = []
+	let Source: Choice[] = []
 	for (var i = 0; i <= 31; i++) {
 		Source.push({ id: i.toString(), label: 'Pic' + i.toString() })
 	}
@@ -105,4 +107,3 @@ function SourcesToChoices(sources) {
 }
 
 export { SourcesToChoices, getChoicesByStill, getChoicesByMacro, getChoicesByAudioSourceType, getChoices, Choice }
-

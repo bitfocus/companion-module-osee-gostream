@@ -1,26 +1,25 @@
-
 import { combineRgb } from '@companion-module/base'
 import { ActionType, SourceType, feedbackId, TransitionStyle } from './enums'
 import { getChoices, getChoicesByMacro, getChoicesByStill } from './choices'
 import {
-    TransitionStyleChoice,
-    StreamingChoices,
-    UpStreamKeyTypeChoices,
-    SettingsInputWindowLayoutChoices,
-    SettingsOutSourceParamChoices,
-    SettingsAuxSourceChoices,
-    SettingsColorChoices,
-    SuperSourceStyleChoices,
-    KeySwitchChoices,
-    SwitchChoices
+	TransitionStyleChoice,
+	StreamingChoices,
+	UpStreamKeyTypeChoices,
+	SettingsInputWindowLayoutChoices,
+	SettingsOutSourceParamChoices,
+	SettingsAuxSourceChoices,
+	SettingsColorChoices,
+	SuperSourceStyleChoices,
+	KeySwitchChoices,
+	SwitchChoices,
 } from './model'
-    
+
 var MacroFeedbackType = {
-    "IsRunning": "isRunning",
-    "IsWaiting": "isWaiting",
-    "IsRecording": "isRecording",
-    "IsUsed": "isUsed"
-};
+	IsRunning: 'isRunning',
+	IsWaiting: 'isWaiting',
+	IsRecording: 'isRecording',
+	IsUsed: 'isUsed',
+}
 
 function feedbacks(self) {
 	const feedbacks = {}
@@ -541,42 +540,44 @@ function feedbacks(self) {
 			}
 		},
 	}
-    	feedbacks[feedbackId.OutputColorSpace] = {
+	feedbacks[feedbackId.OutputColorSpace] = {
 		type: 'boolean',
 		name: 'Setting: Output color space',
 		description: 'If the colorspace of specified output is the selected, change style of the bank',
-	    options: [
-		{
-		    type: 'dropdown',
-		    label: 'Output',
-		    id: 'OutputId',
-		    choices: [
-			{ id: '0', label: 'out1' },
-			{ id: '1', label: 'out2' },
-		    ],
-		    default: 0,
-		},
-		{
-		    type: 'dropdown',
-		    label: 'ColorSpace',
-		    id: 'OutputColorSpaceId',
-		    choices: SettingsColorChoices,
-		    default: 0,
-		}
+		options: [
+			{
+				type: 'dropdown',
+				label: 'Output',
+				id: 'OutputId',
+				choices: [
+					{ id: '0', label: 'out1' },
+					{ id: '1', label: 'out2' },
+				],
+				default: 0,
+			},
+			{
+				type: 'dropdown',
+				label: 'ColorSpace',
+				id: 'OutputColorSpaceId',
+				choices: SettingsColorChoices,
+				default: 0,
+			},
 		],
 		defaultStyle: {
 			color: combineRgb(0, 0, 0),
 			bgcolor: combineRgb(0, 255, 0),
 		},
-	    callback: (_feedback) => {
-		    return self.states.SettingsProp.OutputColorSpace[_feedback.options.OutputId] === _feedback.options.OutputColorSpaceId;
+		callback: (_feedback) => {
+			return (
+				self.states.SettingsProp.OutputColorSpace[_feedback.options.OutputId] === _feedback.options.OutputColorSpaceId
+			)
 		},
-	    learn: (_feedback) => {
-		return {
-					..._feedback.options,
-					OutputColorSpaceId: self.states.SettingsProp.OutputColorSpace[_feedback.options.OutputId]
-		}
-	    }
+		learn: (_feedback) => {
+			return {
+				..._feedback.options,
+				OutputColorSpaceId: self.states.SettingsProp.OutputColorSpace[_feedback.options.OutputId],
+			}
+		},
 	}
 	feedbacks[feedbackId.Macro] = {
 		type: 'boolean',
@@ -1074,9 +1075,9 @@ function feedbacks(self) {
 				label: 'Video file',
 				id: 'PlayFileID',
 				choices: self.states.PlayBackState.PlayFileList.map((s, index) => ({
-						id: index,
-						label: s,
-					})),
+					id: index,
+					label: s,
+				})),
 				default: 0,
 			},
 		],
@@ -1133,4 +1134,3 @@ function feedbacks(self) {
 }
 
 export { feedbacks, MacroFeedbackType }
-

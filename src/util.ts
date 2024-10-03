@@ -179,7 +179,8 @@ function IsCrcOK(datas) {
 	}
 }
 
-export { IsCrcOK,
+export {
+	IsCrcOK,
 	UpackDatas,
 	Bytes2ToInt,
 	Bytes4ToInt,
@@ -191,4 +192,5 @@ export { IsCrcOK,
 	HEAD2,
 	HEAD1,
 	compareNumber,
-    NumberComparitor }
+	NumberComparitor,
+}
