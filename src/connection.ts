@@ -386,7 +386,13 @@ export function ParaData(msg_data, self) {
 				break
 			case ActionId.OutFormat:
 				self.states.SettingsProp.OutputFormat = json.value[0]
-				break
+		    break
+		case ActionId.MicInput:
+		    self.states.SettingsProp.MicInput[json.value[0]] = json.value[1]
+		    break
+		case ActionId.MvLayout:
+		    self.states.SettingsProp.MvLayout = json.value[0]
+		    break
 			case ActionId.SrcSelection:
 				self.states.SettingsProp.SourceSelection[json.value[0]] = json.value[1]
 				break
@@ -510,7 +516,10 @@ export function ReqStateData() {
 	sendCommand(ActionId.MvMeter, ReqType.Get, [4])
 	sendCommand(ActionId.MvMeter, ReqType.Get, [5])
 	sendCommand(ActionId.OutputColorSpace, ReqType.Get)
-	sendCommand(ActionId.OutFormat, ReqType.Get)
+    sendCommand(ActionId.OutFormat, ReqType.Get)
+    sendCommand(ActionId.MvLayout, ReqType.Get)
+    	sendCommand(ActionId.MicInput, ReqType.Get, [0])
+	sendCommand(ActionId.MicInput, ReqType.Get, [1])
 	//Macro
 	sendCommand(ActionId.GetMacroInfoAll, ReqType.Get)
 }

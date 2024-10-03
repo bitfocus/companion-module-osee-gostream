@@ -11,7 +11,10 @@ import {
 	SourceModels,
 	SettingsAuxSourceChoices,
 	SettingsColorChoices,
-	SuperSourceStyleChoices,
+    SuperSourceStyleChoices,
+    SettingsMvLayoutChoices,
+    AudioMicChoices,
+    SettingsMicInputChoices,
 	KeySwitchChoices,
 	SwitchChoices,
 } from './model'
@@ -607,6 +610,32 @@ function feedbacks(self) {
 			}
 		},
 	}
+    	feedbacks[feedbackId.MvLayout] = {
+		type: 'boolean',
+		name: 'Setting: Mv layout',
+		description: 'If the mv layout is matching, change style of the bank',
+	    options: [
+		{
+		    type: 'dropdown',
+		    label: 'Layout',
+		    id: 'MvLayoutId',
+		    choices: SettingsMvLayoutChoices,
+		    default: 0,
+		},
+		],
+		defaultStyle: {
+			color: combineRgb(0, 0, 0),
+			bgcolor: combineRgb(0, 255, 0),
+		},
+		callback: (_feedback) => {
+			return self.states.SettingsProp.MvLayout === _feedback.options.MvLayoutId
+		},
+		learn: (_feedback) => {
+			return {
+				MvLayoutId: self.states.SettingsProp.MvLayoutId,
+			}
+		},
+	}
 	feedbacks[feedbackId.SrcSelection] = {
 		type: 'boolean',
 		name: 'Setting: Src selection',
@@ -638,6 +667,40 @@ function feedbacks(self) {
 			return {
 				..._feedback.options,
 				srcSelectionId: self.states.SettingsProp.SourceSelection,
+			}
+		},
+	}
+    	feedbacks[feedbackId.MicInput] = {
+		type: 'boolean',
+		name: 'Setting: Mic input',
+		description: 'If the mic input for selected mic is matching, change style of the bank',
+	    options: [
+						{
+					type: 'dropdown',
+					label: 'mic',
+					id: 'micId',
+					choices: AudioMicChoices,
+					default: 0,
+				},
+				{
+					type: 'dropdown',
+					label: 'Mic Input',
+					id: 'micInputId',
+					choices: SettingsMicInputChoices,
+					default: 0,
+				},
+		],
+		defaultStyle: {
+			color: combineRgb(0, 0, 0),
+			bgcolor: combineRgb(0, 255, 0),
+		},
+		callback: (_feedback) => {
+			return self.states.SettingsProp.MicInput[_feedback.options.micId] === _feedback.options.micInputId
+		},
+		learn: (_feedback) => {
+			return {
+				..._feedback.options,
+				micInputId: self.states.SettingsProp.MicInput[_feedback.options.micId],
 			}
 		},
 	}
