@@ -11,10 +11,10 @@ import {
 	SourceModels,
 	SettingsAuxSourceChoices,
 	SettingsColorChoices,
-    SuperSourceStyleChoices,
-    SettingsMvLayoutChoices,
-    AudioMicChoices,
-    SettingsMicInputChoices,
+	SuperSourceStyleChoices,
+	SettingsMvLayoutChoices,
+	AudioMicChoices,
+	SettingsMicInputChoices,
 	KeySwitchChoices,
 	SwitchChoices,
 } from './model'
@@ -610,18 +610,18 @@ function feedbacks(self) {
 			}
 		},
 	}
-    	feedbacks[feedbackId.MvLayout] = {
+	feedbacks[feedbackId.MvLayout] = {
 		type: 'boolean',
 		name: 'Setting: Mv layout',
 		description: 'If the mv layout is matching, change style of the bank',
-	    options: [
-		{
-		    type: 'dropdown',
-		    label: 'Layout',
-		    id: 'MvLayoutId',
-		    choices: SettingsMvLayoutChoices,
-		    default: 0,
-		},
+		options: [
+			{
+				type: 'dropdown',
+				label: 'Layout',
+				id: 'MvLayoutId',
+				choices: SettingsMvLayoutChoices,
+				default: 0,
+			},
 		],
 		defaultStyle: {
 			color: combineRgb(0, 0, 0),
@@ -670,25 +670,25 @@ function feedbacks(self) {
 			}
 		},
 	}
-    	feedbacks[feedbackId.MicInput] = {
+	feedbacks[feedbackId.MicInput] = {
 		type: 'boolean',
 		name: 'Setting: Mic input',
 		description: 'If the mic input for selected mic is matching, change style of the bank',
-	    options: [
-						{
-					type: 'dropdown',
-					label: 'mic',
-					id: 'micId',
-					choices: AudioMicChoices,
-					default: 0,
-				},
-				{
-					type: 'dropdown',
-					label: 'Mic Input',
-					id: 'micInputId',
-					choices: SettingsMicInputChoices,
-					default: 0,
-				},
+		options: [
+			{
+				type: 'dropdown',
+				label: 'mic',
+				id: 'micId',
+				choices: AudioMicChoices,
+				default: 0,
+			},
+			{
+				type: 'dropdown',
+				label: 'Mic Input',
+				id: 'micInputId',
+				choices: SettingsMicInputChoices,
+				default: 0,
+			},
 		],
 		defaultStyle: {
 			color: combineRgb(0, 0, 0),

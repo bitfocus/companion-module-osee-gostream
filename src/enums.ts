@@ -267,9 +267,9 @@ export let feedbackId = {
 	InputWindowLayout: 'inputWindowLayout',
 	SrcSelection: 'srcSelection',
 	OutputColorSpace: 'outputColorSpace',
-    OutputFormat: 'outFormat',
-    MicInput: 'micInput',
-    	MvLayout: 'mvLayout',
+	OutputFormat: 'outFormat',
+	MicInput: 'micInput',
+	MvLayout: 'mvLayout',
 }
 
 export let variableId = {

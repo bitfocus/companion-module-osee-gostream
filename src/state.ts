@@ -93,9 +93,9 @@ function Create() {
 			MvMeter: [0, 0, 0, 0, 0, 0],
 			SourceSelection: [0, 0, 0, 0], // INPUT1-4
 			OutputColorSpace: [0, 0],
-		    OutputFormat: 0,
-		    MicInput: [0, 0],
-		    MvLayout: 0,
+			OutputFormat: 0,
+			MicInput: [0, 0],
+			MvLayout: 0,
 		},
 		StillProp: {
 			Still1: 0,
