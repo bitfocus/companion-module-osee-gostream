@@ -382,8 +382,13 @@ export function ParaData(msg_data, self) {
 				}
 				break
 			case ActionId.OutputColorSpace:
-				console.log('COLOR SPACE', json.value)
 				self.states.SettingsProp.OutputColorSpace[json.value[0]] = json.value[1]
+				break
+			case ActionId.OutFormat:
+				self.states.SettingsProp.OutputFormat = json.value[0]
+				break
+			case ActionId.SrcSelection:
+				self.states.SettingsProp.SourceSelection[json.value[0]] = json.value[1]
 				break
 			//macro
 			case ActionId.MacroInfo:
@@ -505,6 +510,7 @@ export function ReqStateData() {
 	sendCommand(ActionId.MvMeter, ReqType.Get, [4])
 	sendCommand(ActionId.MvMeter, ReqType.Get, [5])
 	sendCommand(ActionId.OutputColorSpace, ReqType.Get)
+	sendCommand(ActionId.OutFormat, ReqType.Get)
 	//Macro
 	sendCommand(ActionId.GetMacroInfoAll, ReqType.Get)
 }

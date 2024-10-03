@@ -265,7 +265,9 @@ export let feedbackId = {
 	Live: 'live',
 	// Settings
 	InputWindowLayout: 'inputWindowLayout',
+	SrcSelection: 'srcSelection',
 	OutputColorSpace: 'outputColorSpace',
+	OutputFormat: 'outFormat',
 }
 
 export let variableId = {

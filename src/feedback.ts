@@ -1,12 +1,14 @@
 import { combineRgb } from '@companion-module/base'
 import { ActionType, SourceType, feedbackId, TransitionStyle } from './enums'
-import { getChoices, getChoicesByMacro, getChoicesByStill } from './choices'
+import { getChoices, SourcesToChoices, getChoicesByMacro, getChoicesByStill } from './choices'
 import {
 	TransitionStyleChoice,
 	StreamingChoices,
 	UpStreamKeyTypeChoices,
 	SettingsInputWindowLayoutChoices,
 	SettingsOutSourceParamChoices,
+	SettingsOutFormatChoices,
+	SourceModels,
 	SettingsAuxSourceChoices,
 	SettingsColorChoices,
 	SuperSourceStyleChoices,
@@ -576,6 +578,66 @@ function feedbacks(self) {
 			return {
 				..._feedback.options,
 				OutputColorSpaceId: self.states.SettingsProp.OutputColorSpace[_feedback.options.OutputId],
+			}
+		},
+	}
+	feedbacks[feedbackId.OutputFormat] = {
+		type: 'boolean',
+		name: 'Setting: Out format',
+		description: 'If the out format is matching, change style of the bank',
+		options: [
+			{
+				type: 'dropdown',
+				label: 'Format',
+				id: 'OutputFormatId',
+				choices: SettingsOutFormatChoices,
+				default: 0,
+			},
+		],
+		defaultStyle: {
+			color: combineRgb(0, 0, 0),
+			bgcolor: combineRgb(0, 255, 0),
+		},
+		callback: (_feedback) => {
+			return self.states.SettingsProp.OutputFormat === _feedback.options.OutputFormatId
+		},
+		learn: (_feedback) => {
+			return {
+				OutputFormatId: self.states.SettingsProp.OutputFormat,
+			}
+		},
+	}
+	feedbacks[feedbackId.SrcSelection] = {
+		type: 'boolean',
+		name: 'Setting: Src selection',
+		description: 'If the source selection format is matching, change style of the bank',
+		options: [
+			{
+				type: 'dropdown',
+				label: 'Src',
+				id: 'srcId',
+				choices: SourcesToChoices(SourceModels),
+				default: 0,
+			},
+			{
+				type: 'dropdown',
+				label: 'Selection',
+				id: 'srcSelectionId',
+				choices: SettingsColorChoices,
+				default: 0,
+			},
+		],
+		defaultStyle: {
+			color: combineRgb(0, 0, 0),
+			bgcolor: combineRgb(0, 255, 0),
+		},
+		callback: (_feedback) => {
+			return self.states.SettingsProp.SourceSelection[_feedback.options.srcId] === _feedback.options.srcSelectionId
+		},
+		learn: (_feedback) => {
+			return {
+				..._feedback.options,
+				srcSelectionId: self.states.SettingsProp.SourceSelection,
 			}
 		},
 	}
