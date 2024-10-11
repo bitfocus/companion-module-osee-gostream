@@ -4,7 +4,7 @@ import { getChoices } from '../../choices'
 import { SwitchChoices, KeyResizeSizeChoices } from '../../model'
 import { ReqType, ActionType } from '../../enums'
 import { sendCommand } from '../../connection'
-import { type GoStreamDeckInstance } from '../index'
+import { type GoStreamDeckInstance } from '../../index'
 import { type CompanionActionDefinitions } from '@companion-module/base'
 
 export function createLumaKeyActions(_self: GoStreamDeckInstance): CompanionActionDefinitions {
