@@ -1,6 +1,7 @@
 import { TCPHelper, InstanceStatus } from '@companion-module/base'
 import { portDefault } from './config'
-import { ActionId, ActionType, ReqType } from './enums'
+import { ActionType, ReqType } from './enums'
+import { ActionId } from './actions/ActionId'
 import { Bytes2ToInt, UpackDatas, PackData } from './util'
 import { getChoices, Choice } from './choices'
 import { updatePlayStatedVariables, updatePlayFileVariables, updateRecordVariables } from './variables'

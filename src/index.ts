@@ -2,7 +2,7 @@ import { runEntrypoint, InstanceBase, InstanceStatus, SomeCompanionConfigField }
 import { GetConfigFields, Config } from './config'
 import { GoStreamDeckV1 } from './GoStreamdeckV1'
 
-class GoSteamDeckInstance extends InstanceBase<Config> {
+class GoStreamDeckInstance extends InstanceBase<Config> {
 	config
 	gostreamdeck
 	states

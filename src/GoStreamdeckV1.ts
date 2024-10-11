@@ -1,4 +1,4 @@
-import { actions } from './actions'
+import { GetActionsList } from './actions/index'
 import { variables } from './variables'
 import { feedbacks } from './feedback'
 import { presets } from './presets'
@@ -15,7 +15,7 @@ class GoStreamDeckV1 {
 		return variables(this.instance)
 	}
 	getActions() {
-		return actions(this.instance)
+		return GetActionsList(this.instance) //actions(this.instance)
 	}
 	getFeedbacks() {
 		return feedbacks(this.instance)

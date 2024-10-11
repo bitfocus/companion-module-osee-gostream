@@ -1,5 +1,6 @@
 import { combineRgb } from '@companion-module/base'
-import { ActionId, ActionType, feedbackId } from './enums'
+import { ActionType, feedbackId } from './enums'
+import { ActionId } from './actions/ActionId'
 import { getChoices } from './choices'
 import {
 	TransitionStyleChoice,
