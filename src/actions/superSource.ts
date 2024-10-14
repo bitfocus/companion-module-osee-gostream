@@ -4,10 +4,10 @@ import { getChoices } from '../choices'
 import { SwitchChoices, SuperSourceBorderChoices, SuperSourceMaskChoices, SuperSourceStyleChoices } from '../model'
 import { ReqType, ActionType } from '../enums'
 import { sendCommand } from '../connection'
-import { type GoStreamDeckInstance } from '../index'
-import { type CompanionActionDefinitions } from '@companion-module/base'
+import type { GoStreamInstance } from '../index'
+import type { CompanionActionDefinitions } from '@companion-module/base'
 
-export function createSuperSourceActions(_self: GoStreamDeckInstance): CompanionActionDefinitions {
+export function createSuperSourceActions(_self: GoStreamInstance): CompanionActionDefinitions {
 	return {
 		[ActionId.SuperSourceEnable]: {
 			name: 'Super Source:Super Source Enable',

@@ -11,12 +11,13 @@ import { createPlaybackActions } from './playback'
 import { createSettingsActions } from './settings'
 import { createRecordActions } from './record'
 import { createLiveActions } from './live'
-import { type GoStreamDeckInstance } from '../index'
+import type { GoStreamInstance } from '../index'
+import type { IModelSpec } from '../models/types'
 import { type CompanionActionDefinitions, type CompanionActionEvent } from '@companion-module/base'
 
-export function GetActionsList(_self: GoStreamDeckInstance): CompanionActionDefinitions {
+export function GetActionsList(_self: GoStreamInstance, model: IModelSpec): CompanionActionDefinitions {
 	return {
-		...createProgramPreviewActions(_self),
+		...createProgramPreviewActions(_self, model),
 		...createTransitionActions(_self),
 		...createDSKActions(_self),
 		...createSuperSourceActions(_self),

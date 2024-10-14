@@ -8,10 +8,10 @@ import { createLumaKeyActions } from './upstreamKeyActions/lumaKey'
 import { createChromaKeyActions } from './upstreamKeyActions/chromaKey'
 import { createKeyPatternActions } from './upstreamKeyActions/keyPattern'
 import { createPIPActions } from './upstreamKeyActions/pip'
-import { type GoStreamDeckInstance } from '../index'
-import { type CompanionActionDefinitions } from '@companion-module/base'
+import type { GoStreamInstance } from '../index'
+import type { CompanionActionDefinitions } from '@companion-module/base'
 
-export function createUSKActions(_self: GoStreamDeckInstance): CompanionActionDefinitions {
+export function createUSKActions(_self: GoStreamInstance): CompanionActionDefinitions {
 	return {
 		[ActionId.UpStreamKeyFillKeyType]: {
 			name: 'UpStream Key:Set inputs',

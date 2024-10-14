@@ -3,10 +3,10 @@ import { getOptNumber } from './index'
 import { SwitchChoices } from '../model'
 import { ReqType } from '../enums'
 import { sendCommand } from '../connection'
-import { type GoStreamDeckInstance } from '../index'
-import { type CompanionActionDefinitions } from '@companion-module/base'
+import type { GoStreamInstance } from '../index'
+import type { CompanionActionDefinitions } from '@companion-module/base'
 
-export function createPlaybackActions(_self: GoStreamDeckInstance): CompanionActionDefinitions {
+export function createPlaybackActions(_self: GoStreamInstance): CompanionActionDefinitions {
 	return {
 		[ActionId.PlayModeRepeatPause]: {
 			name: 'Playback:Set playback Info',

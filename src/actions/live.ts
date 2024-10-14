@@ -2,8 +2,8 @@ import { ActionId } from './ActionId'
 import { getOptNumber } from './index'
 import { ReqType } from '../enums'
 import { sendCommand } from '../connection'
-import { type GoStreamDeckInstance } from '../index'
-import { type CompanionActionDefinitions } from '@companion-module/base'
+import type { GoStreamInstance } from '../index'
+import type { CompanionActionDefinitions } from '@companion-module/base'
 
 /**
  * Returns all implemented live related actions.
@@ -11,7 +11,7 @@ import { type CompanionActionDefinitions } from '@companion-module/base'
  * @constructor
  * @returns CompanionActionDefinitions
  */
-export function createLiveActions(_self: GoStreamDeckInstance): CompanionActionDefinitions {
+export function createLiveActions(_self: GoStreamInstance): CompanionActionDefinitions {
 	return {
 		[ActionId.Live]: {
 			name: 'Live:Set Start or Stop Live',

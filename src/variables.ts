@@ -1,15 +1,16 @@
 import { ActionType } from './enums'
 import { getChoices } from './choices'
+import type { GoStreamInstance } from './index'
 
-function variables(_self) {
+export function variables(instance: GoStreamInstance): void {
 	const variables: any[] = []
 	const values = {}
 	variables.push({
 		name: 'IP address of GoStreamDeck',
 		variableId: `device_ip`,
 	})
-	values['device_ip'] = _self.config.host
-	let MeChoice = getChoices(ActionType.Preview)
+	values['device_ip'] = instance.config.host
+	const MeChoice = getChoices(ActionType.Preview)
 	for (let i = 0; i < MeChoice.length; i++) {
 		variables.push({
 			name: `Id of input_${i + 1}`,
@@ -32,27 +33,25 @@ function variables(_self) {
 		variableId: 'record_duration_hm',
 	})
 	values['record_duration_hm'] = '00:00:00'
-	_self.setVariableDefinitions(variables)
-	_self.setVariableValues(values)
+	instance.setVariableDefinitions(variables)
+	instance.setVariableValues(values)
 }
 
-function updatePlayStatedVariables(_self, state) {
+export function updatePlayStatedVariables(instance: GoStreamInstance, state: boolean): void {
 	const newValues = {}
 	if (state) newValues['PlayState'] = 'Stop'
 	else newValues['PlayState'] = 'Play'
-	_self.setVariableValues(newValues)
+	instance.setVariableValues(newValues)
 }
 
-function updatePlayFileVariables(_self, file) {
+export function updatePlayFileVariables(instance: GoStreamInstance, file: string): void {
 	const newValues = {}
 	newValues['PlayFile'] = file
-	_self.setVariableValues(newValues)
+	instance.setVariableValues(newValues)
 }
 
-function updateRecordVariables(_self, time) {
+export function updateRecordVariables(instance: GoStreamInstance, time: string): void {
 	const newValues = {}
 	newValues['record_duration_hm'] = time
-	_self.setVariableValues(newValues)
+	instance.setVariableValues(newValues)
 }
-
-export { updateRecordVariables, updatePlayStatedVariables, updatePlayFileVariables, variables }

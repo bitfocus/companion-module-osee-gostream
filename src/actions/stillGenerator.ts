@@ -3,10 +3,10 @@ import { getOptNumber } from './index'
 import { getChoicesByStill } from '../choices'
 import { ReqType } from '../enums'
 import { sendCommand } from '../connection'
-import { type GoStreamDeckInstance } from '../index'
-import { type CompanionActionDefinitions } from '@companion-module/base'
+import type { GoStreamInstance } from '../index'
+import type { CompanionActionDefinitions } from '@companion-module/base'
 
-export function createStillGeneratorActions(_self: GoStreamDeckInstance): CompanionActionDefinitions {
+export function createStillGeneratorActions(_self: GoStreamInstance): CompanionActionDefinitions {
 	return {
 		[ActionId.StillSelection]: {
 			name: 'Still:Select pic index',

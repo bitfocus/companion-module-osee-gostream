@@ -4,8 +4,8 @@ import { getChoices } from '../choices'
 import { WipeDirectionChoices, TransitionStyleChoice, SwitchChoices } from '../model'
 import { ReqType, ActionType, TransitionStyle } from '../enums'
 import { sendCommand } from '../connection'
-import { type GoStreamDeckInstance } from '../index'
-import { type CompanionActionDefinitions } from '@companion-module/base'
+import type { GoStreamInstance } from '../index'
+import type { CompanionActionDefinitions } from '@companion-module/base'
 
 /**
  * Returns all implemented transition related actions.
@@ -13,7 +13,7 @@ import { type CompanionActionDefinitions } from '@companion-module/base'
  * @constructor
  * @returns CompanionActionDefinitions
  */
-export function createTransitionActions(_self: GoStreamDeckInstance): CompanionActionDefinitions {
+export function createTransitionActions(_self: GoStreamInstance): CompanionActionDefinitions {
 	return {
 		[ActionId.CutTransition]: {
 			name: 'Perform CUT transition',

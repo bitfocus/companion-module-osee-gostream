@@ -4,10 +4,10 @@ import { getChoices } from '../choices'
 import { AudioMicChoices, AudioInputSourcesChoices, SwitchChoices } from '../model'
 import { ReqType, ActionType } from '../enums'
 import { sendCommand } from '../connection'
-import { type GoStreamDeckInstance } from '../index'
+import type { GoStreamInstance } from '../index'
 import { type CompanionActionDefinitions } from '@companion-module/base'
 
-export function createAudioMixerActions(_self: GoStreamDeckInstance): CompanionActionDefinitions {
+export function createAudioMixerActions(_self: GoStreamInstance): CompanionActionDefinitions {
 	return {
 		[ActionId.AudioTransition]: {
 			name: 'Audio Mixer:Set audio fade in and out switch',

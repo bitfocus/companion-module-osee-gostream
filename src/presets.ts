@@ -1,4 +1,6 @@
 import { combineRgb } from '@companion-module/base'
+import { CompanionPresetDefinitions } from '@companion-module/base'
+
 import { ActionType, feedbackId } from './enums'
 import { ActionId } from './actions/ActionId'
 import { getChoices } from './choices'
@@ -12,12 +14,13 @@ import {
 	StreamingChoices,
 } from './model'
 import { MacroFeedbackType } from './feedback'
+
 const rateOptions = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0]
 const ptzSize = '18'
-function presets(_self) {
+export function presets(): CompanionPresetDefinitions {
 	const presets = {}
 	//Prev 和Program
-	let MeChoice = getChoices(ActionType.Preview)
+	const MeChoice = getChoices(ActionType.Preview)
 	for (const src of MeChoice) {
 		presets[`Preview_${src.id}`] = {
 			type: 'button',
@@ -161,7 +164,7 @@ function presets(_self) {
 		],
 	}
 	//Transitions
-	let TranChoices = TransitionStyleChoice
+	const TranChoices = TransitionStyleChoice
 	for (const opt of TranChoices) {
 		presets[`transition_style_${opt.id}`] = {
 			category: `Transitions`,
@@ -369,7 +372,7 @@ function presets(_self) {
 		],
 	}
 	//Keys On Air
-	let Keys = KeySwitchChoices
+	const Keys = KeySwitchChoices
 	for (const key of Keys) {
 		if (key.label != 'BKGD') {
 			presets[`keys_Next_Air_${key.id}`] = {
@@ -492,7 +495,7 @@ function presets(_self) {
 		// }
 	}
 	//DSK
-	let dsk_sources = getChoices(ActionType.DskSourceFill)
+	const dsk_sources = getChoices(ActionType.DskSourceFill)
 	for (const s of dsk_sources) {
 		let id = Number(s.id) + 1
 		if (id === dsk_sources.length) id = 0
@@ -820,7 +823,7 @@ function presets(_self) {
 	// 	}
 	// }
 	//UpStreamKey
-	var sources = getChoices(ActionType.LumaKeySourceKey)
+	const sources = getChoices(ActionType.LumaKeySourceKey)
 	for (const source of sources) {
 		let id = Number(source.id) + 1
 		if (id === sources.length) id = 0
@@ -1742,5 +1745,3 @@ function presets(_self) {
 	}
 	return presets
 }
-
-export { presets }

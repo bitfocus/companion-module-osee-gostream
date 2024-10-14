@@ -17,10 +17,10 @@ import {
 } from '../model'
 import { ReqType, ActionType } from '../enums'
 import { sendCommand } from '../connection'
-import { type GoStreamDeckInstance } from '../index'
-import { type CompanionActionDefinitions } from '@companion-module/base'
+import type { GoStreamInstance } from '../index'
+import type { CompanionActionDefinitions } from '@companion-module/base'
 
-export function createSettingsActions(_self: GoStreamDeckInstance): CompanionActionDefinitions {
+export function createSettingsActions(_self: GoStreamInstance): CompanionActionDefinitions {
 	return {
 		[ActionId.SrcName]: {
 			name: 'Settings:Set SrcName',

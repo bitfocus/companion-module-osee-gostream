@@ -1,4 +1,113 @@
-function Create() {
+import { Choice } from './choices'
+
+type GoStreamState = {
+	selectPrevInput: Choice
+	selectPgmInput: Choice
+	infos: {
+		protocolVersion: string
+		deviceType: number
+	}
+	TKeyeState: {
+		BKGD: boolean
+		DSK: boolean
+		M_Key: boolean
+		KeyOnAir: boolean
+		DSKOnAir: boolean
+	}
+	DSKState: {
+		DSKSourceFill: Choice
+		DSKSourceKeyFill: Choice
+		DskMask: boolean
+		DskControlInvert: boolean
+		DskControlShapedKey: boolean
+	}
+	selectOutputs: object
+	upStreamKeyState: {
+		UpStreamKeyType: number
+		ArrayKeySourceFill: number[]
+	}
+	transitionPosition: {
+		inTransition: boolean
+		handlePosition: number
+	}
+	fadeToBlack: {
+		inTransition: boolean
+		isFullyBlack: boolean
+		AFV: boolean
+		rate: number
+	}
+	selectTransitionStyle: {
+		PrevState: boolean
+		style: Choice
+		mixrate: number
+		diprate: number
+		wiperate: number
+	}
+	SuperSourcePorp: {
+		SSEnable: boolean
+		SuperSourceSource1: Choice
+		SuperSourceSource2: Choice
+		SuperSourceBackground: Choice
+		SuperSourceControlStyle: Choice
+		SuperSourceMaskEnable: {
+			mask1: boolean
+			mask2: boolean
+		}
+	}
+	AudioMixerPorp: {
+		AudioTransition: boolean
+		AudioEnable: {
+			mic1: number
+			mic2: number
+			in1: number
+			in2: number
+			in3: number
+			in4: number
+			aux: number
+		}
+	}
+	PlayBackState: {
+		PlaybackMode: number
+		PlaybackRepeat: boolean
+		PlaybackPause: boolean
+		PlaybackBar: boolean
+		PlayFile: number
+		// Not really state variable, hold videofile list
+		// TODO: place somewhere more logical
+		PlayFileList: string[]
+	}
+	RecordState: boolean
+	LiveState: number
+	StreamingProp: {
+		stream1: boolean
+		stream2: boolean
+		stream3: boolean
+	}
+	SettingsProp: {
+		AuxSource: number
+		OutSource: {
+			hdmi1: Choice
+			hdmi2: Choice
+			uvc: Choice
+		}
+		SettingsInputWindowLayout: number
+		MvMeter: number[]
+		SourceSelection: number[]
+		OutputColorSpace: number[]
+		OutputFormat: number
+		MicInput: number[]
+		MvLayout: number
+	}
+	StillProp: {
+		Still1: number
+		Still2: number
+	}
+	MacroProp: {
+		macroProperties: number[]
+	}
+}
+
+export function Create(): GoStreamState {
 	return {
 		selectPrevInput: { id: 0, label: 'Input1' },
 		selectPgmInput: { id: 0, label: 'Input1' },
@@ -106,4 +215,3 @@ function Create() {
 		},
 	}
 }
-export { Create }

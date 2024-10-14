@@ -2,10 +2,10 @@ import { ActionId } from './ActionId'
 import { getOptNumber } from './index'
 import { ReqType } from '../enums'
 import { sendCommand } from '../connection'
-import { type GoStreamDeckInstance } from '../index'
-import { type CompanionActionDefinitions } from '@companion-module/base'
+import type { GoStreamInstance } from '../index'
+import type { CompanionActionDefinitions } from '@companion-module/base'
 
-export function createRecordActions(_self: GoStreamDeckInstance): CompanionActionDefinitions {
+export function createRecordActions(_self: GoStreamInstance): CompanionActionDefinitions {
 	return {
 		[ActionId.Record]: {
 			name: 'Record:Set Start or Stop Record',

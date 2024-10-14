@@ -3,10 +3,10 @@ import { getOptNumber, getOptString } from './index'
 import { getChoicesByMacro } from '../choices'
 import { ReqType } from '../enums'
 import { sendCommand } from '../connection'
-import { type GoStreamDeckInstance } from '../index'
+import type { GoStreamInstance } from '../index'
 import { type CompanionActionDefinitions, Regex } from '@companion-module/base'
 
-export function createMacroActions(_self: GoStreamDeckInstance): CompanionActionDefinitions {
+export function createMacroActions(_self: GoStreamInstance): CompanionActionDefinitions {
 	return {
 		[ActionId.MacroRecord]: {
 			name: 'Macro:Set Start Record',

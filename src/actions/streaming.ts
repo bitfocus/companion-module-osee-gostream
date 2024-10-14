@@ -3,10 +3,10 @@ import { getOptNumber, getOptString } from './index'
 import { StreamingChoices, SwitchChoices } from '../model'
 import { ReqType } from '../enums'
 import { sendCommand } from '../connection'
-import { type GoStreamDeckInstance } from '../index'
-import { type CompanionActionDefinitions } from '@companion-module/base'
+import type { GoStreamInstance } from '../index'
+import type { CompanionActionDefinitions } from '@companion-module/base'
 
-export function createStreamingActions(_self: GoStreamDeckInstance): CompanionActionDefinitions {
+export function createStreamingActions(_self: GoStreamInstance): CompanionActionDefinitions {
 	return {
 		[ActionId.StreamOutput]: {
 			name: 'Streaming:Set Output',

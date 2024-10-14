@@ -1,19 +1,22 @@
 import { runEntrypoint, InstanceBase, InstanceStatus, SomeCompanionConfigField } from '@companion-module/base'
 import { GetConfigFields, Config } from './config'
-import { GoStreamDeckV1 } from './GoStreamdeckV1'
+import { GoStream } from './GoStream'
+import { type IModelSpec, MODEL_AUTO_DETECT } from './models/types'
+import { GetModelSpec, GetAutoDetectModel } from './models/index'
+import { GetActionsList } from './actions/index'
 
-class GoStreamDeckInstance extends InstanceBase<Config> {
+export class GoStreamInstance extends InstanceBase<Config> {
 	config
-	gostreamdeck
+	gostream
 	states
-	async init(config) {
+	private model!: IModelSpec
+	async init(config: Config): Promise<void> {
 		this.config = config
+		this.model = GetModelSpec(this.config.modelId || MODEL_AUTO_DETECT) || GetAutoDetectModel()
 		this.log('debug', 'Initializing module')
 		this.updateStatus(InstanceStatus.Disconnected)
-		// this.config.reconnect = true
-		// this.config.reconnectInterval = 5
 		this.saveConfig(this.config)
-		this.gostreamdeck = new GoStreamDeckV1(this)
+		this.gostream = new GoStream(this)
 		this.initConnection()
 		this.init_variables()
 		this.init_actions()
@@ -21,8 +24,8 @@ class GoStreamDeckInstance extends InstanceBase<Config> {
 		this.init_presets()
 		this.checkFeedbacks()
 	}
-	async destroy() {
-		this.gostreamdeck.disconnectSocket()
+	async destroy(): Promise<void> {
+		this.gostream.disconnectSocket()
 		this.updateStatus(InstanceStatus.Disconnected)
 		this.log('debug', 'destroy ' + this.id)
 	}
@@ -30,16 +33,16 @@ class GoStreamDeckInstance extends InstanceBase<Config> {
 	public getConfigFields(): SomeCompanionConfigField[] {
 		return GetConfigFields()
 	}
-	async configUpdated(config) {
+	async configUpdated(config: Config): Promise<void> {
 		this.config = config
-		this.gostreamdeck.disconnectSocket()
+		this.gostream.disconnectSocket()
 		this.updateStatus(InstanceStatus.Disconnected)
 		/* if (this.config.version === 'v1') {
             this.ontime = new OntimeV1(this)
         } else if (this.config.version === 'v2') {
             // this.ontime = new OntimeV2(this)
         } */
-		this.gostreamdeck = new GoStreamDeckV1(this)
+		this.gostream = new GoStream(this)
 		this.initConnection()
 		this.init_variables()
 		this.init_actions()
@@ -47,27 +50,26 @@ class GoStreamDeckInstance extends InstanceBase<Config> {
 		this.init_presets()
 		this.checkFeedbacks()
 	}
-	initConnection() {
+	initConnection(): void {
 		this.log('debug', 'Initializing connection')
-		this.gostreamdeck.connect()
+		this.gostream.connect()
 	}
-	init_variables() {
+	init_variables(): void {
 		this.log('debug', 'Initializing variables')
-		this.gostreamdeck.getVariables(this)
+		this.gostream.getVariables(this)
 		//this.setVariableDefinitions()
 	}
-	init_actions() {
+	init_actions(): void {
 		this.log('debug', 'Initializing actions')
-		this.setActionDefinitions(this.gostreamdeck.getActions(this))
+		this.setActionDefinitions(GetActionsList(this, this.model))
 	}
-	init_feedbacks() {
+	init_feedbacks(): void {
 		this.log('debug', 'Initializing feedbacks')
-		this.setFeedbackDefinitions(this.gostreamdeck.getFeedbacks(this))
+		this.setFeedbackDefinitions(this.gostream.getFeedbacks(this))
 	}
-	init_presets() {
+	init_presets(): void {
 		this.log('debug', 'Initializing presets')
-		this.setPresetDefinitions(this.gostreamdeck.getPresets())
+		this.setPresetDefinitions(this.gostream.getPresets())
 	}
 }
-export { GoSteamDeckInstance }
-runEntrypoint(GoSteamDeckInstance, [])
+runEntrypoint(GoStreamInstance, [])

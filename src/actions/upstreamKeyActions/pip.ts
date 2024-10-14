@@ -4,10 +4,10 @@ import { getChoices } from '../../choices'
 import { SwitchChoices, KeyResizeSizeChoices } from '../../model'
 import { ReqType, ActionType } from '../../enums'
 import { sendCommand } from '../../connection'
-import { type GoStreamDeckInstance } from '../../index'
-import { type CompanionActionDefinitions } from '@companion-module/base'
+import type { GoStreamInstance } from '../../index'
+import type { CompanionActionDefinitions } from '@companion-module/base'
 
-export function createPIPActions(_self: GoStreamDeckInstance): CompanionActionDefinitions {
+export function createPIPActions(_self: GoStreamInstance): CompanionActionDefinitions {
 	return {
 		[ActionId.PipSource]: {
 			name: 'UpStream Key:Set Pip Source',

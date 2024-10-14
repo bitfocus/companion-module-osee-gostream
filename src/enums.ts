@@ -1,31 +1,43 @@
-export let ReqType = {
-	Get: 'get',
-	Set: 'set',
-	Push: 'pus',
+export enum Model {
+	Unknown = 0x00,
+	Deck = 0x01, // TODO: Find out the ID number from handshake
+	Duet = 0x02,
 }
 
-export let ActionType = {
-	Unknown: 'Unknown',
-	Heart: 'Heart',
-	Program: 'Program',
-	Preview: 'Preview',
-	TransitionStyle: 'TransitionStyle',
-	TransitionDipSource: '5',
-	TransitionWipeFillSource: '6',
-	DskSourceFill: '7',
-	SuperSourceSource: '8',
-	LumaKeySourceKey: '9',
-	ChromaKeySourceKey: '10',
-	KeyPatternSourceKey: '11',
-	PipSource: '12',
-	AudioFader: '13',
-	AudioMonitorSource: '14',
-	SettingsoutSource: '15',
-	AudioEnable: '16',
-	AudioEnableSource: '17',
+export enum PortType {
+	Unknown = 0,
+	SDI = 1 << 0,
+	HDMI = 1 << 1,
 }
 
-export let feedbackId = {
+export enum ReqType {
+	Get = 'get',
+	Set = 'set',
+	Push = 'pus',
+}
+
+export enum ActionType {
+	Unknown = 'Unknown',
+	Heart = 'Heart',
+	Program = 'Program',
+	Preview = 'Preview',
+	TransitionStyle = 'TransitionStyle',
+	TransitionDipSource = '5',
+	TransitionWipeFillSource = '6',
+	DskSourceFill = '7',
+	SuperSourceSource = '8',
+	LumaKeySourceKey = '9',
+	ChromaKeySourceKey = '10',
+	KeyPatternSourceKey = '11',
+	PipSource = '12',
+	AudioFader = '13',
+	AudioMonitorSource = '14',
+	SettingsoutSource = '15',
+	AudioEnable = '16',
+	AudioEnableSource = '17',
+}
+
+export const feedbackId = {
 	PreviewBG: 'preview_bg',
 	PreviewBG2: 'preview_bg_2',
 	PreviewBG3: 'preview_bg_3',
@@ -81,7 +93,7 @@ export let feedbackId = {
 	MvLayout: 'mvLayout',
 }
 
-export let variableId = {
+export const variableId = {
 	PlayState: 'playState',
 	Clock: 'clock',
 	TimerStart: 'timer_start',
@@ -106,7 +118,7 @@ export let variableId = {
 	LowerMessage: 'lowerMessage',
 }
 
-export let SourceType = {
+export const SourceType = {
 	Input1: 'Input1',
 	Input2: 'Input2',
 	Input3: 'Input3',
@@ -114,7 +126,7 @@ export let SourceType = {
 	Aux: 'Aux',
 }
 
-export let TransitionStyle = {
+export const TransitionStyle = {
 	MIX: 0,
 	DIP: 1,
 	WIPE: 2,

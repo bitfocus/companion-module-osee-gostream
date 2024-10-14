@@ -3,10 +3,14 @@ import { getOptNumber } from './index'
 import { getChoices } from '../choices'
 import { ReqType, SourceType, ActionType } from '../enums'
 import { sendCommand } from '../connection'
-import { type GoStreamDeckInstance } from '../index'
-import { type CompanionActionDefinitions } from '@companion-module/base'
+import type { GoStreamInstance } from '../index'
+import type { CompanionActionDefinitions } from '@companion-module/base'
+import type { IModelSpec } from '../models/types'
 
-export function createProgramPreviewActions(_self: GoStreamDeckInstance): CompanionActionDefinitions {
+export function createProgramPreviewActions(_self: GoStreamInstance, model: IModelSpec): CompanionActionDefinitions {
+	if (model) {
+		console.log('MODEL', model)
+	}
 	return {
 		[ActionId.PgmIndex]: {
 			name: 'Set PGM Source',

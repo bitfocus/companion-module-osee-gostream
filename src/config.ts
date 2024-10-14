@@ -1,4 +1,5 @@
 import { Regex, SomeCompanionConfigField } from '@companion-module/base'
+import { ALL_MODEL_CHOICES } from './models/index'
 export const portDefault = 19010
 
 export interface Config {
@@ -37,6 +38,14 @@ export function GetConfigFields(): SomeCompanionConfigField[] {
 			max: 0xffff,
 			step: 1,
 			tooltip: 'Usually 19010 by default',
+		},
+		{
+			type: 'dropdown',
+			id: 'modelId',
+			label: 'Model',
+			width: 6,
+			choices: ALL_MODEL_CHOICES,
+			default: 0,
 		},
 		{
 			label: 'Reconnect',
