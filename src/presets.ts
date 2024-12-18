@@ -3,374 +3,29 @@ import { CompanionPresetDefinitions } from '@companion-module/base'
 
 import { ActionType, feedbackId } from './enums'
 import { ActionId } from './actions/ActionId'
+import { MixEffectPresets } from './functions/mixEffect'
+import { StreamingPresets } from './functions/streaming'
+import { LivePresets } from './functions/live'
 import { getChoices } from './choices'
 import {
-	TransitionStyleChoice,
 	AudioInputSourcesChoices,
 	AudioMicChoices,
 	KeySwitchChoices,
 	SettingsOutSourceParamChoices,
 	SettingsAuxSourceChoices,
-	StreamingChoices,
 } from './model'
 import { MacroFeedbackType } from './feedback'
 
-const rateOptions = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0]
 const ptzSize = '18'
 export function presets(): CompanionPresetDefinitions {
-	const presets = {}
-	//Prev 和Program
-	const MeChoice = getChoices(ActionType.Preview)
-	for (const src of MeChoice) {
-		presets[`Preview_${src.id}`] = {
-			type: 'button',
-			category: 'Preview',
-			name: `Preview button for ${src.label}`,
-			style: {
-				pngalignment: 'center:center',
-				text: `${src.label}`,
-				alignment: 'center:center',
-				size: ptzSize,
-				color: combineRgb(255, 255, 255),
-				bgcolor: combineRgb(0, 0, 0),
-			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: ActionId.PvwIndex,
-							options: {
-								Source: src.id,
-							},
-						},
-					],
-					up: [],
-				},
-			],
-			feedbacks: [
-				{
-					feedbackId: feedbackId.PreviewBG,
-					options: {
-						Source: src.id,
-					},
-					style: {
-						bgcolor: combineRgb(0, 255, 0),
-						color: combineRgb(255, 255, 255),
-					},
-				},
-			],
-		}
-		presets[`Program_${src.id}`] = {
-			type: 'button',
-			category: 'Program',
-			name: `Program button for ${src.label}`,
-			style: {
-				pngalignment: 'center:center',
-				text: `${src.label}`,
-				alignment: 'center:center',
-				size: ptzSize,
-				color: combineRgb(255, 255, 255),
-				bgcolor: combineRgb(0, 0, 0),
-			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: ActionId.PgmIndex,
-							options: {
-								Source: src.id,
-							},
-						},
-					],
-					up: [],
-				},
-			],
-			feedbacks: [
-				{
-					feedbackId: feedbackId.ProgramBG,
-					options: {
-						Source: src.id,
-					},
-					style: {
-						bgcolor: combineRgb(0, 255, 0),
-						color: combineRgb(255, 255, 255),
-					},
-				},
-			],
-		}
+	const presets = {
+		...MixEffectPresets.create(),
+		...StreamingPresets.create(),
+		...LivePresets.create(),
 	}
-	presets[`transition_cut`] = {
-		category: `Transitions`,
-		name: `CUT`,
-		type: 'button',
-		style: {
-			text: 'CUT',
-			size: ptzSize,
-			color: combineRgb(255, 255, 255),
-			bgcolor: combineRgb(0, 0, 0),
-		},
-		feedbacks: [
-			{
-				feedbackId: feedbackId.Cut,
-				options: {},
-				style: {
-					bgcolor: combineRgb(255, 0, 0),
-					color: combineRgb(255, 255, 255),
-				},
-			},
-		],
-		steps: [
-			{
-				down: [
-					{
-						actionId: ActionId.CutTransition,
-						options: {},
-					},
-				],
-				up: [],
-			},
-		],
-	}
-	presets[`transition_auto`] = {
-		category: `Transitions`,
-		name: `AUTO`,
-		type: 'button',
-		style: {
-			text: 'AUTO',
-			size: ptzSize,
-			color: combineRgb(255, 255, 255),
-			bgcolor: combineRgb(0, 0, 0),
-		},
-		feedbacks: [
-			{
-				feedbackId: feedbackId.InTransition,
-				options: {},
-				style: {
-					bgcolor: combineRgb(255, 0, 0),
-					color: combineRgb(255, 255, 255),
-				},
-			},
-		],
-		steps: [
-			{
-				down: [
-					{
-						actionId: ActionId.AutoTransition,
-						options: {},
-					},
-				],
-				up: [],
-			},
-		],
-	}
+	//Prev 和Progra
 	//Transitions
-	const TranChoices = TransitionStyleChoice
-	for (const opt of TranChoices) {
-		presets[`transition_style_${opt.id}`] = {
-			category: `Transitions`,
-			name: `Transition: Change Transition style to ${opt.label}`,
-			type: 'button',
-			style: {
-				text: opt.label,
-				size: ptzSize,
-				color: combineRgb(255, 255, 255),
-				bgcolor: combineRgb(0, 0, 0),
-			},
-			feedbacks: [
-				{
-					feedbackId: feedbackId.TransitionStyle,
-					options: {
-						TransitionStyle: opt.id,
-					},
-					style: {
-						bgcolor: combineRgb(255, 255, 0),
-						color: combineRgb(0, 0, 0),
-					},
-				},
-			],
-			steps: [
-				{
-					down: [
-						{
-							actionId: ActionId.TransitionIndex,
-							options: {
-								TransitionStyle: opt.id,
-							},
-						},
-					],
-					up: [],
-				},
-			],
-		}
-		for (const rate of rateOptions) {
-			presets[`transition_rate_${opt.id}_${rate}`] = {
-				category: `Transitions`,
-				name: `Transition: ${opt.label} rate ${rate}`,
-				type: 'button',
-				style: {
-					text: `${opt.label} ${rate}`,
-					size: ptzSize,
-					color: combineRgb(255, 255, 255),
-					bgcolor: combineRgb(0, 0, 0),
-				},
-				feedbacks: [
-					{
-						feedbackId: feedbackId.TransitionRate,
-						options: {
-							TransitionStyle: opt.id,
-							TransitionRate: rate,
-						},
-						style: {
-							bgcolor: combineRgb(255, 255, 0),
-							color: combineRgb(0, 0, 0),
-						},
-					},
-				],
-				steps: [
-					{
-						down: [
-							{
-								actionId: ActionId.TransitionRate,
-								options: {
-									TransitionStyle: opt.id,
-									TransitionRate: rate,
-								},
-							},
-						],
-						up: [],
-					},
-				],
-			}
-		}
-	}
-	presets[`transition_Prev`] = {
-		category: `Transitions`,
-		name: `Transition:PREV`,
-		type: 'button',
-		style: {
-			text: 'PREV',
-			size: ptzSize,
-			color: combineRgb(255, 255, 255),
-			bgcolor: combineRgb(0, 0, 0),
-		},
-		feedbacks: [
-			{
-				feedbackId: feedbackId.Prev,
-				options: {},
-				style: {
-					bgcolor: combineRgb(255, 0, 0),
-					color: combineRgb(255, 255, 255),
-				},
-			},
-		],
-		steps: [
-			{
-				down: [
-					{
-						actionId: ActionId.Prev,
-						options: { prevEnable: 2 },
-					},
-				],
-				up: [],
-			},
-		],
-	}
-	presets[`transition_BG`] = {
-		category: `Transitions`,
-		name: `Transition: Change selection`,
-		type: 'button',
-		style: {
-			text: 'BG',
-			size: ptzSize,
-			color: combineRgb(255, 255, 255),
-			bgcolor: combineRgb(0, 0, 0),
-		},
-		feedbacks: [
-			{
-				feedbackId: feedbackId.TransitionSelection,
-				options: { MatchState: 1, Background: true, Key: false },
-				style: {
-					bgcolor: combineRgb(255, 0, 0),
-					color: combineRgb(255, 255, 255),
-				},
-			},
-		],
-		steps: [
-			{
-				down: [
-					{
-						actionId: ActionId.TransitionSourceBG,
-						options: { Background: true, Key: false },
-					},
-				],
-				up: [],
-			},
-		],
-	}
-	presets[`transition_Key`] = {
-		category: `Transitions`,
-		name: `Transition: Change selection`,
-		type: 'button',
-		style: {
-			text: 'Key',
-			size: ptzSize,
-			color: combineRgb(255, 255, 255),
-			bgcolor: combineRgb(0, 0, 0),
-		},
-		feedbacks: [
-			{
-				feedbackId: feedbackId.TransitionSelection,
-				options: { MatchState: 1, Background: false, Key: true },
-				style: {
-					bgcolor: combineRgb(255, 0, 0),
-					color: combineRgb(255, 255, 255),
-				},
-			},
-		],
-		steps: [
-			{
-				down: [
-					{
-						actionId: ActionId.TransitionSourceBG,
-						options: { Background: false, Key: true },
-					},
-				],
-				up: [],
-			},
-		],
-	}
-	presets[`transition_BG&Key`] = {
-		category: `Transitions`,
-		name: `Transition: Change selection`,
-		type: 'button',
-		style: {
-			text: 'BG&Key',
-			size: ptzSize,
-			color: combineRgb(255, 255, 255),
-			bgcolor: combineRgb(0, 0, 0),
-		},
-		feedbacks: [
-			{
-				feedbackId: feedbackId.TransitionSelection,
-				options: { MatchState: 1, Background: true, Key: true },
-				style: {
-					bgcolor: combineRgb(255, 0, 0),
-					color: combineRgb(255, 255, 255),
-				},
-			},
-		],
-		steps: [
-			{
-				down: [
-					{
-						actionId: ActionId.TransitionSourceBG,
-						options: { Background: true, Key: true },
-					},
-				],
-				up: [],
-			},
-		],
-	}
+
 	//Keys On Air
 	const Keys = KeySwitchChoices
 	for (const key of Keys) {
@@ -415,84 +70,41 @@ export function presets(): CompanionPresetDefinitions {
 			}
 		}
 	}
-	//Key Next
-	for (const key of Keys) {
-		presets[`keys_Next_${key.id}`] = {
-			category: 'Key Next',
-			name: `Toggle ${key.label} Switch`,
-			type: 'button',
-			style: {
-				text: `${key.label}`,
-				size: ptzSize,
-				color: combineRgb(255, 255, 255),
-				bgcolor: combineRgb(0, 0, 0),
+
+	// USK
+	presets[`USKOnPvw`] = {
+		category: `Keys On Air`,
+		name: `Toggle USK on preview`,
+		type: 'button',
+		style: {
+			text: `USK on PVW`,
+			size: ptzSize,
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		feedbacks: [
+			{
+				feedbackId: feedbackId.KeyOnPvw,
+				options: {
+					KeyOnAir: 1,
+				},
+				style: {
+					bgcolor: combineRgb(0, 255, 0),
+					color: combineRgb(0, 0, 0),
+				},
 			},
-			feedbacks: [
-				{
-					feedbackId: feedbackId.TransitionKeySwitch,
-					options: {
-						KeySwitch: [key.id],
+		],
+		steps: [
+			{
+				down: [
+					{
+						actionId: ActionId.USKOnPreview,
+						options: { USKPvwState: 0 },
 					},
-					style: {
-						bgcolor: combineRgb(255, 0, 0),
-						color: combineRgb(255, 255, 255),
-					},
-				},
-			],
-			steps: [
-				{
-					down: [
-						{
-							actionId: ActionId.TransitionSource,
-							options: {
-								KeySwitch: [key.id],
-							},
-						},
-					],
-					up: [],
-				},
-			],
-		}
-		// if (key.label != "BKGD") {
-		// 	presets[`keys_Next_Air_${key.id}`] = {
-		// 		category: 'KEYs Next',
-		// 		name: `Toggle upstream KEY ${key.label} OnAir`,
-		// 		type: 'button',
-		// 		style: {
-		// 			text: `${key.label} On AIR`,
-		// 			size: ptzSize,
-		// 			color: combineRgb(255, 255, 255),
-		// 			bgcolor: combineRgb(0, 0, 0),
-		// 		},
-		// 		feedbacks: [
-		// 			{
-		// 				feedbackId: key.label === "Key" ? feedbackId.KeyOnAir : feedbackId.DskOnAir,
-		// 				options: {
-		// 					KeyOnAir: 1,
-		// 					DSKOnAir: 1,
-		// 				},
-		// 				style: {
-		// 					bgcolor: combineRgb(255, 255, 0),
-		// 					color: combineRgb(0, 0, 0),
-		// 				},
-		// 			},
-		// 		],
-		// 		steps: [
-		// 			{
-		// 				down: [
-		// 					{
-		// 						actionId: key.label === "Key" ? ActionId.KeyOnAir : ActionId.DskOnAir,
-		// 						options: {
-		// 							KeyOnAir: 2,
-		// 							DSKOnAir: 2,
-		// 						},
-		// 					},
-		// 				],
-		// 				up: [],
-		// 			},
-		// 		],
-		// 	}
-		// }
+				],
+				up: [],
+			},
+		],
 	}
 	//DSK
 	const dsk_sources = getChoices(ActionType.DskSourceFill)
@@ -611,46 +223,7 @@ export function presets(): CompanionPresetDefinitions {
 	// 	}
 	// }
 	//Still
-	for (let Still = 0; Still < 31; Still++) {
-		presets[`Still_Selection_${Still}`] = {
-			category: 'Still',
-			name: `Still: Slect pic index`,
-			type: 'button',
-			style: {
-				text: `Still${Still + 1}`,
-				size: ptzSize,
-				color: combineRgb(255, 255, 255),
-				bgcolor: combineRgb(0, 0, 0),
-			},
-			feedbacks: [
-				{
-					feedbackId: feedbackId.Still,
-					options: {
-						Stillindex: 0,
-						PicIndex: Still,
-					},
-					style: {
-						bgcolor: combineRgb(255, 0, 0),
-						color: combineRgb(255, 255, 255),
-					},
-				},
-			],
-			steps: [
-				{
-					down: [
-						{
-							actionId: ActionId.StillSelection,
-							options: {
-								Stillindex: 0,
-								PicIndex: Still,
-							},
-						},
-					],
-					up: [],
-				},
-			],
-		}
-	}
+
 	//SuperSource
 	// presets[`SuperSource_Enable`] = {
 	// 	category: `SuperSource`,
@@ -1182,182 +755,7 @@ export function presets(): CompanionPresetDefinitions {
 		}
 	}
 	//FTB
-	presets[`ftb_auto`] = {
-		category: `Fade to black`,
-		name: `Autofade`,
-		type: 'button',
-		style: {
-			text: `FTB`,
-			size: ptzSize,
-			color: combineRgb(255, 255, 255),
-			bgcolor: combineRgb(0, 0, 0),
-		},
-		feedbacks: [
-			{
-				feedbackId: feedbackId.FadeToBlackIsBlack,
-				options: {
-					state: 'off',
-				},
-				style: {
-					bgcolor: combineRgb(0, 0, 0),
-					color: combineRgb(255, 255, 255),
-				},
-			},
-			{
-				feedbackId: feedbackId.FadeToBlackIsBlack,
-				options: {
-					state: 'on',
-				},
-				style: {
-					bgcolor: combineRgb(255, 0, 0),
-					color: combineRgb(255, 255, 255),
-				},
-			},
-			{
-				feedbackId: feedbackId.FadeToBlackIsBlack,
-				options: {
-					state: 'fading',
-				},
-				style: {
-					bgcolor: combineRgb(255, 255, 0),
-					color: combineRgb(0, 0, 0),
-				},
-			},
-		],
-		steps: [
-			{
-				down: [
-					{
-						actionId: ActionId.FTB,
-						options: {},
-					},
-				],
-				up: [],
-			},
-		],
-	}
-	for (const rate of rateOptions) {
-		presets[`ftb_rate_${rate}`] = {
-			category: `Fade to black`,
-			name: `Rate ${rate}`,
-			type: 'button',
-			style: {
-				text: `Rate ${rate}`,
-				size: ptzSize,
-				color: combineRgb(255, 255, 255),
-				bgcolor: combineRgb(0, 0, 0),
-			},
-			feedbacks: [
-				{
-					feedbackId: feedbackId.FadeToBlackRate,
-					options: {
-						FtbRate: rate,
-					},
-					style: {
-						bgcolor: combineRgb(255, 255, 0),
-						color: combineRgb(0, 0, 0),
-					},
-				},
-			],
-			steps: [
-				{
-					down: [
-						{
-							actionId: ActionId.FtbRate,
-							options: {
-								FtbRate: rate,
-							},
-						},
-					],
-					up: [],
-				},
-			],
-		}
-	}
-	presets[`ftb_AFV`] = {
-		category: `Fade to black`,
-		name: `FTB:Audio Follow Video Enable`,
-		type: 'button',
-		style: {
-			text: `AFV`,
-			size: ptzSize,
-			color: combineRgb(255, 255, 255),
-			bgcolor: combineRgb(0, 0, 0),
-		},
-		feedbacks: [
-			{
-				feedbackId: feedbackId.FTBAFV,
-				options: {
-					state: 1,
-				},
-				style: {
-					bgcolor: combineRgb(255, 0, 0),
-					color: combineRgb(255, 255, 255),
-				},
-			},
-			{
-				feedbackId: feedbackId.FTBAFV,
-				options: {
-					state: 0,
-				},
-				style: {
-					bgcolor: combineRgb(255, 255, 0),
-					color: combineRgb(0, 0, 0),
-				},
-			},
-		],
-		steps: [
-			{
-				down: [
-					{
-						actionId: ActionId.FtbAudioAFV,
-						options: { FtbAudioAFV: 2 },
-					},
-				],
-				up: [],
-			},
-		],
-	}
-	//Streaming
-	for (const st of StreamingChoices) {
-		presets[`StreamingSwitch_${st.id}`] = {
-			type: 'button',
-			category: 'Streaming',
-			name: 'Push Streaming',
-			style: {
-				text: `${st.label}`,
-				size: ptzSize,
-				color: combineRgb(255, 255, 255),
-				bgcolor: combineRgb(0, 0, 0),
-			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: ActionId.StreamOutput,
-							options: {
-								StreamID: st.id,
-								EnableId: 2,
-							},
-						},
-					],
-					up: [],
-				},
-			],
-			feedbacks: [
-				{
-					feedbackId: feedbackId.StreamOutput,
-					options: {
-						StreamID: st.id,
-					},
-					style: {
-						bgcolor: combineRgb(255, 255, 0),
-						color: combineRgb(0, 0, 0),
-					},
-				},
-			],
-		}
-	}
+
 	//Playback
 	// presets[`PalyMode_0`] = {
 	// 	type: 'button',
@@ -1533,43 +931,9 @@ export function presets(): CompanionPresetDefinitions {
 	// 		},
 	// 	],
 	// }
-	//Record
-	presets[`Record_0`] = {
-		type: 'button',
-		category: 'Record',
-		name: 'Record',
-		style: {
-			text: `Record\\n$(gostreamdeck:record_duration_hm)`,
-			size: ptzSize,
-			color: combineRgb(255, 255, 255),
-			bgcolor: combineRgb(0, 0, 0),
-		},
-		steps: [
-			{
-				down: [
-					{
-						actionId: ActionId.Record,
-						options: {
-							Record: 2,
-						},
-					},
-				],
-				up: [],
-			},
-		],
-		feedbacks: [
-			{
-				feedbackId: feedbackId.Record,
-				options: {},
-				style: {
-					bgcolor: combineRgb(255, 0, 0),
-					color: combineRgb(255, 255, 255),
-				},
-			},
-		],
-	}
+
 	//PlayBack
-	presets[`PlayModeRepeatPause_0`] = {
+	/*presets[`PlayModeRepeatPause_0`] = {
 		type: 'button',
 		category: 'Playback',
 		name: 'Set Playback Info',
@@ -1605,63 +969,7 @@ export function presets(): CompanionPresetDefinitions {
 			},
 		],
 	}
-	//live
-	presets[`Live_0`] = {
-		type: 'button',
-		category: 'Live',
-		name: 'Live',
-		style: {
-			text: `Live`,
-			size: ptzSize,
-			color: combineRgb(255, 255, 255),
-			bgcolor: combineRgb(0, 0, 0),
-		},
-		steps: [
-			{
-				down: [
-					{
-						actionId: ActionId.Live,
-						options: {
-							LiveEnable: 2,
-						},
-					},
-				],
-				up: [],
-			},
-		],
-		feedbacks: [
-			{
-				feedbackId: feedbackId.Live,
-				options: {
-					statesId: 0,
-				},
-				style: {
-					bgcolor: combineRgb(0, 0, 0),
-					color: combineRgb(255, 255, 255),
-				},
-			},
-			{
-				feedbackId: feedbackId.Live,
-				options: {
-					statesId: 1,
-				},
-				style: {
-					bgcolor: combineRgb(255, 0, 0),
-					color: combineRgb(255, 255, 255),
-				},
-			},
-			{
-				feedbackId: feedbackId.Live,
-				options: {
-					statesId: 2,
-				},
-				style: {
-					bgcolor: combineRgb(255, 255, 0),
-					color: combineRgb(0, 0, 0),
-				},
-			},
-		],
-	}
+	*/
 	//Settings
 	for (const aux of SettingsAuxSourceChoices) {
 		presets[`aux_${aux.id}`] = {

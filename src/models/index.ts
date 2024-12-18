@@ -1,8 +1,8 @@
 import type { DropdownChoice } from '@companion-module/base'
-import { type IModelSpec, ModelId } from './types.js'
-import { ModelSpecAuto } from './auto.js'
-import { ModelSpecDeck } from './deck.js'
-import { ModelSpecDuet } from './duet.js'
+import { type IModelSpec, ModelId } from './types'
+import { ModelSpecAuto } from './auto'
+import { ModelSpecDeck } from './deck'
+import { ModelSpecDuet } from './duet'
 
 export const ALL_MODELS: IModelSpec[] = [ModelSpecAuto, ModelSpecDeck, ModelSpecDuet]
 

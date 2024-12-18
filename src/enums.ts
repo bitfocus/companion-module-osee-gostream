@@ -38,52 +38,26 @@ export enum ActionType {
 }
 
 export const feedbackId = {
-	PreviewBG: 'preview_bg',
-	PreviewBG2: 'preview_bg_2',
-	PreviewBG3: 'preview_bg_3',
-	PreviewBG4: 'preview_bg_4',
-	ProgramBG: 'program_bg',
-	ProgramBG2: 'program_bg_2',
-	ProgramBG3: 'program_bg_3',
-	ProgramBG4: 'program_bg_4',
-	TransitionStyle: 'TransitionStyle',
-	InTransition: 'inTransition',
-	Cut: 'cut',
-	Prev: 'prev',
-	TransitionRate: 'transitionRate',
-	TransitionKeySwitch: 'transitionKeySwitch',
-	TransitionSelection: 'transitionSelection',
 	KeyOnAir: 'keyOnAir',
+	KeyOnPvw: 'keyOnPvw',
 	DskOnAir: 'dskOnAir',
 	SettingOutSource: 'settingOutSource',
 	Macro: 'macro',
-	Still: 'still',
-	FadeToBlackIsBlack: 'fadeToBlackIsBlack',
-	FadeToBlackRate: 'fadeToBlackRate',
-	FTBAFV: 'FTBAFV',
 	AuxBG: 'auxBG',
 	UpStreamKeyType: 'upStreamKeyType',
 	DskSourceFill: 'dskSourceFill',
 	KeySourceFill: 'keySourceFill',
-	SuperSourceEnable: 'superSourceEnable',
-	SuperSourceSelect: 'superSourceSelect',
-	SuperSourceControlStyle: 'superSourceControlStyle',
-	SuperSourceMask: 'superSourceMask',
+	TransitionSource: 'transitionSource',
 	//AudioMixer
 	AudioEnable: 'audioEnable',
 	AudioTransition: 'audioTransition',
-	//Streamming
-	StreamOutput: 'streamOutput',
 	//Playback
 	PlaybackMode: 'playbackMode',
 	PlaybackRepeat: 'playbackRepeat',
 	PlaybackPause: 'playbackPause',
 	PlaybackBar: 'playbackBar',
 	PlayFile: 'playFile',
-	//Record
-	Record: 'record',
-	//Live
-	Live: 'live',
+
 	// Settings
 	InputWindowLayout: 'inputWindowLayout',
 	SrcSelection: 'srcSelection',

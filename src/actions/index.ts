@@ -1,35 +1,38 @@
-import { createProgramPreviewActions } from './programPreview'
-import { createTransitionActions } from './transition'
+//import { createProgramPreviewActions } from './programPreview'
+//import { createTransitionActions } from './transition'
 import { createDSKActions } from './downstreamKeyer'
-import { createSuperSourceActions } from './superSource'
+import { createUSKActions } from './upstreamKeyer'
 import { createAudioMixerActions } from './audioMixer'
 import { createColorBackActions } from './colorBack'
-import { createStillGeneratorActions } from './stillGenerator'
 import { createMacroActions } from './macro'
-import { createStreamingActions } from './streaming'
-import { createPlaybackActions } from './playback'
 import { createSettingsActions } from './settings'
-import { createRecordActions } from './record'
-import { createLiveActions } from './live'
+import { SuperSourceActions } from '../functions/superSource'
+import { MixEffectActions } from '../functions/mixEffect'
+import { StreamingActions } from '../functions/streaming'
+import { LiveActions } from '../functions/live'
+import { RecordActions } from '../functions/record'
+import { StillGeneratorActions } from '../functions/stillGenerator'
+import { PlaybackActions } from '../functions/playback'
+
 import type { GoStreamInstance } from '../index'
-import type { IModelSpec } from '../models/types'
 import { type CompanionActionDefinitions, type CompanionActionEvent } from '@companion-module/base'
 
-export function GetActionsList(_self: GoStreamInstance, model: IModelSpec): CompanionActionDefinitions {
+export function GetActionsList(instance: GoStreamInstance): CompanionActionDefinitions {
 	return {
-		...createProgramPreviewActions(_self, model),
-		...createTransitionActions(_self),
-		...createDSKActions(_self),
-		...createSuperSourceActions(_self),
-		...createAudioMixerActions(_self),
-		...createColorBackActions(_self),
-		...createStillGeneratorActions(_self),
-		...createMacroActions(_self),
-		...createStreamingActions(_self),
-		...createPlaybackActions(_self),
-		...createSettingsActions(_self),
-		...createRecordActions(_self),
-		...createLiveActions(_self),
+		...MixEffectActions.create(instance),
+		...SuperSourceActions.create(instance),
+		...StreamingActions.create(instance),
+		...LiveActions.create(instance),
+		...RecordActions.create(instance),
+		...StillGeneratorActions.create(instance),
+		...PlaybackActions.create(instance),
+		// OLD TYPE ACTIONS
+		...createUSKActions(instance),
+		...createDSKActions(instance),
+		...createAudioMixerActions(instance),
+		...createColorBackActions(instance),
+		...createMacroActions(instance),
+		...createSettingsActions(instance),
 	}
 }
 

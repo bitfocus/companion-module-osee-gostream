@@ -1,7 +1,7 @@
 import { ActionId } from './ActionId'
 import { getOptNumber } from './index'
 import { getChoices } from '../choices'
-import { SwitchChoices, KeySwitchChoices } from '../model'
+import { SwitchChoices } from '../model'
 import { ReqType, ActionType } from '../enums'
 import { sendCommand } from '../connection'
 import type { GoStreamInstance } from '../index'
@@ -9,87 +9,6 @@ import type { CompanionActionDefinitions } from '@companion-module/base'
 
 export function createDSKActions(_self: GoStreamInstance): CompanionActionDefinitions {
 	return {
-		[ActionId.TransitionSourceBG]: {
-			name: 'Transition: Change selection',
-			options: [
-				{
-					type: 'checkbox',
-					label: 'Background',
-					id: 'Background',
-					default: false,
-				},
-				{
-					type: 'checkbox',
-					label: 'Key',
-					id: 'Key',
-					default: false,
-				},
-			],
-			callback: async (action) => {
-				let num = 0
-				const bg = action.options.Background
-				const key = action.options.Key
-				if (key === true) {
-					num += 1
-				}
-				if (bg === true) {
-					num += 1 << 2
-				}
-				await sendCommand(ActionId.TransitionSource, ReqType.Set, [num])
-			},
-		},
-		[ActionId.TransitionSource]: {
-			name: 'Next Transition:Set Transition Key Switch',
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Switch',
-					id: 'KeySwitch',
-					choices: KeySwitchChoices,
-					default: 2,
-				},
-			],
-			callback: async (action) => {
-				const seleOptions = action.options.KeySwitch
-				if (seleOptions && Array.isArray(seleOptions)) {
-					const arrayOptions = Array.from(seleOptions)
-					const keyState = _self.states.TKeyeState
-					let num = 0
-					if (keyState.M_Key === true) {
-						num += 1
-					}
-					if (keyState.DSK === true) {
-						num += 1 << 1
-					}
-					if (keyState.BKGD === true) {
-						num += 1 << 2
-					}
-					//console.log(num);
-					if (arrayOptions.includes(0)) {
-						if (keyState.M_Key === true) {
-							num -= 1
-						} else {
-							num += 1
-						}
-					}
-					if (arrayOptions.includes(1)) {
-						if (keyState.DSK === true) {
-							num -= 1 << 1
-						} else {
-							num += 1 << 1
-						}
-					}
-					if (arrayOptions.includes(2)) {
-						if (keyState.BKGD === true) {
-							num -= 1 << 2
-						} else {
-							num += 1 << 2
-						}
-					}
-					await sendCommand(ActionId.TransitionSource, ReqType.Set, [num])
-				}
-			},
-		},
 		[ActionId.KeyOnAir]: {
 			name: 'Next Transition:Set KeyOnAir',
 			options: [

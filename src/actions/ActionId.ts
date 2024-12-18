@@ -1,28 +1,4 @@
 export enum ActionId {
-	// ME
-	PgmIndex = 'pgmIndex',
-	PvwIndex = 'pvwIndex',
-	CutTransition = 'cutTransition',
-	AutoTransition = 'autoTransition',
-
-	//Transition
-	FTB = 'ftb',
-	FtbAudioAFV = 'ftbAudioAFV',
-	FtbRate = 'ftbRate',
-	Prev = 'prev',
-	TransitionIndex = 'transitionIndex',
-	TransitionRate = 'transitionRate',
-	TransitionDipSource = 'transitionDipSource',
-	TransitionWipePattern = 'transitionWipePattern',
-	TransitionWipeXPosition = 'transitionWipeXPosition',
-	TransitionWipeYPosition = 'transitionWipeYPosition',
-	TransitionWipeDirection = 'transitionWipeDirection',
-	TransitionWipeSymmetry = 'transitionWipeSymmetry',
-	TransitionWipeSoftness = 'transitionWipeSoftness',
-	TransitionWipeBorder = 'transitionWipeBorder',
-	TransitionWipeFillSource = 'transitionWipeFillSource',
-	TransitionSourceBG = 'transitionSourceBG',
-	TransitionSource = 'transitionSource',
 	//DSK
 	KeyOnAir = 'keyOnAir',
 	DskOnAir = 'dskOnAir',
@@ -59,6 +35,8 @@ export enum ActionId {
 	SuperSourceBorderSaturation = 'superSourceBorderSaturation',
 	SuperSourceBorderBrightness = 'superSourceBorderBrightness',
 	//UpStream Key
+	TransitionSource = 'transitionSource',
+	USKOnPreview = 'uskOnPreview', // This is custom function
 	UpStreamKeyFillKeyType = 'upStreamKeyFillKeyType',
 	UpStreamKeyType = 'upStreamKeyType',
 	LumaKeySourceFill = 'lumaKeySourceFill',
@@ -133,11 +111,6 @@ export enum ActionId {
 	AudioDelay = 'audioDelay',
 	AudioMonitorLevel = 'audioMonitorLevel',
 	AudioMonitorSource = 'audioMonitorSource',
-	//Still Generator
-	StillSelection = 'stillSelection',
-	StillRemove = 'stillRemove',
-	StillLoadIndex = 'stillLoadIndex',
-	StillLoadImage = 'stillLoadImage',
 	//Macro
 	MacroRecord = 'macroRecord',
 	MacroInfo = 'macroInfo',
@@ -145,19 +118,6 @@ export enum ActionId {
 	MacroRun = 'macroRun',
 	RemoveMacro = 'removeMacro',
 	MacroSleep = 'macroSleep',
-	//Streaming
-	StreamOutput = 'streamOutput',
-	StreamPlatform = 'streamPlatform',
-	StreamServer = 'streamServer',
-	StreamUrl = 'streamUrl',
-	//Playback
-	PlayModeRepeatPause = 'playModeRepeatPause',
-	PlaybackMode = 'playbackMode',
-	PlaybackRepeat = 'playbackRepeat',
-	PlaybackPause = 'playbackPause',
-	PlaybackBar = 'playbackBar',
-	PlayFile = 'playFile',
-	PlaybackList = 'playbackList',
 	//Settings
 	SrcName = 'srcName',
 	MvMeter = 'mvMeter',
@@ -181,12 +141,10 @@ export enum ActionId {
 	Panel = 'panel',
 	SdFormat = 'sdFormat',
 	SystemReset = 'systemReset',
-	Record = 'record',
 	RecordStatus = 'recordStatus',
 	RecordTime = 'recordTime',
 	SdCardStatus = 'sdCardStatus',
 	SdFree = 'sdFree',
-	Live = 'live',
 	LiveStatus = 'liveStatus',
 	LiveInfo = 'liveInfo',
 }

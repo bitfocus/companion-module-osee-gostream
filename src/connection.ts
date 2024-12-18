@@ -4,9 +4,17 @@ import { ActionType, ReqType } from './enums'
 import { ActionId } from './actions/ActionId'
 import { Bytes2ToInt, UpackDatas, PackData } from './util'
 import { getChoices } from './choices'
-import { updatePlayStatedVariables, updatePlayFileVariables, updateRecordVariables } from './variables'
-import { TransitionStyleChoice, SuperSourceStyleChoices } from './model'
+import { updateRecordVariables } from './variables'
+import { SuperSourceStyleChoices } from './model'
 import { GoStreamInstance } from './index'
+
+import { MixEffectState } from './functions/mixEffect'
+import { LiveState } from './functions/live'
+import { PlaybackState } from './functions/playback'
+import { RecordState } from './functions/record'
+import { StillGeneratorState } from './functions/stillGenerator'
+import { StreamingState } from './functions/streaming'
+//import { SuperSourceState } from './functions/superSource'
 
 let tcp: any = null // TCPHelper
 let Working_byte_resp_lens: any = null // BUFFER
@@ -123,72 +131,30 @@ export function connect(instance: GoStreamInstance): void {
 	})
 }
 
+export type GoStreamData = {
+	id: string
+	type: string
+	value: number[]
+}
+
 export function ParaData(msg_data: Buffer, instance: GoStreamInstance): void {
 	const jsonContent = UpackDatas(msg_data)
 	//console.log("jsonContent", jsonContent)
 	const jsonStr = jsonContent.toString('utf8')
 	//console.log(jsonStr);
 	const json = JSON.parse(jsonStr)
+
+	if (MixEffectState.handleData(instance, json)) return
+	if (LiveState.handleData(instance, json)) return
+	if (PlaybackState.handleData(instance, json)) return
+	if (RecordState.handleData(instance, json)) return
+	if (StillGeneratorState.handleData(instance, json)) return
+	if (StreamingState.handleData(instance, json)) return
+	//if(SuperSourceState.handleData(instance, json)) return;
+
 	//console.log(json);
 	if (json !== null && json.id !== '' && Array.isArray(json.value)) {
 		switch (json.id) {
-			case ActionId.PvwIndex: {
-				const select = getChoices(ActionType.Preview).find((s) => s.id === json.value[0])
-				if (select !== undefined) {
-					instance.states.selectPrevInput = select
-				}
-				break
-			}
-			case ActionId.PgmIndex: {
-				const select = getChoices(ActionType.Program).find((s) => s.id === json.value[0])
-				if (select !== undefined) {
-					instance.states.selectPgmInput = select
-				}
-				break
-			}
-			case ActionId.AutoTransition:
-				instance.states.transitionPosition.inTransition = json.value[0] === 1 ? true : false
-				break
-			case ActionId.FTB:
-				if (json.value[0] === 0) {
-					instance.states.fadeToBlack.isFullyBlack = false
-					instance.states.fadeToBlack.inTransition = false
-				} else if (json.value[0] === 1) {
-					instance.states.fadeToBlack.inTransition = false
-					instance.states.fadeToBlack.isFullyBlack = true
-				} else if (json.value[0] === 2) {
-					instance.states.fadeToBlack.inTransition = true
-				}
-				break
-			case ActionId.FtbAudioAFV:
-				instance.states.fadeToBlack.AFV = json.value[0] === 1 ? true : false
-				break
-			case ActionId.FtbRate:
-				instance.states.fadeToBlack.rate = json.value[0]
-				break
-			case ActionId.Prev:
-				instance.states.selectTransitionStyle.PrevState = json.value[0] === 1 ? true : false
-				break
-			case ActionId.TransitionIndex: {
-				const selectValue = Number(json.value[0])
-				const selectStyle = TransitionStyleChoice.find((s) => s.id === selectValue)
-				if (selectStyle !== undefined) {
-					instance.states.selectTransitionStyle.style = selectStyle
-				}
-				break
-			}
-			case ActionId.TransitionRate: {
-				const type = json.value[0]
-				const typeValue = json.value[1]
-				if (type === 0) {
-					instance.states.selectTransitionStyle.mixrate = typeValue
-				} else if (type === 1) {
-					instance.states.selectTransitionStyle.diprate = typeValue
-				} else if (type === 2) {
-					instance.states.selectTransitionStyle.wiperate = typeValue
-				}
-				break
-			}
 			case ActionId.TransitionSource: {
 				const intstate = Number(json.value[0])
 				if ((intstate & 1) === 1) {
@@ -285,29 +251,7 @@ export function ParaData(msg_data: Buffer, instance: GoStreamInstance): void {
 			case ActionId.PipSource:
 				instance.states.upStreamKeyState.ArrayKeySourceFill[3] = json.value[0]
 				break
-			//Still
-			case ActionId.StillSelection: {
-				const stype = json.value[0]
-				const stypeValue = json.value[1]
-				if (stype === 0) {
-					instance.states.StillProp.Still1 = stypeValue
-				} else {
-					instance.states.StillProp.Still2 = stypeValue
-				}
-				break
-			}
-			//Streaming
-			case ActionId.StreamOutput: {
-				const streamtype = json.value[0]
-				if (streamtype === 0) {
-					instance.states.StreamingProp.stream1 = json.value[1] === 1 ? true : false
-				} else if (streamtype === 1) {
-					instance.states.StreamingProp.stream2 = json.value[1] === 1 ? true : false
-				} else if (streamtype === 2) {
-					instance.states.StreamingProp.stream3 = json.value[1] === 1 ? true : false
-				}
-				break
-			}
+
 			//Audio Mixer
 			case ActionId.AudioTransition:
 				instance.states.AudioMixerPorp.AudioTransition = json.value[0] === 1 ? true : false
@@ -332,39 +276,10 @@ export function ParaData(msg_data: Buffer, instance: GoStreamInstance): void {
 				}
 				break
 			}
-			//Playback
-			case ActionId.PlaybackMode:
-				instance.states.PlayBackState.PlaybackMode = json.value[0]
-				break
-			case ActionId.PlaybackRepeat:
-				instance.states.PlayBackState.PlaybackRepeat = json.value[0] === 1 ? true : false
-				break
-			case ActionId.PlaybackPause:
-				instance.states.PlayBackState.PlaybackPause = json.value[0] === 1 ? true : false
-				updatePlayStatedVariables(instance, instance.states.PlayBackState.PlaybackPause)
-				break
-			case ActionId.PlaybackBar:
-				instance.states.PlayBackState.PlaybackBar = json.value[0] === 1 ? true : false
-				break
-			case ActionId.PlayFile:
-				instance.states.PlayBackState.PlayFile = instance.states.PlayBackState.PlayFileList.indexOf(json.value[0])
-				updatePlayFileVariables(instance, json.value[0])
-				break
-			case ActionId.PlaybackList:
-				instance.states.PlayBackState.PlayFileList = instance.states.PlayBackState.PlayFileList.concat(json.value)
-				// Re-initialize actions and feedbackls so that dropdown are updated
-				instance.init_actions()
-				instance.init_feedbacks()
-				break
+
 			//Record
 			case ActionId.RecordTime:
 				updateRecordVariables(instance, json.value[0])
-				break
-			case ActionId.Record:
-				instance.states.RecordState = json.value[0] === 1 ? true : false
-				break
-			case ActionId.Live:
-				instance.states.LiveState = json.value[0]
 				break
 			//Settings
 			case ActionId.AuxSource:
@@ -462,7 +377,15 @@ export function ParaData(msg_data: Buffer, instance: GoStreamInstance): void {
 }
 
 export async function ReqStateData(): Promise<void> {
-	await sendCommand(ActionId.PgmIndex, ReqType.Get)
+	await MixEffectState.sync()
+	await LiveState.sync()
+	await PlaybackState.sync()
+	await RecordState.sync()
+	await StillGeneratorState.sync()
+	await StreamingState.sync()
+	//SuperSourceState.sync()
+
+	/*await sendCommand(ActionId.PgmIndex, ReqType.Get)
 	await sendCommand(ActionId.PvwIndex, ReqType.Get)
 	await sendCommand(ActionId.AutoTransition, ReqType.Get)
 	await sendCommand(ActionId.Prev, ReqType.Get)
@@ -473,7 +396,8 @@ export async function ReqStateData(): Promise<void> {
 	await sendCommand(ActionId.TransitionRate, ReqType.Get, [0])
 	await sendCommand(ActionId.TransitionRate, ReqType.Get, [1])
 	await sendCommand(ActionId.TransitionRate, ReqType.Get, [2])
-	await sendCommand(ActionId.TransitionSource, ReqType.Get)
+	await sendCommand(ActionId.TransitionSource, ReqType.Get)*/
+
 	await sendCommand(ActionId.DskOnAir, ReqType.Get)
 	await sendCommand(ActionId.KeyOnAir, ReqType.Get)
 	//DSK
@@ -488,7 +412,7 @@ export async function ReqStateData(): Promise<void> {
 	// sendCommand(ActionId.SuperSourceSource2, ReqType.Get)
 	// sendCommand(ActionId.SuperSourceBackground, ReqType.Get)
 	// sendCommand(ActionId.SuperSourceControlStyle, ReqType.Get)
-	// sendCommand(ActionId.SuperSourceMaskEnable, ReqType.Get)
+	// sendCommand(ActionId.SuperSourceMaskEnable, ReqType.Get)*/
 	//upStreamKeyType
 	await sendCommand(ActionId.UpStreamKeyType, ReqType.Get)
 	await sendCommand(ActionId.LumaKeySourceFill, ReqType.Get)
@@ -496,8 +420,8 @@ export async function ReqStateData(): Promise<void> {
 	await sendCommand(ActionId.KeyPatternSourceFill, ReqType.Get)
 	await sendCommand(ActionId.PipSource, ReqType.Get)
 	//Still
-	await sendCommand(ActionId.StillSelection, ReqType.Get, [0])
-	await sendCommand(ActionId.StillSelection, ReqType.Get, [1])
+	//await sendCommand(ActionId.StillSelection, ReqType.Get, [0])
+	//await sendCommand(ActionId.StillSelection, ReqType.Get, [1])
 	//Audio Mixer
 	await sendCommand(ActionId.AudioTransition, ReqType.Get)
 	await sendCommand(ActionId.AudioEnable, ReqType.Get, [0])
@@ -508,18 +432,18 @@ export async function ReqStateData(): Promise<void> {
 	await sendCommand(ActionId.AudioEnable, ReqType.Get, [5])
 	await sendCommand(ActionId.AudioEnable, ReqType.Get, [6])
 	//Streaming
-	await sendCommand(ActionId.StreamOutput, ReqType.Get, [0])
-	await sendCommand(ActionId.StreamOutput, ReqType.Get, [1])
-	await sendCommand(ActionId.StreamOutput, ReqType.Get, [2])
+	//await sendCommand(ActionId.StreamOutput, ReqType.Get, [0])
+	//await sendCommand(ActionId.StreamOutput, ReqType.Get, [1])
+	//await sendCommand(ActionId.StreamOutput, ReqType.Get, [2])
 	//Playback
-	await sendCommand(ActionId.PlaybackMode, ReqType.Get)
-	await sendCommand(ActionId.PlaybackRepeat, ReqType.Get)
-	await sendCommand(ActionId.PlaybackPause, ReqType.Get)
-	await sendCommand(ActionId.PlaybackBar, ReqType.Get)
-	await sendCommand(ActionId.PlaybackList, ReqType.Get)
+	//await sendCommand(ActionId.PlaybackMode, ReqType.Get)
+	//await sendCommand(ActionId.PlaybackRepeat, ReqType.Get)
+	//await sendCommand(ActionId.PlaybackPause, ReqType.Get)
+	//await sendCommand(ActionId.PlaybackBar, ReqType.Get)
+	//await sendCommand(ActionId.PlaybackList, ReqType.Get)
 	//Record
-	await sendCommand(ActionId.Record, ReqType.Get)
-	await sendCommand(ActionId.Live, ReqType.Get)
+	//await sendCommand(ActionId.Record, ReqType.Get)
+	//await sendCommand(ActionId.Live, ReqType.Get)
 	//Settings
 	await sendCommand(ActionId.AuxSource, ReqType.Get)
 	await sendCommand(ActionId.OutSource, ReqType.Get, [0])

@@ -1,4 +1,4 @@
-import { generateOutputs, MODEL_AUTO_DETECT, type IModelSpec } from './types.js'
+import { generateOutputs, MODEL_AUTO_DETECT, type IModelSpec } from './types'
 import { PortType } from '../enums'
 
 export const ModelSpecAuto: IModelSpec = {

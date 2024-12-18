@@ -1,4 +1,4 @@
-import { Model, PortType } from '../enums.js'
+import { Model, PortType } from '../enums'
 
 export const MODEL_AUTO_DETECT = 0
 export type ModelId = 0 | Model

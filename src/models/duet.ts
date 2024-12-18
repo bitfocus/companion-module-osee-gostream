@@ -1,5 +1,5 @@
-import { generateOutputs, type IModelSpec } from './types.js'
-import { Model, PortType } from '../enums.js'
+import { generateOutputs, type IModelSpec } from './types'
+import { Model, PortType } from '../enums'
 
 export const ModelSpecDuet: IModelSpec = {
 	id: Model.Duet,

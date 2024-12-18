@@ -1,8 +1,18 @@
 import { Choice } from './choices'
+import { MixEffectState } from './functions/mixEffect'
+import { StreamingState } from './functions/streaming'
+import { LiveState } from './functions/live'
+import { StillGeneratorState } from './functions/stillGenerator'
+import { PlaybackState } from './functions/playback'
+import { RecordState } from './functions/record'
 
 type GoStreamState = {
-	selectPrevInput: Choice
-	selectPgmInput: Choice
+	MixEffect: MixEffectState.State
+	Streaming: StreamingState.State
+	Live: LiveState.State
+	StillGenerator: StillGeneratorState.State
+	Playback: PlaybackState.State
+	Record: RecordState.State
 	infos: {
 		protocolVersion: string
 		deviceType: number
@@ -23,25 +33,11 @@ type GoStreamState = {
 	}
 	selectOutputs: object
 	upStreamKeyState: {
+		PvwOnAir: boolean
+		Tied: boolean
+		OnAir: boolean
 		UpStreamKeyType: number
 		ArrayKeySourceFill: number[]
-	}
-	transitionPosition: {
-		inTransition: boolean
-		handlePosition: number
-	}
-	fadeToBlack: {
-		inTransition: boolean
-		isFullyBlack: boolean
-		AFV: boolean
-		rate: number
-	}
-	selectTransitionStyle: {
-		PrevState: boolean
-		style: Choice
-		mixrate: number
-		diprate: number
-		wiperate: number
 	}
 	SuperSourcePorp: {
 		SSEnable: boolean
@@ -66,23 +62,7 @@ type GoStreamState = {
 			aux: number
 		}
 	}
-	PlayBackState: {
-		PlaybackMode: number
-		PlaybackRepeat: boolean
-		PlaybackPause: boolean
-		PlaybackBar: boolean
-		PlayFile: number
-		// Not really state variable, hold videofile list
-		// TODO: place somewhere more logical
-		PlayFileList: string[]
-	}
-	RecordState: boolean
-	LiveState: number
-	StreamingProp: {
-		stream1: boolean
-		stream2: boolean
-		stream3: boolean
-	}
+
 	SettingsProp: {
 		AuxSource: number
 		OutSource: {
@@ -109,8 +89,12 @@ type GoStreamState = {
 
 export function Create(): GoStreamState {
 	return {
-		selectPrevInput: { id: 0, label: 'Input1' },
-		selectPgmInput: { id: 0, label: 'Input1' },
+		...MixEffectState.create(),
+		...StreamingState.create(),
+		...LiveState.create(),
+		...StillGeneratorState.create(),
+		...PlaybackState.create(),
+		...RecordState.create(),
 		infos: {
 			protocolVersion: '1.0',
 			deviceType: 0,
@@ -131,25 +115,11 @@ export function Create(): GoStreamState {
 		},
 		selectOutputs: {},
 		upStreamKeyState: {
+			PvwOnAir: false,
+			Tied: false,
+			OnAir: false,
 			UpStreamKeyType: 0,
 			ArrayKeySourceFill: [0, 0, 0, 0],
-		},
-		transitionPosition: {
-			inTransition: false,
-			handlePosition: 0,
-		},
-		fadeToBlack: {
-			inTransition: false,
-			isFullyBlack: false,
-			AFV: false,
-			rate: 0,
-		},
-		selectTransitionStyle: {
-			PrevState: false,
-			style: { id: 0, label: 'MIX' },
-			mixrate: 0,
-			diprate: 0,
-			wiperate: 0,
 		},
 		SuperSourcePorp: {
 			SSEnable: false,
@@ -173,23 +143,6 @@ export function Create(): GoStreamState {
 				in4: 0,
 				aux: 0,
 			},
-		},
-		PlayBackState: {
-			PlaybackMode: 0,
-			PlaybackRepeat: false,
-			PlaybackPause: false,
-			PlaybackBar: false,
-			PlayFile: 0,
-			// Not really state variable, hold videofile list
-			// TODO: place somewhere more logical
-			PlayFileList: [],
-		},
-		RecordState: false,
-		LiveState: 0,
-		StreamingProp: {
-			stream1: false,
-			stream2: false,
-			stream3: false,
 		},
 		SettingsProp: {
 			AuxSource: 0,
