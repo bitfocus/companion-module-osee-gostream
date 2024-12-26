@@ -101,16 +101,7 @@ export enum ActionId {
 	PipBorderHue = 'pipBorderHue',
 	PipBorderSaturation = 'pipBorderSaturation',
 	PipBorderBrightness = 'pipBorderBrightness',
-	//Audio Mixer
-	AudioTransition = 'audioTransition',
-	AudioFader = 'audioFader',
-	AudioBalance = 'audioBalance',
-	AudioInput = 'audioInput',
-	AudioEnable = 'audioEnable',
-	AudioEnable1 = 'audioEnable1',
-	AudioDelay = 'audioDelay',
-	AudioMonitorLevel = 'audioMonitorLevel',
-	AudioMonitorSource = 'audioMonitorSource',
+
 	//Macro
 	MacroRecord = 'macroRecord',
 	MacroInfo = 'macroInfo',

@@ -5,7 +5,6 @@ import { ActionId } from './actions/ActionId'
 import { Bytes2ToInt, UpackDatas, PackData } from './util'
 import { getChoices } from './choices'
 import { updateRecordVariables } from './variables'
-import { SuperSourceStyleChoices } from './model'
 import { GoStreamInstance } from './index'
 
 import { MixEffectState } from './functions/mixEffect'
@@ -14,7 +13,8 @@ import { PlaybackState } from './functions/playback'
 import { RecordState } from './functions/record'
 import { StillGeneratorState } from './functions/stillGenerator'
 import { StreamingState } from './functions/streaming'
-//import { SuperSourceState } from './functions/superSource'
+import { SuperSourceState } from './functions/superSource'
+import { AudioMixerState } from './functions/audioMixer'
 
 let tcp: any = null // TCPHelper
 let Working_byte_resp_lens: any = null // BUFFER
@@ -150,6 +150,8 @@ export function ParaData(msg_data: Buffer, instance: GoStreamInstance): void {
 	if (RecordState.handleData(instance, json)) return
 	if (StillGeneratorState.handleData(instance, json)) return
 	if (StreamingState.handleData(instance, json)) return
+	if (SuperSourceState.handleData(instance, json)) return
+	if (AudioMixerState.handleData(instance, json)) return
 	//if(SuperSourceState.handleData(instance, json)) return;
 
 	//console.log(json);
@@ -201,40 +203,8 @@ export function ParaData(msg_data: Buffer, instance: GoStreamInstance): void {
 			case ActionId.DskControlShapedKey:
 				instance.states.DSKState.DskControlShapedKey = json.value[0] === 1 ? true : false
 				break
-			//SuperSource
-			case ActionId.SuperSourceEnable:
-				instance.states.SuperSourcePorp.SSEnable = json.value[0] === 1 ? true : false
-				break
-			case ActionId.SuperSourceSource1: {
-				const select = getChoices(ActionType.SuperSourceSource).find((s) => s.id === json.value[0])
-				if (select !== undefined) instance.states.SuperSourcePorp.SuperSourceSource1 = select
-				break
-			}
-			case ActionId.SuperSourceSource2: {
-				const select = getChoices(ActionType.SuperSourceSource).find((s) => s.id === json.value[0])
-				if (select !== undefined) instance.states.SuperSourcePorp.SuperSourceSource2 = select
-				break
-			}
-			case ActionId.SuperSourceBackground: {
-				const select = getChoices(ActionType.SuperSourceSource).find((s) => s.id === json.value[0])
-				if (select !== undefined) instance.states.SuperSourcePorp.SuperSourceBackground = select
-				break
-			}
-			case ActionId.SuperSourceControlStyle: {
-				const sschoice = SuperSourceStyleChoices.find((s) => s.id === json.value[0])
-				if (sschoice !== undefined) instance.states.SuperSourcePorp.SuperSourceControlStyle = sschoice
-				break
-			}
-			case ActionId.SuperSourceMaskEnable: {
-				const masktype = json.value[0]
-				const masktypeValue = json.value[1]
-				if (masktype === 0) {
-					instance.states.SuperSourcePorp.SuperSourceMaskEnable.mask1 = masktypeValue === 1 ? true : false
-				} else {
-					instance.states.SuperSourcePorp.SuperSourceMaskEnable.mask2 = masktypeValue === 1 ? true : false
-				}
-				break
-			}
+		
+		
 			//upStreamKeyType
 			case ActionId.UpStreamKeyType:
 				instance.states.upStreamKeyState.UpStreamKeyType = json.value[0]
@@ -253,29 +223,7 @@ export function ParaData(msg_data: Buffer, instance: GoStreamInstance): void {
 				break
 
 			//Audio Mixer
-			case ActionId.AudioTransition:
-				instance.states.AudioMixerPorp.AudioTransition = json.value[0] === 1 ? true : false
-				break
-			case ActionId.AudioEnable: {
-				const audiotype = json.value[0]
-				const audiotypeValue = json.value[1]
-				if (audiotype == 0) {
-					instance.states.AudioMixerPorp.AudioEnable.mic1 = audiotypeValue
-				} else if (audiotype == 1) {
-					instance.states.AudioMixerPorp.AudioEnable.mic2 = audiotypeValue
-				} else if (audiotype == 2) {
-					instance.states.AudioMixerPorp.AudioEnable.in1 = audiotypeValue
-				} else if (audiotype == 3) {
-					instance.states.AudioMixerPorp.AudioEnable.in2 = audiotypeValue
-				} else if (audiotype == 4) {
-					instance.states.AudioMixerPorp.AudioEnable.in3 = audiotypeValue
-				} else if (audiotype == 5) {
-					instance.states.AudioMixerPorp.AudioEnable.in4 = audiotypeValue
-				} else if (audiotype == 6) {
-					instance.states.AudioMixerPorp.AudioEnable.aux = audiotypeValue
-				}
-				break
-			}
+			
 
 			//Record
 			case ActionId.RecordTime:
@@ -383,6 +331,7 @@ export async function ReqStateData(): Promise<void> {
 	await RecordState.sync()
 	await StillGeneratorState.sync()
 	await StreamingState.sync()
+	await AudioMixerState.sync()
 	//SuperSourceState.sync()
 
 	/*await sendCommand(ActionId.PgmIndex, ReqType.Get)
@@ -406,13 +355,7 @@ export async function ReqStateData(): Promise<void> {
 	await sendCommand(ActionId.DskMaskEnable, ReqType.Get)
 	await sendCommand(ActionId.DskControlShapedKey, ReqType.Get)
 	await sendCommand(ActionId.DskControlInvert, ReqType.Get)
-	//SuperSource
-	// sendCommand(ActionId.SuperSourceEnable, ReqType.Get)
-	// sendCommand(ActionId.SuperSourceSource1, ReqType.Get)
-	// sendCommand(ActionId.SuperSourceSource2, ReqType.Get)
-	// sendCommand(ActionId.SuperSourceBackground, ReqType.Get)
-	// sendCommand(ActionId.SuperSourceControlStyle, ReqType.Get)
-	// sendCommand(ActionId.SuperSourceMaskEnable, ReqType.Get)*/
+
 	//upStreamKeyType
 	await sendCommand(ActionId.UpStreamKeyType, ReqType.Get)
 	await sendCommand(ActionId.LumaKeySourceFill, ReqType.Get)
@@ -423,14 +366,14 @@ export async function ReqStateData(): Promise<void> {
 	//await sendCommand(ActionId.StillSelection, ReqType.Get, [0])
 	//await sendCommand(ActionId.StillSelection, ReqType.Get, [1])
 	//Audio Mixer
-	await sendCommand(ActionId.AudioTransition, ReqType.Get)
-	await sendCommand(ActionId.AudioEnable, ReqType.Get, [0])
-	await sendCommand(ActionId.AudioEnable, ReqType.Get, [1])
-	await sendCommand(ActionId.AudioEnable, ReqType.Get, [2])
-	await sendCommand(ActionId.AudioEnable, ReqType.Get, [3])
-	await sendCommand(ActionId.AudioEnable, ReqType.Get, [4])
-	await sendCommand(ActionId.AudioEnable, ReqType.Get, [5])
-	await sendCommand(ActionId.AudioEnable, ReqType.Get, [6])
+	//await sendCommand(ActionId.AudioTransition, ReqType.Get)
+	//await sendCommand(ActionId.AudioEnable, ReqType.Get, [0])
+	//await sendCommand(ActionId.AudioEnable, ReqType.Get, [1])
+	//await sendCommand(ActionId.AudioEnable, ReqType.Get, [2])
+	//await sendCommand(ActionId.AudioEnable, ReqType.Get, [3])
+	//await sendCommand(ActionId.AudioEnable, ReqType.Get, [4])
+	//await sendCommand(ActionId.AudioEnable, ReqType.Get, [5])
+	//await sendCommand(ActionId.AudioEnable, ReqType.Get, [6])
 	//Streaming
 	//await sendCommand(ActionId.StreamOutput, ReqType.Get, [0])
 	//await sendCommand(ActionId.StreamOutput, ReqType.Get, [1])

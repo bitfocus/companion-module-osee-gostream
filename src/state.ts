@@ -5,6 +5,8 @@ import { LiveState } from './functions/live'
 import { StillGeneratorState } from './functions/stillGenerator'
 import { PlaybackState } from './functions/playback'
 import { RecordState } from './functions/record'
+import { SuperSourceState } from './functions/superSource'
+import { AudioMixerState } from './functions/audioMixer'
 
 type GoStreamState = {
 	MixEffect: MixEffectState.State
@@ -13,6 +15,8 @@ type GoStreamState = {
 	StillGenerator: StillGeneratorState.State
 	Playback: PlaybackState.State
 	Record: RecordState.State
+	SuperSource: SuperSourceState.State
+	AudioMixer: AudioMixerState.State
 	infos: {
 		protocolVersion: string
 		deviceType: number
@@ -39,30 +43,6 @@ type GoStreamState = {
 		UpStreamKeyType: number
 		ArrayKeySourceFill: number[]
 	}
-	SuperSourcePorp: {
-		SSEnable: boolean
-		SuperSourceSource1: Choice
-		SuperSourceSource2: Choice
-		SuperSourceBackground: Choice
-		SuperSourceControlStyle: Choice
-		SuperSourceMaskEnable: {
-			mask1: boolean
-			mask2: boolean
-		}
-	}
-	AudioMixerPorp: {
-		AudioTransition: boolean
-		AudioEnable: {
-			mic1: number
-			mic2: number
-			in1: number
-			in2: number
-			in3: number
-			in4: number
-			aux: number
-		}
-	}
-
 	SettingsProp: {
 		AuxSource: number
 		OutSource: {
@@ -95,6 +75,8 @@ export function Create(): GoStreamState {
 		...StillGeneratorState.create(),
 		...PlaybackState.create(),
 		...RecordState.create(),
+		...SuperSourceState.create(),
+		...AudioMixerState.create(),
 		infos: {
 			protocolVersion: '1.0',
 			deviceType: 0,
@@ -120,29 +102,6 @@ export function Create(): GoStreamState {
 			OnAir: false,
 			UpStreamKeyType: 0,
 			ArrayKeySourceFill: [0, 0, 0, 0],
-		},
-		SuperSourcePorp: {
-			SSEnable: false,
-			SuperSourceSource1: { id: 0, label: 'Input1' },
-			SuperSourceSource2: { id: 0, label: 'Input1' },
-			SuperSourceBackground: { id: 0, label: 'Input1' },
-			SuperSourceControlStyle: { id: 0, label: 'zoom in' },
-			SuperSourceMaskEnable: {
-				mask1: false,
-				mask2: false,
-			},
-		},
-		AudioMixerPorp: {
-			AudioTransition: false,
-			AudioEnable: {
-				mic1: 0,
-				mic2: 0,
-				in1: 0,
-				in2: 0,
-				in3: 0,
-				in4: 0,
-				aux: 0,
-			},
 		},
 		SettingsProp: {
 			AuxSource: 0,

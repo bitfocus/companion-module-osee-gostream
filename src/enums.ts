@@ -49,8 +49,7 @@ export const feedbackId = {
 	KeySourceFill: 'keySourceFill',
 	TransitionSource: 'transitionSource',
 	//AudioMixer
-	AudioEnable: 'audioEnable',
-	AudioTransition: 'audioTransition',
+
 	//Playback
 	PlaybackMode: 'playbackMode',
 	PlaybackRepeat: 'playbackRepeat',

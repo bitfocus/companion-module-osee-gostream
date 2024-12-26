@@ -1,13 +1,13 @@
-import { ActionId } from './ActionId'
-import { getOptNumber } from './index'
-import { getChoices } from '../choices'
-import { AudioMicChoices, AudioInputSourcesChoices, SwitchChoices } from '../model'
-import { ReqType, ActionType } from '../enums'
-import { sendCommand } from '../connection'
-import type { GoStreamInstance } from '../index'
-import { type CompanionActionDefinitions } from '@companion-module/base'
+import { ActionId } from './actionId'
+import { getOptNumber } from '../../actions/index'
+import { ReqType, ActionType } from '../../enums'
+import { sendCommand } from '../../connection'
+import type { GoStreamInstance } from '../../index'
+import type { CompanionActionDefinitions } from '@companion-module/base'
+import { getChoices } from '../../choices'
+import { AudioMicChoices, AudioInputSourcesChoices, SwitchChoices } from '../../model'
 
-export function createAudioMixerActions(_self: GoStreamInstance): CompanionActionDefinitions {
+export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 	return {
 		[ActionId.AudioTransition]: {
 			name: 'Audio Mixer:Set audio fade in and out switch',
@@ -24,7 +24,7 @@ export function createAudioMixerActions(_self: GoStreamInstance): CompanionActio
 				const opt = getOptNumber(action, 'AudioTrans')
 				let paramOpt = 0
 				if (opt === 2) {
-					if (_self.states.AudioMixerPorp.AudioTransition === true) {
+					if (instance.states.AudioMixerPorp.AudioTransition === true) {
 						paramOpt = 0
 					} else {
 						paramOpt = 1
@@ -147,13 +147,13 @@ export function createAudioMixerActions(_self: GoStreamInstance): CompanionActio
 				let paramOpt = 0
 				if (opt2 === 2) {
 					if (opt1 === 0) {
-						if (_self.states.AudioMixerPorp.AudioEnable.mic1 === 1) {
+						if (instance.states.AudioMixerPorp.AudioEnable.mic1 === 1) {
 							paramOpt = 0
 						} else {
 							paramOpt = 1
 						}
 					} else {
-						if (_self.states.AudioMixerPorp.AudioEnable.mic2 === 1) {
+						if (instance.states.AudioMixerPorp.AudioEnable.mic2 === 1) {
 							paramOpt = 0
 						} else {
 							paramOpt = 1
@@ -194,41 +194,41 @@ export function createAudioMixerActions(_self: GoStreamInstance): CompanionActio
 				let paramOpt = 0
 				if (opt1 === 3) {
 					if (opt2 === 2) {
-						if (_self.states.AudioMixerPorp.AudioEnable.in1 === 0) {
+						if (instance.states.AudioMixerPorp.AudioEnable.in1 === 0) {
 							paramOpt = 1
-						} else if (_self.states.AudioMixerPorp.AudioEnable.in1 === 1) {
+						} else if (instance.states.AudioMixerPorp.AudioEnable.in1 === 1) {
 							paramOpt = 2
 						} else {
 							paramOpt = 0
 						}
 					} else if (opt2 == 3) {
-						if (_self.states.AudioMixerPorp.AudioEnable.in2 === 0) {
+						if (instance.states.AudioMixerPorp.AudioEnable.in2 === 0) {
 							paramOpt = 1
-						} else if (_self.states.AudioMixerPorp.AudioEnable.in2 === 1) {
+						} else if (instance.states.AudioMixerPorp.AudioEnable.in2 === 1) {
 							paramOpt = 2
 						} else {
 							paramOpt = 0
 						}
 					} else if (opt2 == 4) {
-						if (_self.states.AudioMixerPorp.AudioEnable.in3 === 0) {
+						if (instance.states.AudioMixerPorp.AudioEnable.in3 === 0) {
 							paramOpt = 1
-						} else if (_self.states.AudioMixerPorp.AudioEnable.in3 === 1) {
+						} else if (instance.states.AudioMixerPorp.AudioEnable.in3 === 1) {
 							paramOpt = 2
 						} else {
 							paramOpt = 0
 						}
 					} else if (opt2 == 5) {
-						if (_self.states.AudioMixerPorp.AudioEnable.in4 === 0) {
+						if (instance.states.AudioMixerPorp.AudioEnable.in4 === 0) {
 							paramOpt = 1
-						} else if (_self.states.AudioMixerPorp.AudioEnable.in4 === 1) {
+						} else if (instance.states.AudioMixerPorp.AudioEnable.in4 === 1) {
 							paramOpt = 2
 						} else {
 							paramOpt = 0
 						}
 					} else if (opt2 == 6) {
-						if (_self.states.AudioMixerPorp.AudioEnable.aux === 0) {
+						if (instance.states.AudioMixerPorp.AudioEnable.aux === 0) {
 							paramOpt = 1
-						} else if (_self.states.AudioMixerPorp.AudioEnable.aux === 1) {
+						} else if (instance.states.AudioMixerPorp.AudioEnable.aux === 1) {
 							paramOpt = 2
 						} else {
 							paramOpt = 0
