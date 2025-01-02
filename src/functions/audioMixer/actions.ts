@@ -212,7 +212,7 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 					} else if (opt2 == 4) {
 						if (instance.states.AudioMixerPorp.AudioEnable.in3 === 0) {
 							paramOpt = 1
-						} else if (instance.states.AudioMixerPorp.AudioEnable.in3 === 1) {
+						} else if (instance .states.AudioMixerPorp.AudioEnable.in3 === 1) {
 							paramOpt = 2
 						} else {
 							paramOpt = 0

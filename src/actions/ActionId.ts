@@ -1,23 +1,6 @@
 export enum ActionId {
-	//DSK
-	KeyOnAir = 'keyOnAir',
-	DskOnAir = 'dskOnAir',
-	DskSourceFillKey = 'dskSourceFillKey',
-	DskSourceFill = 'dskSourceFill',
-	DskSourceKey = 'dskSourceKey',
-	DskMaskEnable = 'dskMaskEnable',
-	DskMaskHStart = 'dskMaskHStart',
-	DskMaskVStart = 'dskMaskVStart',
-	DskMaskHEnd = 'dskMaskHEnd',
-	DskMaskVEnd = 'dskMaskVEnd',
-	DskControlShapedKey = 'dskControlShapedKey',
-	DskControlClip = 'dskControlClip',
-	DskControlGain = 'dskControlGain',
-	DskControlInvert = 'dskControlInvert',
-	DskRate = 'dskRate',
-	ColorHue = 'colorHue',
-	ColorSaturation = 'colorSaturation',
-	ColorBrightness = 'colorBrightness',
+	
+	
 	//Super Source
 	SuperSourceEnable = 'superSourceEnable',
 	SuperSourceSource1 = 'superSourceSource1',
@@ -35,6 +18,7 @@ export enum ActionId {
 	SuperSourceBorderSaturation = 'superSourceBorderSaturation',
 	SuperSourceBorderBrightness = 'superSourceBorderBrightness',
 	//UpStream Key
+	KeyOnAir = 'keyOnAir',
 	TransitionSource = 'transitionSource',
 	USKOnPreview = 'uskOnPreview', // This is custom function
 	UpStreamKeyFillKeyType = 'upStreamKeyFillKeyType',

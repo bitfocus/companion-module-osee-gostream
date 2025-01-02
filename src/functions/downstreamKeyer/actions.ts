@@ -1,44 +1,14 @@
-import { ActionId } from './ActionId'
-import { getOptNumber } from './index'
-import { getChoices } from '../choices'
-import { SwitchChoices } from '../model'
-import { ReqType, ActionType } from '../enums'
-import { sendCommand } from '../connection'
-import type { GoStreamInstance } from '../index'
+import { ActionId } from './actionId'
+import { getOptNumber } from './../../actions/index'
+import { getChoices } from './../../choices'
+import { SwitchChoices } from './../../model'
+import { ReqType, ActionType } from './../../enums'
+import { sendCommand } from './../../connection'
+import type { GoStreamInstance } from './../../index'
 import type { CompanionActionDefinitions } from '@companion-module/base'
 
-export function createDSKActions(_self: GoStreamInstance): CompanionActionDefinitions {
+export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 	return {
-		[ActionId.KeyOnAir]: {
-			name: 'Next Transition:Set KeyOnAir',
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Key OnAir',
-					id: 'KeyOnAir',
-					choices: [
-						{ id: 0, label: 'Off' },
-						{ id: 1, label: 'On Air' },
-						{ id: 2, label: 'Toggle' },
-					],
-					default: 2,
-				},
-			],
-			callback: async (action) => {
-				const opt = getOptNumber(action, 'KeyOnAir')
-				let paramOpt = 0
-				if (opt === 2) {
-					if (_self.states.TKeyeState.KeyOnAir === true) {
-						paramOpt = 0
-					} else {
-						paramOpt = 1
-					}
-					await sendCommand(ActionId.KeyOnAir, ReqType.Set, [paramOpt])
-				} else {
-					await sendCommand(ActionId.KeyOnAir, ReqType.Set, [opt])
-				}
-			},
-		},
 		[ActionId.DskOnAir]: {
 			name: 'Next Transition:Set DSKOnAir',
 			options: [
@@ -58,7 +28,7 @@ export function createDSKActions(_self: GoStreamInstance): CompanionActionDefini
 				const opt = getOptNumber(action, 'DSKOnAir')
 				let paramOpt = 0
 				if (opt === 2) {
-					if (_self.states.TKeyeState.DSKOnAir === true) {
+					if (instance.states.TKeyeState.DSKOnAir === true) {
 						paramOpt = 0
 					} else {
 						paramOpt = 1
@@ -139,7 +109,7 @@ export function createDSKActions(_self: GoStreamInstance): CompanionActionDefini
 				const opt = getOptNumber(action, 'DskMaskEnable')
 				let paramOpt = 0
 				if (opt === 2) {
-					if (_self.states.DSKState.DskMask === true) {
+					if (instance.states.DSKState.DskMask === true) {
 						paramOpt = 0
 					} else {
 						paramOpt = 1
@@ -232,7 +202,7 @@ export function createDSKActions(_self: GoStreamInstance): CompanionActionDefini
 				const opt = getOptNumber(action, 'ShapedKey')
 				let paramOpt = 0
 				if (opt === 2) {
-					if (_self.states.DSKState.DskControlShapedKey === true) {
+					if (instance.states.DSKState.DskControlShapedKey === true) {
 						paramOpt = 0
 					} else {
 						paramOpt = 1
@@ -290,7 +260,7 @@ export function createDSKActions(_self: GoStreamInstance): CompanionActionDefini
 				const opt = getOptNumber(action, 'Invert')
 				let paramOpt = 0
 				if (opt === 2) {
-					if (_self.states.DSKState.DskControlInvert === true) {
+					if (instance.states.DSKState.DskControlInvert === true) {
 						paramOpt = 0
 					} else {
 						paramOpt = 1

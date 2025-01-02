@@ -7,6 +7,7 @@ import { MixEffectPresets } from './functions/mixEffect'
 import { StreamingPresets } from './functions/streaming'
 import { LivePresets } from './functions/live'
 import { AudioMixerPresets } from './functions/audioMixer'
+import { DownstreamKeyerPresets } from './functions/downstreamKeyer'
 
 import { getChoices } from './choices'
 import {
@@ -23,6 +24,7 @@ export function presets(): CompanionPresetDefinitions {
 		...StreamingPresets.create(),
 		...LivePresets.create(),
 		...AudioMixerPresets.create(),
+		...DownstreamKeyerPresets.create(),
 	}
 	//Prev 和Progra
 	//Transitions
@@ -30,7 +32,7 @@ export function presets(): CompanionPresetDefinitions {
 	//Keys On Air
 	const Keys = KeySwitchChoices
 	for (const key of Keys) {
-		if (key.label != 'BKGD') {
+		if (key.label != 'BKGD' && key.label === 'Key') {
 			presets[`keys_Next_Air_${key.id}`] = {
 				category: 'Keys On Air',
 				name: `Toggle upstream KEY ${key.label} OnAir`,
@@ -43,7 +45,7 @@ export function presets(): CompanionPresetDefinitions {
 				},
 				feedbacks: [
 					{
-						feedbackId: key.label === 'Key' ? feedbackId.KeyOnAir : feedbackId.DskOnAir,
+						feedbackId: feedbackId.KeyOnAir,
 						options: {
 							KeyOnAir: 1,
 							DSKOnAir: 1,
@@ -58,7 +60,7 @@ export function presets(): CompanionPresetDefinitions {
 					{
 						down: [
 							{
-								actionId: key.label === 'Key' ? ActionId.KeyOnAir : ActionId.DskOnAir,
+								actionId: ActionId.KeyOnAir,
 								options: {
 									KeyOnAir: 2,
 									DSKOnAir: 2,
@@ -107,47 +109,7 @@ export function presets(): CompanionPresetDefinitions {
 			},
 		],
 	}
-	//DSK
-	const dsk_sources = getChoices(ActionType.DskSourceFill)
-	for (const s of dsk_sources) {
-		let id = Number(s.id) + 1
-		if (id === dsk_sources.length) id = 0
-		presets[`DskFillKey_${s.id}`] = {
-			category: `DSK`,
-			name: `DSK Source Fill And Key ${s.label}`,
-			type: 'button',
-			style: {
-				text: `${s.label}`,
-				size: ptzSize,
-				color: combineRgb(255, 255, 255),
-				bgcolor: combineRgb(0, 0, 0),
-			},
-			feedbacks: [
-				{
-					feedbackId: feedbackId.DskSourceFill,
-					options: {
-						TypeID: 1,
-						DSKFill: s.id,
-					},
-					style: {
-						bgcolor: combineRgb(255, 0, 0),
-						color: combineRgb(255, 255, 255),
-					},
-				},
-			],
-			steps: [
-				{
-					down: [
-						{
-							actionId: ActionId.DskSourceFillKey,
-							options: { DSKFill: s.id, DSKKey: id },
-						},
-					],
-					up: [],
-				},
-			],
-		}
-	}
+	
 	//分开配置的删除
 	// for(const s of dsk_sources){
 	// 	presets[`DskFill_${s.id}`] = {

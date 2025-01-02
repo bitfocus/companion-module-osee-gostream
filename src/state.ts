@@ -7,6 +7,7 @@ import { PlaybackState } from './functions/playback'
 import { RecordState } from './functions/record'
 import { SuperSourceState } from './functions/superSource'
 import { AudioMixerState } from './functions/audioMixer'
+import { DownstreamKeyerState } from './functions/downstreamKeyer'
 
 type GoStreamState = {
 	MixEffect: MixEffectState.State
@@ -17,6 +18,7 @@ type GoStreamState = {
 	Record: RecordState.State
 	SuperSource: SuperSourceState.State
 	AudioMixer: AudioMixerState.State
+	DownstreamKeyer: DownstreamKeyerState.State
 	infos: {
 		protocolVersion: string
 		deviceType: number
@@ -27,13 +29,6 @@ type GoStreamState = {
 		M_Key: boolean
 		KeyOnAir: boolean
 		DSKOnAir: boolean
-	}
-	DSKState: {
-		DSKSourceFill: Choice
-		DSKSourceKeyFill: Choice
-		DskMask: boolean
-		DskControlInvert: boolean
-		DskControlShapedKey: boolean
 	}
 	selectOutputs: object
 	upStreamKeyState: {
@@ -77,6 +72,7 @@ export function Create(): GoStreamState {
 		...RecordState.create(),
 		...SuperSourceState.create(),
 		...AudioMixerState.create(),
+		...DownstreamKeyerState.create(),
 		infos: {
 			protocolVersion: '1.0',
 			deviceType: 0,
@@ -87,13 +83,6 @@ export function Create(): GoStreamState {
 			M_Key: false,
 			KeyOnAir: false,
 			DSKOnAir: false,
-		},
-		DSKState: {
-			DSKSourceFill: { id: 0, label: 'Input1' },
-			DSKSourceKeyFill: { id: 0, label: 'Input1' },
-			DskMask: false,
-			DskControlInvert: false,
-			DskControlShapedKey: false,
 		},
 		selectOutputs: {},
 		upStreamKeyState: {

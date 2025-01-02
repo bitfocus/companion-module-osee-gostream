@@ -29,7 +29,8 @@
 		"jest-extended": "^4.0.2",
 		"socket.io-client": "^4.5.1",
 		"ts-jest": "^29.2.5",
-		"typescript-eslint": "^8.8.1"
+		"typescript-eslint": "^8.8.1",
+		"yarn": "^1.22.22"
 	},
 	"devDependencies": {
 		"@companion-module/tools": "^2.1.0",

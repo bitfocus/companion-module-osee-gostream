@@ -1,12 +1,13 @@
-import { ActionId } from './ActionId'
-import { getOptNumber } from './index'
-import { ColorSwitchChoices } from '../model'
-import { ReqType } from '../enums'
-import { sendCommand } from '../connection'
+import { ActionId } from './actionId'
+import { getOptNumber } from './../../actions/index'
+import { ColorSwitchChoices } from './../../model'
+import { ReqType } from './../../enums'
+import { sendCommand } from './../../connection'
 import type { CompanionActionDefinitions } from '@companion-module/base'
-import type { GoStreamInstance } from '../index'
+import type { GoStreamInstance } from './../../index'
 
-export function createColorBackActions(_self: GoStreamInstance): CompanionActionDefinitions {
+// @ts-ignore
+export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 	return {
 		[ActionId.ColorHue]: {
 			name: 'Color Back:Set Color Hue',
@@ -52,7 +53,7 @@ export function createColorBackActions(_self: GoStreamInstance): CompanionAction
 					min: 0,
 					max: 100,
 				},
-			],
+			], 
 			callback: async (action) => {
 				await sendCommand(ActionId.ColorSaturation, ReqType.Set, [
 					getOptNumber(action, 'ColorSaturation1'),

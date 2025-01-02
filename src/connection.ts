@@ -15,6 +15,7 @@ import { StillGeneratorState } from './functions/stillGenerator'
 import { StreamingState } from './functions/streaming'
 import { SuperSourceState } from './functions/superSource'
 import { AudioMixerState } from './functions/audioMixer'
+import { DownstreamKeyerState } from './functions/downstreamKeyer'
 
 let tcp: any = null // TCPHelper
 let Working_byte_resp_lens: any = null // BUFFER
@@ -152,6 +153,7 @@ export function ParaData(msg_data: Buffer, instance: GoStreamInstance): void {
 	if (StreamingState.handleData(instance, json)) return
 	if (SuperSourceState.handleData(instance, json)) return
 	if (AudioMixerState.handleData(instance, json)) return
+	if (DownstreamKeyerState.handleData(instance, json)) return
 	//if(SuperSourceState.handleData(instance, json)) return;
 
 	//console.log(json);
@@ -177,35 +179,11 @@ export function ParaData(msg_data: Buffer, instance: GoStreamInstance): void {
 				//instance.log('info',intstate.toString());
 				break
 			}
-			case ActionId.DskOnAir:
-				instance.states.TKeyeState.DSKOnAir = json.value[0] === 1 ? true : false
-				break
+				
+			//upStreamKeyType
 			case ActionId.KeyOnAir:
 				instance.states.TKeyeState.KeyOnAir = json.value[0] === 1 ? true : false
 				break
-			//DSK
-			case ActionId.DskSourceFill: {
-				const select = getChoices(ActionType.DskSourceFill).find((s) => s.id === json.value[0])
-				if (select !== undefined) instance.states.DSKState.DSKSourceFill = select
-				break
-			}
-			case ActionId.DskSourceKey: {
-				const select = getChoices(ActionType.DskSourceFill).find((s) => s.id === json.value[0])
-				if (select !== undefined) instance.states.DSKState.DSKSourceKeyFill = select
-				break
-			}
-			case ActionId.DskControlInvert:
-				instance.states.DSKState.DskControlInvert = json.value[0] === 1 ? true : false
-				break
-			case ActionId.DskMaskEnable:
-				instance.states.DSKState.DskMask = json.value[0] === 1 ? true : false
-				break
-			case ActionId.DskControlShapedKey:
-				instance.states.DSKState.DskControlShapedKey = json.value[0] === 1 ? true : false
-				break
-		
-		
-			//upStreamKeyType
 			case ActionId.UpStreamKeyType:
 				instance.states.upStreamKeyState.UpStreamKeyType = json.value[0]
 				break
@@ -332,6 +310,7 @@ export async function ReqStateData(): Promise<void> {
 	await StillGeneratorState.sync()
 	await StreamingState.sync()
 	await AudioMixerState.sync()
+	await DownstreamKeyerState.sync()
 	//SuperSourceState.sync()
 
 	/*await sendCommand(ActionId.PgmIndex, ReqType.Get)
@@ -347,16 +326,9 @@ export async function ReqStateData(): Promise<void> {
 	await sendCommand(ActionId.TransitionRate, ReqType.Get, [2])
 	await sendCommand(ActionId.TransitionSource, ReqType.Get)*/
 
-	await sendCommand(ActionId.DskOnAir, ReqType.Get)
-	await sendCommand(ActionId.KeyOnAir, ReqType.Get)
-	//DSK
-	await sendCommand(ActionId.DskSourceFill, ReqType.Get)
-	await sendCommand(ActionId.DskSourceKey, ReqType.Get)
-	await sendCommand(ActionId.DskMaskEnable, ReqType.Get)
-	await sendCommand(ActionId.DskControlShapedKey, ReqType.Get)
-	await sendCommand(ActionId.DskControlInvert, ReqType.Get)
 
 	//upStreamKeyType
+	await sendCommand(ActionId.KeyOnAir, ReqType.Get)
 	await sendCommand(ActionId.UpStreamKeyType, ReqType.Get)
 	await sendCommand(ActionId.LumaKeySourceFill, ReqType.Get)
 	await sendCommand(ActionId.ChromaKeyFill, ReqType.Get)

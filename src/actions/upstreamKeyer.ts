@@ -13,6 +13,36 @@ import type { CompanionActionDefinitions } from '@companion-module/base'
 
 export function createUSKActions(_self: GoStreamInstance): CompanionActionDefinitions {
 	return {
+		[ActionId.KeyOnAir]: {
+			name: 'Next Transition:Set KeyOnAir',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Key OnAir',
+					id: 'KeyOnAir',
+					choices: [
+						{ id: 0, label: 'Off' },
+						{ id: 1, label: 'On Air' },
+						{ id: 2, label: 'Toggle' },
+					],
+					default: 2,
+				},
+			],
+			callback: async (action) => {
+				const opt = getOptNumber(action, 'KeyOnAir')
+				let paramOpt = 0
+				if (opt === 2) {
+					if (_self.states.TKeyeState.KeyOnAir === true) {
+						paramOpt = 0
+					} else {
+						paramOpt = 1
+					}
+					await sendCommand(ActionId.KeyOnAir, ReqType.Set, [paramOpt])
+				} else {
+					await sendCommand(ActionId.KeyOnAir, ReqType.Set, [opt])
+				}
+			},
+		},
 		[ActionId.UpStreamKeyFillKeyType]: {
 			name: 'UpStream Key:Set inputs',
 			options: [

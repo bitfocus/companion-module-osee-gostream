@@ -1,8 +1,4 @@
-//import { createProgramPreviewActions } from './programPreview'
-//import { createTransitionActions } from './transition'
-import { createDSKActions } from './downstreamKeyer'
 import { createUSKActions } from './upstreamKeyer'
-import { createColorBackActions } from './colorBack'
 import { createMacroActions } from './macro'
 import { createSettingsActions } from './settings'
 import { SuperSourceActions } from '../functions/superSource'
@@ -13,6 +9,8 @@ import { RecordActions } from '../functions/record'
 import { StillGeneratorActions } from '../functions/stillGenerator'
 import { PlaybackActions } from '../functions/playback'
 import { AudioMixerActions } from '../functions/audioMixer'
+import { ColorBackActions } from '../functions/colorBack'
+import { DownstreamKeyerActions } from '../functions/downstreamKeyer'
 
 import type { GoStreamInstance } from '../index'
 import { type CompanionActionDefinitions, type CompanionActionEvent } from '@companion-module/base'
@@ -27,10 +25,10 @@ export function GetActionsList(instance: GoStreamInstance): CompanionActionDefin
 		...StillGeneratorActions.create(instance),
 		...PlaybackActions.create(instance),
 		...AudioMixerActions.create(instance),
+		...ColorBackActions.create(instance),
+		...DownstreamKeyerActions.create(instance),
 		// OLD TYPE ACTIONS
 		...createUSKActions(instance),
-		...createDSKActions(instance),
-		...createColorBackActions(instance),
 		...createMacroActions(instance),
 		...createSettingsActions(instance),
 	}

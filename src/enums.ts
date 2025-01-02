@@ -40,12 +40,10 @@ export enum ActionType {
 export const feedbackId = {
 	KeyOnAir: 'keyOnAir',
 	KeyOnPvw: 'keyOnPvw',
-	DskOnAir: 'dskOnAir',
 	SettingOutSource: 'settingOutSource',
 	Macro: 'macro',
 	AuxBG: 'auxBG',
 	UpStreamKeyType: 'upStreamKeyType',
-	DskSourceFill: 'dskSourceFill',
 	KeySourceFill: 'keySourceFill',
 	TransitionSource: 'transitionSource',
 	//AudioMixer
