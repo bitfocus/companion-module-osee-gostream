@@ -1,6 +1,4 @@
 import { createUSKActions } from './upstreamKeyer'
-import { createMacroActions } from './macro'
-import { createSettingsActions } from './settings'
 import { SuperSourceActions } from '../functions/superSource'
 import { MixEffectActions } from '../functions/mixEffect'
 import { StreamingActions } from '../functions/streaming'
@@ -11,6 +9,8 @@ import { PlaybackActions } from '../functions/playback'
 import { AudioMixerActions } from '../functions/audioMixer'
 import { ColorBackActions } from '../functions/colorBack'
 import { DownstreamKeyerActions } from '../functions/downstreamKeyer'
+import { SettingsActions } from '../functions/settings'
+import { MacroActions } from '../functions/macro'
 
 import type { GoStreamInstance } from '../index'
 import { type CompanionActionDefinitions, type CompanionActionEvent } from '@companion-module/base'
@@ -27,10 +27,10 @@ export function GetActionsList(instance: GoStreamInstance): CompanionActionDefin
 		...AudioMixerActions.create(instance),
 		...ColorBackActions.create(instance),
 		...DownstreamKeyerActions.create(instance),
+		...SettingsActions.create(instance),
+		...MacroActions.create(instance),
 		// OLD TYPE ACTIONS
 		...createUSKActions(instance),
-		...createMacroActions(instance),
-		...createSettingsActions(instance),
 	}
 }
 

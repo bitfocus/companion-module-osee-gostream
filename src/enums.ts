@@ -40,28 +40,9 @@ export enum ActionType {
 export const feedbackId = {
 	KeyOnAir: 'keyOnAir',
 	KeyOnPvw: 'keyOnPvw',
-	SettingOutSource: 'settingOutSource',
-	Macro: 'macro',
-	AuxBG: 'auxBG',
 	UpStreamKeyType: 'upStreamKeyType',
 	KeySourceFill: 'keySourceFill',
 	TransitionSource: 'transitionSource',
-	//AudioMixer
-
-	//Playback
-	PlaybackMode: 'playbackMode',
-	PlaybackRepeat: 'playbackRepeat',
-	PlaybackPause: 'playbackPause',
-	PlaybackBar: 'playbackBar',
-	PlayFile: 'playFile',
-
-	// Settings
-	InputWindowLayout: 'inputWindowLayout',
-	SrcSelection: 'srcSelection',
-	OutputColorSpace: 'outputColorSpace',
-	OutputFormat: 'outFormat',
-	MicInput: 'micInput',
-	MvLayout: 'mvLayout',
 }
 
 export const variableId = {

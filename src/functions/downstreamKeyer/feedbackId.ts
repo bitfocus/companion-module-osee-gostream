@@ -1,4 +1,4 @@
 export enum FeedbackId {
-    DskOnAir = 'dskOnAir',
-    DskSourceFill = 'dskSourceFill',
+	DskOnAir = 'dskOnAir',
+	DskSourceFill = 'dskSourceFill',
 }

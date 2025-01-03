@@ -1,6 +1,10 @@
-import { ActionId } from './ActionId'
-import { getOptNumber, getOptString } from './index'
-import { getChoices, SourcesToChoices } from '../choices'
+import { ActionId } from './actionId'
+import { getOptNumber, getOptString } from './../../actions/index'
+import { getChoices, SourcesToChoices } from './../../choices'
+import { ReqType, ActionType } from './../../enums'
+import { sendCommand } from './../../connection'
+import type { GoStreamInstance } from './../../index'
+import type { CompanionActionDefinitions } from '@companion-module/base'
 import {
 	SettingsAuxSourceChoices,
 	SettingsOutFormatChoices,
@@ -14,13 +18,9 @@ import {
 	SettingsUMDSrcChoices,
 	SwitchChoices,
 	SourceModels,
-} from '../model'
-import { ReqType, ActionType } from '../enums'
-import { sendCommand } from '../connection'
-import type { GoStreamInstance } from '../index'
-import type { CompanionActionDefinitions } from '@companion-module/base'
+} from './../../model'
 
-export function createSettingsActions(_self: GoStreamInstance): CompanionActionDefinitions {
+export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 	return {
 		[ActionId.SrcName]: {
 			name: 'Settings:Set SrcName',
@@ -70,7 +70,7 @@ export function createSettingsActions(_self: GoStreamInstance): CompanionActionD
 				let enable = getOptNumber(action, 'MvMeterEnable')
 				if (enable === 2) {
 					// Toggle
-					enable = _self.states.SettingsProp.MvMeter[src] === 1 ? 0 : 1
+					enable = instance.states.SettingsProp.MvMeter[src] === 1 ? 0 : 1
 				}
 				await sendCommand(ActionId.MvMeter, ReqType.Set, [src, enable])
 			},

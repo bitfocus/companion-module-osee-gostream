@@ -27,19 +27,18 @@ export function create(): SuperSourceState {
 		SuperSource: {
 			enable: false,
 			source1: 0,
-			source2: 0, 
+			source2: 0,
 			background: 0,
-			controlStyle: 0, 
+			controlStyle: 0,
 			maskEnable: {
 				mask1: false,
-				mask2: false
-			}
+				mask2: false,
+			},
 		},
 	}
 }
 
 export function handleData(instance: GoStreamInstance, data: GoStreamData): boolean {
-	
 	switch (data.id as ActionId) {
 		case ActionId.SuperSourceBackground: {
 			const select = getChoices(ActionType.SuperSourceSource).find((s) => s.id === data.value[0])
@@ -67,7 +66,7 @@ export function handleData(instance: GoStreamInstance, data: GoStreamData): bool
 			return true
 		}
 		case ActionId.SuperSourceEnable: {
-			instance.states.SuperSource.enable = data.value[0] == 1 ? true : false 
+			instance.states.SuperSource.enable = data.value[0] == 1 ? true : false
 			return true
 		}
 		case ActionId.SuperSourceMaskEnable: {
@@ -107,20 +106,19 @@ export function handleData(instance: GoStreamInstance, data: GoStreamData): bool
 }
 
 export async function sync(): Promise<void> {
-	sendCommand(ActionId.SuperSourceEnable, ReqType.Get)
-	sendCommand(ActionId.SuperSourceSource1, ReqType.Get)
-	sendCommand(ActionId.SuperSourceSource2, ReqType.Get)
-	sendCommand(ActionId.SuperSourceBackground, ReqType.Get)
-	sendCommand(ActionId.SuperSourceControlStyle, ReqType.Get)
-	sendCommand(ActionId.SuperSourceMaskEnable, ReqType.Get)
-	sendCommand(ActionId.SuperSourceBorderBrightness, ReqType.Get)
-	sendCommand(ActionId.SuperSourceBorderHue, ReqType.Get)
-	sendCommand(ActionId.SuperSourceBorderSaturation, ReqType.Get)
-	sendCommand(ActionId.SuperSourceBorderWidth, ReqType.Get)
-	sendCommand(ActionId.SuperSourceControlYPosition, ReqType.Get)
-	sendCommand(ActionId.SuperSourceMaskHEnd, ReqType.Get)
-	sendCommand(ActionId.SuperSourceMaskHStart, ReqType.Get)
-	sendCommand(ActionId.SuperSourceMaskVEnd, ReqType.Get)
-	sendCommand(ActionId.SuperSourceMaskVStart, ReqType.Get)
-
+	await sendCommand(ActionId.SuperSourceEnable, ReqType.Get)
+	await sendCommand(ActionId.SuperSourceSource1, ReqType.Get)
+	await sendCommand(ActionId.SuperSourceSource2, ReqType.Get)
+	await sendCommand(ActionId.SuperSourceBackground, ReqType.Get)
+	await sendCommand(ActionId.SuperSourceControlStyle, ReqType.Get)
+	await sendCommand(ActionId.SuperSourceMaskEnable, ReqType.Get)
+	await sendCommand(ActionId.SuperSourceBorderBrightness, ReqType.Get)
+	await sendCommand(ActionId.SuperSourceBorderHue, ReqType.Get)
+	await sendCommand(ActionId.SuperSourceBorderSaturation, ReqType.Get)
+	await sendCommand(ActionId.SuperSourceBorderWidth, ReqType.Get)
+	await sendCommand(ActionId.SuperSourceControlYPosition, ReqType.Get)
+	await sendCommand(ActionId.SuperSourceMaskHEnd, ReqType.Get)
+	await sendCommand(ActionId.SuperSourceMaskHStart, ReqType.Get)
+	await sendCommand(ActionId.SuperSourceMaskVEnd, ReqType.Get)
+	await sendCommand(ActionId.SuperSourceMaskVStart, ReqType.Get)
 }

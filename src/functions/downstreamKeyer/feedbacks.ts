@@ -1,10 +1,7 @@
-
 import { FeedbackId } from './feedbackId'
 import type { GoStreamInstance } from '../../index'
 import { combineRgb, CompanionFeedbackDefinitions } from '@companion-module/base'
-import {
-	SwitchChoices,
-} from './../../model'
+import { SwitchChoices } from './../../model'
 import { getChoices } from '../../choices'
 import { ActionType } from '../../enums'
 

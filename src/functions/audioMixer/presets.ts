@@ -2,10 +2,7 @@ import { combineRgb } from '@companion-module/base'
 import { CompanionPresetDefinitions } from '@companion-module/base'
 import { ActionId } from './actionId'
 import { FeedbackId } from './feedbackId'
-import {
-	AudioInputSourcesChoices,
-	AudioMicChoices,
-} from './../../model'
+import { AudioInputSourcesChoices, AudioMicChoices } from './../../model'
 const ptzSize = '18'
 export function create(): CompanionPresetDefinitions {
 	const presets = {}

@@ -6,8 +6,7 @@ import { sendCommand } from './../../connection'
 import type { CompanionActionDefinitions } from '@companion-module/base'
 import type { GoStreamInstance } from './../../index'
 
-// @ts-ignore
-export function create(instance: GoStreamInstance): CompanionActionDefinitions {
+export function create(_instance: GoStreamInstance): CompanionActionDefinitions {
 	return {
 		[ActionId.ColorHue]: {
 			name: 'Color Back:Set Color Hue',
@@ -53,7 +52,7 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 					min: 0,
 					max: 100,
 				},
-			], 
+			],
 			callback: async (action) => {
 				await sendCommand(ActionId.ColorSaturation, ReqType.Set, [
 					getOptNumber(action, 'ColorSaturation1'),

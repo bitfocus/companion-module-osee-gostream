@@ -4,7 +4,6 @@ import { ReqType, ActionType } from '../../enums'
 import { GoStreamInstance } from '../../index'
 import { getChoices } from './../../choices'
 
-
 export type State = {
 	onAir: boolean
 	fill: number

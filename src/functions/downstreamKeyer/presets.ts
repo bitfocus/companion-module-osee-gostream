@@ -5,9 +5,7 @@ import { FeedbackId } from './feedbackId'
 
 import { ActionType } from '../../enums'
 import { getChoices } from './../../choices'
-import {
-	KeySwitchChoices,
-} from './../../model'
+import { KeySwitchChoices } from './../../model'
 
 const ptzSize = '18'
 export function create(): CompanionPresetDefinitions {

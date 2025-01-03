@@ -1,10 +1,9 @@
 import { TCPHelper, InstanceStatus } from '@companion-module/base'
 import { portDefault } from './config'
-import { ActionType, ReqType } from './enums'
+import { ReqType } from './enums'
 import { ActionId } from './actions/ActionId'
 import { Bytes2ToInt, UpackDatas, PackData } from './util'
-import { getChoices } from './choices'
-import { updateRecordVariables } from './variables'
+
 import { GoStreamInstance } from './index'
 
 import { MixEffectState } from './functions/mixEffect'
@@ -16,6 +15,8 @@ import { StreamingState } from './functions/streaming'
 import { SuperSourceState } from './functions/superSource'
 import { AudioMixerState } from './functions/audioMixer'
 import { DownstreamKeyerState } from './functions/downstreamKeyer'
+import { SettingsState } from './functions/settings'
+import { MacroState } from './functions/macro'
 
 let tcp: any = null // TCPHelper
 let Working_byte_resp_lens: any = null // BUFFER
@@ -154,7 +155,9 @@ export function ParaData(msg_data: Buffer, instance: GoStreamInstance): void {
 	if (SuperSourceState.handleData(instance, json)) return
 	if (AudioMixerState.handleData(instance, json)) return
 	if (DownstreamKeyerState.handleData(instance, json)) return
-	//if(SuperSourceState.handleData(instance, json)) return;
+	if (SettingsState.handleData(instance, json)) return
+	if (MacroState.handleData(instance, json)) return
+	if (SuperSourceState.handleData(instance, json)) return
 
 	//console.log(json);
 	if (json !== null && json.id !== '' && Array.isArray(json.value)) {
@@ -179,7 +182,7 @@ export function ParaData(msg_data: Buffer, instance: GoStreamInstance): void {
 				//instance.log('info',intstate.toString());
 				break
 			}
-				
+
 			//upStreamKeyType
 			case ActionId.KeyOnAir:
 				instance.states.TKeyeState.KeyOnAir = json.value[0] === 1 ? true : false
@@ -201,98 +204,13 @@ export function ParaData(msg_data: Buffer, instance: GoStreamInstance): void {
 				break
 
 			//Audio Mixer
-			
 
 			//Record
-			case ActionId.RecordTime:
-				updateRecordVariables(instance, json.value[0])
-				break
+
 			//Settings
-			case ActionId.AuxSource:
-				instance.states.SettingsProp.AuxSource = json.value[0]
-				break
-			case ActionId.InputWindowLayout:
-				instance.states.SettingsProp.SettingsInputWindowLayout = json.value[0]
-				break
-			case ActionId.MvMeter:
-				instance.states.SettingsProp.MvMeter[json.value[0]] = json.value[1]
-				break
-			case ActionId.OutSource: {
-				const outType = json.value[0]
-				const outTypeValue = json.value[1]
-				const selectSource = getChoices(ActionType.SettingsoutSource).find((s) => s.id === outTypeValue)
-				if (outType === 0) {
-					if (selectSource !== undefined) {
-						instance.states.SettingsProp.OutSource.hdmi1 = selectSource
-					}
-				} else if (outType === 1) {
-					if (selectSource !== undefined) {
-						instance.states.SettingsProp.OutSource.hdmi2 = selectSource
-					}
-				} else if (outType === 2) {
-					if (selectSource !== undefined) {
-						instance.states.SettingsProp.OutSource.uvc = selectSource
-					}
-				}
-				break
-			}
-			case ActionId.OutputColorSpace:
-				instance.states.SettingsProp.OutputColorSpace[json.value[0]] = json.value[1]
-				break
-			case ActionId.OutFormat:
-				instance.states.SettingsProp.OutputFormat = json.value[0]
-				break
-			case ActionId.MicInput:
-				instance.states.SettingsProp.MicInput[json.value[0]] = json.value[1]
-				break
-			case ActionId.MvLayout:
-				instance.states.SettingsProp.MvLayout = json.value[0]
-				break
-			case ActionId.SrcSelection:
-				instance.states.SettingsProp.SourceSelection[json.value[0]] = json.value[1]
-				break
+
 			//macro
-			case ActionId.MacroInfo: {
-				const obj = {
-					MacroIndex: Number(json.value[0]),
-					Name: json.value[1],
-					description: json.value[2],
-					isUsed: true,
-					isWaiting: false,
-					isRecording: false,
-					isRunning: false,
-				}
-				instance.states.MacroProp.macroProperties.push(obj)
-				break
-			}
-			case ActionId.MacroRun: {
-				const macroIndex = Number(json.value[1])
-				const macrostate = json.value[0]
-				const macro = instance.states.MacroProp.macroProperties.find((s) => s?.MacroIndex === macroIndex)
-				if (macro !== undefined) {
-					macro.isRunning = macrostate === 1 ? true : false
-				}
-				break
-			}
-			case ActionId.MacroRecord: {
-				const r_index = Number(json.value[1])
-				const r_state = json.value[0]
-				const r_macro = instance.states.MacroProp.macroProperties.find((s) => s?.MacroIndex === r_index)
-				if (r_macro !== undefined) {
-					r_macro.isRecording = r_state === 1 ? true : false
-				} else {
-					instance.states.MacroProp.macroProperties.push({
-						Name: '',
-						description: '',
-						isRecording: r_state,
-						isUsed: true,
-						isRunning: false,
-						isWaiting: false,
-						MacroIndex: r_index,
-					})
-				}
-				break
-			}
+
 			default:
 				return
 		}
@@ -311,21 +229,8 @@ export async function ReqStateData(): Promise<void> {
 	await StreamingState.sync()
 	await AudioMixerState.sync()
 	await DownstreamKeyerState.sync()
-	//SuperSourceState.sync()
-
-	/*await sendCommand(ActionId.PgmIndex, ReqType.Get)
-	await sendCommand(ActionId.PvwIndex, ReqType.Get)
-	await sendCommand(ActionId.AutoTransition, ReqType.Get)
-	await sendCommand(ActionId.Prev, ReqType.Get)
-	await sendCommand(ActionId.FTB, ReqType.Get)
-	await sendCommand(ActionId.FtbRate, ReqType.Get)
-	await sendCommand(ActionId.FtbAudioAFV, ReqType.Get)
-	await sendCommand(ActionId.TransitionIndex, ReqType.Get)
-	await sendCommand(ActionId.TransitionRate, ReqType.Get, [0])
-	await sendCommand(ActionId.TransitionRate, ReqType.Get, [1])
-	await sendCommand(ActionId.TransitionRate, ReqType.Get, [2])
-	await sendCommand(ActionId.TransitionSource, ReqType.Get)*/
-
+	await MacroState.sync()
+	await SuperSourceState.sync()
 
 	//upStreamKeyType
 	await sendCommand(ActionId.KeyOnAir, ReqType.Get)
@@ -334,50 +239,8 @@ export async function ReqStateData(): Promise<void> {
 	await sendCommand(ActionId.ChromaKeyFill, ReqType.Get)
 	await sendCommand(ActionId.KeyPatternSourceFill, ReqType.Get)
 	await sendCommand(ActionId.PipSource, ReqType.Get)
-	//Still
-	//await sendCommand(ActionId.StillSelection, ReqType.Get, [0])
-	//await sendCommand(ActionId.StillSelection, ReqType.Get, [1])
-	//Audio Mixer
-	//await sendCommand(ActionId.AudioTransition, ReqType.Get)
-	//await sendCommand(ActionId.AudioEnable, ReqType.Get, [0])
-	//await sendCommand(ActionId.AudioEnable, ReqType.Get, [1])
-	//await sendCommand(ActionId.AudioEnable, ReqType.Get, [2])
-	//await sendCommand(ActionId.AudioEnable, ReqType.Get, [3])
-	//await sendCommand(ActionId.AudioEnable, ReqType.Get, [4])
-	//await sendCommand(ActionId.AudioEnable, ReqType.Get, [5])
-	//await sendCommand(ActionId.AudioEnable, ReqType.Get, [6])
-	//Streaming
-	//await sendCommand(ActionId.StreamOutput, ReqType.Get, [0])
-	//await sendCommand(ActionId.StreamOutput, ReqType.Get, [1])
-	//await sendCommand(ActionId.StreamOutput, ReqType.Get, [2])
-	//Playback
-	//await sendCommand(ActionId.PlaybackMode, ReqType.Get)
-	//await sendCommand(ActionId.PlaybackRepeat, ReqType.Get)
-	//await sendCommand(ActionId.PlaybackPause, ReqType.Get)
-	//await sendCommand(ActionId.PlaybackBar, ReqType.Get)
-	//await sendCommand(ActionId.PlaybackList, ReqType.Get)
-	//Record
-	//await sendCommand(ActionId.Record, ReqType.Get)
-	//await sendCommand(ActionId.Live, ReqType.Get)
-	//Settings
-	await sendCommand(ActionId.AuxSource, ReqType.Get)
-	await sendCommand(ActionId.OutSource, ReqType.Get, [0])
-	await sendCommand(ActionId.OutSource, ReqType.Get, [1])
-	await sendCommand(ActionId.OutSource, ReqType.Get, [2])
-	await sendCommand(ActionId.InputWindowLayout, ReqType.Get)
-	await sendCommand(ActionId.MvMeter, ReqType.Get, [0])
-	await sendCommand(ActionId.MvMeter, ReqType.Get, [1])
-	await sendCommand(ActionId.MvMeter, ReqType.Get, [2])
-	await sendCommand(ActionId.MvMeter, ReqType.Get, [3])
-	await sendCommand(ActionId.MvMeter, ReqType.Get, [4])
-	await sendCommand(ActionId.MvMeter, ReqType.Get, [5])
-	await sendCommand(ActionId.OutputColorSpace, ReqType.Get)
-	await sendCommand(ActionId.OutFormat, ReqType.Get)
-	await sendCommand(ActionId.MvLayout, ReqType.Get)
-	await sendCommand(ActionId.MicInput, ReqType.Get, [0])
-	await sendCommand(ActionId.MicInput, ReqType.Get, [1])
+
 	//Macro
-	await sendCommand(ActionId.GetMacroInfoAll, ReqType.Get)
 }
 
 export function disconnectSocket(): void {
