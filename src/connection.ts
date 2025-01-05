@@ -1,22 +1,23 @@
 import { TCPHelper, InstanceStatus } from '@companion-module/base'
 import { portDefault } from './config'
 import { ReqType } from './enums'
-import { ActionId } from './actions/ActionId'
 import { Bytes2ToInt, UpackDatas, PackData } from './util'
 
 import { GoStreamInstance } from './index'
 
-import { MixEffectState } from './functions/mixEffect'
-import { LiveState } from './functions/live'
-import { PlaybackState } from './functions/playback'
-import { RecordState } from './functions/record'
-import { StillGeneratorState } from './functions/stillGenerator'
-import { StreamingState } from './functions/streaming'
-import { SuperSourceState } from './functions/superSource'
-import { AudioMixerState } from './functions/audioMixer'
-import { DownstreamKeyerState } from './functions/downstreamKeyer'
-import { SettingsState } from './functions/settings'
-import { MacroState } from './functions/macro'
+import { MixEffectActions, MixEffectState } from './functions/mixEffect'
+import { LiveActions, LiveState } from './functions/live'
+import { PlaybackActions, PlaybackState } from './functions/playback'
+import { RecordActions, RecordState } from './functions/record'
+import { StillGeneratorActions, StillGeneratorState } from './functions/stillGenerator'
+import { StreamingActions, StreamingState } from './functions/streaming'
+import { SuperSourceActions, SuperSourceState } from './functions/superSource'
+import { AudioMixerActions, AudioMixerState } from './functions/audioMixer'
+import { DownstreamKeyerActions, DownstreamKeyerState } from './functions/downstreamKeyer'
+import { SettingsActions } from './functions/settings'
+import { MacroActions, MacroState } from './functions/macro'
+
+import { UpstreamKeyerActions, UpstreamKeyerState } from './functions/upstreamKeyer'
 
 let tcp: any = null // TCPHelper
 let Working_byte_resp_lens: any = null // BUFFER
@@ -141,83 +142,23 @@ export type GoStreamData = {
 
 export function ParaData(msg_data: Buffer, instance: GoStreamInstance): void {
 	const jsonContent = UpackDatas(msg_data)
-	//console.log("jsonContent", jsonContent)
 	const jsonStr = jsonContent.toString('utf8')
-	//console.log(jsonStr);
 	const json = JSON.parse(jsonStr)
 
-	if (MixEffectState.handleData(instance, json)) return
-	if (LiveState.handleData(instance, json)) return
-	if (PlaybackState.handleData(instance, json)) return
-	if (RecordState.handleData(instance, json)) return
-	if (StillGeneratorState.handleData(instance, json)) return
-	if (StreamingState.handleData(instance, json)) return
-	if (SuperSourceState.handleData(instance, json)) return
-	if (AudioMixerState.handleData(instance, json)) return
-	if (DownstreamKeyerState.handleData(instance, json)) return
-	if (SettingsState.handleData(instance, json)) return
-	if (MacroState.handleData(instance, json)) return
-	if (SuperSourceState.handleData(instance, json)) return
-
-	//console.log(json);
-	if (json !== null && json.id !== '' && Array.isArray(json.value)) {
-		switch (json.id) {
-			case ActionId.TransitionSource: {
-				const intstate = Number(json.value[0])
-				if ((intstate & 1) === 1) {
-					instance.states.TKeyeState.M_Key = true
-				} else {
-					instance.states.TKeyeState.M_Key = false
-				}
-				if (((intstate >> 1) & 1) === 1) {
-					instance.states.TKeyeState.DSK = true
-				} else {
-					instance.states.TKeyeState.DSK = false
-				}
-				if (((intstate >> 2) & 1) === 1) {
-					instance.states.TKeyeState.BKGD = true
-				} else {
-					instance.states.TKeyeState.BKGD = false
-				}
-				//instance.log('info',intstate.toString());
-				break
-			}
-
-			//upStreamKeyType
-			case ActionId.KeyOnAir:
-				instance.states.TKeyeState.KeyOnAir = json.value[0] === 1 ? true : false
-				break
-			case ActionId.UpStreamKeyType:
-				instance.states.upStreamKeyState.UpStreamKeyType = json.value[0]
-				break
-			case ActionId.LumaKeySourceFill:
-				instance.states.upStreamKeyState.ArrayKeySourceFill[0] = json.value[0]
-				break
-			case ActionId.ChromaKeyFill:
-				instance.states.upStreamKeyState.ArrayKeySourceFill[1] = json.value[0]
-				break
-			case ActionId.KeyPatternSourceFill:
-				instance.states.upStreamKeyState.ArrayKeySourceFill[2] = json.value[0]
-				break
-			case ActionId.PipSource:
-				instance.states.upStreamKeyState.ArrayKeySourceFill[3] = json.value[0]
-				break
-
-			//Audio Mixer
-
-			//Record
-
-			//Settings
-
-			//macro
-
-			default:
-				return
-		}
-		instance.checkFeedbacks()
-	} else {
-		instance.log('error', json.error_info)
-	}
+	MixEffectActions.handleData(instance, json)
+	LiveActions.handleData(instance, json)
+	PlaybackActions.handleData(instance, json)
+	RecordActions.handleData(instance, json)
+	StillGeneratorActions.handleData(instance, json)
+	StreamingActions.handleData(instance, json)
+	SuperSourceActions.handleData(instance, json)
+	AudioMixerActions.handleData(instance, json)
+	DownstreamKeyerActions.handleData(instance, json)
+	SettingsActions.handleData(instance, json)
+	MacroActions.handleData(instance, json)
+	SuperSourceActions.handleData(instance, json)
+	UpstreamKeyerActions.handleData(instance, json)
+	instance.checkFeedbacks()
 }
 
 export async function ReqStateData(): Promise<void> {
@@ -231,16 +172,7 @@ export async function ReqStateData(): Promise<void> {
 	await DownstreamKeyerState.sync()
 	await MacroState.sync()
 	await SuperSourceState.sync()
-
-	//upStreamKeyType
-	await sendCommand(ActionId.KeyOnAir, ReqType.Get)
-	await sendCommand(ActionId.UpStreamKeyType, ReqType.Get)
-	await sendCommand(ActionId.LumaKeySourceFill, ReqType.Get)
-	await sendCommand(ActionId.ChromaKeyFill, ReqType.Get)
-	await sendCommand(ActionId.KeyPatternSourceFill, ReqType.Get)
-	await sendCommand(ActionId.PipSource, ReqType.Get)
-
-	//Macro
+	await UpstreamKeyerState.sync()
 }
 
 export function disconnectSocket(): void {

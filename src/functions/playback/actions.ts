@@ -1,8 +1,8 @@
 import { ActionId } from './actionId'
-import { getOptNumber } from '../../actions/index'
+import { getOptNumber } from '../../actions'
 import { SwitchChoices } from '../../model'
 import { ReqType } from '../../enums'
-import { sendCommand } from '../../connection'
+import { sendCommand, GoStreamData } from '../../connection'
 import type { GoStreamInstance } from '../../index'
 import type { CompanionActionDefinitions } from '@companion-module/base'
 
@@ -186,4 +186,32 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 			},
 		},
 	}
+}
+export function handleData(instance: GoStreamInstance, data: GoStreamData): boolean {
+	switch (data.id as ActionId) {
+		case ActionId.PlaybackMode:
+			instance.states.Playback.Mode = data.value[0]
+			break
+		case ActionId.PlaybackRepeat:
+			instance.states.Playback.Repeat = data.value[0] === 1 ? true : false
+			break
+		case ActionId.PlaybackPause:
+			instance.states.Playback.Pause = data.value[0] === 1 ? true : false
+			//updatePlayStatedVariables(instance, instance.states.PlayBackState.PlaybackPause)
+			break
+		case ActionId.PlaybackBar:
+			instance.states.Playback.Bar = data.value[0] === 1 ? true : false
+			break
+		case ActionId.PlayFile:
+			instance.states.Playback.File = instance.states.Playback.FileList.indexOf(data.value[0])
+			//updatePlayFileVariables(instance, data.value[0])
+			break
+		case ActionId.PlaybackList:
+			instance.states.Playback.FileList = instance.states.Playback.FileList.concat(data.value)
+			// Re-initialize actions and feedbackls so that dropdown are updated
+			instance.init_actions()
+			instance.init_feedbacks()
+			break
+	}
+	return false
 }

@@ -1,9 +1,6 @@
 import { ActionId } from './actionId'
-import { sendCommand, GoStreamData } from '../../connection'
-import { ReqType, ActionType } from '../../enums'
-import { GoStreamInstance } from '../../index'
-import { getChoices } from './../../choices'
-import { updateRecordVariables } from './../../variables'
+import { sendCommand } from '../../connection'
+import { ReqType } from '../../enums'
 
 export type State = {
 	auxSource: number
@@ -35,58 +32,6 @@ export function create(): SettingsState {
 			sourceSelection: [0, 0, 0, 0],
 		},
 	}
-}
-
-export function handleData(instance: GoStreamInstance, data: GoStreamData): boolean {
-	switch (data.id as ActionId) {
-		case ActionId.AuxSource:
-			instance.states.SettingsProp.AuxSource = data.value[0]
-			return true
-		case ActionId.InputWindowLayout:
-			instance.states.SettingsProp.SettingsInputWindowLayout = data.value[0]
-			return true
-		case ActionId.MvMeter:
-			instance.states.SettingsProp.MvMeter[data.value[0]] = data.value[1]
-			return true
-		case ActionId.OutSource: {
-			const outType = data.value[0]
-			const outTypeValue = data.value[1]
-			const selectSource = getChoices(ActionType.SettingsoutSource).find((s) => s.id === outTypeValue)
-			if (outType === 0) {
-				if (selectSource !== undefined) {
-					instance.states.SettingsProp.OutSource.hdmi1 = selectSource
-				}
-			} else if (outType === 1) {
-				if (selectSource !== undefined) {
-					instance.states.SettingsProp.OutSource.hdmi2 = selectSource
-				}
-			} else if (outType === 2) {
-				if (selectSource !== undefined) {
-					instance.states.SettingsProp.OutSource.uvc = selectSource
-				}
-			}
-			return true
-		}
-		case ActionId.OutputColorSpace:
-			instance.states.SettingsProp.OutputColorSpace[data.value[0]] = data.value[1]
-			return true
-		case ActionId.OutFormat:
-			instance.states.SettingsProp.OutputFormat = data.value[0]
-			return true
-		case ActionId.MicInput:
-			instance.states.SettingsProp.MicInput[data.value[0]] = data.value[1]
-			return true
-		case ActionId.MvLayout:
-			instance.states.SettingsProp.MvLayout = data.value[0]
-			return true
-		case ActionId.SrcSelection:
-			instance.states.SettingsProp.SourceSelection[data.value[0]] = data.value[1]
-			return true
-		case ActionId.RecordTime:
-			updateRecordVariables(instance, data.value[0].toString())
-			return true
-	}
-	return false
 }
 
 export async function sync(): Promise<void> {

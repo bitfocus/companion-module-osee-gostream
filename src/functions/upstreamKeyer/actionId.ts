@@ -1,5 +1,4 @@
 export enum ActionId {
-	//UpStream Key
 	KeyOnAir = 'keyOnAir',
 	TransitionSource = 'transitionSource',
 	USKOnPreview = 'uskOnPreview', // This is custom function

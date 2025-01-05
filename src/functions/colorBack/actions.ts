@@ -1,5 +1,5 @@
 import { ActionId } from './actionId'
-import { getOptNumber } from './../../actions/index'
+import { getOptNumber } from './../../actions'
 import { ColorSwitchChoices } from './../../model'
 import { ReqType } from './../../enums'
 import { sendCommand } from './../../connection'

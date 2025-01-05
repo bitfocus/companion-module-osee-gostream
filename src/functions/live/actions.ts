@@ -1,7 +1,7 @@
 import { ActionId } from './actionId'
-import { getOptNumber } from '../../actions/index'
+import { getOptNumber } from '../../actions'
 import { ReqType } from '../../enums'
-import { sendCommand } from '../../connection'
+import { sendCommand, GoStreamData } from '../../connection'
 import type { GoStreamInstance } from '../../index'
 import type { CompanionActionDefinitions } from '@companion-module/base'
 
@@ -44,4 +44,14 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 			},
 		},
 	}
+}
+
+export function handleData(instance: GoStreamInstance, data: GoStreamData): boolean {
+	switch (data.id as ActionId) {
+		case ActionId.Live: {
+			instance.states.Live.State = data.value[0]
+			return true
+		}
+	}
+	return false
 }

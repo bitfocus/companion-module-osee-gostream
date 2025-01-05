@@ -1,9 +1,9 @@
 import { ActionId } from './actionId'
-import { getOptNumber } from '../../actions/index'
+import { getOptNumber } from '../../actions'
 import { getChoices } from '../../choices'
 import { SwitchChoices, SuperSourceBorderChoices, SuperSourceMaskChoices, SuperSourceStyleChoices } from '../../model'
 import { ReqType, ActionType } from '../../enums'
-import { sendCommand } from '../../connection'
+import { sendCommand, GoStreamData } from '../../connection'
 import type { GoStreamInstance } from '../../index'
 import type { CompanionActionDefinitions } from '@companion-module/base'
 
@@ -347,4 +347,70 @@ export function create(_self: GoStreamInstance): CompanionActionDefinitions {
 			},
 		},
 	}
+}
+export function handleData(instance: GoStreamInstance, data: GoStreamData): boolean {
+	switch (data.id as ActionId) {
+		case ActionId.SuperSourceBackground: {
+			const select = getChoices(ActionType.SuperSourceSource).find((s) => s.id === data.value[0])
+			if (select !== undefined) instance.states.SuperSource.background = select
+			return true
+		}
+		case ActionId.SuperSourceBorderBrightness: {
+			return true
+		}
+		case ActionId.SuperSourceBorderHue: {
+			return true
+		}
+		case ActionId.SuperSourceBorderSaturation: {
+			return true
+		}
+		case ActionId.SuperSourceBorderWidth: {
+			return true
+		}
+		case ActionId.SuperSourceControlStyle: {
+			const sschoice = SuperSourceStyleChoices.find((s) => s.id === data.value[0])
+			if (sschoice !== undefined) instance.states.SuperSource.controlStyle = sschoice
+			return true
+		}
+		case ActionId.SuperSourceControlYPosition: {
+			return true
+		}
+		case ActionId.SuperSourceEnable: {
+			instance.states.SuperSource.enable = data.value[0] == 1 ? true : false
+			return true
+		}
+		case ActionId.SuperSourceMaskEnable: {
+			const masktype = data.value[0]
+			const masktypeValue = data.value[1]
+			if (masktype === 0) {
+				instance.states.SuperSource.maskEnable.mask1 = masktypeValue === 1 ? true : false
+			} else {
+				instance.states.SuperSource.maskEnable.mask2 = masktypeValue === 1 ? true : false
+			}
+			return true
+		}
+		case ActionId.SuperSourceMaskHEnd: {
+			return true
+		}
+		case ActionId.SuperSourceMaskHStart: {
+			return true
+		}
+		case ActionId.SuperSourceMaskVEnd: {
+			return true
+		}
+		case ActionId.SuperSourceMaskVStart: {
+			return true
+		}
+		case ActionId.SuperSourceSource1: {
+			const select = getChoices(ActionType.SuperSourceSource).find((s) => s.id === data.value[0])
+			if (select !== undefined) instance.states.SuperSource.source1 = select
+			return true
+		}
+		case ActionId.SuperSourceSource2: {
+			const select = getChoices(ActionType.SuperSourceSource).find((s) => s.id === data.value[0])
+			if (select !== undefined) instance.states.SuperSource.source2 = select
+			return true
+		}
+	}
+	return false
 }

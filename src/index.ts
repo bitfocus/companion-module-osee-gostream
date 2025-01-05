@@ -3,7 +3,7 @@ import { GetConfigFields, Config } from './config'
 import { GoStream } from './GoStream'
 //import { type IModelSpec, MODEL_AUTO_DETECT } from './models/types'
 //import { GetModelSpec, GetAutoDetectModel } from './models/index'
-import { GetActionsList } from './actions/index'
+import { GetActionsList } from './actions'
 
 export class GoStreamInstance extends InstanceBase<Config> {
 	config

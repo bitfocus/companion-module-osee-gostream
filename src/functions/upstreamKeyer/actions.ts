@@ -1,17 +1,17 @@
-import { ActionId } from './ActionId'
-import { getOptNumber } from './index'
-import { getChoices } from '../choices'
-import { UpStreamKeyTypeChoices } from '../model'
-import { ReqType, ActionType } from '../enums'
-import { sendCommand } from '../connection'
-import { createLumaKeyActions } from './upstreamKeyActions/lumaKey'
-import { createChromaKeyActions } from './upstreamKeyActions/chromaKey'
-import { createKeyPatternActions } from './upstreamKeyActions/keyPattern'
-import { createPIPActions } from './upstreamKeyActions/pip'
-import type { GoStreamInstance } from '../index'
+import { ActionId } from './actionId'
+import { getOptNumber } from './../../actions'
+import { getChoices } from './../../choices'
+import { UpStreamKeyTypeChoices } from './../../model'
+import { ReqType, ActionType } from './../../enums'
+import { sendCommand, GoStreamData } from './../../connection'
+import { createLumaKeyActions } from './keyTypes/lumaKey'
+import { createChromaKeyActions } from './keyTypes/chromaKey'
+import { createKeyPatternActions } from './keyTypes/keyPattern'
+import { createPIPActions } from './keyTypes/pip'
+import type { GoStreamInstance } from './../../index'
 import type { CompanionActionDefinitions } from '@companion-module/base'
 
-export function createUSKActions(_self: GoStreamInstance): CompanionActionDefinitions {
+export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 	return {
 		[ActionId.KeyOnAir]: {
 			name: 'Next Transition:Set KeyOnAir',
@@ -32,7 +32,7 @@ export function createUSKActions(_self: GoStreamInstance): CompanionActionDefini
 				const opt = getOptNumber(action, 'KeyOnAir')
 				let paramOpt = 0
 				if (opt === 2) {
-					if (_self.states.TKeyeState.KeyOnAir === true) {
+					if (instance.states.TKeyeState.KeyOnAir === true) {
 						paramOpt = 0
 					} else {
 						paramOpt = 1
@@ -102,7 +102,7 @@ export function createUSKActions(_self: GoStreamInstance): CompanionActionDefini
 			callback: async (action) => {
 				let nextState = action.options.USKTieState
 				if (nextState === 0) {
-					nextState = _self.states.upStreamKeyState.Tied ? 4 : 5
+					nextState = instance.states.upStreamKeyState.Tied ? 4 : 5
 				}
 				await sendCommand(ActionId.TransitionSource, ReqType.Set, [nextState])
 			},
@@ -127,19 +127,19 @@ export function createUSKActions(_self: GoStreamInstance): CompanionActionDefini
 
 				if (nextState === 0) {
 					// Figure out if it is visible in pvw or not
-					if (_self.states.upStreamKeyState.Tied && !_self.states.upStreamKeyState.OnAir)
+					if (instance.states.upStreamKeyState.Tied && !instance.states.upStreamKeyState.OnAir)
 						// it is currently visible, so should be hidden
 						nextState = 4
-					else if (!_self.states.upStreamKeyState.Tied && _self.states.upStreamKeyState.OnAir)
+					else if (!instance.states.upStreamKeyState.Tied && instance.states.upStreamKeyState.OnAir)
 						// it is currently visible, so should be hidden. As it is on air we do this by tie:ing
 						nextState = 5
-					else if (_self.states.upStreamKeyState.Tied && _self.states.upStreamKeyState.OnAir)
+					else if (instance.states.upStreamKeyState.Tied && instance.states.upStreamKeyState.OnAir)
 						// it is currently hidden, so should be visible. As it is on air we do this by unting
 						nextState = 4
-					else if (!_self.states.upStreamKeyState.Tied && !_self.states.upStreamKeyState.OnAir)
+					else if (!instance.states.upStreamKeyState.Tied && !instance.states.upStreamKeyState.OnAir)
 						// it is currently hidden, so should be visible
 						nextState = 5
-				} else if (_self.states.upStreamKeyState.OnAir) {
+				} else if (instance.states.upStreamKeyState.OnAir) {
 					// Invert next state if On Air is true
 					nextState = nextState === 5 ? 4 : 5
 				}
@@ -154,9 +154,53 @@ export function createUSKActions(_self: GoStreamInstance): CompanionActionDefini
 				//}
 			},
 		},
-		...createLumaKeyActions(_self),
-		...createChromaKeyActions(_self),
-		...createKeyPatternActions(_self),
-		...createPIPActions(_self),
+		...createLumaKeyActions(instance),
+		...createChromaKeyActions(instance),
+		...createKeyPatternActions(instance),
+		...createPIPActions(instance),
 	}
+}
+
+export function handleData(instance: GoStreamInstance, data: GoStreamData): boolean {
+	switch (data.id as ActionId) {
+		case ActionId.KeyOnAir:
+			instance.states.UpstreamKeyer.transitionKey.KeyOnAir = data.value[0] === 1 ? true : false
+			return true
+		case ActionId.UpStreamKeyType:
+			instance.states.UpstreamKeyer.UpStreamKeyType = data.value[0]
+			return true
+		case ActionId.LumaKeySourceFill:
+			instance.states.UpstreamKeyer.ArrayKeySourceFill[0] = data.value[0]
+			return true
+		case ActionId.ChromaKeyFill:
+			instance.states.UpstreamKeyer.ArrayKeySourceFill[1] = data.value[0]
+			return true
+		case ActionId.KeyPatternSourceFill:
+			instance.states.UpstreamKeyer.ArrayKeySourceFill[2] = data.value[0]
+			return true
+		case ActionId.PipSource:
+			instance.states.UpstreamKeyer.ArrayKeySourceFill[3] = data.value[0]
+			return true
+		case ActionId.TransitionSource: {
+			const intstate = Number(data.value[0])
+			if ((intstate & 1) === 1) {
+				instance.states.UpstreamKeyer.transitionKey.M_Key = true
+			} else {
+				instance.states.UpstreamKeyer.transitionKey.M_Key = false
+			}
+			if (((intstate >> 1) & 1) === 1) {
+				instance.states.UpstreamKeyer.transitionKey.DSK = true
+			} else {
+				instance.states.UpstreamKeyer.transitionKey.DSK = false
+			}
+			if (((intstate >> 2) & 1) === 1) {
+				instance.states.UpstreamKeyer.transitionKey.BKGD = true
+			} else {
+				instance.states.UpstreamKeyer.transitionKey.BKGD = false
+			}
+			//instance.log('info',intstate.toString());
+			break
+		}
+	}
+	return false
 }

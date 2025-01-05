@@ -9,6 +9,7 @@ import { AudioMixerState } from './functions/audioMixer'
 import { DownstreamKeyerState } from './functions/downstreamKeyer'
 import { SettingsState } from './functions/settings'
 import { MacroState } from './functions/macro'
+import { UpstreamKeyerState } from './functions/upstreamKeyer'
 
 type GoStreamState = {
 	MixEffect: MixEffectState.State
@@ -22,25 +23,12 @@ type GoStreamState = {
 	DownstreamKeyer: DownstreamKeyerState.State
 	Settings: SettingsState.State
 	Macro: MacroState.State
+	UpstreamKeyer: UpstreamKeyerState.State
 	infos: {
 		protocolVersion: string
 		deviceType: number
 	}
-	TKeyeState: {
-		BKGD: boolean
-		DSK: boolean
-		M_Key: boolean
-		KeyOnAir: boolean
-		DSKOnAir: boolean
-	}
 	selectOutputs: object
-	upStreamKeyState: {
-		PvwOnAir: boolean
-		Tied: boolean
-		OnAir: boolean
-		UpStreamKeyType: number
-		ArrayKeySourceFill: number[]
-	}
 }
 
 export function Create(): GoStreamState {
@@ -56,24 +44,11 @@ export function Create(): GoStreamState {
 		...DownstreamKeyerState.create(),
 		...SettingsState.create(),
 		...MacroState.create(),
+		...UpstreamKeyerState.create(),
 		infos: {
 			protocolVersion: '1.0',
 			deviceType: 0,
 		},
-		TKeyeState: {
-			BKGD: true,
-			DSK: false,
-			M_Key: false,
-			KeyOnAir: false,
-			DSKOnAir: false,
-		},
 		selectOutputs: {},
-		upStreamKeyState: {
-			PvwOnAir: false,
-			Tied: false,
-			OnAir: false,
-			UpStreamKeyType: 0,
-			ArrayKeySourceFill: [0, 0, 0, 0],
-		},
 	}
 }

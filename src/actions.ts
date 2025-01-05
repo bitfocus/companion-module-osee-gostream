@@ -1,18 +1,18 @@
-import { createUSKActions } from './upstreamKeyer'
-import { SuperSourceActions } from '../functions/superSource'
-import { MixEffectActions } from '../functions/mixEffect'
-import { StreamingActions } from '../functions/streaming'
-import { LiveActions } from '../functions/live'
-import { RecordActions } from '../functions/record'
-import { StillGeneratorActions } from '../functions/stillGenerator'
-import { PlaybackActions } from '../functions/playback'
-import { AudioMixerActions } from '../functions/audioMixer'
-import { ColorBackActions } from '../functions/colorBack'
-import { DownstreamKeyerActions } from '../functions/downstreamKeyer'
-import { SettingsActions } from '../functions/settings'
-import { MacroActions } from '../functions/macro'
+import { SuperSourceActions } from './functions/superSource'
+import { MixEffectActions } from './functions/mixEffect'
+import { StreamingActions } from './functions/streaming'
+import { LiveActions } from './functions/live'
+import { RecordActions } from './functions/record'
+import { StillGeneratorActions } from './functions/stillGenerator'
+import { PlaybackActions } from './functions/playback'
+import { AudioMixerActions } from './functions/audioMixer'
+import { ColorBackActions } from './functions/colorBack'
+import { DownstreamKeyerActions } from './functions/downstreamKeyer'
+import { SettingsActions } from './functions/settings'
+import { MacroActions } from './functions/macro'
+import { UpstreamKeyerActions } from './functions/upstreamKeyer'
 
-import type { GoStreamInstance } from '../index'
+import type { GoStreamInstance } from './index'
 import { type CompanionActionDefinitions, type CompanionActionEvent } from '@companion-module/base'
 
 export function GetActionsList(instance: GoStreamInstance): CompanionActionDefinitions {
@@ -29,8 +29,7 @@ export function GetActionsList(instance: GoStreamInstance): CompanionActionDefin
 		...DownstreamKeyerActions.create(instance),
 		...SettingsActions.create(instance),
 		...MacroActions.create(instance),
-		// OLD TYPE ACTIONS
-		...createUSKActions(instance),
+		...UpstreamKeyerActions.create(instance),
 	}
 }
 

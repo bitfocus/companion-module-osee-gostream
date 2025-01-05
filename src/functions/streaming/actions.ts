@@ -1,11 +1,10 @@
 import { ActionId } from './actionId'
-import { getOptNumber, getOptString } from '../../actions/index'
+import { getOptNumber, getOptString } from '../../actions'
 import { StreamingChoices, SwitchChoices } from '../../model'
 import { ReqType } from '../../enums'
-import { sendCommand } from '../../connection'
+import { sendCommand, GoStreamData } from '../../connection'
 import type { GoStreamInstance } from '../../index'
 import type { CompanionActionDefinitions } from '@companion-module/base'
-
 export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 	return {
 		[ActionId.StreamOutput]: {
@@ -70,4 +69,20 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 			},
 		},
 	}
+}
+export function handleData(instance: GoStreamInstance, data: GoStreamData): boolean {
+	switch (data.id as ActionId) {
+		case ActionId.StreamOutput: {
+			const streamtype = data.value[0]
+			if (streamtype === 0) {
+				instance.states.Streaming.stream1 = data.value[1] === 1 ? true : false
+			} else if (streamtype === 1) {
+				instance.states.Streaming.stream2 = data.value[1] === 1 ? true : false
+			} else if (streamtype === 2) {
+				instance.states.Streaming.stream3 = data.value[1] === 1 ? true : false
+			}
+			return true
+		}
+	}
+	return false
 }

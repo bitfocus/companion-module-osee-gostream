@@ -1,10 +1,10 @@
-import { ActionId } from '../ActionId'
-import { getOptNumber } from '../index'
-import { getChoices } from '../../choices'
-import { SwitchChoices, KeyResizeSizeChoices } from '../../model'
-import { ReqType, ActionType } from '../../enums'
-import { sendCommand } from '../../connection'
-import type { GoStreamInstance } from '../../index'
+import { ActionId } from '../actionId'
+import { getOptNumber } from './../../../actions'
+import { getChoices } from './../../../choices'
+import { SwitchChoices, KeyResizeSizeChoices } from './../../../model'
+import { ReqType, ActionType } from './../../../enums'
+import { sendCommand } from './../../../connection'
+import type { GoStreamInstance } from './../../../index'
 import type { CompanionActionDefinitions } from '@companion-module/base'
 
 export function createKeyPatternActions(_self: GoStreamInstance): CompanionActionDefinitions {
