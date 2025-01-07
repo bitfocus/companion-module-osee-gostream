@@ -1,5 +1,5 @@
 import { ActionId } from './actionId'
-import { getOptNumber } from '../../actions'
+import { getOptNumber } from '../../util'
 import { SwitchChoices } from '../../model'
 import { ReqType } from '../../enums'
 import { sendCommand, GoStreamData } from '../../connection'

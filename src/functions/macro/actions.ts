@@ -3,7 +3,7 @@ import { getChoicesByMacro } from './../../choices'
 import { ReqType } from './../../enums'
 import { sendCommand, GoStreamData } from './../../connection'
 import type { GoStreamInstance } from './../../index'
-import { getOptNumber, getOptString } from './../../actions'
+import { getOptNumber, getOptString } from './../../util'
 import { type CompanionActionDefinitions, Regex } from '@companion-module/base'
 
 export function create(_instance: GoStreamInstance): CompanionActionDefinitions {

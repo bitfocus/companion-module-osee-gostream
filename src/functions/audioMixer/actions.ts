@@ -1,5 +1,5 @@
 import { ActionId } from './actionId'
-import { getOptNumber } from '../../actions'
+import { getOptNumber } from '../../util'
 import { ReqType, ActionType } from '../../enums'
 import { sendCommand, GoStreamData } from '../../connection'
 import type { GoStreamInstance } from '../../index'

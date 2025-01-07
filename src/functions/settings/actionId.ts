@@ -21,8 +21,6 @@ export enum ActionId {
 	Panel = 'panel',
 	SdFormat = 'sdFormat',
 	SystemReset = 'systemReset',
-	RecordStatus = 'recordStatus',
-	RecordTime = 'recordTime',
 	SdCardStatus = 'sdCardStatus',
 	SdFree = 'sdFree',
 	LiveStatus = 'liveStatus',

@@ -1,6 +1,28 @@
+import type { CompanionActionEvent } from '@companion-module/base'
+
 export const HEAD1 = 0xeb
 export const HEAD2 = 0xa6
 export const ProType = 0x00
+
+export function getOptNumber(action: CompanionActionEvent, key: string, defVal?: number): number {
+	const rawVal = action.options[key]
+	if (defVal !== undefined && rawVal === undefined) return defVal
+	const val = Number(rawVal)
+	if (isNaN(val)) {
+		throw new Error(`Invalid option '${key}'`)
+	}
+	return val
+}
+
+export function getOptString(action: CompanionActionEvent, key: string, defVal?: string): string {
+	const rawVal = action.options[key]
+	if (defVal !== undefined && rawVal === undefined) return defVal
+	const val = String(rawVal)
+	if (typeof rawVal !== 'string') {
+		throw new Error(`Invalid option '${key}'`)
+	}
+	return val
+}
 
 export function PackData(Datas: Buffer): Buffer {
 	const dataLen = Datas.length + 5

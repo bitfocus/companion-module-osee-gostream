@@ -1,5 +1,5 @@
 import { ActionId } from './actionId'
-import { getOptNumber } from '../../actions'
+import { getOptNumber } from '../../util'
 import { getChoices } from '../../choices'
 import { SwitchChoices, SuperSourceBorderChoices, SuperSourceMaskChoices, SuperSourceStyleChoices } from '../../model'
 import { ReqType, ActionType } from '../../enums'

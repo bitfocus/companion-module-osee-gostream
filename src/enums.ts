@@ -37,39 +37,6 @@ export enum ActionType {
 	AudioEnableSource = '17',
 }
 
-export const feedbackId = {
-	KeyOnAir: 'keyOnAir',
-	KeyOnPvw: 'keyOnPvw',
-	UpStreamKeyType: 'upStreamKeyType',
-	KeySourceFill: 'keySourceFill',
-	TransitionSource: 'transitionSource',
-}
-
-export const variableId = {
-	PlayState: 'playState',
-	Clock: 'clock',
-	TimerStart: 'timer_start',
-	TimerFinish: 'timer_finish',
-	TimerDelay: 'timer_delay',
-	Time: 'time',
-	TimeHM: 'time_hm',
-	TimeH: 'time_h',
-	TimeM: 'time_m',
-	TimeS: 'time_s',
-	TitleNow: 'titleNow',
-	SubtitleNow: 'subtitleNow',
-	SpeakerNow: 'speakerNow',
-	NoteNow: 'noteNow',
-	TitleNext: 'titleNext',
-	SubtitleNext: 'subtitleNext',
-	SpeakerNext: 'speakerNext',
-	NoteNext: 'noteNext',
-	OnAir: 'onAir',
-	SpeakerMessage: 'speakerMessage',
-	PublicMessage: 'publicMessage',
-	LowerMessage: 'lowerMessage',
-}
-
 export const SourceType = {
 	Input1: 'Input1',
 	Input2: 'Input2',

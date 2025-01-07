@@ -1,13 +1,13 @@
 import { ActionId } from './actionId'
-import { getOptNumber } from '../../actions'
+import { getOptNumber } from '../../util'
 import { getChoices } from '../../choices'
 import { ReqType, SourceType, ActionType, TransitionStyle } from '../../enums'
 import { sendCommand, GoStreamData } from '../../connection'
 import type { GoStreamInstance } from '../../index'
 import type { CompanionActionDefinitions } from '@companion-module/base'
-import { KeySwitchChoices, TransitionStyleChoice, WipeDirectionChoices, SwitchChoices } from '../../model'
+import { TransitionStyleChoice, WipeDirectionChoices, SwitchChoices } from '../../model'
 
-export function create(_self: GoStreamInstance): CompanionActionDefinitions {
+export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 	return {
 		[ActionId.PgmIndex]: {
 			name: 'Set PGM Source',
@@ -77,7 +77,7 @@ export function create(_self: GoStreamInstance): CompanionActionDefinitions {
 				const opt = getOptNumber(action, 'FtbAudioAFV')
 				let paramOpt = 0
 				if (opt === 2) {
-					if (_self.states.fadeToBlack.AFV === true) {
+					if (instance.states.fadeToBlack.AFV === true) {
 						paramOpt = 0
 					} else {
 						paramOpt = 1
@@ -120,7 +120,7 @@ export function create(_self: GoStreamInstance): CompanionActionDefinitions {
 				const opt = getOptNumber(action, 'prevEnable')
 				let paramOpt = 0
 				if (opt === 2) {
-					if (_self.states.selectTransitionStyle.PrevState === true) {
+					if (instance.states.selectTransitionStyle.PrevState === true) {
 						paramOpt = 0
 					} else {
 						paramOpt = 1
@@ -354,55 +354,26 @@ export function create(_self: GoStreamInstance): CompanionActionDefinitions {
 			},
 		},
 		[ActionId.TransitionSource]: {
-			name: 'Next Transition:Set Transition Key Switch',
+			name: 'UpStream Key: Tie USK to next transition',
 			options: [
 				{
 					type: 'dropdown',
-					label: 'Switch',
-					id: 'KeySwitch',
-					choices: KeySwitchChoices,
-					default: 2,
+					label: 'State',
+					id: 'USKTieState',
+					choices: [
+						{ id: 5, label: 'on' },
+						{ id: 4, label: 'off' },
+						{ id: 0, label: 'toggle' },
+					],
+					default: 0,
 				},
 			],
 			callback: async (action) => {
-				const seleOptions = action.options.KeySwitch
-				if (seleOptions && Array.isArray(seleOptions)) {
-					const arrayOptions = Array.from(seleOptions)
-					const keyState = _self.states.TKeyeState
-					let num = 0
-					if (keyState.M_Key === true) {
-						num += 1
-					}
-					if (keyState.DSK === true) {
-						num += 1 << 1
-					}
-					if (keyState.BKGD === true) {
-						num += 1 << 2
-					}
-					//console.log(num);
-					if (arrayOptions.includes(0)) {
-						if (keyState.M_Key === true) {
-							num -= 1
-						} else {
-							num += 1
-						}
-					}
-					if (arrayOptions.includes(1)) {
-						if (keyState.DSK === true) {
-							num -= 1 << 1
-						} else {
-							num += 1 << 1
-						}
-					}
-					if (arrayOptions.includes(2)) {
-						if (keyState.BKGD === true) {
-							num -= 1 << 2
-						} else {
-							num += 1 << 2
-						}
-					}
-					await sendCommand(ActionId.TransitionSource, ReqType.Set, [num])
+				let nextState = action.options.USKTieState
+				if (nextState === 0) {
+					nextState = instance.states.UpstreamKeyer.Tied ? 4 : 5
 				}
+				await sendCommand(ActionId.TransitionSource, ReqType.Set, [nextState])
 			},
 		},
 	}
@@ -466,22 +437,22 @@ export function handleData(instance: GoStreamInstance, data: GoStreamData): bool
 			return true
 		}
 		case ActionId.TransitionSource: {
-			/*const intstate = Number(data.value[0])
+			const intstate = Number(data.value[0])
 			if ((intstate & 1) === 1) {
-				instance.states.MixEffect.TKeyeState.M_Key = true
+				instance.states.UpstreamKeyer.transitionKey.M_Key = true
 			} else {
-				instance.states.MixEffect.TKeyeState.M_Key = false
+				instance.states.UpstreamKeyer.transitionKey.M_Key = false
 			}
 			if (((intstate >> 1) & 1) === 1) {
-				instance.states.MixEffect.TKeyeState.DSK = true
+				instance.states.UpstreamKeyer.transitionKey.DSK = true
 			} else {
-				instance.states.MixEffect.TKeyeState.DSK = false
+				instance.states.UpstreamKeyer.transitionKey.DSK = false
 			}
 			if (((intstate >> 2) & 1) === 1) {
-				instance.states.MixEffect.TKeyeState.BKGD = true
+				instance.states.UpstreamKeyer.transitionKey.BKGD = true
 			} else {
-				instance.states.MixEffect.TKeyeState.BKGD = false
-			}*/
+				instance.states.UpstreamKeyer.transitionKey.BKGD = false
+			}
 			//instance.log('info',intstate.toString());
 			return true
 		}

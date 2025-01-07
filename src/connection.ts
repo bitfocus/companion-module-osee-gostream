@@ -4,6 +4,7 @@ import { ReqType } from './enums'
 import { Bytes2ToInt, UpackDatas, PackData } from './util'
 
 import { GoStreamInstance } from './index'
+import { updateVariables } from './variables'
 
 import { MixEffectActions, MixEffectState } from './functions/mixEffect'
 import { LiveActions, LiveState } from './functions/live'
@@ -159,6 +160,7 @@ export function ParaData(msg_data: Buffer, instance: GoStreamInstance): void {
 	SuperSourceActions.handleData(instance, json)
 	UpstreamKeyerActions.handleData(instance, json)
 	instance.checkFeedbacks()
+	updateVariables(instance)
 }
 
 export async function ReqStateData(): Promise<void> {

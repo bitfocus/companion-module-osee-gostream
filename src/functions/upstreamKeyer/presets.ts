@@ -1,9 +1,9 @@
 import { ActionId } from './actionId'
+import { FeedbackId } from './feedbackId'
 import { combineRgb } from '@companion-module/base'
 import { CompanionPresetDefinitions } from '@companion-module/base'
 
-import { ActionType, feedbackId } from './../../enums'
-
+import { ActionType } from './../../enums'
 import { getChoices } from './../../choices'
 import { KeySwitchChoices } from './../../model'
 
@@ -25,7 +25,7 @@ export function create(): CompanionPresetDefinitions {
 				},
 				feedbacks: [
 					{
-						feedbackId: feedbackId.KeyOnAir,
+						feedbackId: FeedbackId.KeyOnAir,
 						options: {
 							KeyOnAir: 1,
 							DSKOnAir: 1,
@@ -67,7 +67,7 @@ export function create(): CompanionPresetDefinitions {
 		},
 		feedbacks: [
 			{
-				feedbackId: feedbackId.KeyOnPvw,
+				feedbackId: FeedbackId.KeyOnPvw,
 				options: {
 					KeyOnAir: 1,
 				},
@@ -107,7 +107,7 @@ export function create(): CompanionPresetDefinitions {
 			},
 			feedbacks: [
 				{
-					feedbackId: feedbackId.KeySourceFill,
+					feedbackId: FeedbackId.KeySourceFill,
 					options: {
 						USKKeyType: 0,
 						USKSourceFill: source.id,

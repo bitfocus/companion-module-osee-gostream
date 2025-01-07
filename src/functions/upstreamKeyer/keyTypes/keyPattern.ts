@@ -1,5 +1,5 @@
 import { ActionId } from '../actionId'
-import { getOptNumber } from './../../../actions'
+import { getOptNumber } from './../../../util'
 import { getChoices } from './../../../choices'
 import { SwitchChoices, KeyResizeSizeChoices } from './../../../model'
 import { ReqType, ActionType } from './../../../enums'

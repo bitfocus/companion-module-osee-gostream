@@ -4,6 +4,7 @@ import { ReqType } from '../../enums'
 
 export type State = {
 	State: number
+	RecordTime: string
 }
 
 export type RecordState = {
@@ -14,6 +15,7 @@ export function create(): RecordState {
 	return {
 		Record: {
 			State: 0,
+			RecordTime: '',
 		},
 	}
 }

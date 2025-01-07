@@ -1,11 +1,10 @@
 import { ActionId } from './actionId'
-import { getOptNumber, getOptString } from './../../actions'
+import { getOptNumber, getOptString } from './../../util'
 import { getChoices, SourcesToChoices } from './../../choices'
 import { ReqType, ActionType } from './../../enums'
 import { sendCommand, GoStreamData } from './../../connection'
 import type { GoStreamInstance } from './../../index'
 import type { CompanionActionDefinitions } from '@companion-module/base'
-import { updateRecordVariables } from './../../variables'
 import {
 	SettingsAuxSourceChoices,
 	SettingsOutFormatChoices,
@@ -347,9 +346,6 @@ export function handleData(instance: GoStreamInstance, data: GoStreamData): bool
 			return true
 		case ActionId.SrcSelection:
 			instance.states.SettingsProp.SourceSelection[data.value[0]] = data.value[1]
-			return true
-		case ActionId.RecordTime:
-			updateRecordVariables(instance, data.value[0].toString())
 			return true
 	}
 	return false

@@ -13,7 +13,7 @@ import { MacroActions } from './functions/macro'
 import { UpstreamKeyerActions } from './functions/upstreamKeyer'
 
 import type { GoStreamInstance } from './index'
-import { type CompanionActionDefinitions, type CompanionActionEvent } from '@companion-module/base'
+import type { CompanionActionDefinitions } from '@companion-module/base'
 
 export function GetActionsList(instance: GoStreamInstance): CompanionActionDefinitions {
 	return {
@@ -31,24 +31,4 @@ export function GetActionsList(instance: GoStreamInstance): CompanionActionDefin
 		...MacroActions.create(instance),
 		...UpstreamKeyerActions.create(instance),
 	}
-}
-
-export function getOptNumber(action: CompanionActionEvent, key: string, defVal?: number): number {
-	const rawVal = action.options[key]
-	if (defVal !== undefined && rawVal === undefined) return defVal
-	const val = Number(rawVal)
-	if (isNaN(val)) {
-		throw new Error(`Invalid option '${key}'`)
-	}
-	return val
-}
-
-export function getOptString(action: CompanionActionEvent, key: string, defVal?: string): string {
-	const rawVal = action.options[key]
-	if (defVal !== undefined && rawVal === undefined) return defVal
-	const val = String(rawVal)
-	if (typeof rawVal !== 'string') {
-		throw new Error(`Invalid option '${key}'`)
-	}
-	return val
 }

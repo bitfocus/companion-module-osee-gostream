@@ -1,10 +1,14 @@
 import { variables } from './variables'
-import { feedbacks } from './feedback'
+import { feedbacks } from './feedbacks'
 import { presets } from './presets'
 import { Create } from './state'
 import { disconnectSocket, connect } from './connection'
 import { GoStreamInstance } from './index'
-import { CompanionFeedbackDefinitions, CompanionPresetDefinitions } from '@companion-module/base'
+import {
+	CompanionFeedbackDefinitions,
+	CompanionPresetDefinitions,
+	CompanionVariableDefinition,
+} from '@companion-module/base'
 
 export class GoStream {
 	instance
@@ -12,8 +16,8 @@ export class GoStream {
 		this.instance = instance
 		this.instance.states = Create()
 	}
-	getVariables(): void {
-		variables(this.instance)
+	getVariables(): CompanionVariableDefinition[] {
+		return variables(this.instance)
 	}
 	getFeedbacks(): CompanionFeedbackDefinitions {
 		return feedbacks(this.instance)

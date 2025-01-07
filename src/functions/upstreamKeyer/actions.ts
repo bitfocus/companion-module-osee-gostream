@@ -1,7 +1,7 @@
 import { ActionId } from './actionId'
-import { getOptNumber } from './../../actions'
+import { getOptNumber } from './../../util'
 import { getChoices } from './../../choices'
-import { UpStreamKeyTypeChoices } from './../../model'
+import { UpStreamKeyTypeChoices, KeySwitchChoices } from './../../model'
 import { ReqType, ActionType } from './../../enums'
 import { sendCommand, GoStreamData } from './../../connection'
 import { createLumaKeyActions } from './keyTypes/lumaKey'
@@ -32,7 +32,7 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 				const opt = getOptNumber(action, 'KeyOnAir')
 				let paramOpt = 0
 				if (opt === 2) {
-					if (instance.states.TKeyeState.KeyOnAir === true) {
+					if (instance.states.UpstreamKeyer.transitionKey.KeyOnAir === true) {
 						paramOpt = 0
 					} else {
 						paramOpt = 1
@@ -84,29 +84,6 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 				await sendCommand(ActionId.UpStreamKeyType, ReqType.Set, [getOptNumber(action, 'USKType')])
 			},
 		},
-		[ActionId.TransitionSource]: {
-			name: 'UpStream Key: Tie USK to next transition',
-			options: [
-				{
-					type: 'dropdown',
-					label: 'State',
-					id: 'USKTieState',
-					choices: [
-						{ id: 5, label: 'on' },
-						{ id: 4, label: 'off' },
-						{ id: 0, label: 'toggle' },
-					],
-					default: 0,
-				},
-			],
-			callback: async (action) => {
-				let nextState = action.options.USKTieState
-				if (nextState === 0) {
-					nextState = instance.states.upStreamKeyState.Tied ? 4 : 5
-				}
-				await sendCommand(ActionId.TransitionSource, ReqType.Set, [nextState])
-			},
-		},
 		[ActionId.USKOnPreview]: {
 			name: 'UpStream Key: on preview, change state for USK on preview bus',
 			options: [
@@ -127,19 +104,19 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 
 				if (nextState === 0) {
 					// Figure out if it is visible in pvw or not
-					if (instance.states.upStreamKeyState.Tied && !instance.states.upStreamKeyState.OnAir)
+					if (instance.states.UpstreamKeyer.Tied && !instance.states.UpstreamKeyer.OnAir)
 						// it is currently visible, so should be hidden
 						nextState = 4
-					else if (!instance.states.upStreamKeyState.Tied && instance.states.upStreamKeyState.OnAir)
+					else if (!instance.states.UpstreamKeyer.Tied && instance.states.UpstreamKeyer.OnAir)
 						// it is currently visible, so should be hidden. As it is on air we do this by tie:ing
 						nextState = 5
-					else if (instance.states.upStreamKeyState.Tied && instance.states.upStreamKeyState.OnAir)
+					else if (instance.states.UpstreamKeyer.Tied && instance.states.UpstreamKeyer.OnAir)
 						// it is currently hidden, so should be visible. As it is on air we do this by unting
 						nextState = 4
-					else if (!instance.states.upStreamKeyState.Tied && !instance.states.upStreamKeyState.OnAir)
+					else if (!instance.states.UpstreamKeyer.Tied && !instance.states.UpstreamKeyer.OnAir)
 						// it is currently hidden, so should be visible
 						nextState = 5
-				} else if (instance.states.upStreamKeyState.OnAir) {
+				} else if (instance.states.UpstreamKeyer.OnAir) {
 					// Invert next state if On Air is true
 					nextState = nextState === 5 ? 4 : 5
 				}
@@ -152,6 +129,58 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 				// It is not showing since it is on and tied, untie USK to show it
 				//	await sendCommand(ActionId.TransitionSource, ReqType.Set, [ nextState ])
 				//}
+			},
+		},
+		[ActionId.TransitionSource]: {
+			name: 'Next Transition:Set Transition Key Switch',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Switch',
+					id: 'KeySwitch',
+					choices: KeySwitchChoices,
+					default: 2,
+				},
+			],
+			callback: async (action) => {
+				const seleOptions = action.options.KeySwitch
+				if (seleOptions && Array.isArray(seleOptions)) {
+					const arrayOptions = Array.from(seleOptions)
+					const keyState = instance.states.TKeyeState
+					let num = 0
+					if (keyState.M_Key === true) {
+						num += 1
+					}
+					if (keyState.DSK === true) {
+						num += 1 << 1
+					}
+					if (keyState.BKGD === true) {
+						num += 1 << 2
+					}
+					//console.log(num);
+					if (arrayOptions.includes(0)) {
+						if (keyState.M_Key === true) {
+							num -= 1
+						} else {
+							num += 1
+						}
+					}
+					if (arrayOptions.includes(1)) {
+						if (keyState.DSK === true) {
+							num -= 1 << 1
+						} else {
+							num += 1 << 1
+						}
+					}
+					if (arrayOptions.includes(2)) {
+						if (keyState.BKGD === true) {
+							num -= 1 << 2
+						} else {
+							num += 1 << 2
+						}
+					}
+					await sendCommand(ActionId.TransitionSource, ReqType.Set, [num])
+				}
 			},
 		},
 		...createLumaKeyActions(instance),
@@ -181,26 +210,6 @@ export function handleData(instance: GoStreamInstance, data: GoStreamData): bool
 		case ActionId.PipSource:
 			instance.states.UpstreamKeyer.ArrayKeySourceFill[3] = data.value[0]
 			return true
-		case ActionId.TransitionSource: {
-			const intstate = Number(data.value[0])
-			if ((intstate & 1) === 1) {
-				instance.states.UpstreamKeyer.transitionKey.M_Key = true
-			} else {
-				instance.states.UpstreamKeyer.transitionKey.M_Key = false
-			}
-			if (((intstate >> 1) & 1) === 1) {
-				instance.states.UpstreamKeyer.transitionKey.DSK = true
-			} else {
-				instance.states.UpstreamKeyer.transitionKey.DSK = false
-			}
-			if (((intstate >> 2) & 1) === 1) {
-				instance.states.UpstreamKeyer.transitionKey.BKGD = true
-			} else {
-				instance.states.UpstreamKeyer.transitionKey.BKGD = false
-			}
-			//instance.log('info',intstate.toString());
-			break
-		}
 	}
 	return false
 }

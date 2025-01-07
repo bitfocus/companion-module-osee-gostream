@@ -11,7 +11,7 @@ import { PlaybackPresets } from './functions/playback'
 import { UpstreamKeyerPresets } from './functions/upstreamKeyer'
 
 export function presets(): CompanionPresetDefinitions {
-	const presets = {
+	return {
 		...MixEffectPresets.create(),
 		...StreamingPresets.create(),
 		...LivePresets.create(),
@@ -22,15 +22,4 @@ export function presets(): CompanionPresetDefinitions {
 		...PlaybackPresets.create(),
 		...UpstreamKeyerPresets.create(),
 	}
-
-	//Audio Mixer
-
-	//Macro
-
-	//FTB
-
-	//Playback
-	//
-
-	return presets
 }
