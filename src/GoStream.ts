@@ -8,13 +8,16 @@ import {
 	CompanionFeedbackDefinitions,
 	CompanionPresetDefinitions,
 	CompanionVariableDefinition,
+	TCPHelper,
 } from '@companion-module/base'
 
 export class GoStream {
 	instance
+	connection: TCPHelper | null
 	constructor(instance: GoStreamInstance) {
 		this.instance = instance
 		this.instance.states = Create()
+		this.connection = null
 	}
 	getVariables(): CompanionVariableDefinition[] {
 		return variables(this.instance)

@@ -25,7 +25,7 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 				},
 			],
 			callback: (feedback) => {
-				if (instance.states.MixEffect.PvwSrc?.id === feedback.options.Source) {
+				if (instance.states.MixEffect.PvwSrc === feedback.options.Source) {
 					return true
 				} else {
 					return false
@@ -50,7 +50,7 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 				},
 			],
 			callback: (feedback) => {
-				if (instance.states.MixEffect.PgmSrc?.id === feedback.options.Source) {
+				if (instance.states.MixEffect.PgmSrc === feedback.options.Source) {
 					return true
 				} else {
 					return false

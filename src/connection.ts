@@ -1,7 +1,7 @@
 import { TCPHelper, InstanceStatus } from '@companion-module/base'
 import { portDefault } from './config'
 import { ReqType } from './enums'
-import { Bytes2ToInt, UpackDatas, PackData } from './util'
+import crc16modbus from 'crc/crc16modbus'
 
 import { GoStreamInstance } from './index'
 import { updateVariables } from './variables'
@@ -17,11 +17,43 @@ import { AudioMixerActions, AudioMixerState } from './functions/audioMixer'
 import { DownstreamKeyerActions, DownstreamKeyerState } from './functions/downstreamKeyer'
 import { SettingsActions } from './functions/settings'
 import { MacroActions, MacroState } from './functions/macro'
-
 import { UpstreamKeyerActions, UpstreamKeyerState } from './functions/upstreamKeyer'
 
-let tcp: any = null // TCPHelper
-let Working_byte_resp_lens: any = null // BUFFER
+export const HEAD1 = 0xeb
+export const HEAD2 = 0xa6
+export const ProType = 0x00
+let tcp: TCPHelper | null = null
+let partialPacketBuffer: Buffer | null = null
+
+const PACKET_HEADER_SIZE = 5
+const PACKET_HEAD = new Uint8Array([HEAD1, HEAD2])
+
+export type GoStreamData = {
+	id: string
+	type: string
+	value: number[]
+}
+
+/*
+ * A data packet, Little Endian encoded
+ *
+ * U16 HEADER = 0xA6 0xEB
+ * U8 protoid
+ * U16 length
+ * U8[] data
+ * U16 crc
+ *
+ * A TCP datagram might contain many data packets
+ * A Packet might be cut based on TCP datagram lenght,
+ * the next packet will then start with rest of data
+ * without the header
+ * E.g.
+ * Datagram 1 => | P1: <HEADER> data <crc> | P2: P1: <HEADER> data <crc> | P3a: P1: <HEADER> data
+ * Datagram 2 => P3b: data <crc> | P4: <HEADER> data <crc>
+ *
+ * CRC is a normal crc16 modbus sum, the whole header is part of the crc sum
+ */
+
 export function connect(instance: GoStreamInstance): void {
 	if (tcp !== null) {
 		tcp.destroy()
@@ -52,96 +84,38 @@ export function connect(instance: GoStreamInstance): void {
 		instance.log('debug', 'Socket Disconnecting')
 	})
 	tcp.on('data', (msg_data) => {
-		//console.log(msg_data.toString('hex').match(/.{1,2}/g)?.join(' '));
-		//粘包处理
-		let index = msg_data.indexOf(0xeb)
-		if (index === 0) {
-			//从数据头开始得数据
-			const msg_data_len = msg_data.length
-			const byte_resp_len = Buffer.alloc(2)
-			msg_data.copy(byte_resp_len, 0, 3, 5)
-			const resp_len = Bytes2ToInt(byte_resp_len, true)
-			if (resp_len + 5 !== msg_data_len) {
-				if (msg_data_len > resp_len + 5) {
-					while (index == 0) {
-						if (msg_data[index + 1] == 0xa6) {
-							const part_byte_resp_len = Buffer.alloc(2)
-							msg_data.copy(part_byte_resp_len, 0, 3, 5)
-							//console.log(part_byte_resp_len);
-							const part_resp_len = Bytes2ToInt(part_byte_resp_len, true)
-							if (msg_data.length < part_resp_len + 5) {
-								Working_byte_resp_lens = Buffer.alloc(msg_data.length)
-								msg_data.copy(Working_byte_resp_lens, 0, 0, msg_data.length)
-								break
-							}
-							const part_resp = msg_data.subarray(0, part_resp_len + 5)
-							//console.log("msg:"+msg_data.toString('hex').match(/.{1,2}/g)?.join(' '));
-							msg_data = msg_data.subarray(part_resp_len + 5, msg_data.length)
-							// console.log("part:"+part_resp.toString('hex').match(/.{1,2}/g)?.join(' '));
-							//  console.log(part_resp_len);
-							//  console.log(Working_byte_resp_lens);
-							// console.log('444444444');
-							ParaData(part_resp, instance)
-							index = msg_data.indexOf(0xeb)
-						}
-					}
-				} else {
-					//数据长度不够，放入暂存区
-					Working_byte_resp_lens = Buffer.alloc(msg_data_len)
-					msg_data.copy(Working_byte_resp_lens, 0, 0, msg_data_len)
-				}
+		let index = msg_data.indexOf(PACKET_HEAD)
+
+		// Take care of data before start of packet, i.e. if index > 0
+		// needs to be merged with hopefully saved data
+		if (index > 0) {
+			if (partialPacketBuffer != null) {
+				const packet_data = Buffer.alloc(partialPacketBuffer.length + index, partialPacketBuffer)
+				const remaining_data = msg_data.subarray(0, index)
+				remaining_data.copy(packet_data, partialPacketBuffer.length)
+				ParaData(instance, packet_data)
+				partialPacketBuffer = null
 			} else {
-				//console.log('3333333');
-				ParaData(msg_data, instance)
+				console.log('ERROR, packet out of order')
 			}
-		} else if (index < 0) {
-			//console.log(msg_data.toString('hex').match(/.{1,2}/g)?.join(' '));
-			throw new Error('Recv Data Error...')
-		} else {
-			//暂存区肯定存在一段不完整得数据，否则不成立丢弃
-			// console.log(msg_data.toString('hex').match(/.{1,2}/g)?.join(' '));
-			// console.log(index);
-			const bytes_remaining_data = msg_data.subarray(0, index)
-			msg_data = msg_data.subarray(index, msg_data.length)
-			if (Working_byte_resp_lens != null && Working_byte_resp_lens.length > 0) {
-				const bytes_right_packages = Buffer.alloc(Working_byte_resp_lens.length + bytes_remaining_data.length)
-				Working_byte_resp_lens.copy(bytes_right_packages, 0, 0, Working_byte_resp_lens.length)
-				bytes_remaining_data.copy(bytes_right_packages, Working_byte_resp_lens.length, 0, bytes_remaining_data.length)
-				//console.log('2222222');
-				ParaData(bytes_right_packages, instance)
-			}
-			Working_byte_resp_lens = null
-			index = msg_data.indexOf(0xeb)
-			// console.log('12312312312');
-			// console.log(index);
-			while (index == 0) {
-				if (msg_data[index + 1] == 0xa6) {
-					const part_byte_resp_len = Buffer.alloc(2)
-					msg_data.copy(part_byte_resp_len, 0, 3, 5)
-					const part_resp_len = Bytes2ToInt(part_byte_resp_len, true)
-					if (msg_data.length < part_resp_len + 5) {
-						Working_byte_resp_lens = Buffer.alloc(msg_data.length)
-						msg_data.copy(Working_byte_resp_lens, 0, 0, msg_data.length)
-						break
-					}
-					const part_resp = msg_data.subarray(0, part_resp_len + 5)
-					msg_data = msg_data.subarray(part_resp_len + 5, msg_data.length)
-					//console.log('111111111');
-					ParaData(part_resp, instance)
-					index = msg_data.indexOf(0xeb)
-				}
+		}
+
+		// Consume all packet data
+		while (index >= 0) {
+			const packet_size = msg_data.readUInt16LE(index + 3)
+			const packet_data = msg_data.subarray(index, index + PACKET_HEADER_SIZE + packet_size)
+			ParaData(instance, packet_data)
+			index = msg_data.indexOf(PACKET_HEAD, index + PACKET_HEADER_SIZE + packet_size)
+			if (index + PACKET_HEADER_SIZE + packet_size > msg_data.length) {
+				// Partial data found, save in buffer for next datagram
+				partialPacketBuffer = Buffer.alloc(msg_data.length - index, msg_data.subarray(index))
+				break
 			}
 		}
 	})
 }
 
-export type GoStreamData = {
-	id: string
-	type: string
-	value: number[]
-}
-
-export function ParaData(msg_data: Buffer, instance: GoStreamInstance): void {
+export function ParaData(instance: GoStreamInstance, msg_data: Buffer): void {
 	const jsonContent = UpackDatas(msg_data)
 	const jsonStr = jsonContent.toString('utf8')
 	const json = JSON.parse(jsonStr)
@@ -189,12 +163,61 @@ export async function sendCommand(id: string, type: ReqType, value?: string | nu
 		const json = JSON.stringify(obj)
 		const bufs = Buffer.from(json, 'utf-8')
 		const send_data = PackData(bufs)
-		//console.log(send_data.toString('hex').match(/.{1,2}/g)?.join(' '));
 		const sign = await tcp.send(send_data)
-		// if (type == ReqType.Set) {
-		// 	instance.checkFeedbacks();
-		// }
 		return sign
 	}
 	return false
+}
+
+// Convert number to UInt16 LE
+function num2UInt16LE(num: number): number[] {
+	const numStr = num.toString(16).padStart(4, '0')
+	return [parseInt(numStr.substring(2, 4), 16), parseInt(numStr.substring(0, 2), 16)]
+}
+function PackData(data: Buffer): Buffer {
+	const packetLen = data.length + 7
+	const packet = Buffer.alloc(packetLen)
+
+	packet[0] = HEAD1
+	packet[1] = HEAD2
+	packet[2] = ProType
+	const packetSize = num2UInt16LE(packetLen - 5)
+	packet[3] = packetSize[0]
+	packet[4] = packetSize[1]
+
+	if (data != undefined) data.copy(packet, 5, 0, data.length)
+	const packetCrc = num2UInt16LE(crc16modbus(packet.subarray(0, packetLen - 2)))
+	packet[packet.length - 2] = packetCrc[0]
+	packet[packet.length - 1] = packetCrc[1]
+	return packet
+}
+function UpackDatas(resp: Buffer): Buffer {
+	if (resp.length == 0) {
+		throw new Error('recv null')
+	}
+	if (resp[0] != exports.HEAD1 || resp[1] != exports.HEAD2) {
+		throw new Error('recv head error')
+	}
+	const resp_len = resp.readInt16LE(3)
+	if (resp_len != resp.length - 5) {
+		console.log(
+			'Recv Error:' +
+				resp
+					.toString('hex')
+					.match(/.{1,2}/g)
+					?.join(' '),
+		)
+		throw new Error('recv data length error')
+	}
+	if (!IsCrcOK(resp)) {
+		throw new Error('recv data crc error')
+	}
+	return resp.subarray(5, resp.length - 2)
+}
+
+function IsCrcOK(datas: Buffer): boolean {
+	const length = datas.length - 2
+	const recvCrc = datas.readUInt16LE(length)
+	const calcCrc = crc16modbus(datas.subarray(0, length))
+	return recvCrc === calcCrc
 }
