@@ -1,58 +1,36 @@
 import { ActionType } from './enums'
 import { getChoices } from './choices'
+import { PlaybackVariables } from './functions/playback'
+import { RecordVariables } from './functions/record'
+import type { GoStreamInstance } from './index'
+import { CompanionVariableDefinition, CompanionVariableValues } from '@companion-module/base'
 
-function variables(_self) {
-	const variables: any[] = []
-	const values = {}
-	variables.push({
+export function variables(instance: GoStreamInstance): CompanionVariableDefinition[] {
+	const vars: CompanionVariableDefinition[] = [
+		...PlaybackVariables.create(instance),
+		...RecordVariables.create(instance),
+	]
+
+	vars.push({
 		name: 'IP address of GoStreamDeck',
 		variableId: `device_ip`,
 	})
-	values['device_ip'] = _self.config.host
-	let MeChoice = getChoices(ActionType.Preview)
+	const MeChoice = getChoices(ActionType.Preview)
 	for (let i = 0; i < MeChoice.length; i++) {
-		variables.push({
+		vars.push({
 			name: `Id of input_${i + 1}`,
 			variableId: `pre${i + 1}_input_id`,
 		})
-		values[`pre${i + 1}_input_id`] = MeChoice[i].label
 	}
-	variables.push({
-		name: 'Play State of PlayBack',
-		variableId: `PlayState`,
-	})
-	values['PlayState'] = 'Play'
-	variables.push({
-		name: 'Loaded video file',
-		variableId: `PlayFile`,
-	})
-	values['PlayFile'] = ''
-	variables.push({
-		name: 'Recording duration (hh:mm)',
-		variableId: 'record_duration_hm',
-	})
-	values['record_duration_hm'] = '00:00:00'
-	_self.setVariableDefinitions(variables)
-	_self.setVariableValues(values)
+
+	return vars
 }
 
-function updatePlayStatedVariables(_self, state) {
-	const newValues = {}
-	if (state) newValues['PlayState'] = 'Stop'
-	else newValues['PlayState'] = 'Play'
-	_self.setVariableValues(newValues)
-}
+export function updateVariables(instance: GoStreamInstance): void {
+	const newValues: CompanionVariableValues = {
+		...PlaybackVariables.getValues(instance),
+		...RecordVariables.getValues(instance),
+	}
 
-function updatePlayFileVariables(_self, file) {
-	const newValues = {}
-	newValues['PlayFile'] = file
-	_self.setVariableValues(newValues)
+	instance.setVariableValues(newValues)
 }
-
-function updateRecordVariables(_self, time) {
-	const newValues = {}
-	newValues['record_duration_hm'] = time
-	_self.setVariableValues(newValues)
-}
-
-export { updateRecordVariables, updatePlayStatedVariables, updatePlayFileVariables, variables }

@@ -1,8 +1,8 @@
 {
-	"id": "osee-gostreamdeck",
-	"name": "osee-gostreamdeck",
-	"shortname": "gostreamdeck",
-	"description": "Companion module for GoStreamDeck",
+	"id": "osee-gostream",
+	"name": "osee-gostream",
+	"shortname": "gostream",
+	"description": "Companion module for GoStream products",
 	"version": "1.0.0",
 	"license": "MIT",
 	"repository": "git+https://github.com/bitfocus/companion-module-osee-gostream.git",
@@ -21,6 +21,6 @@
 		"entrypoint": "../dist/index.js"
 	},
 	"manufacturer": "OSEE",
-	"products": ["GoStreamDeck"],
-	"keywords": ["GoStreamDeck", "companion"]
+	"products": ["GoStream"],
+	"keywords": ["GoStream", "companion"]
 }

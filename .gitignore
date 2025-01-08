@@ -5,3 +5,5 @@ package-lock.json
 dist/
 DEBUG-*
 /.yarn
+/docs
+/.vs
