@@ -3,7 +3,7 @@
 	"name": "osee-gostreamdeck",
 	"shortname": "gostreamdeck",
 	"description": "Companion module for GoStreamDeck",
-	"version": "1.0.0",
+	"version": "0.0.0",
 	"license": "MIT",
 	"repository": "git+https://github.com/bitfocus/companion-module-osee-gostream.git",
 	"bugs": "https://github.com/bitfocus/companion-module-osee-gostream/issues",
