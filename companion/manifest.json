@@ -3,7 +3,7 @@
 	"name": "osee-gostream",
 	"shortname": "gostream",
 	"description": "Companion module for GoStream products",
-	"version": "1.0.0",
+	"version": "0.0.0",
 	"license": "MIT",
 	"repository": "git+https://github.com/bitfocus/companion-module-osee-gostream.git",
 	"bugs": "https://github.com/bitfocus/companion-module-osee-gostream/issues",

@@ -1,4 +1,4 @@
-import { TCPHelper, InstanceStatus } from '@companion-module/base'
+﻿import { TCPHelper, InstanceStatus } from '@companion-module/base'
 import { portDefault } from './config'
 import { ReqType } from './enums'
 import crc16modbus from 'crc/crc16modbus'
@@ -17,6 +17,7 @@ import { AudioMixerActions, AudioMixerState } from './functions/audioMixer'
 import { DownstreamKeyerActions, DownstreamKeyerState } from './functions/downstreamKeyer'
 import { SettingsActions } from './functions/settings'
 import { MacroActions, MacroState } from './functions/macro'
+
 import { UpstreamKeyerActions, UpstreamKeyerState } from './functions/upstreamKeyer'
 
 export const HEAD1 = 0xeb
@@ -85,7 +86,6 @@ export function connect(instance: GoStreamInstance): void {
 	})
 	tcp.on('data', (msg_data) => {
 		let index = msg_data.indexOf(PACKET_HEAD)
-
 		// Take care of data before start of packet, i.e. if index > 0
 		// needs to be merged with hopefully saved data
 		if (index > 0) {
@@ -100,14 +100,14 @@ export function connect(instance: GoStreamInstance): void {
 			}
 		}
 
-		// Consume all packet data
+		// Handle case index < 0 , e.g. when only additional data has been received, no head
+
 		while (index >= 0) {
 			const packet_size = msg_data.readUInt16LE(index + 3)
 			const packet_data = msg_data.subarray(index, index + PACKET_HEADER_SIZE + packet_size)
 			ParaData(instance, packet_data)
 			index = msg_data.indexOf(PACKET_HEAD, index + PACKET_HEADER_SIZE + packet_size)
 			if (index + PACKET_HEADER_SIZE + packet_size > msg_data.length) {
-				// Partial data found, save in buffer for next datagram
 				partialPacketBuffer = Buffer.alloc(msg_data.length - index, msg_data.subarray(index))
 				break
 			}
@@ -169,11 +169,6 @@ export async function sendCommand(id: string, type: ReqType, value?: string | nu
 	return false
 }
 
-// Convert number to UInt16 LE
-function num2UInt16LE(num: number): number[] {
-	const numStr = num.toString(16).padStart(4, '0')
-	return [parseInt(numStr.substring(2, 4), 16), parseInt(numStr.substring(0, 2), 16)]
-}
 function PackData(data: Buffer): Buffer {
 	const packetLen = data.length + 7
 	const packet = Buffer.alloc(packetLen)
@@ -181,14 +176,10 @@ function PackData(data: Buffer): Buffer {
 	packet[0] = HEAD1
 	packet[1] = HEAD2
 	packet[2] = ProType
-	const packetSize = num2UInt16LE(packetLen - 5)
-	packet[3] = packetSize[0]
-	packet[4] = packetSize[1]
+	packet.writeUInt16LE(packetLen - 5, 3)
 
 	if (data != undefined) data.copy(packet, 5, 0, data.length)
-	const packetCrc = num2UInt16LE(crc16modbus(packet.subarray(0, packetLen - 2)))
-	packet[packet.length - 2] = packetCrc[0]
-	packet[packet.length - 1] = packetCrc[1]
+	packet.writeUInt16LE(crc16modbus(packet.subarray(0, packetLen - 2)), packet.length - 2)
 	return packet
 }
 function UpackDatas(resp: Buffer): Buffer {
