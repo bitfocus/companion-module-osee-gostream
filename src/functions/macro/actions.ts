@@ -147,6 +147,7 @@ export function create(_instance: GoStreamInstance): CompanionActionDefinitions 
 	}
 }
 export function handleData(instance: GoStreamInstance, data: GoStreamData): boolean {
+	if (!data.value) return false
 	switch (data.id as ActionId) {
 		case ActionId.MacroInfo: {
 			const obj = {

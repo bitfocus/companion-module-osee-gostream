@@ -11,7 +11,6 @@
 		"build": "rimraf dist && yarn build::main",
 		"build::main": "tsc -p tsconfig.build.json",
 		"build::dev": "tsc -p tsconfig.build.json --watch",
-		"test": "jest",
 		"prepare": "husky",
 		"doc": "npx typedoc --out docs src"
 	},
@@ -28,7 +27,6 @@
 	},
 	"devDependencies": {
 		"@companion-module/tools": "^2.1.0",
-		"@types/jest": "^29.5.13",
 		"eslint": "9.14.0",
 		"husky": "^9.1.6",
 		"prettier": "^3.3.3",

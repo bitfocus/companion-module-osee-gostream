@@ -47,6 +47,7 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 }
 
 export function handleData(instance: GoStreamInstance, data: GoStreamData): boolean {
+	if (!data.value) return false
 	switch (data.id as ActionId) {
 		case ActionId.Live: {
 			instance.states.Live.State = data.value[0]

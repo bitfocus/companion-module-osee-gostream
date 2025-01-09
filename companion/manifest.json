@@ -22,5 +22,11 @@
 	},
 	"manufacturer": "OSEE",
 	"products": ["GoStream"],
-	"keywords": ["GoStream", "companion"]
+	"keywords": ["GoStream", "companion"],
+	"bonjourQueries": {
+		"bonjourDevices": {
+			"type": "oseectrl",
+			"protocol": "tcp"
+		}
+	}
 }

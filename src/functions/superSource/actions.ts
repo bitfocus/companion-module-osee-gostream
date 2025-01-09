@@ -351,7 +351,7 @@ export function create(_self: GoStreamInstance): CompanionActionDefinitions {
 export function handleData(instance: GoStreamInstance, data: GoStreamData): boolean {
 	switch (data.id as ActionId) {
 		case ActionId.SuperSourceBackground: {
-			const select = getChoices(ActionType.SuperSourceSource).find((s) => s.id === data.value[0])
+			const select = getChoices(ActionType.SuperSourceSource).find((s) => data.value && s.id === data.value[0])
 			if (select !== undefined) instance.states.SuperSource.background = select
 			return true
 		}
@@ -368,7 +368,7 @@ export function handleData(instance: GoStreamInstance, data: GoStreamData): bool
 			return true
 		}
 		case ActionId.SuperSourceControlStyle: {
-			const sschoice = SuperSourceStyleChoices.find((s) => s.id === data.value[0])
+			const sschoice = SuperSourceStyleChoices.find((s) => data.value && s.id === data.value[0])
 			if (sschoice !== undefined) instance.states.SuperSource.controlStyle = sschoice
 			return true
 		}
@@ -376,12 +376,12 @@ export function handleData(instance: GoStreamInstance, data: GoStreamData): bool
 			return true
 		}
 		case ActionId.SuperSourceEnable: {
-			instance.states.SuperSource.enable = data.value[0] == 1 ? true : false
+			instance.states.SuperSource.enable = data.value && data.value[0] == 1 ? true : false
 			return true
 		}
 		case ActionId.SuperSourceMaskEnable: {
-			const masktype = data.value[0]
-			const masktypeValue = data.value[1]
+			const masktype = data.value && data.value[0]
+			const masktypeValue = data.value && data.value[1]
 			if (masktype === 0) {
 				instance.states.SuperSource.maskEnable.mask1 = masktypeValue === 1 ? true : false
 			} else {
@@ -402,12 +402,12 @@ export function handleData(instance: GoStreamInstance, data: GoStreamData): bool
 			return true
 		}
 		case ActionId.SuperSourceSource1: {
-			const select = getChoices(ActionType.SuperSourceSource).find((s) => s.id === data.value[0])
+			const select = getChoices(ActionType.SuperSourceSource).find((s) => s.id === data.value && data.value[0])
 			if (select !== undefined) instance.states.SuperSource.source1 = select
 			return true
 		}
 		case ActionId.SuperSourceSource2: {
-			const select = getChoices(ActionType.SuperSourceSource).find((s) => s.id === data.value[0])
+			const select = getChoices(ActionType.SuperSourceSource).find((s) => s.id === data.value && data.value[0])
 			if (select !== undefined) instance.states.SuperSource.source2 = select
 			return true
 		}

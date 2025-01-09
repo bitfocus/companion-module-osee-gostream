@@ -73,13 +73,13 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 export function handleData(instance: GoStreamInstance, data: GoStreamData): boolean {
 	switch (data.id as ActionId) {
 		case ActionId.StreamOutput: {
-			const streamtype = data.value[0]
+			const streamtype = data.value && data.value[0]
 			if (streamtype === 0) {
-				instance.states.Streaming.stream1 = data.value[1] === 1 ? true : false
+				instance.states.Streaming.stream1 = data.value && data.value[1] === 1 ? true : false
 			} else if (streamtype === 1) {
-				instance.states.Streaming.stream2 = data.value[1] === 1 ? true : false
+				instance.states.Streaming.stream2 = data.value && data.value[1] === 1 ? true : false
 			} else if (streamtype === 2) {
-				instance.states.Streaming.stream3 = data.value[1] === 1 ? true : false
+				instance.states.Streaming.stream3 = data.value && data.value[1] === 1 ? true : false
 			}
 			return true
 		}

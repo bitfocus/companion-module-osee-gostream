@@ -1,5 +1,4 @@
 ﻿import { TCPHelper, InstanceStatus } from '@companion-module/base'
-import { portDefault } from './config'
 import { ReqType } from './enums'
 import crc16modbus from 'crc/crc16modbus'
 
@@ -28,11 +27,12 @@ let partialPacketBuffer: Buffer | null = null
 
 const PACKET_HEADER_SIZE = 5
 const PACKET_HEAD = new Uint8Array([HEAD1, HEAD2])
+const PORT_NUMBER = 19010
 
 export type GoStreamData = {
 	id: string
 	type: string
-	value: number[]
+	value?: string | number | any[]
 }
 
 /*
@@ -41,7 +41,7 @@ export type GoStreamData = {
  * U16 HEADER = 0xA6 0xEB
  * U8 protoid
  * U16 length
- * U8[] data
+ * GoStreamData[] data
  * U16 crc
  *
  * A TCP datagram might contain many data packets
@@ -60,13 +60,8 @@ export function connect(instance: GoStreamInstance): void {
 		tcp.destroy()
 	}
 	instance.updateStatus(InstanceStatus.Connecting)
-	const host = instance.config.host
-	const port = instance.config.port
-	const option = {
-		reconnect_interval: instance.config.reconnectInterval,
-		reconnect: instance.config.reconnect,
-	}
-	tcp = new TCPHelper(host, port || portDefault, option)
+	const host = instance.config.bonjourDevices ? instance.config.bonjourDevices.split(':')[0] : instance.config.host
+	tcp = new TCPHelper(host, PORT_NUMBER)
 	tcp.on('status_change', (state, message) => {
 		instance.updateStatus(state, message)
 		instance.log('debug', 'Socket reconnected')
@@ -87,22 +82,30 @@ export function connect(instance: GoStreamInstance): void {
 	tcp.on('data', (msg_data) => {
 		let index = msg_data.indexOf(PACKET_HEAD)
 		// Take care of data before start of packet, i.e. if index > 0
-		// needs to be merged with hopefully saved data
-		if (index > 0) {
+		// OR packets that dont have a head i.e. index < 0
+		// The data needs to be merged with hopefully saved data
+		if (index !== 0) {
 			if (partialPacketBuffer != null) {
 				const packet_data = Buffer.alloc(partialPacketBuffer.length + index, partialPacketBuffer)
 				const remaining_data = msg_data.subarray(0, index)
 				remaining_data.copy(packet_data, partialPacketBuffer.length)
-				ParaData(instance, packet_data)
-				partialPacketBuffer = null
+
+				if (index > 0) {
+					// Process packet_data and continue
+					ParaData(instance, packet_data)
+					partialPacketBuffer = null
+				} else if (index < 0) {
+					// Save packet_data as it is not complete yet
+					partialPacketBuffer = Buffer.from(packet_data)
+					return // No more data
+				}
 			} else {
-				console.log('ERROR, packet out of order')
+				console.error('packet data out of order, dropping packet!')
+				return
 			}
 		}
 
-		// Handle case index < 0 , e.g. when only additional data has been received, no head
-
-		while (index >= 0) {
+		while (index === 0) {
 			const packet_size = msg_data.readUInt16LE(index + 3)
 			const packet_data = msg_data.subarray(index, index + PACKET_HEADER_SIZE + packet_size)
 			ParaData(instance, packet_data)
@@ -155,6 +158,20 @@ export function disconnectSocket(): void {
 	if (tcp !== null) {
 		tcp.destroy()
 	}
+}
+
+export async function sendCommands(commands: GoStreamData[]): Promise<boolean> {
+	if (tcp !== null) {
+		const cmdStrings: string[] = []
+		commands.forEach((cmd) => {
+			const json = JSON.stringify(cmd)
+			const bufs = Buffer.from(json, 'utf-8')
+			cmdStrings.push(PackData(bufs).toString())
+		})
+		const sign = await tcp.send(cmdStrings.join(''))
+		return sign
+	}
+	return false
 }
 
 export async function sendCommand(id: string, type: ReqType, value?: string | number | any[]): Promise<boolean> {

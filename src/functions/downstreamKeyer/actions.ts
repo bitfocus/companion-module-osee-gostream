@@ -293,14 +293,15 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 }
 
 export function handleData(instance: GoStreamInstance, data: GoStreamData): boolean {
+	if (!data.value) return false
 	switch (data.id as ActionId) {
 		case ActionId.DskSourceFill: {
-			const select = getChoices(ActionType.DskSourceFill).find((s) => s.id === data.value[0])
+			const select = getChoices(ActionType.DskSourceFill).find((s) => data.value && s.id === data.value[0])
 			if (select !== undefined) instance.states.DownstreamKeyer.fill = select
 			return true
 		}
 		case ActionId.DskSourceKey: {
-			const select = getChoices(ActionType.DskSourceFill).find((s) => s.id === data.value[0])
+			const select = getChoices(ActionType.DskSourceFill).find((s) => s.id === data.value && data.value[0])
 			if (select !== undefined) instance.states.DownstreamKeyer.key = select
 			return true
 		}
