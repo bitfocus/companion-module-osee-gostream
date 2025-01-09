@@ -7,7 +7,6 @@ export class GoStreamInstance extends InstanceBase<Config> {
 	config
 	gostream
 	states
-
 	//private model!: IModelSpec
 	async init(config: Config): Promise<void> {
 		this.config = config

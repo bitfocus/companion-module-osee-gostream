@@ -1,4 +1,4 @@
-﻿import { TCPHelper, InstanceStatus } from '@companion-module/base'
+import { TCPHelper, InstanceStatus } from '@companion-module/base'
 import { ReqType } from './enums'
 import crc16modbus from 'crc/crc16modbus'
 
@@ -16,7 +16,6 @@ import { AudioMixerActions, AudioMixerState } from './functions/audioMixer'
 import { DownstreamKeyerActions, DownstreamKeyerState } from './functions/downstreamKeyer'
 import { SettingsActions } from './functions/settings'
 import { MacroActions, MacroState } from './functions/macro'
-
 import { UpstreamKeyerActions, UpstreamKeyerState } from './functions/upstreamKeyer'
 
 export const HEAD1 = 0xeb
@@ -89,7 +88,6 @@ export function connect(instance: GoStreamInstance): void {
 				const packet_data = Buffer.alloc(partialPacketBuffer.length + index, partialPacketBuffer)
 				const remaining_data = msg_data.subarray(0, index)
 				remaining_data.copy(packet_data, partialPacketBuffer.length)
-
 				if (index > 0) {
 					// Process packet_data and continue
 					ParaData(instance, packet_data)
