@@ -193,22 +193,22 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 export function handleData(instance: GoStreamInstance, data: GoStreamData): boolean {
 	switch (data.id as ActionId) {
 		case ActionId.KeyOnAir:
-			instance.states.UpstreamKeyer.transitionKey.KeyOnAir = data.value[0] === 1 ? true : false
+			instance.states.UpstreamKeyer.transitionKey.KeyOnAir = data.value && data.value[0] === 1 ? true : false
 			return true
 		case ActionId.UpStreamKeyType:
-			instance.states.UpstreamKeyer.UpStreamKeyType = data.value[0]
+			instance.states.UpstreamKeyer.UpStreamKeyType = data.value && data.value[0]
 			return true
 		case ActionId.LumaKeySourceFill:
-			instance.states.UpstreamKeyer.ArrayKeySourceFill[0] = data.value[0]
+			instance.states.UpstreamKeyer.ArrayKeySourceFill[0] = data.value && data.value[0]
 			return true
 		case ActionId.ChromaKeyFill:
-			instance.states.UpstreamKeyer.ArrayKeySourceFill[1] = data.value[0]
+			instance.states.UpstreamKeyer.ArrayKeySourceFill[1] = data.value && data.value[0]
 			return true
 		case ActionId.KeyPatternSourceFill:
-			instance.states.UpstreamKeyer.ArrayKeySourceFill[2] = data.value[0]
+			instance.states.UpstreamKeyer.ArrayKeySourceFill[2] = data.value && data.value[0]
 			return true
 		case ActionId.PipSource:
-			instance.states.UpstreamKeyer.ArrayKeySourceFill[3] = data.value[0]
+			instance.states.UpstreamKeyer.ArrayKeySourceFill[3] = data.value && data.value[0]
 			return true
 	}
 	return false

@@ -1,8 +1,6 @@
 import { runEntrypoint, InstanceBase, InstanceStatus, SomeCompanionConfigField } from '@companion-module/base'
 import { GetConfigFields, Config } from './config'
 import { GoStream } from './GoStream'
-//import { type IModelSpec, MODEL_AUTO_DETECT } from './models/types'
-//import { GetModelSpec, GetAutoDetectModel } from './models/index'
 import { GetActionsList } from './actions'
 
 export class GoStreamInstance extends InstanceBase<Config> {
@@ -37,11 +35,6 @@ export class GoStreamInstance extends InstanceBase<Config> {
 		this.config = config
 		this.gostream.disconnectSocket()
 		this.updateStatus(InstanceStatus.Disconnected)
-		/* if (this.config.version === 'v1') {
-            this.ontime = new OntimeV1(this)
-        } else if (this.config.version === 'v2') {
-            // this.ontime = new OntimeV2(this)
-        } */
 		this.gostream = new GoStream(this)
 		this.initConnection()
 		this.init_variables()

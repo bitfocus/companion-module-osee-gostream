@@ -43,10 +43,10 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 export function handleData(instance: GoStreamInstance, data: GoStreamData): boolean {
 	switch (data.id as ActionId) {
 		case ActionId.Record:
-			instance.states.Record.State = data.value[0] === 1 ? true : false
+			instance.states.Record.State = data.value![0] === 1 ? true : false
 			return true
 		case ActionId.RecordTime:
-			instance.states.Record.RecordTime = data.value[0].toString()
+			instance.states.Record.RecordTime = data.value![0].toString()
 			return true
 	}
 	return false

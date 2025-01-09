@@ -380,6 +380,7 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 }
 
 export function handleData(instance: GoStreamInstance, data: GoStreamData): boolean {
+	if (!data.value) return false
 	switch (data.id as ActionId) {
 		case ActionId.PvwIndex: {
 			if (data.value[0] !== undefined) {

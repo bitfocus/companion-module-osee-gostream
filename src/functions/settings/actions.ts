@@ -305,17 +305,17 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 export function handleData(instance: GoStreamInstance, data: GoStreamData): boolean {
 	switch (data.id as ActionId) {
 		case ActionId.AuxSource:
-			instance.states.SettingsProp.AuxSource = data.value[0]
+			if (data.value) instance.states.SettingsProp.AuxSource = data.value[0]
 			return true
 		case ActionId.InputWindowLayout:
-			instance.states.SettingsProp.SettingsInputWindowLayout = data.value[0]
+			if (data.value) instance.states.SettingsProp.SettingsInputWindowLayout = data.value[0]
 			return true
 		case ActionId.MvMeter:
-			instance.states.SettingsProp.MvMeter[data.value[0]] = data.value[1]
+			if (data.value) instance.states.SettingsProp.MvMeter[data.value[0]] = data.value[1]
 			return true
 		case ActionId.OutSource: {
-			const outType = data.value[0]
-			const outTypeValue = data.value[1]
+			const outType = data.value && data.value[0]
+			const outTypeValue = data.value && data.value[1]
 			const selectSource = getChoices(ActionType.SettingsoutSource).find((s) => s.id === outTypeValue)
 			if (outType === 0) {
 				if (selectSource !== undefined) {
@@ -333,19 +333,19 @@ export function handleData(instance: GoStreamInstance, data: GoStreamData): bool
 			return true
 		}
 		case ActionId.OutputColorSpace:
-			instance.states.SettingsProp.OutputColorSpace[data.value[0]] = data.value[1]
+			if (data.value) instance.states.SettingsProp.OutputColorSpace[data.value[0]] = data.value[1]
 			return true
 		case ActionId.OutFormat:
-			instance.states.SettingsProp.OutputFormat = data.value[0]
+			instance.states.SettingsProp.OutputFormat = data.value && data.value[0]
 			return true
 		case ActionId.MicInput:
-			instance.states.SettingsProp.MicInput[data.value[0]] = data.value[1]
+			if (data.value) instance.states.SettingsProp.MicInput[data.value[0]] = data.value[1]
 			return true
 		case ActionId.MvLayout:
-			instance.states.SettingsProp.MvLayout = data.value[0]
+			instance.states.SettingsProp.MvLayout = data.value && data.value[0]
 			return true
 		case ActionId.SrcSelection:
-			instance.states.SettingsProp.SourceSelection[data.value[0]] = data.value[1]
+			if (data.value) instance.states.SettingsProp.SourceSelection[data.value[0]] = data.value[1]
 			return true
 	}
 	return false

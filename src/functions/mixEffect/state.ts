@@ -1,5 +1,5 @@
 import { ActionId } from './actionId'
-import { sendCommand } from '../../connection'
+import { sendCommands } from '../../connection'
 import { ReqType } from '../../enums'
 import { Choice } from '../../choices'
 
@@ -56,16 +56,19 @@ export function create(): MixEffectState {
 }
 
 export async function sync(): Promise<void> {
-	await sendCommand(ActionId.PgmIndex, ReqType.Get)
-	await sendCommand(ActionId.PvwIndex, ReqType.Get)
-	await sendCommand(ActionId.AutoTransition, ReqType.Get)
-	await sendCommand(ActionId.Prev, ReqType.Get)
-	await sendCommand(ActionId.FTB, ReqType.Get)
-	await sendCommand(ActionId.FtbRate, ReqType.Get)
-	await sendCommand(ActionId.FtbAudioAFV, ReqType.Get)
-	await sendCommand(ActionId.TransitionIndex, ReqType.Get)
-	await sendCommand(ActionId.TransitionRate, ReqType.Get, [0])
-	await sendCommand(ActionId.TransitionRate, ReqType.Get, [1])
-	await sendCommand(ActionId.TransitionRate, ReqType.Get, [2])
-	await sendCommand(ActionId.TransitionSource, ReqType.Get)
+	const cmds = [
+		{ id: ActionId.PgmIndex, type: ReqType.Get },
+		{ id: ActionId.PvwIndex, type: ReqType.Get },
+		{ id: ActionId.AutoTransition, type: ReqType.Get },
+		{ id: ActionId.Prev, type: ReqType.Get },
+		{ id: ActionId.FTB, type: ReqType.Get },
+		{ id: ActionId.FtbRate, type: ReqType.Get },
+		{ id: ActionId.FtbAudioAFV, type: ReqType.Get },
+		{ id: ActionId.TransitionIndex, type: ReqType.Get },
+		{ id: ActionId.TransitionRate, type: ReqType.Get, value: [0] },
+		{ id: ActionId.TransitionRate, type: ReqType.Get, value: [1] },
+		{ id: ActionId.TransitionRate, type: ReqType.Get, value: [2] },
+		{ id: ActionId.TransitionSource, type: ReqType.Get },
+	]
+	await sendCommands(cmds)
 }
