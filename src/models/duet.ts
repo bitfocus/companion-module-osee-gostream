@@ -1,34 +1,24 @@
-import { generateOutputs, type IModelSpec } from './types'
+import { generatePorts, type IModelSpec } from './types'
 import { Model, PortType } from '../enums'
 
 export const ModelSpecDuet: IModelSpec = {
 	id: Model.Duet,
 	label: 'Duet',
-	outputs: [...generateOutputs('Output', 1)],
+	outputs: [...generatePorts('Output', "Out", PortType.HDMI, 2), { id: 2, longName: 'UVC', shortName: 'UVC', type: PortType.Other }],
 	inputs: [
+		...generatePorts('Input', "In", PortType.External, 4),  // HDMI 1-4
 		{
-			id: 0,
-			longName: 'Input2',
-			shortName: 'In1',
-			portType: PortType.SDI | PortType.HDMI,
+			id: 4,
+			longName: 'Aux',
+			shortName: 'Aux',
+			type: PortType.Aux,
 		},
 		{
-			id: 1,
-			longName: 'Input2',
-			shortName: 'In2',
-			portType: PortType.SDI | PortType.HDMI,
+			id: 5,
+			longName: 'S/SRC',
+			shortName: 'SSRC',
+			type: PortType.Internal,
 		},
-		{
-			id: 2,
-			longName: 'Input3',
-			shortName: 'In3',
-			portType: PortType.SDI | PortType.HDMI,
-		},
-		{
-			id: 3,
-			longName: 'Input4',
-			shortName: 'In4',
-			portType: PortType.SDI | PortType.HDMI,
-		},
+		...generatePorts('Still', "STL", PortType.Internal, 2, 6),  // Still 1-2
 	],
 }

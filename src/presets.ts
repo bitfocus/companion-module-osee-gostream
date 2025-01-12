@@ -1,5 +1,5 @@
 import { CompanionPresetDefinitions } from '@companion-module/base'
-
+import type { GoStreamInstance } from './index'
 import { MixEffectPresets } from './functions/mixEffect'
 import { StreamingPresets } from './functions/streaming'
 import { LivePresets } from './functions/live'
@@ -10,9 +10,9 @@ import { SuperSourcePresets } from './functions/superSource'
 import { PlaybackPresets } from './functions/playback'
 import { UpstreamKeyerPresets } from './functions/upstreamKeyer'
 
-export function presets(): CompanionPresetDefinitions {
+export function presets(instance: GoStreamInstance): CompanionPresetDefinitions {
 	return {
-		...MixEffectPresets.create(),
+		...MixEffectPresets.create(instance),
 		...StreamingPresets.create(),
 		...LivePresets.create(),
 		...AudioMixerPresets.create(),

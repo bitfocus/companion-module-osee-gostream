@@ -26,7 +26,7 @@ export class GoStream {
 		return feedbacks(this.instance)
 	}
 	getPresets(): CompanionPresetDefinitions {
-		return presets()
+		return presets(this.instance)
 	}
 	connect(): void {
 		connect(this.instance)

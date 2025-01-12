@@ -1,9 +1,9 @@
 import { combineRgb, CompanionFeedbackDefinitions } from '@companion-module/base'
-import { ActionType, TransitionStyle, SourceType } from '../../enums'
-import { getChoices } from '../../choices'
+import { TransitionStyle } from '../../enums'
 import type { GoStreamInstance } from '../../index'
 import { FeedbackId } from './feedbackId'
 import { KeySwitchChoices, TransitionStyleChoice } from '../../model'
+import { getInputChoices } from './../../models'
 
 export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions {
 	return {
@@ -20,8 +20,8 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 					type: 'dropdown',
 					label: 'Source',
 					id: 'Source',
-					default: SourceType.Input1,
-					choices: getChoices(ActionType.Preview),
+					default: 0,
+					choices: getInputChoices(instance.model),
 				},
 			],
 			callback: (feedback) => {
@@ -45,8 +45,8 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 					type: 'dropdown',
 					label: 'Source',
 					id: 'Source',
-					default: SourceType.Input1,
-					choices: getChoices(ActionType.Program),
+					default: 0,
+					choices: getInputChoices(instance.model),
 				},
 			],
 			callback: (feedback) => {

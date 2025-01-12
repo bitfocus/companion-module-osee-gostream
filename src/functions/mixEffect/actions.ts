@@ -1,11 +1,12 @@
 import { ActionId } from './actionId'
 import { getOptNumber } from '../../util'
 import { getChoices } from '../../choices'
-import { ReqType, SourceType, ActionType, TransitionStyle } from '../../enums'
+import { ReqType, ActionType, TransitionStyle } from '../../enums'
 import { sendCommand, GoStreamData } from '../../connection'
 import type { GoStreamInstance } from '../../index'
 import type { CompanionActionDefinitions } from '@companion-module/base'
 import { TransitionStyleChoice, WipeDirectionChoices, SwitchChoices } from '../../model'
+import { getInputChoices } from './../../models'
 
 export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 	return {
@@ -16,8 +17,8 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 					type: 'dropdown',
 					label: 'Source',
 					id: 'Source',
-					default: SourceType.Input1,
-					choices: getChoices(ActionType.Program),
+					default: 0, 
+					choices: getInputChoices(instance.model)
 				},
 			],
 			callback: async (action) => {
@@ -32,8 +33,8 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 					type: 'dropdown',
 					label: 'Source',
 					id: 'Source',
-					default: SourceType.Input1,
-					choices: getChoices(ActionType.Preview),
+					default: 0,
+					choices: getInputChoices(instance.model)
 				},
 			],
 			callback: async (action) => {
