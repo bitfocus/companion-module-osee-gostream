@@ -7,3 +7,4 @@ DEBUG-*
 /.yarn
 /docs
 /.vs
+/coverage

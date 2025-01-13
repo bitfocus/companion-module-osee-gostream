@@ -8,8 +8,7 @@ module.exports = {
 			},
 		],
 	},
-	testMatch: ['**/__tests__/**/*.spec.(ts|js)'],
-	setupFilesAfterEnv: ['jest-extended/all'],
+	testMatch: ['**/__tests__/**/*.test.(ts|js)'],
 	testEnvironment: 'node',
 	coverageThreshold: {
 		global: {

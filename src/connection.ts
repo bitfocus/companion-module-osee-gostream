@@ -79,61 +79,90 @@ export function connect(instance: GoStreamInstance): void {
 		instance.log('debug', 'Socket Disconnecting')
 	})
 	tcp.on('data', (msg_data) => {
-		let index = msg_data.indexOf(PACKET_HEAD)
-		// Take care of data before start of packet, i.e. if index > 0
-		// OR packets that dont have a head i.e. index < 0
-		// The data needs to be merged with hopefully saved data
-		if (index !== 0) {
-			if (partialPacketBuffer != null) {
-				const packet_data = Buffer.alloc(partialPacketBuffer.length + index, partialPacketBuffer)
-				const remaining_data = msg_data.subarray(0, index)
-				remaining_data.copy(packet_data, partialPacketBuffer.length)
-				if (index > 0) {
-					// Process packet_data and continue
-					ParaData(instance, packet_data)
-					partialPacketBuffer = null
-				} else if (index < 0) {
-					// Save packet_data as it is not complete yet
-					partialPacketBuffer = Buffer.from(packet_data)
-					return // No more data
-				}
-			} else {
-				console.error('packet data out of order, dropping packet!')
-				return
-			}
-		}
-
-		while (index === 0) {
-			const packet_size = msg_data.readUInt16LE(index + 3)
-			const packet_data = msg_data.subarray(index, index + PACKET_HEADER_SIZE + packet_size)
-			ParaData(instance, packet_data)
-			index = msg_data.indexOf(PACKET_HEAD, index + PACKET_HEADER_SIZE + packet_size)
-			if (index + PACKET_HEADER_SIZE + packet_size > msg_data.length) {
-				partialPacketBuffer = Buffer.alloc(msg_data.length - index, msg_data.subarray(index))
-				break
-			}
-		}
+		const commands = handleGoStreamPacket(msg_data)
+		handleCommands(instance, commands)
 	})
 }
 
-export function ParaData(instance: GoStreamInstance, msg_data: Buffer): void {
+export function handleGoStreamPacket(msg_data: Buffer): GoStreamData[] {
+	const commands: GoStreamData[] = []
+
+	let index = msg_data.indexOf(PACKET_HEAD)
+	// Take care of data before start of packet, i.e. if index > 0
+	// OR packets that dont have a head i.e. index < 0
+	// The data needs to be merged with hopefully saved data
+	if (index !== 0) {
+		if (partialPacketBuffer != null) {
+			// Either we have found a head sequence or this is plain data
+			const offset = index > 0 ? index : msg_data.length
+			// Merge with saved packet data
+			const packet_data = Buffer.alloc(partialPacketBuffer.length + offset, partialPacketBuffer)
+			const remaining_data = msg_data.subarray(0, offset)
+			remaining_data.copy(packet_data, partialPacketBuffer.length)
+
+			if (index > 0) {
+				// We did found a head somewhere later in data
+				// process packet to that index then resume with
+				// rest of package in while loop below
+				commands.push(unpackData(packet_data))
+				partialPacketBuffer = null
+			} else if (index < 0) {
+				// All data in this msg_data belongs to same package
+				// as we did not find any head sequence
+				const expected_length = packet_data.readUInt16LE(3)
+				if (expected_length + 5 === packet_data.length) {
+					// This is a full packet received, process it
+					commands.push(unpackData(packet_data))
+					partialPacketBuffer = null
+				} else {
+					// Save packet_data as it is not complete yet
+					partialPacketBuffer = Buffer.from(packet_data)
+				}
+				return commands
+			}
+		} else {
+			console.error('packet data out of order, dropping packet!')
+			return []
+		}
+	}
+
+	while (index >= 0) {
+		const packet_size = msg_data.readUInt16LE(index + 3)
+		const packet_data = msg_data.subarray(index, index + PACKET_HEADER_SIZE + packet_size)
+		commands.push(unpackData(packet_data))
+		index = msg_data.indexOf(PACKET_HEAD, index + PACKET_HEADER_SIZE + packet_size)
+		if (index + PACKET_HEADER_SIZE + packet_size > msg_data.length) {
+			partialPacketBuffer = Buffer.alloc(msg_data.length - index, msg_data.subarray(index))
+			break
+		}
+	}
+
+	return commands
+}
+
+function unpackData(msg_data: Buffer): GoStreamData {
 	const jsonContent = UpackDatas(msg_data)
 	const jsonStr = jsonContent.toString('utf8')
 	const json = JSON.parse(jsonStr)
+	return json
+}
 
-	MixEffectActions.handleData(instance, json)
-	LiveActions.handleData(instance, json)
-	PlaybackActions.handleData(instance, json)
-	RecordActions.handleData(instance, json)
-	StillGeneratorActions.handleData(instance, json)
-	StreamingActions.handleData(instance, json)
-	SuperSourceActions.handleData(instance, json)
-	AudioMixerActions.handleData(instance, json)
-	DownstreamKeyerActions.handleData(instance, json)
-	SettingsActions.handleData(instance, json)
-	MacroActions.handleData(instance, json)
-	SuperSourceActions.handleData(instance, json)
-	UpstreamKeyerActions.handleData(instance, json)
+function handleCommands(instance: GoStreamInstance, data: GoStreamData[]): void {
+	data.forEach((json) => {
+		MixEffectActions.handleData(instance, json)
+		LiveActions.handleData(instance, json)
+		PlaybackActions.handleData(instance, json)
+		RecordActions.handleData(instance, json)
+		StillGeneratorActions.handleData(instance, json)
+		StreamingActions.handleData(instance, json)
+		SuperSourceActions.handleData(instance, json)
+		AudioMixerActions.handleData(instance, json)
+		DownstreamKeyerActions.handleData(instance, json)
+		SettingsActions.handleData(instance, json)
+		MacroActions.handleData(instance, json)
+		SuperSourceActions.handleData(instance, json)
+		UpstreamKeyerActions.handleData(instance, json)
+	})
 	instance.checkFeedbacks()
 	updateVariables(instance)
 }
