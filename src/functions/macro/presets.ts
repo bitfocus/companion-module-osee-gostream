@@ -4,7 +4,7 @@ import { ActionId } from './actionId'
 import { FeedbackId } from './feedbackId'
 import { MacroFeedbackType } from './feedbacks'
 
-const ptzSize = '18'
+const ptzSize = '14'
 export function create(): CompanionPresetDefinitions {
 	const presets = {}
 	for (let macro = 0; macro < 100; macro++) {
@@ -19,16 +19,6 @@ export function create(): CompanionPresetDefinitions {
 				bgcolor: combineRgb(0, 0, 0),
 			},
 			feedbacks: [
-				// {
-				// 	feedbackId: feedbackId.Macro,
-				// 	options: {
-				// 		macroIndex: macro,
-				// 	},
-				// 	style: {
-				// 		bgcolor: combineRgb(0, 0, 238),
-				// 		color: combineRgb(255, 255, 255),
-				// 	},
-				// },
 				{
 					feedbackId: FeedbackId.Macro,
 					options: {

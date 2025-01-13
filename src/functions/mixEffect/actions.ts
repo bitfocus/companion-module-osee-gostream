@@ -17,8 +17,8 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 					type: 'dropdown',
 					label: 'Source',
 					id: 'Source',
-					default: 0, 
-					choices: getInputChoices(instance.model)
+					default: 0,
+					choices: getInputChoices(instance.model),
 				},
 			],
 			callback: async (action) => {
@@ -34,7 +34,7 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 					label: 'Source',
 					id: 'Source',
 					default: 0,
-					choices: getInputChoices(instance.model)
+					choices: getInputChoices(instance.model),
 				},
 			],
 			callback: async (action) => {

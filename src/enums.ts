@@ -12,7 +12,7 @@ export enum PortType {
 	Other = 1 << 3,
 	Aux = 1 << 4,
 	External = SDI | HDMI,
-	All = External | Internal | Other | Aux
+	All = External | Internal | Other | Aux,
 }
 
 export enum ReqType {

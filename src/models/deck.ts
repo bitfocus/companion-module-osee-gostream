@@ -4,9 +4,12 @@ import { Model, PortType } from '../enums'
 export const ModelSpecDeck: IModelSpec = {
 	id: Model.Deck,
 	label: 'Deck',
-	outputs: [...generatePorts('Output', "Out", PortType.HDMI, 2), { id: 2, longName: 'UVC', shortName: 'UVC', type: PortType.Other }],
+	outputs: [
+		...generatePorts('Output', 'Out', PortType.HDMI, 2),
+		{ id: 2, longName: 'UVC', shortName: 'UVC', type: PortType.Other },
+	],
 	inputs: [
-		...generatePorts('Input', "In", PortType.HDMI, 4),  // HDMI 1-4
+		...generatePorts('Input', 'In', PortType.HDMI, 4), // HDMI 1-4
 		{
 			id: 4,
 			longName: 'Aux',
@@ -19,6 +22,6 @@ export const ModelSpecDeck: IModelSpec = {
 			shortName: 'SSRC',
 			type: PortType.Internal,
 		},
-		...generatePorts('Still', "STL", PortType.Internal, 2, 6),  // Still 1-2
+		...generatePorts('Still', 'STL', PortType.Internal, 2, 6), // Still 1-2
 	],
 }

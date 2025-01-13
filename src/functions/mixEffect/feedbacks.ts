@@ -9,11 +9,11 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 	return {
 		[FeedbackId.PreviewBG]: {
 			type: 'boolean',
-			name: 'preview source',
+			name: 'Preview source',
 			description: 'If the input specified is selected in preview, change style of the bank',
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(0, 255, 0),
+				bgcolor: combineRgb(0, 204, 0),
 			},
 			options: [
 				{
@@ -34,11 +34,11 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 		},
 		[FeedbackId.ProgramBG]: {
 			type: 'boolean',
-			name: 'program source',
+			name: 'Program source',
 			description: 'If the input specified is selected in program, change style of the bank',
 			defaultStyle: {
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(0, 255, 0),
+				color: combineRgb(255, 255, 255),
+				bgcolor: combineRgb(204, 0, 0),
 			},
 			options: [
 				{

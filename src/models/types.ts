@@ -16,9 +16,15 @@ export interface IModelSpec {
 	inputs: IPortSpec[]
 }
 
-export function generatePorts(longNamePrefix: string, shortNamePrefix: string, type: PortType, count: number, idOffset?: number): IPortSpec[] {
+export function generatePorts(
+	longNamePrefix: string,
+	shortNamePrefix: string,
+	type: PortType,
+	count: number,
+	idOffset?: number,
+): IPortSpec[] {
 	const outputs: IPortSpec[] = []
-	let offset = idOffset ? idOffset : 0
+	const offset = idOffset ? idOffset : 0
 	for (let i = 0; i < count; i++) {
 		outputs.push({
 			id: offset + i,

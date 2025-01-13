@@ -18,11 +18,7 @@ import {
 	SettingsUMDSrcChoices,
 	SwitchChoices,
 } from './../../model'
-import {
-	getOutputChoices,
-	getInputChoices,
-	getColorChoices,
-} from './../../models'
+import { getOutputChoices, getInputChoices, getColorChoices } from './../../models'
 
 export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 	return {
@@ -183,8 +179,7 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 				},
 			],
 			callback: async (action) => {
-				console.log(getOptNumber(action, 'Srcid'),
-					getOptNumber(action, 'SrcSelection'))
+				console.log(getOptNumber(action, 'Srcid'), getOptNumber(action, 'SrcSelection'))
 				await sendCommand(ActionId.SrcSelection, ReqType.Set, [
 					getOptNumber(action, 'Srcid'),
 					getOptNumber(action, 'SrcSelection'),
