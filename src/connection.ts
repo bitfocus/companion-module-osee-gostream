@@ -6,7 +6,6 @@ import { GoStreamInstance } from './index'
 import { updateVariables } from './variables'
 
 import { MixEffectActions, MixEffectState } from './functions/mixEffect'
-import { LiveActions, LiveState } from './functions/live'
 import { PlaybackActions, PlaybackState } from './functions/playback'
 import { RecordActions, RecordState } from './functions/record'
 import { StillGeneratorActions, StillGeneratorState } from './functions/stillGenerator'
@@ -68,7 +67,7 @@ export function connect(instance: GoStreamInstance): void {
 	tcp.on('connect', () => {
 		instance.updateStatus(InstanceStatus.Ok)
 		instance.log('debug', 'Socket connected')
-		void ReqStateData()
+		ReqStateData()
 	})
 	tcp.on('error', () => {
 		instance.updateStatus(InstanceStatus.ConnectionFailure, 'Connection error')
@@ -77,6 +76,7 @@ export function connect(instance: GoStreamInstance): void {
 	tcp.on('end', () => {
 		instance.updateStatus(InstanceStatus.Disconnected, 'Disconnecting')
 		instance.log('debug', 'Socket Disconnecting')
+		tcp?.destroy()
 	})
 	tcp.on('data', (msg_data) => {
 		const commands = handleGoStreamPacket(msg_data)
@@ -129,12 +129,13 @@ export function handleGoStreamPacket(msg_data: Buffer): GoStreamData[] {
 	while (index >= 0) {
 		const packet_size = msg_data.readUInt16LE(index + 3)
 		const packet_data = msg_data.subarray(index, index + PACKET_HEADER_SIZE + packet_size)
-		commands.push(unpackData(packet_data))
-		index = msg_data.indexOf(PACKET_HEAD, index + PACKET_HEADER_SIZE + packet_size)
 		if (index + PACKET_HEADER_SIZE + packet_size > msg_data.length) {
+			// Packet is not complete, save this in partial packet buffer
 			partialPacketBuffer = Buffer.alloc(msg_data.length - index, msg_data.subarray(index))
 			break
 		}
+		commands.push(unpackData(packet_data))
+		index = msg_data.indexOf(PACKET_HEAD, index + PACKET_HEADER_SIZE + packet_size)
 	}
 
 	return commands
@@ -150,7 +151,6 @@ function unpackData(msg_data: Buffer): GoStreamData {
 function handleCommands(instance: GoStreamInstance, data: GoStreamData[]): void {
 	data.forEach((json) => {
 		MixEffectActions.handleData(instance, json)
-		LiveActions.handleData(instance, json)
 		PlaybackActions.handleData(instance, json)
 		RecordActions.handleData(instance, json)
 		StillGeneratorActions.handleData(instance, json)
@@ -169,7 +169,6 @@ function handleCommands(instance: GoStreamInstance, data: GoStreamData[]): void 
 
 export async function ReqStateData(): Promise<void> {
 	await MixEffectState.sync()
-	await LiveState.sync()
 	await PlaybackState.sync()
 	await RecordState.sync()
 	await StillGeneratorState.sync()

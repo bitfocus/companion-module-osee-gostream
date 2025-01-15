@@ -14,6 +14,7 @@ export interface IModelSpec {
 	label: string
 	outputs: IPortSpec[]
 	inputs: IPortSpec[]
+	streams: number
 }
 
 export function generatePorts(

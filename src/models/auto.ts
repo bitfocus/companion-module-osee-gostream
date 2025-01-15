@@ -5,4 +5,5 @@ export const ModelSpecAuto: IModelSpec = {
 	label: 'Auto Detect',
 	outputs: [],
 	inputs: [],
+	streams: 0,
 }

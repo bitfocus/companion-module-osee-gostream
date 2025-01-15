@@ -51,7 +51,6 @@ export class GoStreamInstance extends InstanceBase<Config> {
 	init_variables(): void {
 		this.log('debug', 'Initializing variables')
 		this.setVariableDefinitions(this.gostream.getVariables(this))
-		//this.setVariableDefinitions()
 	}
 	init_actions(): void {
 		this.log('debug', 'Initializing actions')

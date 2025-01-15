@@ -3,7 +3,6 @@ import type { GoStreamInstance } from './index'
 import { SuperSourceFeedbacks } from './functions/superSource'
 import { MixEffectFeedbacks } from './functions/mixEffect'
 import { StreamingFeedbacks } from './functions/streaming'
-import { LiveFeedbacks } from './functions/live'
 import { RecordFeedbacks } from './functions/record'
 import { StillGeneratorFeedbacks } from './functions/stillGenerator'
 import { DownstreamKeyerFeedbacks } from './functions/downstreamKeyer'
@@ -16,7 +15,6 @@ export function feedbacks(instance: GoStreamInstance): CompanionFeedbackDefiniti
 	return {
 		...UpstreamKeyerFeedbacks.create(instance),
 		...RecordFeedbacks.create(instance),
-		...LiveFeedbacks.create(instance),
 		...SuperSourceFeedbacks.create(instance),
 		...MixEffectFeedbacks.create(instance),
 		...StreamingFeedbacks.create(instance),

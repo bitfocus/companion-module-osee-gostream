@@ -24,4 +24,5 @@ export const ModelSpecDeck: IModelSpec = {
 		},
 		...generatePorts('Still', 'STL', PortType.Internal, 2, 6), // Still 1-2
 	],
+	streams: 3,
 }

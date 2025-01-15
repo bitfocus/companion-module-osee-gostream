@@ -1,6 +1,5 @@
 import { MixEffectState } from './functions/mixEffect'
 import { StreamingState } from './functions/streaming'
-import { LiveState } from './functions/live'
 import { StillGeneratorState } from './functions/stillGenerator'
 import { PlaybackState } from './functions/playback'
 import { RecordState } from './functions/record'
@@ -14,7 +13,6 @@ import { UpstreamKeyerState } from './functions/upstreamKeyer'
 type GoStreamState = {
 	MixEffect: MixEffectState.State
 	Streaming: StreamingState.State
-	Live: LiveState.State
 	StillGenerator: StillGeneratorState.State
 	Playback: PlaybackState.State
 	Record: RecordState.State
@@ -35,7 +33,6 @@ export function Create(): GoStreamState {
 	return {
 		...MixEffectState.create(),
 		...StreamingState.create(),
-		...LiveState.create(),
 		...StillGeneratorState.create(),
 		...PlaybackState.create(),
 		...RecordState.create(),
