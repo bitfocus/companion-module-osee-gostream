@@ -13,7 +13,7 @@ import { StreamingActions, StreamingState } from './functions/streaming'
 import { SuperSourceActions, SuperSourceState } from './functions/superSource'
 import { AudioMixerActions, AudioMixerState } from './functions/audioMixer'
 import { DownstreamKeyerActions, DownstreamKeyerState } from './functions/downstreamKeyer'
-import { SettingsActions } from './functions/settings'
+import { SettingsActions, SettingsState } from './functions/settings'
 import { MacroActions, MacroState } from './functions/macro'
 import { UpstreamKeyerActions, UpstreamKeyerState } from './functions/upstreamKeyer'
 
@@ -178,6 +178,7 @@ export async function ReqStateData(): Promise<void> {
 	await MacroState.sync()
 	await SuperSourceState.sync()
 	await UpstreamKeyerState.sync()
+	await SettingsState.sync()
 }
 
 export function disconnectSocket(): void {

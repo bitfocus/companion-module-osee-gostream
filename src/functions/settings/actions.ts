@@ -336,6 +336,11 @@ export function handleData(instance: GoStreamInstance, data: GoStreamData): bool
 		case ActionId.SrcSelection:
 			if (data.value) instance.states.Settings.sourceSelection[data.value[0]] = data.value[1]
 			return true
+		case ActionId.SrcName:
+			if (!data.value) return true
+			instance.states.Settings.sourceName[data.value[0]] = data.value[1]
+			return true
+
 	}
 	return false
 }

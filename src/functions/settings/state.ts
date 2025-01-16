@@ -12,6 +12,7 @@ export type State = {
 	micInput: number[]
 	mvLayout: number
 	sourceSelection: number[]
+	sourceName: string[]
 }
 
 export type SettingsState = {
@@ -30,11 +31,14 @@ export function create(): SettingsState {
 			micInput: [0, 0],
 			mvLayout: 0,
 			sourceSelection: [0, 0, 0, 0],
+			sourceName: new Array(9),
 		},
 	}
 }
 
 export async function sync(): Promise<void> {
+
+	// TODO : Read these from the model info
 	await sendCommand(ActionId.AuxSource, ReqType.Get)
 	await sendCommand(ActionId.OutSource, ReqType.Get, [0])
 	await sendCommand(ActionId.OutSource, ReqType.Get, [1])
@@ -51,4 +55,14 @@ export async function sync(): Promise<void> {
 	await sendCommand(ActionId.MvLayout, ReqType.Get)
 	await sendCommand(ActionId.MicInput, ReqType.Get, [0])
 	await sendCommand(ActionId.MicInput, ReqType.Get, [1])
+
+	await sendCommand(ActionId.SrcName, ReqType.Get, [0])
+	await sendCommand(ActionId.SrcName, ReqType.Get, [1])
+	await sendCommand(ActionId.SrcName, ReqType.Get, [2])
+	await sendCommand(ActionId.SrcName, ReqType.Get, [3])
+	await sendCommand(ActionId.SrcName, ReqType.Get, [4])
+	await sendCommand(ActionId.SrcName, ReqType.Get, [5])
+	await sendCommand(ActionId.SrcName, ReqType.Get, [6])
+	await sendCommand(ActionId.SrcName, ReqType.Get, [7])
+	await sendCommand(ActionId.SrcName, ReqType.Get, [8])
 }
