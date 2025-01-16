@@ -113,31 +113,6 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 				await sendCommand(ActionId.StreamKey, ReqType.Set, [opt1, opt2])
 			},
 		},
-		[ActionId.StreamUrl]: {
-			name: 'Streaming:Set Stream Url',
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Stream',
-					id: 'StreamID',
-					choices: StreamingChoices,
-					default: 0,
-				},
-				{
-					type: 'textinput',
-					label: 'Url',
-					id: 'StreamUrl',
-					default: '',
-					required: true,
-				},
-			],
-			callback: async (action) => {
-				await sendCommand(ActionId.StreamOutput, ReqType.Set, [
-					getOptNumber(action, 'StreamID'),
-					getOptString(action, 'StreamUrl'),
-				])
-			},
-		},
 		[ActionId.Live]: {
 			name: 'Live:Set Start or Stop Live',
 			options: [

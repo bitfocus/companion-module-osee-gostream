@@ -1,5 +1,5 @@
 import { ActionId } from './actionId'
-import { sendCommand } from '../../connection'
+import { sendCommands } from '../../connection'
 import { ReqType } from '../../enums'
 
 export type State = {
@@ -33,9 +33,12 @@ export function create(): PlaybackState {
 }
 
 export async function sync(): Promise<void> {
-	await sendCommand(ActionId.PlaybackMode, ReqType.Get)
-	await sendCommand(ActionId.PlaybackRepeat, ReqType.Get)
-	await sendCommand(ActionId.PlaybackPause, ReqType.Get)
-	await sendCommand(ActionId.PlaybackBar, ReqType.Get)
-	await sendCommand(ActionId.PlaybackList, ReqType.Get)
+	const cmds = [
+		{ id: ActionId.PlaybackMode, type: ReqType.Get },
+		{ id: ActionId.PlaybackRepeat, type: ReqType.Get },
+		{ id: ActionId.PlaybackPause, type: ReqType.Get },
+		{ id: ActionId.PlaybackBar, type: ReqType.Get },
+		{ id: ActionId.PlaybackList, type: ReqType.Get },
+	]
+	await sendCommands(cmds)
 }

@@ -1,5 +1,5 @@
 import { ActionId } from './actionId'
-import { sendCommand } from '../../connection'
+import { sendCommands } from '../../connection'
 import { ReqType } from '../../enums'
 
 export type TransitionKeyState = {
@@ -43,10 +43,13 @@ export function create(): UpstreamKeyState {
 }
 
 export async function sync(): Promise<void> {
-	await sendCommand(ActionId.KeyOnAir, ReqType.Get)
-	await sendCommand(ActionId.UpStreamKeyType, ReqType.Get)
-	await sendCommand(ActionId.LumaKeySourceFill, ReqType.Get)
-	await sendCommand(ActionId.ChromaKeyFill, ReqType.Get)
-	await sendCommand(ActionId.KeyPatternSourceFill, ReqType.Get)
-	await sendCommand(ActionId.PipSource, ReqType.Get)
+	const cmds = [
+		{ id: ActionId.KeyOnAir, type: ReqType.Get },
+		{ id: ActionId.UpStreamKeyType, type: ReqType.Get },
+		{ id: ActionId.LumaKeySourceFill, type: ReqType.Get },
+		{ id: ActionId.ChromaKeyFill, type: ReqType.Get },
+		{ id: ActionId.KeyPatternSourceFill, type: ReqType.Get },
+		{ id: ActionId.PipSource, type: ReqType.Get },
+	]
+	return sendCommands(cmds)
 }

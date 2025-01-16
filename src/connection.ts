@@ -68,6 +68,15 @@ export function connect(instance: GoStreamInstance): void {
 		instance.updateStatus(InstanceStatus.Ok)
 		instance.log('debug', 'Socket connected')
 		ReqStateData()
+			.catch((err) => {
+				instance.log('error', 'Error while syncing data ' + err)
+			})
+			.then(() => {
+				instance.log('debug', 'No handler defined to reconnect')
+			})
+			.catch(() => {
+				// Do nothing
+			})
 	})
 	tcp.on('error', () => {
 		instance.updateStatus(InstanceStatus.ConnectionFailure, 'Connection error')
@@ -187,7 +196,7 @@ export function disconnectSocket(): void {
 	}
 }
 
-export async function sendCommands(commands: GoStreamData[]): Promise<boolean> {
+export async function sendCommands(commands: GoStreamData[]): Promise<void> {
 	if (tcp !== null) {
 		const cmdStrings: string[] = []
 		commands.forEach((cmd) => {
@@ -195,10 +204,10 @@ export async function sendCommands(commands: GoStreamData[]): Promise<boolean> {
 			const bufs = Buffer.from(json, 'utf-8')
 			cmdStrings.push(PackData(bufs).toString())
 		})
-		const sign = await tcp.send(cmdStrings.join(''))
-		return sign
+		await tcp.send(cmdStrings.join(''))
+		return
 	}
-	return false
+	return
 }
 
 export async function sendCommand(id: string, type: ReqType, value?: string | number | any[]): Promise<boolean> {

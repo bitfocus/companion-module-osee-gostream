@@ -1,5 +1,5 @@
 import { ActionId } from './actionId'
-import { sendCommand } from '../../connection'
+import { sendCommands } from '../../connection'
 import { ReqType } from '../../enums'
 
 export type State = {
@@ -37,32 +37,33 @@ export function create(): SettingsState {
 }
 
 export async function sync(): Promise<void> {
-
 	// TODO : Read these from the model info
-	await sendCommand(ActionId.AuxSource, ReqType.Get)
-	await sendCommand(ActionId.OutSource, ReqType.Get, [0])
-	await sendCommand(ActionId.OutSource, ReqType.Get, [1])
-	await sendCommand(ActionId.OutSource, ReqType.Get, [2])
-	await sendCommand(ActionId.InputWindowLayout, ReqType.Get)
-	await sendCommand(ActionId.MvMeter, ReqType.Get, [0])
-	await sendCommand(ActionId.MvMeter, ReqType.Get, [1])
-	await sendCommand(ActionId.MvMeter, ReqType.Get, [2])
-	await sendCommand(ActionId.MvMeter, ReqType.Get, [3])
-	await sendCommand(ActionId.MvMeter, ReqType.Get, [4])
-	await sendCommand(ActionId.MvMeter, ReqType.Get, [5])
-	await sendCommand(ActionId.OutputColorSpace, ReqType.Get)
-	await sendCommand(ActionId.OutFormat, ReqType.Get)
-	await sendCommand(ActionId.MvLayout, ReqType.Get)
-	await sendCommand(ActionId.MicInput, ReqType.Get, [0])
-	await sendCommand(ActionId.MicInput, ReqType.Get, [1])
-
-	await sendCommand(ActionId.SrcName, ReqType.Get, [0])
-	await sendCommand(ActionId.SrcName, ReqType.Get, [1])
-	await sendCommand(ActionId.SrcName, ReqType.Get, [2])
-	await sendCommand(ActionId.SrcName, ReqType.Get, [3])
-	await sendCommand(ActionId.SrcName, ReqType.Get, [4])
-	await sendCommand(ActionId.SrcName, ReqType.Get, [5])
-	await sendCommand(ActionId.SrcName, ReqType.Get, [6])
-	await sendCommand(ActionId.SrcName, ReqType.Get, [7])
-	await sendCommand(ActionId.SrcName, ReqType.Get, [8])
+	const cmds = [
+		{ id: ActionId.AuxSource, type: ReqType.Get },
+		{ id: ActionId.OutSource, type: ReqType.Get, value: [0] },
+		{ id: ActionId.OutSource, type: ReqType.Get, value: [1] },
+		{ id: ActionId.OutSource, type: ReqType.Get, value: [2] },
+		{ id: ActionId.InputWindowLayout, type: ReqType.Get },
+		{ id: ActionId.MvMeter, type: ReqType.Get, value: [0] },
+		{ id: ActionId.MvMeter, type: ReqType.Get, value: [1] },
+		{ id: ActionId.MvMeter, type: ReqType.Get, value: [2] },
+		{ id: ActionId.MvMeter, type: ReqType.Get, value: [3] },
+		{ id: ActionId.MvMeter, type: ReqType.Get, value: [4] },
+		{ id: ActionId.MvMeter, type: ReqType.Get, value: [5] },
+		{ id: ActionId.OutputColorSpace, type: ReqType.Get },
+		{ id: ActionId.OutFormat, type: ReqType.Get },
+		{ id: ActionId.MvLayout, type: ReqType.Get },
+		{ id: ActionId.MicInput, type: ReqType.Get, value: [0] },
+		{ id: ActionId.MicInput, type: ReqType.Get, value: [1] },
+		{ id: ActionId.SrcName, type: ReqType.Get, value: [0] },
+		{ id: ActionId.SrcName, type: ReqType.Get, value: [1] },
+		{ id: ActionId.SrcName, type: ReqType.Get, value: [2] },
+		{ id: ActionId.SrcName, type: ReqType.Get, value: [3] },
+		{ id: ActionId.SrcName, type: ReqType.Get, value: [4] },
+		{ id: ActionId.SrcName, type: ReqType.Get, value: [5] },
+		{ id: ActionId.SrcName, type: ReqType.Get, value: [6] },
+		{ id: ActionId.SrcName, type: ReqType.Get, value: [7] },
+		{ id: ActionId.SrcName, type: ReqType.Get, value: [8] },
+	]
+	await sendCommands(cmds)
 }

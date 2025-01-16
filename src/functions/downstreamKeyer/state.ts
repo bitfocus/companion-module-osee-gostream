@@ -1,5 +1,5 @@
 import { ActionId } from './actionId'
-import { sendCommand } from '../../connection'
+import { sendCommands } from '../../connection'
 import { ReqType } from '../../enums'
 
 export type State = {
@@ -29,10 +29,13 @@ export function create(): DownstreamKeyerState {
 }
 
 export async function sync(): Promise<void> {
-	await sendCommand(ActionId.DskOnAir, ReqType.Get)
-	await sendCommand(ActionId.DskSourceFill, ReqType.Get)
-	await sendCommand(ActionId.DskSourceKey, ReqType.Get)
-	await sendCommand(ActionId.DskMaskEnable, ReqType.Get)
-	await sendCommand(ActionId.DskControlShapedKey, ReqType.Get)
-	await sendCommand(ActionId.DskControlInvert, ReqType.Get)
+	const cmds = [
+		{ id: ActionId.DskOnAir, type: ReqType.Get },
+		{ id: ActionId.DskSourceFill, type: ReqType.Get },
+		{ id: ActionId.DskSourceKey, type: ReqType.Get },
+		{ id: ActionId.DskMaskEnable, type: ReqType.Get },
+		{ id: ActionId.DskControlShapedKey, type: ReqType.Get },
+		{ id: ActionId.DskControlInvert, type: ReqType.Get },
+	]
+	await sendCommands(cmds)
 }

@@ -1,5 +1,5 @@
 import { ActionId } from './actionId'
-import { sendCommand } from '../../connection'
+import { sendCommands } from '../../connection'
 import { ReqType } from '../../enums'
 
 export type State = {
@@ -25,12 +25,15 @@ export function create(): AudioMixerState {
 }
 
 export async function sync(): Promise<void> {
-	await sendCommand(ActionId.AudioTransition, ReqType.Get)
-	await sendCommand(ActionId.AudioEnable, ReqType.Get, [0])
-	await sendCommand(ActionId.AudioEnable, ReqType.Get, [1])
-	await sendCommand(ActionId.AudioEnable, ReqType.Get, [2])
-	await sendCommand(ActionId.AudioEnable, ReqType.Get, [3])
-	await sendCommand(ActionId.AudioEnable, ReqType.Get, [4])
-	await sendCommand(ActionId.AudioEnable, ReqType.Get, [5])
-	await sendCommand(ActionId.AudioEnable, ReqType.Get, [6])
+	const cmds = [
+		{ id: ActionId.AudioTransition, type: ReqType.Get },
+		{ id: ActionId.AudioEnable, type: ReqType.Get, value: [0] },
+		{ id: ActionId.AudioEnable, type: ReqType.Get, value: [1] },
+		{ id: ActionId.AudioEnable, type: ReqType.Get, value: [2] },
+		{ id: ActionId.AudioEnable, type: ReqType.Get, value: [3] },
+		{ id: ActionId.AudioEnable, type: ReqType.Get, value: [4] },
+		{ id: ActionId.AudioEnable, type: ReqType.Get, value: [5] },
+		{ id: ActionId.AudioEnable, type: ReqType.Get, value: [6] },
+	]
+	await sendCommands(cmds)
 }

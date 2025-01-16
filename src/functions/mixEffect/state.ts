@@ -70,6 +70,6 @@ export async function sync(): Promise<void> {
 		{ id: ActionId.TransitionRate, type: ReqType.Get, value: [2] },
 		{ id: ActionId.TransitionSource, type: ReqType.Get },
 	]
-	sendCommands(cmds)
-	return 
+	await sendCommands(cmds)
+	return
 }

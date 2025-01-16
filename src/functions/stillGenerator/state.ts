@@ -1,5 +1,5 @@
 import { ActionId } from './actionId'
-import { sendCommand } from '../../connection'
+import { sendCommands } from '../../connection'
 import { ReqType } from '../../enums'
 
 export type State = {
@@ -21,6 +21,9 @@ export function create(): StillGeneratorState {
 }
 
 export async function sync(): Promise<void> {
-	await sendCommand(ActionId.StillSelection, ReqType.Get, [0])
-	await sendCommand(ActionId.StillSelection, ReqType.Get, [1])
+	const cmds = [
+		{ id: ActionId.StillSelection, type: ReqType.Get, value: [0] },
+		{ id: ActionId.StillSelection, type: ReqType.Get, value: [1] },
+	]
+	await sendCommands(cmds)
 }

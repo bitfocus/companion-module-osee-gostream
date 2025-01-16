@@ -16,7 +16,7 @@ export function variables(instance: GoStreamInstance): CompanionVariableDefiniti
 	vars.push({
 		name: 'IP address of GoStreamDeck',
 		variableId: `device_ip`,
-	})	
+	})
 
 	return vars
 }

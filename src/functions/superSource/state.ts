@@ -1,5 +1,5 @@
 import { ActionId } from './actionId'
-import { sendCommand } from '../../connection'
+import { sendCommands } from '../../connection'
 import { ReqType } from '../../enums'
 
 export type State = {
@@ -35,19 +35,22 @@ export function create(): SuperSourceState {
 }
 
 export async function sync(): Promise<void> {
-	await sendCommand(ActionId.SuperSourceEnable, ReqType.Get)
-	await sendCommand(ActionId.SuperSourceSource1, ReqType.Get)
-	await sendCommand(ActionId.SuperSourceSource2, ReqType.Get)
-	await sendCommand(ActionId.SuperSourceBackground, ReqType.Get)
-	await sendCommand(ActionId.SuperSourceControlStyle, ReqType.Get)
-	await sendCommand(ActionId.SuperSourceMaskEnable, ReqType.Get)
-	await sendCommand(ActionId.SuperSourceBorderBrightness, ReqType.Get)
-	await sendCommand(ActionId.SuperSourceBorderHue, ReqType.Get)
-	await sendCommand(ActionId.SuperSourceBorderSaturation, ReqType.Get)
-	await sendCommand(ActionId.SuperSourceBorderWidth, ReqType.Get)
-	await sendCommand(ActionId.SuperSourceControlYPosition, ReqType.Get)
-	await sendCommand(ActionId.SuperSourceMaskHEnd, ReqType.Get)
-	await sendCommand(ActionId.SuperSourceMaskHStart, ReqType.Get)
-	await sendCommand(ActionId.SuperSourceMaskVEnd, ReqType.Get)
-	await sendCommand(ActionId.SuperSourceMaskVStart, ReqType.Get)
+	const cmds = [
+		{ id: ActionId.SuperSourceEnable, type: ReqType.Get },
+		{ id: ActionId.SuperSourceSource1, type: ReqType.Get },
+		{ id: ActionId.SuperSourceSource2, type: ReqType.Get },
+		{ id: ActionId.SuperSourceBackground, type: ReqType.Get },
+		{ id: ActionId.SuperSourceControlStyle, type: ReqType.Get },
+		{ id: ActionId.SuperSourceMaskEnable, type: ReqType.Get },
+		{ id: ActionId.SuperSourceBorderBrightness, type: ReqType.Get },
+		{ id: ActionId.SuperSourceBorderHue, type: ReqType.Get },
+		{ id: ActionId.SuperSourceBorderSaturation, type: ReqType.Get },
+		{ id: ActionId.SuperSourceBorderWidth, type: ReqType.Get },
+		{ id: ActionId.SuperSourceControlYPosition, type: ReqType.Get },
+		{ id: ActionId.SuperSourceMaskHEnd, type: ReqType.Get },
+		{ id: ActionId.SuperSourceMaskHStart, type: ReqType.Get },
+		{ id: ActionId.SuperSourceMaskVEnd, type: ReqType.Get },
+		{ id: ActionId.SuperSourceMaskVStart, type: ReqType.Get },
+	]
+	return sendCommands(cmds)
 }

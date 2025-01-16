@@ -340,7 +340,6 @@ export function handleData(instance: GoStreamInstance, data: GoStreamData): bool
 			if (!data.value) return true
 			instance.states.Settings.sourceName[data.value[0]] = data.value[1]
 			return true
-
 	}
 	return false
 }
