@@ -14,7 +14,7 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: () => {
-				return instance.states.RecordState
+				return instance.states.recordState
 			},
 		},
 	}

@@ -2,7 +2,7 @@ import { ActionId } from './actionId'
 import { getOptNumber } from '../../util'
 import { getChoices } from '../../choices'
 import { ReqType, ActionType, TransitionStyle } from '../../enums'
-import { sendCommand, GoStreamData } from '../../connection'
+import { sendCommand } from '../../connection'
 import type { GoStreamInstance } from '../../index'
 import type { CompanionActionDefinitions } from '@companion-module/base'
 import { TransitionStyleChoice, WipeDirectionChoices, SwitchChoices } from '../../model'
@@ -378,86 +378,4 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 			},
 		},
 	}
-}
-
-export function handleData(instance: GoStreamInstance, data: GoStreamData): boolean {
-	if (!data.value) return false
-	switch (data.id as ActionId) {
-		case ActionId.PvwIndex: {
-			if (data.value[0] !== undefined) {
-				instance.states.MixEffect.PvwSrc = data.value[0]
-			}
-			return true
-		}
-		case ActionId.PgmIndex: {
-			if (data.value[0] !== undefined) {
-				instance.states.MixEffect.PgmSrc = data.value[0]
-			}
-			return true
-		}
-		case ActionId.AutoTransition:
-			instance.states.MixEffect.transitionPosition.inTransition = data.value[0] === 1 ? true : false
-			return true
-		case ActionId.FTB:
-			if (data.value[0] === 0) {
-				instance.states.MixEffect.fadeToBlack.isFullyBlack = false
-				instance.states.MixEffect.fadeToBlack.inTransition = false
-			} else if (data.value[0] === 1) {
-				instance.states.MixEffect.fadeToBlack.inTransition = false
-				instance.states.MixEffect.fadeToBlack.isFullyBlack = true
-			} else if (data.value[0] === 2) {
-				instance.states.MixEffect.fadeToBlack.inTransition = true
-			}
-			return true
-		case ActionId.FtbAudioAFV:
-			instance.states.MixEffect.fadeToBlack.AFV = data.value[0] === 1 ? true : false
-			return true
-		case ActionId.FtbRate:
-			instance.states.MixEffect.fadeToBlack.rate = data.value[0]
-			return true
-		case ActionId.Prev:
-			instance.states.MixEffect.selectTransitionStyle.PrevState = data.value[0] === 1 ? true : false
-			return true
-		case ActionId.TransitionIndex: {
-			const selectValue = Number(data.value[0])
-			const selectStyle = TransitionStyleChoice.find((s) => s.id === selectValue)
-			if (selectStyle !== undefined) {
-				instance.states.MixEffect.selectTransitionStyle.style = selectStyle
-			}
-			return true
-		}
-		case ActionId.TransitionRate: {
-			const type = data.value[0]
-			const typeValue = data.value[1]
-			if (type === 0) {
-				instance.states.MixEffect.selectTransitionStyle.mixrate = typeValue
-			} else if (type === 1) {
-				instance.states.MixEffect.selectTransitionStyle.diprate = typeValue
-			} else if (type === 2) {
-				instance.states.MixEffect.selectTransitionStyle.wiperate = typeValue
-			}
-			return true
-		}
-		case ActionId.TransitionSource: {
-			const intstate = Number(data.value[0])
-			if ((intstate & 1) === 1) {
-				instance.states.UpstreamKeyer.transitionKey.M_Key = true
-			} else {
-				instance.states.UpstreamKeyer.transitionKey.M_Key = false
-			}
-			if (((intstate >> 1) & 1) === 1) {
-				instance.states.UpstreamKeyer.transitionKey.DSK = true
-			} else {
-				instance.states.UpstreamKeyer.transitionKey.DSK = false
-			}
-			if (((intstate >> 2) & 1) === 1) {
-				instance.states.UpstreamKeyer.transitionKey.BKGD = true
-			} else {
-				instance.states.UpstreamKeyer.transitionKey.BKGD = false
-			}
-			//instance.log('info',intstate.toString());
-			return true
-		}
-	}
-	return false
 }

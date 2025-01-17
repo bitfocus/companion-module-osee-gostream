@@ -6,4 +6,6 @@ export const ModelSpecAuto: IModelSpec = {
 	outputs: [],
 	inputs: [],
 	streams: 0,
+	transitionTypes: 0,
+	stillSlots: 0,
 }

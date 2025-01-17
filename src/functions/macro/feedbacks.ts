@@ -41,17 +41,10 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 				bgcolor: combineRgb(238, 238, 0),
 			},
 			callback: (feedback) => {
-				// const macroIndex = Number(feedback.options.MacroIndex)
-				// if (!isNaN(macroIndex)) {
-				// 	macroIndex -= 1
-				// }
-				// return false
 				const macroIndex = Number(feedback.options.MacroIndex)
 				if (!isNaN(macroIndex)) {
 					const type = feedback.options.state
-					//console.log(instance.states.MacroProp.macroProperties);
-					const macro = instance.states.Macro.props.find((item) => item?.index === macroIndex)
-					//console.log(macro);
+					const macro = instance.states.Macro.macros.find((item) => item?.index === macroIndex)
 					switch (type) {
 						case MacroFeedbackType.IsUsed: {
 							return !!macro?.used

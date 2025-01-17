@@ -3,7 +3,7 @@ import { getOptNumber } from './../../util'
 import { getChoices } from './../../choices'
 import { SwitchChoices } from './../../model'
 import { ReqType, ActionType } from './../../enums'
-import { sendCommand, GoStreamData } from './../../connection'
+import { sendCommand } from './../../connection'
 import type { GoStreamInstance } from './../../index'
 import type { CompanionActionDefinitions } from '@companion-module/base'
 
@@ -290,33 +290,4 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 			},
 		},
 	}
-}
-
-export function handleData(instance: GoStreamInstance, data: GoStreamData): boolean {
-	if (!data.value) return false
-	switch (data.id as ActionId) {
-		case ActionId.DskSourceFill: {
-			const select = getChoices(ActionType.DskSourceFill).find((s) => data.value && s.id === data.value[0])
-			if (select !== undefined) instance.states.DownstreamKeyer.fill = select
-			return true
-		}
-		case ActionId.DskSourceKey: {
-			const select = getChoices(ActionType.DskSourceFill).find((s) => s.id === data.value && data.value[0])
-			if (select !== undefined) instance.states.DownstreamKeyer.key = select
-			return true
-		}
-		case ActionId.DskControlInvert:
-			instance.states.DownstreamKeyer.invert = data.value[0] === 1 ? true : false
-			return true
-		case ActionId.DskMaskEnable:
-			instance.states.DownstreamKeyer.mask = data.value[0] === 1 ? true : false
-			return true
-		case ActionId.DskControlShapedKey:
-			instance.states.DownstreamKeyer.shapedKey = data.value[0] === 1 ? true : false
-			return true
-		case ActionId.DskOnAir:
-			instance.states.DownstreamKeyer.onAir = data.value[0] === 1 ? true : false
-			break
-	}
-	return false
 }

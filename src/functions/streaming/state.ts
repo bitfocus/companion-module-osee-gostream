@@ -1,7 +1,8 @@
 import { ActionId } from './actionId'
-import { sendCommands } from '../../connection'
+import { sendCommands, GoStreamCmd } from '../../connection'
 import { ReqType } from '../../enums'
 import { LiveStatus } from './actions'
+import type { IModelSpec } from '../../models/types'
 
 export type StreamPlatform = {
 	name: string
@@ -13,32 +14,26 @@ type StreamInfo = {
 	status: LiveStatus
 	platform: string
 }
-export type State = {
+export type StreamingStateT = {
 	status: LiveStatus
 	streamInfo: StreamInfo[]
 	platforms: StreamPlatform[]
 }
 
-export type StreamingState = {
-	Streaming: State
-}
-
-export function create(): StreamingState {
+export function create(_model: IModelSpec): StreamingStateT {
 	return {
-		Streaming: {
-			status: LiveStatus.Off,
-			streamInfo: [
-				{ enabled: false, status: LiveStatus.Off, platform: '' },
-				{ enabled: false, status: LiveStatus.Off, platform: '' },
-				{ enabled: false, status: LiveStatus.Off, platform: '' },
-			],
-			platforms: [],
-		},
+		status: LiveStatus.Off,
+		streamInfo: [
+			{ enabled: false, status: LiveStatus.Off, platform: '' },
+			{ enabled: false, status: LiveStatus.Off, platform: '' },
+			{ enabled: false, status: LiveStatus.Off, platform: '' },
+		],
+		platforms: [],
 	}
 }
 
-export async function sync(): Promise<void> {
-	const cmds = [
+export async function sync(_model: IModelSpec): Promise<boolean> {
+	const cmds: GoStreamCmd[] = [
 		{ id: ActionId.StreamOutput, type: ReqType.Get, value: [0] },
 		{ id: ActionId.StreamOutput, type: ReqType.Get, value: [1] },
 		{ id: ActionId.StreamOutput, type: ReqType.Get, value: [2] },
@@ -58,5 +53,36 @@ export async function sync(): Promise<void> {
 		{ id: ActionId.Live, type: ReqType.Get },
 		{ id: ActionId.StreamProfileAll, type: ReqType.Get },
 	]
-	await sendCommands(cmds)
+	return await sendCommands(cmds)
+}
+
+export function update(state: StreamingStateT, data: GoStreamCmd): boolean {
+	if (!data.value) return false
+	switch (data.id as ActionId) {
+		case ActionId.StreamOutput: {
+			state.streamInfo[Number(data.value[0])].enabled = data.value[1] === 1 ? true : false
+			break
+		}
+		case ActionId.Live: {
+			state.status = data.value[0]
+			break
+		}
+		case ActionId.LiveInfo: {
+			state.streamInfo[Number(data.value[0])].status = data.value[1]
+			break
+		}
+		case ActionId.StreamProfile: {
+			const arrData: any[] = data.value as any[]
+			const name = arrData.shift()
+			const servers: any[] = []
+			arrData.forEach((server) => servers.push(server))
+			state.platforms.push({ name: name, servers: servers })
+			return true
+		}
+		case ActionId.StreamPlatform: {
+			state.streamInfo[Number(data.value[0])].platform = data.value[1]
+			return true
+		}
+	}
+	return false
 }

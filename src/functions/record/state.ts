@@ -1,25 +1,33 @@
 import { ActionId } from './actionId'
 import { sendCommand } from '../../connection'
 import { ReqType } from '../../enums'
+import type { IModelSpec } from '../../models/types'
+import { GoStreamCmd } from '../../connection'
 
-export type State = {
-	State: number
-	RecordTime: string
+export type RecordStateT = {
+	isRecording: boolean
+	recordTime: string
 }
 
-export type RecordState = {
-	Record: State
-}
-
-export function create(): RecordState {
+export function create(_model: IModelSpec): RecordStateT {
 	return {
-		Record: {
-			State: 0,
-			RecordTime: '',
-		},
+		isRecording: false,
+		recordTime: '',
 	}
 }
 
-export async function sync(): Promise<void> {
-	await sendCommand(ActionId.Record, ReqType.Get)
+export async function sync(_model: IModelSpec): Promise<boolean> {
+	return await sendCommand(ActionId.Record, ReqType.Get)
+}
+
+export function update(state: RecordStateT, data: GoStreamCmd): boolean {
+	switch (data.id as ActionId) {
+		case ActionId.Record:
+			state.isRecording = data.value![0] === 1 ? true : false
+			break
+		case ActionId.RecordTime:
+			state.recordTime = data.value![0].toString()
+			break
+	}
+	return false
 }

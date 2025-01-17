@@ -2,7 +2,7 @@ import { ActionId } from './actionId'
 import { getOptNumber, getOptString } from './../../util'
 import { getChoices } from './../../choices'
 import { ReqType, ActionType, PortType } from './../../enums'
-import { sendCommand, GoStreamData } from './../../connection'
+import { sendCommand } from './../../connection'
 import type { GoStreamInstance } from './../../index'
 import type { CompanionActionDefinitions } from '@companion-module/base'
 import {
@@ -18,7 +18,7 @@ import {
 	SettingsUMDSrcChoices,
 	SwitchChoices,
 } from './../../model'
-import { getOutputChoices, getInputChoices, getColorChoices } from './../../models'
+import { getInputChoices, getColorChoices } from './../../models'
 
 export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 	return {
@@ -302,44 +302,4 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 			},
 		},
 	}
-}
-export function handleData(instance: GoStreamInstance, data: GoStreamData): boolean {
-	switch (data.id as ActionId) {
-		case ActionId.AuxSource:
-			if (data.value) instance.states.Settings.auxSource = data.value[0]
-			return true
-		case ActionId.InputWindowLayout:
-			if (data.value) instance.states.Settings.settingsInputWindowLayout = data.value[0]
-			return true
-		case ActionId.MvMeter:
-			if (data.value) instance.states.Settings.mvMeter[data.value[0]] = data.value[1]
-			return true
-		case ActionId.OutSource: {
-			const outType = data.value && data.value[0]
-			const outTypeValue = data.value && data.value[1]
-			const selectSource = getOutputChoices(instance.model).find((s) => s.id === outTypeValue)
-			if (selectSource !== undefined) instance.states.Settings.outSource[outType] = selectSource
-			return true
-		}
-		case ActionId.OutputColorSpace:
-			if (data.value) instance.states.Settings.outputColorSpace[data.value[0]] = data.value[1]
-			return true
-		case ActionId.OutFormat:
-			instance.states.Settings.outputFormat = data.value && data.value[0]
-			return true
-		case ActionId.MicInput:
-			if (data.value) instance.states.Settings.micInput[data.value[0]] = data.value[1]
-			return true
-		case ActionId.MvLayout:
-			instance.states.Settings.mvLayout = data.value && data.value[0]
-			return true
-		case ActionId.SrcSelection:
-			if (data.value) instance.states.Settings.sourceSelection[data.value[0]] = data.value[1]
-			return true
-		case ActionId.SrcName:
-			if (!data.value) return true
-			instance.states.Settings.sourceName[data.value[0]] = data.value[1]
-			return true
-	}
-	return false
 }

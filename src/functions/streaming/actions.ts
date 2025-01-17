@@ -2,12 +2,9 @@ import { ActionId } from './actionId'
 import { getOptNumber, getOptString } from '../../util'
 import { StreamingChoices, SwitchChoices } from '../../model'
 import { ReqType } from '../../enums'
-import { sendCommand, GoStreamData } from '../../connection'
+import { sendCommand } from '../../connection'
 import type { GoStreamInstance } from '../../index'
-import type {
-	CompanionActionDefinitions,
-	/* DropdownChoice,*/ SomeCompanionActionInputField,
-} from '@companion-module/base'
+import type { CompanionActionDefinitions, SomeCompanionActionInputField } from '@companion-module/base'
 import type { StreamPlatform } from './state'
 
 export enum LiveStatus {
@@ -144,36 +141,4 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 			},
 		},
 	}
-}
-export function handleData(instance: GoStreamInstance, data: GoStreamData): boolean {
-	if (!data.value) return false
-	switch (data.id as ActionId) {
-		case ActionId.StreamOutput: {
-			instance.states.Streaming.streamInfo[Number(data.value[0])].enabled = data.value[1] === 1 ? true : false
-			return true
-		}
-		case ActionId.Live: {
-			instance.states.Streaming.status = data.value[0]
-			return true
-		}
-		case ActionId.LiveInfo: {
-			instance.states.Streaming.streamInfo[Number(data.value[0])].status = data.value[1]
-			return true
-		}
-		case ActionId.StreamProfile: {
-			const arrData: any[] = data.value as any[]
-			const name = arrData.shift()
-			const servers: any[] = []
-			arrData.forEach((server) => servers.push(server))
-			instance.states.Streaming.platforms.push({ name: name, servers: servers })
-			// Rebuild the options dropdown
-			instance.init_actions()
-			return true
-		}
-		case ActionId.StreamPlatform: {
-			instance.states.Streaming.streamInfo[Number(data.value[0])].platform = data.value[1]
-			return true
-		}
-	}
-	return false
 }

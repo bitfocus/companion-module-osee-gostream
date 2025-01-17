@@ -1,7 +1,7 @@
 import { variables } from './variables'
 import { feedbacks } from './feedbacks'
 import { presets } from './presets'
-import { Create } from './state'
+import { create } from './state'
 import { disconnectSocket, connect } from './connection'
 import { GoStreamInstance } from './index'
 import {
@@ -16,7 +16,7 @@ export class GoStream {
 	connection: TCPHelper | null
 	constructor(instance: GoStreamInstance) {
 		this.instance = instance
-		this.instance.states = Create()
+		this.instance.states = create(instance.model)
 		this.connection = null
 	}
 	getVariables(): CompanionVariableDefinition[] {

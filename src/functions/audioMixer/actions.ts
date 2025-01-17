@@ -1,7 +1,7 @@
 import { ActionId } from './actionId'
 import { getOptNumber } from '../../util'
 import { ReqType, ActionType } from '../../enums'
-import { sendCommand, GoStreamData } from '../../connection'
+import { sendCommand } from '../../connection'
 import type { GoStreamInstance } from '../../index'
 import { getChoices } from '../../choices'
 import { AudioMicChoices, AudioInputSourcesChoices, SwitchChoices } from '../../model'
@@ -146,19 +146,7 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 				const opt2 = getOptNumber(action, 'AudioEnable')
 				let paramOpt = 0
 				if (opt2 === 2) {
-					if (opt1 === 0) {
-						if (instance.states.AudioMixerPorp.AudioEnable.mic1 === 1) {
-							paramOpt = 0
-						} else {
-							paramOpt = 1
-						}
-					} else {
-						if (instance.states.AudioMixerPorp.AudioEnable.mic2 === 1) {
-							paramOpt = 0
-						} else {
-							paramOpt = 1
-						}
-					}
+					paramOpt = instance.states.AudioMixer.enabled[opt1] === 0 ? 1 : 0
 					await sendCommand(ActionId.AudioEnable, ReqType.Set, [opt1, paramOpt])
 				} else {
 					await sendCommand(ActionId.AudioEnable, ReqType.Set, [opt1, opt2])
@@ -193,47 +181,9 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 				const opt2 = getOptNumber(action, 'ASource')
 				let paramOpt = 0
 				if (opt1 === 3) {
-					if (opt2 === 2) {
-						if (instance.states.AudioMixerPorp.AudioEnable.in1 === 0) {
-							paramOpt = 1
-						} else if (instance.states.AudioMixerPorp.AudioEnable.in1 === 1) {
-							paramOpt = 2
-						} else {
-							paramOpt = 0
-						}
-					} else if (opt2 == 3) {
-						if (instance.states.AudioMixerPorp.AudioEnable.in2 === 0) {
-							paramOpt = 1
-						} else if (instance.states.AudioMixerPorp.AudioEnable.in2 === 1) {
-							paramOpt = 2
-						} else {
-							paramOpt = 0
-						}
-					} else if (opt2 == 4) {
-						if (instance.states.AudioMixerPorp.AudioEnable.in3 === 0) {
-							paramOpt = 1
-						} else if (instance.states.AudioMixerPorp.AudioEnable.in3 === 1) {
-							paramOpt = 2
-						} else {
-							paramOpt = 0
-						}
-					} else if (opt2 == 5) {
-						if (instance.states.AudioMixerPorp.AudioEnable.in4 === 0) {
-							paramOpt = 1
-						} else if (instance.states.AudioMixerPorp.AudioEnable.in4 === 1) {
-							paramOpt = 2
-						} else {
-							paramOpt = 0
-						}
-					} else if (opt2 == 6) {
-						if (instance.states.AudioMixerPorp.AudioEnable.aux === 0) {
-							paramOpt = 1
-						} else if (instance.states.AudioMixerPorp.AudioEnable.aux === 1) {
-							paramOpt = 2
-						} else {
-							paramOpt = 0
-						}
-					}
+					if (instance.states.AudioMixer.enabled[opt1] === 0) paramOpt = 1
+					else if (instance.states.AudioMixer.enabled[opt1] === 1) paramOpt = 2
+					else paramOpt = 0
 					await sendCommand(ActionId.AudioEnable, ReqType.Set, [opt2, paramOpt])
 				} else {
 					await sendCommand(ActionId.AudioEnable, ReqType.Set, [opt2, opt1])
@@ -300,34 +250,4 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 			},
 		},
 	}
-}
-
-export function handleData(instance: GoStreamInstance, data: GoStreamData): boolean {
-	if (!data.value) return false
-	switch (data.id as ActionId) {
-		case ActionId.AudioTransition:
-			instance.states.AudioMixer.transitionEnabled = data.value[0] === 1 ? true : false
-			return true
-		case ActionId.AudioEnable: {
-			const audiotype = data.value[0]
-			const audiotypeValue = data.value[1]
-			if (audiotype == 0) {
-				instance.states.AudioMixer.micEnabled[0] = audiotypeValue
-			} else if (audiotype == 1) {
-				instance.states.AudioMixer.micEnabled[1] = audiotypeValue
-			} else if (audiotype == 2) {
-				instance.states.AudioMixer.inputEnabled[0] = audiotypeValue
-			} else if (audiotype == 3) {
-				instance.states.AudioMixer.inputEnabled[1] = audiotypeValue
-			} else if (audiotype == 4) {
-				instance.states.AudioMixer.inputEnabled[2] = audiotypeValue
-			} else if (audiotype == 5) {
-				instance.states.AudioMixer.inputEnabled[3] = audiotypeValue
-			} else if (audiotype == 6) {
-				instance.states.AudioMixer.auxEnabled[0] = audiotypeValue
-			}
-			return true
-		}
-	}
-	return false
 }
