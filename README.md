@@ -27,9 +27,9 @@ enum CommandType:
   Push: 'pus'
 ```
 
-a get command will request the specified parameter in the value array , the reply will be a get measage.
-a set command will change a parameter with the value in the value array, the respons will be a push command
-a push command is send by the switcher when something not requested has changed, e.g. after a set command or if user pushes a hardware button in device
+A get command will request the specified parameter in the value array , the reply will be a get measage.
+A set command will change a parameter with the value in the value array, the response will be a push command. 
+A push command is send by the switcher when something has changed, e.g. after a set command or if user pushes a hardware button on device
 
 ```
 struct GoStreamCommand:
