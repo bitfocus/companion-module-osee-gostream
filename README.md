@@ -35,7 +35,7 @@ A push command is send by the switcher when something has changed, e.g. after a 
 struct GoStreamCommand:
   id: string    
   type: CommandType
-  value: U8[] 
+  value: <number | string>[]
 ```
 each command is embedded in a packet with a header and a CRC 16 modbus sum 
 ```
