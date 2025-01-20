@@ -21,10 +21,21 @@ There is no handshake procedure for connection (other than normal TCP handshake)
 Communication is based on set/get of state variables using the following datapacket format
 
 ```
+enum CommandType:
+  Get: 'get'
+  Set: 'set'
+  Push: 'pus'
+```
+
+A get command will request the specified parameter in the value array , the reply will be a get measage.
+A set command will change a parameter with the value in the value array, the response will be a push command. 
+A push command is send by the switcher when something has changed, e.g. after a set command or if user pushes a hardware button on device
+
+```
 struct GoStreamCommand:
-  id: string
-  type: string
-  value: U8[]
+  id: string    
+  type: CommandType
+  value: (number|string)[]
 ```
 
 each command is embedded in a packet with a header and a CRC 16 modbus sum
