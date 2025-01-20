@@ -1,5 +1,5 @@
 import { ActionId } from './actionId'
-import { sendCommands, GoStreamCmd } from '../../connection'
+import { sendCommands, GoStreamCmd, valueAsBoolean } from '../../connection'
 import { ReqType } from '../../enums'
 import type { IModelSpec } from '../../models/types'
 
@@ -41,22 +41,19 @@ export function update(state: PlaybackStateT, data: GoStreamCmd): boolean {
 			state.Mode = data.value![0]
 			break
 		case ActionId.PlaybackRepeat:
-			state.Repeat = data.value![0] === 1 ? true : false
+			state.Repeat = valueAsBoolean(data.value![0])
 			break
 		case ActionId.PlaybackPause:
 			state.Pause = data.value![0] === 1 ? true : false
-			//updatePlayStatedVariables(instance, instance.states.PlayBackState.PlaybackPause)
 			break
 		case ActionId.PlaybackBar:
 			state.Bar = data.value![0] === 1 ? true : false
 			break
 		case ActionId.PlayFile:
 			state.File = state.FileList.indexOf(data.value![0])
-			//updatePlayFileVariables(instance, data.value[0])
 			break
 		case ActionId.PlaybackList:
 			state.FileList = state.FileList.concat(<any[]>data.value!)
-			// Re-initialize actions and feedbacks so that dropdown are updated
 			return true
 	}
 	return false

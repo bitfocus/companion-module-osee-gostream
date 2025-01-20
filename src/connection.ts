@@ -34,6 +34,12 @@ export type GoStreamCmd = {
 	value?: string | number | any[]
 }
 
+export function valueAsBoolean(val: string | number | any[]): boolean {
+	if (typeof val === 'number') {
+		return val === 1 ? true : false
+	}
+	return false
+}
 /*
  * A data packet, Little Endian encoded
  *
