@@ -3,7 +3,7 @@ import { getOptNumber } from './../../util'
 import { getChoices } from './../../choices'
 import { UpStreamKeyTypeChoices, KeySwitchChoices } from './../../model'
 import { ReqType, ActionType } from './../../enums'
-import { sendCommand, GoStreamData } from './../../connection'
+import { sendCommand } from './../../connection'
 import { createLumaKeyActions } from './keyTypes/lumaKey'
 import { createChromaKeyActions } from './keyTypes/chromaKey'
 import { createKeyPatternActions } from './keyTypes/keyPattern'
@@ -188,28 +188,4 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 		...createKeyPatternActions(instance),
 		...createPIPActions(instance),
 	}
-}
-
-export function handleData(instance: GoStreamInstance, data: GoStreamData): boolean {
-	switch (data.id as ActionId) {
-		case ActionId.KeyOnAir:
-			instance.states.UpstreamKeyer.transitionKey.KeyOnAir = data.value && data.value[0] === 1 ? true : false
-			return true
-		case ActionId.UpStreamKeyType:
-			instance.states.UpstreamKeyer.UpStreamKeyType = data.value && data.value[0]
-			return true
-		case ActionId.LumaKeySourceFill:
-			instance.states.UpstreamKeyer.ArrayKeySourceFill[0] = data.value && data.value[0]
-			return true
-		case ActionId.ChromaKeyFill:
-			instance.states.UpstreamKeyer.ArrayKeySourceFill[1] = data.value && data.value[0]
-			return true
-		case ActionId.KeyPatternSourceFill:
-			instance.states.UpstreamKeyer.ArrayKeySourceFill[2] = data.value && data.value[0]
-			return true
-		case ActionId.PipSource:
-			instance.states.UpstreamKeyer.ArrayKeySourceFill[3] = data.value && data.value[0]
-			return true
-	}
-	return false
 }

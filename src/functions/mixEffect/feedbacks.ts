@@ -1,27 +1,27 @@
 import { combineRgb, CompanionFeedbackDefinitions } from '@companion-module/base'
-import { ActionType, TransitionStyle, SourceType } from '../../enums'
-import { getChoices } from '../../choices'
+import { TransitionStyle } from '../../enums'
 import type { GoStreamInstance } from '../../index'
 import { FeedbackId } from './feedbackId'
 import { KeySwitchChoices, TransitionStyleChoice } from '../../model'
+import { getInputChoices } from './../../models'
 
 export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions {
 	return {
 		[FeedbackId.PreviewBG]: {
 			type: 'boolean',
-			name: 'preview source',
+			name: 'Preview source',
 			description: 'If the input specified is selected in preview, change style of the bank',
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(0, 255, 0),
+				bgcolor: combineRgb(0, 204, 0),
 			},
 			options: [
 				{
 					type: 'dropdown',
 					label: 'Source',
 					id: 'Source',
-					default: SourceType.Input1,
-					choices: getChoices(ActionType.Preview),
+					default: 0,
+					choices: getInputChoices(instance.model),
 				},
 			],
 			callback: (feedback) => {
@@ -34,19 +34,19 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 		},
 		[FeedbackId.ProgramBG]: {
 			type: 'boolean',
-			name: 'program source',
+			name: 'Program source',
 			description: 'If the input specified is selected in program, change style of the bank',
 			defaultStyle: {
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(0, 255, 0),
+				color: combineRgb(255, 255, 255),
+				bgcolor: combineRgb(204, 0, 0),
 			},
 			options: [
 				{
 					type: 'dropdown',
 					label: 'Source',
 					id: 'Source',
-					default: SourceType.Input1,
-					choices: getChoices(ActionType.Program),
+					default: 0,
+					choices: getInputChoices(instance.model),
 				},
 			],
 			callback: (feedback) => {

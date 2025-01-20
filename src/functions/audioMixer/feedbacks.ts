@@ -33,21 +33,7 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 			callback: (feedback) => {
 				const typeid = Number(feedback.options.ASource)
 				const t_enable = Number(feedback.options.AudioEnable)
-				if (typeid === 0) {
-					return instance.states.AudioMixerPorp.AudioEnable.mic1 === t_enable
-				} else if (typeid === 1) {
-					return instance.states.AudioMixerPorp.AudioEnable.mic2 === t_enable
-				} else if (typeid === 2) {
-					return instance.states.AudioMixerPorp.AudioEnable.in1 === t_enable
-				} else if (typeid === 3) {
-					return instance.states.AudioMixerPorp.AudioEnable.in2 === t_enable
-				} else if (typeid === 4) {
-					return instance.states.AudioMixerPorp.AudioEnable.in3 === t_enable
-				} else if (typeid === 5) {
-					return instance.states.AudioMixerPorp.AudioEnable.in4 === t_enable
-				} else {
-					return instance.states.AudioMixerPorp.AudioEnable.aux === t_enable
-				}
+				return instance.states.AudioMixer.enabled[typeid] === t_enable
 			},
 		},
 		[FeedbackId.AudioTransition]: {
@@ -60,7 +46,7 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: () => {
-				return instance.states.AudioMixerPorp.AudioTransition
+				return instance.states.AudioMixer.transitionEnabled
 			},
 		},
 	}

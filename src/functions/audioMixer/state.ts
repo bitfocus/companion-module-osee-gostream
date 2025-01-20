@@ -1,36 +1,46 @@
 import { ActionId } from './actionId'
-import { sendCommand } from '../../connection'
-import { ReqType } from '../../enums'
-
-export type State = {
-	transitionEnabled: boolean
-	micEnabled: boolean[]
-	inputEnabled: boolean[]
-	auxEnabled: boolean[]
-}
+import { sendCommands } from '../../connection'
+import { ReqType, PortCaps } from '../../enums'
+import type { IModelSpec } from '../../models/types'
+import { Range } from '../../util'
+import { GoStreamCmd } from '../../connection'
 
 export type AudioMixerState = {
-	AudioMixer: State
+	transitionEnabled: boolean
+	enabled: boolean[]
 }
 
-export function create(): AudioMixerState {
+export function create(model: IModelSpec): AudioMixerState {
+	const audioCapableInputs = model.inputs.filter((inp) => inp.caps & PortCaps.Audio).length
+
 	return {
-		AudioMixer: {
-			transitionEnabled: false,
-			micEnabled: [false, false],
-			inputEnabled: [false, false, false, false],
-			auxEnabled: [false],
-		},
+		transitionEnabled: false,
+		enabled: Array(audioCapableInputs),
 	}
 }
 
-export async function sync(): Promise<void> {
-	await sendCommand(ActionId.AudioTransition, ReqType.Get)
-	await sendCommand(ActionId.AudioEnable, ReqType.Get, [0])
-	await sendCommand(ActionId.AudioEnable, ReqType.Get, [1])
-	await sendCommand(ActionId.AudioEnable, ReqType.Get, [2])
-	await sendCommand(ActionId.AudioEnable, ReqType.Get, [3])
-	await sendCommand(ActionId.AudioEnable, ReqType.Get, [4])
-	await sendCommand(ActionId.AudioEnable, ReqType.Get, [5])
-	await sendCommand(ActionId.AudioEnable, ReqType.Get, [6])
+export async function sync(model: IModelSpec): Promise<boolean> {
+	const audioCapableInputs = model.inputs.filter((inp) => inp.caps & PortCaps.Audio).length
+
+	const cmds = [
+		{ id: ActionId.AudioTransition, type: ReqType.Get },
+		...Range(audioCapableInputs).map((id) => ({ id: ActionId.AudioEnable, type: ReqType.Get, value: [id] })),
+	]
+	return await sendCommands(cmds)
+}
+
+export function update(state: AudioMixerState, data: GoStreamCmd): boolean {
+	if (!data.value) return false
+	switch (data.id as ActionId) {
+		case ActionId.AudioTransition:
+			state.transitionEnabled = data.value[0] === 1 ? true : false
+			break
+		case ActionId.AudioEnable: {
+			const audiotype = data.value[0]
+			const audiotypeValue = data.value[1]
+			state.enabled[audiotype] = audiotypeValue
+			break
+		}
+	}
+	return false
 }

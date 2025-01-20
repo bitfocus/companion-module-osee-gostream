@@ -2,13 +2,37 @@ import { ActionId } from './actionId'
 import { getOptNumber, getOptString } from '../../util'
 import { StreamingChoices, SwitchChoices } from '../../model'
 import { ReqType } from '../../enums'
-import { sendCommand, GoStreamData } from '../../connection'
+import { sendCommand } from '../../connection'
 import type { GoStreamInstance } from '../../index'
-import type { CompanionActionDefinitions } from '@companion-module/base'
+import type { CompanionActionDefinitions, SomeCompanionActionInputField } from '@companion-module/base'
+import type { StreamPlatform } from './state'
+
+export enum LiveStatus {
+	Off,
+	OnAir,
+	Abnormal,
+}
+
+function getPlatformOptions(platforms: StreamPlatform[]): SomeCompanionActionInputField[] {
+	return platforms.map((platform) => {
+		return {
+			type: 'dropdown',
+			label: 'Server',
+			id: 'ServerId_' + platform.name,
+			choices: platform.servers.map((server) => {
+				return { id: server, label: server }
+			}),
+			default: platform.servers[0],
+			isVisible: (options, data) => options.PlatformId === data.PlatformId,
+			isVisibleData: { PlatformId: platform.name },
+		}
+	})
+}
+
 export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 	return {
 		[ActionId.StreamOutput]: {
-			name: 'Streaming:Set Output',
+			name: 'Streaming: Enable stream',
 			options: [
 				{
 					type: 'dropdown',
@@ -28,23 +52,42 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 			callback: async (action) => {
 				const opt1 = getOptNumber(action, 'StreamID')
 				const opt2 = getOptNumber(action, 'EnableId')
-				let paramOpt = 0
 				if (opt2 === 2) {
-					if (opt1 === 0) {
-						paramOpt = instance.states.StreamingProp.stream1 === true ? 0 : 1
-					} else if (opt1 === 1) {
-						paramOpt = instance.states.StreamingProp.stream2 === true ? 0 : 1
-					} else if (opt1 === 2) {
-						paramOpt = instance.states.StreamingProp.stream3 === true ? 0 : 1
-					}
+					const paramOpt = instance.states.Streaming.enabled[opt1] ? 0 : 1
 					await sendCommand(ActionId.StreamOutput, ReqType.Set, [opt1, paramOpt])
 				} else {
 					await sendCommand(ActionId.StreamOutput, ReqType.Set, [opt1, opt2])
 				}
 			},
 		},
-		[ActionId.StreamUrl]: {
-			name: 'Streaming:Set Stream Url',
+		[ActionId.StreamPlatform]: {
+			name: 'Streaming: Set platform',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Stream',
+					id: 'StreamID',
+					choices: StreamingChoices,
+					default: 0,
+				},
+				{
+					type: 'dropdown',
+					label: 'Platform',
+					id: 'PlatformId',
+					choices: instance.states.Streaming.platforms.map((platform) => ({ id: platform.name, label: platform.name })),
+					default: instance.states.Streaming.platforms[0]?.name,
+				},
+				...getPlatformOptions(instance.states.Streaming.platforms),
+			],
+			callback: async (action) => {
+				const opt1 = getOptNumber(action, 'StreamID')
+				const opt2 = getOptString(action, 'PlatformId')
+				await sendCommand(ActionId.StreamPlatform, ReqType.Set, [opt1, opt2])
+				await sendCommand(ActionId.StreamServer, ReqType.Set, [opt1, action.options['ServerId_' + opt2]])
+			},
+		},
+		[ActionId.StreamKey]: {
+			name: 'Streaming: Set stream Key',
 			options: [
 				{
 					type: 'dropdown',
@@ -55,34 +98,47 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 				},
 				{
 					type: 'textinput',
-					label: 'Url',
-					id: 'StreamUrl',
+					label: 'Stream key',
+					id: 'KeyId',
 					default: '',
 					required: true,
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.StreamOutput, ReqType.Set, [
-					getOptNumber(action, 'StreamID'),
-					getOptString(action, 'StreamUrl'),
-				])
+				const opt1 = getOptNumber(action, 'StreamID')
+				const opt2 = getOptString(action, 'KeyId')
+				await sendCommand(ActionId.StreamKey, ReqType.Set, [opt1, opt2])
+			},
+		},
+		[ActionId.Live]: {
+			name: 'Live:Set Start or Stop Live',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Enable',
+					id: 'LiveEnable',
+					choices: [
+						{ id: 0, label: 'Stop' },
+						{ id: 1, label: 'Start' },
+						{ id: 2, label: 'Toggle' },
+					],
+					default: 0,
+				},
+			],
+			callback: async (action) => {
+				const opt = getOptNumber(action, 'LiveEnable')
+				let paramOpt = 0
+				if (opt === 2) {
+					if (instance.states.Streaming.status === LiveStatus.Off) {
+						paramOpt = 1
+					} else {
+						paramOpt = 0
+					}
+					await sendCommand(ActionId.Live, ReqType.Set, [paramOpt])
+				} else {
+					await sendCommand(ActionId.Live, ReqType.Set, [opt])
+				}
 			},
 		},
 	}
-}
-export function handleData(instance: GoStreamInstance, data: GoStreamData): boolean {
-	switch (data.id as ActionId) {
-		case ActionId.StreamOutput: {
-			const streamtype = data.value && data.value[0]
-			if (streamtype === 0) {
-				instance.states.Streaming.stream1 = data.value && data.value[1] === 1 ? true : false
-			} else if (streamtype === 1) {
-				instance.states.Streaming.stream2 = data.value && data.value[1] === 1 ? true : false
-			} else if (streamtype === 2) {
-				instance.states.Streaming.stream3 = data.value && data.value[1] === 1 ? true : false
-			}
-			return true
-		}
-	}
-	return false
 }

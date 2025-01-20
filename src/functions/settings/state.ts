@@ -1,8 +1,10 @@
 import { ActionId } from './actionId'
-import { sendCommand } from '../../connection'
-import { ReqType } from '../../enums'
+import { sendCommands, GoStreamCmd } from '../../connection'
+import { PortCaps, PortType, ReqType } from '../../enums'
+import type { IModelSpec } from '../../models/types'
+import { Range } from '../../util'
 
-export type State = {
+export type SettingsStateT = {
 	auxSource: number
 	inputWindowLayout: number
 	mvMeter: number[]
@@ -12,43 +14,85 @@ export type State = {
 	micInput: number[]
 	mvLayout: number
 	sourceSelection: number[]
+	sourceName: string[]
 }
 
-export type SettingsState = {
-	Settings: State
-}
-
-export function create(): SettingsState {
+export function create(model: IModelSpec): SettingsStateT {
+	const micInputs = model.inputs.filter((inp) => inp.type & PortType.Mic).length
+	const nameableVideoInputs = model.inputs.filter((inp) => inp.caps & PortCaps.Renameable).length
+	const audioCapableInputs = model.inputs.filter((inp) => inp.caps & PortCaps.Audio).length
+	const colorSpaceCapableOutputs = model.outputs.filter((out) => out.caps & PortCaps.Colorspace).length
+	const srcSelectable = model.inputs.filter((inp) => inp.type & (PortType.HDMI | PortType.SDI)).length
 	return {
-		Settings: {
-			auxSource: 0,
-			inputWindowLayout: 0,
-			mvMeter: [0, 0, 0, 0, 0, 0],
-			outSource: [0, 0, 0],
-			outputColorSpace: [0, 0],
-			outputFormat: 0,
-			micInput: [0, 0],
-			mvLayout: 0,
-			sourceSelection: [0, 0, 0, 0],
-		},
+		auxSource: 0,
+		inputWindowLayout: 0,
+		mvMeter: Array(audioCapableInputs),
+		outSource: Array(model.outputs.length),
+		outputColorSpace: Array(colorSpaceCapableOutputs),
+		outputFormat: 0,
+		micInput: Array(micInputs),
+		mvLayout: 0,
+		sourceSelection: Array(srcSelectable),
+		sourceName: new Array(nameableVideoInputs),
 	}
 }
 
-export async function sync(): Promise<void> {
-	await sendCommand(ActionId.AuxSource, ReqType.Get)
-	await sendCommand(ActionId.OutSource, ReqType.Get, [0])
-	await sendCommand(ActionId.OutSource, ReqType.Get, [1])
-	await sendCommand(ActionId.OutSource, ReqType.Get, [2])
-	await sendCommand(ActionId.InputWindowLayout, ReqType.Get)
-	await sendCommand(ActionId.MvMeter, ReqType.Get, [0])
-	await sendCommand(ActionId.MvMeter, ReqType.Get, [1])
-	await sendCommand(ActionId.MvMeter, ReqType.Get, [2])
-	await sendCommand(ActionId.MvMeter, ReqType.Get, [3])
-	await sendCommand(ActionId.MvMeter, ReqType.Get, [4])
-	await sendCommand(ActionId.MvMeter, ReqType.Get, [5])
-	await sendCommand(ActionId.OutputColorSpace, ReqType.Get)
-	await sendCommand(ActionId.OutFormat, ReqType.Get)
-	await sendCommand(ActionId.MvLayout, ReqType.Get)
-	await sendCommand(ActionId.MicInput, ReqType.Get, [0])
-	await sendCommand(ActionId.MicInput, ReqType.Get, [1])
+export async function sync(model: IModelSpec): Promise<boolean> {
+	const micInputs = model.inputs.filter((inp) => inp.type & PortType.Mic).length
+	const nameableVideoInputs = model.inputs.filter((inp) => inp.caps & PortCaps.Renameable).length
+	const audioCapableInputs = model.inputs.filter(
+		(inp) => inp.type & (PortType.HDMI | PortType.SDI) && inp.caps & PortCaps.Audio,
+	).length
+	const cmds: GoStreamCmd[] = [
+		{ id: ActionId.AuxSource, type: ReqType.Get },
+		...Range(model.outputs.length).map((id) => ({ id: ActionId.OutSource, type: ReqType.Get, value: [id] })),
+		{ id: ActionId.InputWindowLayout, type: ReqType.Get },
+		...Range(audioCapableInputs).map((id) => ({ id: ActionId.MvMeter, type: ReqType.Get, value: [id] })),
+		{ id: ActionId.OutputColorSpace, type: ReqType.Get },
+		{ id: ActionId.OutFormat, type: ReqType.Get },
+		{ id: ActionId.MvLayout, type: ReqType.Get },
+		...Range(micInputs).map((id) => ({ id: ActionId.MicInput, type: ReqType.Get, value: [id] })),
+		...Range(nameableVideoInputs).map((id) => ({ id: ActionId.SrcName, type: ReqType.Get, value: [id] })),
+	]
+	return sendCommands(cmds)
+}
+
+export function update(state: SettingsStateT, data: GoStreamCmd): boolean {
+	switch (data.id as ActionId) {
+		case ActionId.AuxSource:
+			if (data.value) state.auxSource = data.value[0]
+			break
+		case ActionId.InputWindowLayout:
+			if (data.value) state.inputWindowLayout = data.value[0]
+			break
+		case ActionId.MvMeter:
+			if (data.value) state.mvMeter[data.value[0]] = data.value[1]
+			break
+		case ActionId.OutSource: {
+			const outType = data.value && data.value[0]
+			const outValue = data.value && data.value[1]
+			state.outSource[outType] = outValue
+			break
+		}
+		case ActionId.OutputColorSpace:
+			if (data.value) state.outputColorSpace[data.value[0]] = data.value[1]
+			break
+		case ActionId.OutFormat:
+			state.outputFormat = data.value && data.value[0]
+			break
+		case ActionId.MicInput:
+			if (data.value) state.micInput[data.value[0]] = data.value[1]
+			break
+		case ActionId.MvLayout:
+			state.mvLayout = data.value && data.value[0]
+			break
+		case ActionId.SrcSelection:
+			if (data.value) state.sourceSelection[data.value[0]] = data.value[1]
+			break
+		case ActionId.SrcName:
+			if (!data.value) return true
+			state.sourceName[data.value[0]] = data.value[1]
+			break
+	}
+	return false
 }

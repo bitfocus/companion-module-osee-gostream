@@ -1,34 +1,47 @@
-import { generateOutputs, type IModelSpec } from './types'
-import { Model, PortType } from '../enums'
+import { generatePorts, type IModelSpec } from './types'
+import { Model, PortType, PortCaps } from '../enums'
 
 export const ModelSpecDuet: IModelSpec = {
 	id: Model.Duet,
 	label: 'Duet',
-	outputs: [...generateOutputs('Output', 1)],
+	outputs: [
+		...generatePorts('Output', 'Out', PortType.HDMI, PortCaps.Colorspace, 2),
+		{ id: 2, longName: 'UVC', shortName: 'UVC', type: PortType.Other, caps: PortCaps.NoCaps },
+	],
 	inputs: [
 		{
 			id: 0,
-			longName: 'Input2',
-			shortName: 'In1',
-			portType: PortType.SDI | PortType.HDMI,
+			longName: 'Program',
+			shortName: 'PGM',
+			type: PortType.Internal,
+			caps: PortCaps.Renameable | PortCaps.Audio,
 		},
 		{
 			id: 1,
-			longName: 'Input2',
-			shortName: 'In2',
-			portType: PortType.SDI | PortType.HDMI,
+			longName: 'Preview',
+			shortName: 'Pvw',
+			type: PortType.Internal,
+			caps: PortCaps.Renameable,
+		},
+		...generatePorts('Input', 'In', PortType.External, PortCaps.Renameable | PortCaps.Audio, 4, 2), // HDMI 1-4
+		{
+			id: 6,
+			longName: 'Aux',
+			shortName: 'Aux',
+			type: PortType.Aux,
+			caps: PortCaps.Renameable | PortCaps.Audio,
 		},
 		{
-			id: 2,
-			longName: 'Input3',
-			shortName: 'In3',
-			portType: PortType.SDI | PortType.HDMI,
+			id: 7,
+			longName: 'S/SRC',
+			shortName: 'SSRC',
+			type: PortType.Internal,
+			caps: PortCaps.NoCaps,
 		},
-		{
-			id: 3,
-			longName: 'Input4',
-			shortName: 'In4',
-			portType: PortType.SDI | PortType.HDMI,
-		},
+		...generatePorts('Still', 'STL', PortType.Internal, PortCaps.Renameable, 2, 8), // Still 1-2
+		...generatePorts('Mic', 'Mic', PortType.Mic, PortCaps.Audio, 2),
 	],
+	streams: 3,
+	transitionTypes: 3,
+	stillSlots: 2,
 }

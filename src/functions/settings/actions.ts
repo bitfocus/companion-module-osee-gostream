@@ -1,8 +1,8 @@
 import { ActionId } from './actionId'
 import { getOptNumber, getOptString } from './../../util'
-import { getChoices, SourcesToChoices } from './../../choices'
-import { ReqType, ActionType } from './../../enums'
-import { sendCommand, GoStreamData } from './../../connection'
+import { getChoices } from './../../choices'
+import { ReqType, ActionType, PortType } from './../../enums'
+import { sendCommand } from './../../connection'
 import type { GoStreamInstance } from './../../index'
 import type { CompanionActionDefinitions } from '@companion-module/base'
 import {
@@ -17,8 +17,8 @@ import {
 	AudioMicChoices,
 	SettingsUMDSrcChoices,
 	SwitchChoices,
-	SourceModels,
 } from './../../model'
+import { getInputChoices, getColorChoices } from './../../models'
 
 export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 	return {
@@ -167,18 +167,19 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 					type: 'dropdown',
 					label: 'Src',
 					id: 'Srcid',
-					choices: SourcesToChoices(SourceModels),
-					default: 0,
+					choices: getInputChoices(instance.model, PortType.External),
+					default: '0',
 				},
 				{
 					type: 'dropdown',
 					label: 'Selection',
 					id: 'SrcSelection',
-					choices: SettingsColorChoices,
-					default: 0,
+					choices: getColorChoices(instance.model),
+					default: '0',
 				},
 			],
 			callback: async (action) => {
+				console.log(getOptNumber(action, 'Srcid'), getOptNumber(action, 'SrcSelection'))
 				await sendCommand(ActionId.SrcSelection, ReqType.Set, [
 					getOptNumber(action, 'Srcid'),
 					getOptNumber(action, 'SrcSelection'),
@@ -301,52 +302,4 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 			},
 		},
 	}
-}
-export function handleData(instance: GoStreamInstance, data: GoStreamData): boolean {
-	switch (data.id as ActionId) {
-		case ActionId.AuxSource:
-			if (data.value) instance.states.SettingsProp.AuxSource = data.value[0]
-			return true
-		case ActionId.InputWindowLayout:
-			if (data.value) instance.states.SettingsProp.SettingsInputWindowLayout = data.value[0]
-			return true
-		case ActionId.MvMeter:
-			if (data.value) instance.states.SettingsProp.MvMeter[data.value[0]] = data.value[1]
-			return true
-		case ActionId.OutSource: {
-			const outType = data.value && data.value[0]
-			const outTypeValue = data.value && data.value[1]
-			const selectSource = getChoices(ActionType.SettingsoutSource).find((s) => s.id === outTypeValue)
-			if (outType === 0) {
-				if (selectSource !== undefined) {
-					instance.states.SettingsProp.OutSource.hdmi1 = selectSource
-				}
-			} else if (outType === 1) {
-				if (selectSource !== undefined) {
-					instance.states.SettingsProp.OutSource.hdmi2 = selectSource
-				}
-			} else if (outType === 2) {
-				if (selectSource !== undefined) {
-					instance.states.SettingsProp.OutSource.uvc = selectSource
-				}
-			}
-			return true
-		}
-		case ActionId.OutputColorSpace:
-			if (data.value) instance.states.SettingsProp.OutputColorSpace[data.value[0]] = data.value[1]
-			return true
-		case ActionId.OutFormat:
-			instance.states.SettingsProp.OutputFormat = data.value && data.value[0]
-			return true
-		case ActionId.MicInput:
-			if (data.value) instance.states.SettingsProp.MicInput[data.value[0]] = data.value[1]
-			return true
-		case ActionId.MvLayout:
-			instance.states.SettingsProp.MvLayout = data.value && data.value[0]
-			return true
-		case ActionId.SrcSelection:
-			if (data.value) instance.states.SettingsProp.SourceSelection[data.value[0]] = data.value[1]
-			return true
-	}
-	return false
 }

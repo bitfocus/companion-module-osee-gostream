@@ -2,5 +2,9 @@ export enum ActionId {
 	StreamOutput = 'streamOutput',
 	StreamPlatform = 'streamPlatform',
 	StreamServer = 'streamServer',
-	StreamUrl = 'streamUrl',
+	StreamProfile = 'streamProfile',
+	StreamKey = 'streamKey',
+	Live = 'live',
+	LiveInfo = 'liveInfo',
+	StreamProfileAll = 'getStreamProfileAll',
 }

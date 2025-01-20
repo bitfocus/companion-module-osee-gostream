@@ -2,7 +2,7 @@ import { ActionId } from './actionId'
 import { getOptNumber } from '../../util'
 import { getChoicesByStill } from '../../choices'
 import { ReqType } from '../../enums'
-import { sendCommand, GoStreamData } from '../../connection'
+import { sendCommand } from '../../connection'
 import type { GoStreamInstance } from '../../index'
 import type { CompanionActionDefinitions } from '@companion-module/base'
 
@@ -37,19 +37,4 @@ export function create(_instance: GoStreamInstance): CompanionActionDefinitions 
 			},
 		},
 	}
-}
-export function handleData(instance: GoStreamInstance, data: GoStreamData): boolean {
-	switch (data.id as ActionId) {
-		case ActionId.StillSelection: {
-			const stype = data.value && data.value[0]
-			const stypeValue = data.value && data.value[1]
-			if (stype === 0) {
-				instance.states.StillGenerator.Still1 = stypeValue
-			} else {
-				instance.states.StillGenerator.Still2 = stypeValue
-			}
-			return true
-		}
-	}
-	return false
 }

@@ -35,8 +35,7 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 			callback: (feedback) => {
 				const stillIndex = Number(feedback.options.StillIndex)
 				const picIndex = Number(feedback.options.PicIndex)
-				if (stillIndex === 0) return instance.states.StillProp.Still1 === picIndex
-				else return instance.states.StillProp.Still2 === picIndex
+				return instance.states.StillGenerator.slots[stillIndex] == picIndex
 			},
 		},
 	}

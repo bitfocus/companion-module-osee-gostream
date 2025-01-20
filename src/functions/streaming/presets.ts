@@ -48,5 +48,42 @@ export function create(): CompanionPresetDefinitions {
 		}
 	}
 
+	presets[`Live_0`] = {
+		type: 'button',
+		category: 'Live',
+		name: 'Live',
+		style: {
+			text: `Live`,
+			size: ptzSize,
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: ActionId.Live,
+						options: {
+							LiveEnable: 2,
+						},
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [
+			{
+				feedbackId: FeedbackId.LiveInfo,
+				options: {
+					statesId: 1,
+				},
+				style: {
+					bgcolor: combineRgb(255, 0, 0),
+					color: combineRgb(0, 0, 0),
+				},
+			},
+		],
+	}
+
 	return presets
 }

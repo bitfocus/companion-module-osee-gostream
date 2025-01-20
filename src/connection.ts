@@ -4,19 +4,19 @@ import crc16modbus from 'crc/crc16modbus'
 
 import { GoStreamInstance } from './index'
 import { updateVariables } from './variables'
+import type { IModelSpec } from './models/types'
 
-import { MixEffectActions, MixEffectState } from './functions/mixEffect'
-import { LiveActions, LiveState } from './functions/live'
-import { PlaybackActions, PlaybackState } from './functions/playback'
-import { RecordActions, RecordState } from './functions/record'
-import { StillGeneratorActions, StillGeneratorState } from './functions/stillGenerator'
-import { StreamingActions, StreamingState } from './functions/streaming'
-import { SuperSourceActions, SuperSourceState } from './functions/superSource'
-import { AudioMixerActions, AudioMixerState } from './functions/audioMixer'
-import { DownstreamKeyerActions, DownstreamKeyerState } from './functions/downstreamKeyer'
-import { SettingsActions } from './functions/settings'
-import { MacroActions, MacroState } from './functions/macro'
-import { UpstreamKeyerActions, UpstreamKeyerState } from './functions/upstreamKeyer'
+import { MixEffectState } from './functions/mixEffect'
+import { PlaybackState } from './functions/playback'
+import { RecordState } from './functions/record'
+import { StillGeneratorState } from './functions/stillGenerator'
+import { StreamingState } from './functions/streaming'
+import { SuperSourceState } from './functions/superSource'
+import { AudioMixerState } from './functions/audioMixer'
+import { DownstreamKeyerState } from './functions/downstreamKeyer'
+import { SettingsState } from './functions/settings'
+import { MacroState } from './functions/macro'
+import { UpstreamKeyerState } from './functions/upstreamKeyer'
 
 export const HEAD1 = 0xeb
 export const HEAD2 = 0xa6
@@ -28,12 +28,18 @@ const PACKET_HEADER_SIZE = 5
 const PACKET_HEAD = new Uint8Array([HEAD1, HEAD2])
 const PORT_NUMBER = 19010
 
-export type GoStreamData = {
+export type GoStreamCmd = {
 	id: string
-	type: string
+	type: ReqType
 	value?: string | number | any[]
 }
 
+export function valueAsBoolean(val: string | number | any[]): boolean {
+	if (typeof val === 'number') {
+		return val === 1 ? true : false
+	}
+	return false
+}
 /*
  * A data packet, Little Endian encoded
  *
@@ -68,7 +74,21 @@ export function connect(instance: GoStreamInstance): void {
 	tcp.on('connect', () => {
 		instance.updateStatus(InstanceStatus.Ok)
 		instance.log('debug', 'Socket connected')
-		void ReqStateData()
+		ReqStateData(instance.model)
+			.catch((err) => {
+				instance.log('error', 'Error while syncing data ' + err)
+			})
+			.then(
+				() => {
+					instance.log('debug', 'State data synced OK!')
+				},
+				() => {
+					instance.log('debug', 'No handler defined to reconnect')
+				},
+			)
+			.catch(() => {
+				// Do nothing
+			})
 	})
 	tcp.on('error', () => {
 		instance.updateStatus(InstanceStatus.ConnectionFailure, 'Connection error')
@@ -77,6 +97,7 @@ export function connect(instance: GoStreamInstance): void {
 	tcp.on('end', () => {
 		instance.updateStatus(InstanceStatus.Disconnected, 'Disconnecting')
 		instance.log('debug', 'Socket Disconnecting')
+		tcp?.destroy()
 	})
 	tcp.on('data', (msg_data) => {
 		const commands = handleGoStreamPacket(msg_data)
@@ -84,8 +105,8 @@ export function connect(instance: GoStreamInstance): void {
 	})
 }
 
-export function handleGoStreamPacket(msg_data: Buffer): GoStreamData[] {
-	const commands: GoStreamData[] = []
+export function handleGoStreamPacket(msg_data: Buffer): GoStreamCmd[] {
+	const commands: GoStreamCmd[] = []
 
 	let index = msg_data.indexOf(PACKET_HEAD)
 	// Take care of data before start of packet, i.e. if index > 0
@@ -129,56 +150,62 @@ export function handleGoStreamPacket(msg_data: Buffer): GoStreamData[] {
 	while (index >= 0) {
 		const packet_size = msg_data.readUInt16LE(index + 3)
 		const packet_data = msg_data.subarray(index, index + PACKET_HEADER_SIZE + packet_size)
-		commands.push(unpackData(packet_data))
-		index = msg_data.indexOf(PACKET_HEAD, index + PACKET_HEADER_SIZE + packet_size)
 		if (index + PACKET_HEADER_SIZE + packet_size > msg_data.length) {
+			// Packet is not complete, save this in partial packet buffer
 			partialPacketBuffer = Buffer.alloc(msg_data.length - index, msg_data.subarray(index))
 			break
 		}
+		commands.push(unpackData(packet_data))
+		index = msg_data.indexOf(PACKET_HEAD, index + PACKET_HEADER_SIZE + packet_size)
 	}
 
 	return commands
 }
 
-function unpackData(msg_data: Buffer): GoStreamData {
+function unpackData(msg_data: Buffer): GoStreamCmd {
 	const jsonContent = UpackDatas(msg_data)
 	const jsonStr = jsonContent.toString('utf8')
 	const json = JSON.parse(jsonStr)
 	return json
 }
 
-function handleCommands(instance: GoStreamInstance, data: GoStreamData[]): void {
+function handleCommands(instance: GoStreamInstance, data: GoStreamCmd[]): void {
+	let needReinit = false
 	data.forEach((json) => {
-		MixEffectActions.handleData(instance, json)
-		LiveActions.handleData(instance, json)
-		PlaybackActions.handleData(instance, json)
-		RecordActions.handleData(instance, json)
-		StillGeneratorActions.handleData(instance, json)
-		StreamingActions.handleData(instance, json)
-		SuperSourceActions.handleData(instance, json)
-		AudioMixerActions.handleData(instance, json)
-		DownstreamKeyerActions.handleData(instance, json)
-		SettingsActions.handleData(instance, json)
-		MacroActions.handleData(instance, json)
-		SuperSourceActions.handleData(instance, json)
-		UpstreamKeyerActions.handleData(instance, json)
+		if (MixEffectState.update(instance.states.MixEffect, json)) needReinit = true
+		if (PlaybackState.update(instance.states.Playback, json)) needReinit = true
+		if (RecordState.update(instance.states.Record, json)) needReinit = true
+		if (StillGeneratorState.update(instance.states.StillGenerator, json)) needReinit = true
+		if (StreamingState.update(instance.states.Streaming, json)) needReinit = true
+		if (SuperSourceState.update(instance.states.SuperSource, json)) needReinit = true
+		if (AudioMixerState.update(instance.states.AudioMixer, json)) needReinit = true
+		if (DownstreamKeyerState.update(instance.states.DownstreamKeyer, json)) needReinit = true
+		if (SettingsState.update(instance.states.Settings, json)) needReinit = true
+		if (MacroState.update(instance.states.Macro, json)) needReinit = true
+		if (UpstreamKeyerState.update(instance.states.UpstreamKeyer, json)) needReinit = true
 	})
+	if (needReinit) {
+		instance.init_actions()
+		instance.init_feedbacks()
+	}
 	instance.checkFeedbacks()
 	updateVariables(instance)
 }
 
-export async function ReqStateData(): Promise<void> {
-	await MixEffectState.sync()
-	await LiveState.sync()
-	await PlaybackState.sync()
-	await RecordState.sync()
-	await StillGeneratorState.sync()
-	await StreamingState.sync()
-	await AudioMixerState.sync()
-	await DownstreamKeyerState.sync()
-	await MacroState.sync()
-	await SuperSourceState.sync()
-	await UpstreamKeyerState.sync()
+export async function ReqStateData(model?: IModelSpec): Promise<boolean> {
+	if (!model) return false
+	await MixEffectState.sync(model)
+	await PlaybackState.sync(model)
+	await RecordState.sync(model)
+	await StillGeneratorState.sync(model)
+	await StreamingState.sync(model)
+	await AudioMixerState.sync(model)
+	await DownstreamKeyerState.sync(model)
+	await MacroState.sync(model)
+	await SuperSourceState.sync(model)
+	await UpstreamKeyerState.sync(model)
+	await SettingsState.sync(model)
+	return false
 }
 
 export function disconnectSocket(): void {
@@ -187,16 +214,15 @@ export function disconnectSocket(): void {
 	}
 }
 
-export async function sendCommands(commands: GoStreamData[]): Promise<boolean> {
+export async function sendCommands(commands: GoStreamCmd[]): Promise<boolean> {
 	if (tcp !== null) {
-		const cmdStrings: string[] = []
+		const packedCmds: Buffer[] = []
 		commands.forEach((cmd) => {
 			const json = JSON.stringify(cmd)
-			const bufs = Buffer.from(json, 'utf-8')
-			cmdStrings.push(PackData(bufs).toString())
+			const buf = Buffer.from(json, 'utf-8')
+			packedCmds.push(PackData(buf))
 		})
-		const sign = await tcp.send(cmdStrings.join(''))
-		return sign
+		return tcp.send(Buffer.concat(packedCmds))
 	}
 	return false
 }
@@ -207,8 +233,7 @@ export async function sendCommand(id: string, type: ReqType, value?: string | nu
 		const json = JSON.stringify(obj)
 		const bufs = Buffer.from(json, 'utf-8')
 		const send_data = PackData(bufs)
-		const sign = await tcp.send(send_data)
-		return sign
+		return tcp.send(send_data)
 	}
 	return false
 }

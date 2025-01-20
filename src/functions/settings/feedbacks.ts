@@ -5,15 +5,14 @@ import {
 	SettingsInputWindowLayoutChoices,
 	SettingsOutSourceParamChoices,
 	SettingsOutFormatChoices,
-	SourceModels,
 	SettingsAuxSourceChoices,
 	SettingsColorChoices,
 	SettingsMvLayoutChoices,
 	AudioMicChoices,
 	SettingsMicInputChoices,
 } from './../../model'
-import { SourcesToChoices, getChoices } from './../../choices'
-import { ActionType } from './../../enums'
+import { PortType } from './../../enums'
+import { getOutputChoices, getInputChoices } from './../../models'
 
 export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions {
 	return {
@@ -59,7 +58,7 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 					type: 'dropdown',
 					label: 'OutSource',
 					id: 'OutSource',
-					choices: getChoices(ActionType.SettingsoutSource),
+					choices: getOutputChoices(instance.model),
 					default: 0,
 				},
 			],
@@ -195,7 +194,7 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 					type: 'dropdown',
 					label: 'Src',
 					id: 'srcId',
-					choices: SourcesToChoices(SourceModels),
+					choices: getInputChoices(instance.model, PortType.External),
 					default: 0,
 				},
 				{

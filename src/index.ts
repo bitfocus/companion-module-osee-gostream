@@ -2,15 +2,16 @@ import { runEntrypoint, InstanceBase, InstanceStatus, SomeCompanionConfigField }
 import { GetConfigFields, Config } from './config'
 import { GoStream } from './GoStream'
 import { GetActionsList } from './actions'
-
+//import { type IModelSpec } from './models/types'
+import { GetModelSpec, GetAutoDetectModel } from './models'
 export class GoStreamInstance extends InstanceBase<Config> {
 	config
 	gostream
 	states
-	//private model!: IModelSpec
+	model
 	async init(config: Config): Promise<void> {
 		this.config = config
-		//this.model = GetModelSpec(this.config.modelId || MODEL_AUTO_DETECT) || GetAutoDetectModel()
+		this.model = GetModelSpec(this.config.modelId) || GetAutoDetectModel()
 		this.log('debug', 'Initializing module')
 		this.updateStatus(InstanceStatus.Disconnected)
 		this.saveConfig(this.config)
@@ -50,7 +51,6 @@ export class GoStreamInstance extends InstanceBase<Config> {
 	init_variables(): void {
 		this.log('debug', 'Initializing variables')
 		this.setVariableDefinitions(this.gostream.getVariables(this))
-		//this.setVariableDefinitions()
 	}
 	init_actions(): void {
 		this.log('debug', 'Initializing actions')
@@ -62,7 +62,7 @@ export class GoStreamInstance extends InstanceBase<Config> {
 	}
 	init_presets(): void {
 		this.log('debug', 'Initializing presets')
-		this.setPresetDefinitions(this.gostream.getPresets())
+		this.setPresetDefinitions(this.gostream.getPresets(this))
 	}
 }
 runEntrypoint(GoStreamInstance, [])

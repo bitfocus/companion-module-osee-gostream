@@ -1,6 +1,7 @@
 import { ActionId } from './actionId'
-import { sendCommand } from '../../connection'
+import { sendCommands, GoStreamCmd } from '../../connection'
 import { ReqType } from '../../enums'
+import type { IModelSpec } from '../../models/types'
 
 export type TransitionKeyState = {
 	BKGD: boolean
@@ -10,7 +11,7 @@ export type TransitionKeyState = {
 	DSKOnAir: boolean
 }
 
-export type State = {
+export type UpstreamKeyerStateT = {
 	transitionKey: TransitionKeyState
 	PvwOnAir: boolean
 	Tied: boolean
@@ -19,34 +20,54 @@ export type State = {
 	ArrayKeySourceFill: number[]
 }
 
-export type UpstreamKeyState = {
-	UpstreamKeyer: State
-}
-
-export function create(): UpstreamKeyState {
+export function create(_model: IModelSpec): UpstreamKeyerStateT {
 	return {
-		UpstreamKeyer: {
-			transitionKey: {
-				BKGD: false,
-				DSK: false,
-				M_Key: false,
-				KeyOnAir: false,
-				DSKOnAir: false,
-			},
-			PvwOnAir: false,
-			Tied: false,
-			OnAir: false,
-			UpStreamKeyType: 0,
-			ArrayKeySourceFill: [],
+		transitionKey: {
+			BKGD: false,
+			DSK: false,
+			M_Key: false,
+			KeyOnAir: false,
+			DSKOnAir: false,
 		},
+		PvwOnAir: false,
+		Tied: false,
+		OnAir: false,
+		UpStreamKeyType: 0,
+		ArrayKeySourceFill: [],
 	}
 }
 
-export async function sync(): Promise<void> {
-	await sendCommand(ActionId.KeyOnAir, ReqType.Get)
-	await sendCommand(ActionId.UpStreamKeyType, ReqType.Get)
-	await sendCommand(ActionId.LumaKeySourceFill, ReqType.Get)
-	await sendCommand(ActionId.ChromaKeyFill, ReqType.Get)
-	await sendCommand(ActionId.KeyPatternSourceFill, ReqType.Get)
-	await sendCommand(ActionId.PipSource, ReqType.Get)
+export async function sync(_model: IModelSpec): Promise<boolean> {
+	const cmds: GoStreamCmd[] = [
+		{ id: ActionId.KeyOnAir, type: ReqType.Get },
+		{ id: ActionId.UpStreamKeyType, type: ReqType.Get },
+		{ id: ActionId.LumaKeySourceFill, type: ReqType.Get },
+		{ id: ActionId.ChromaKeyFill, type: ReqType.Get },
+		{ id: ActionId.KeyPatternSourceFill, type: ReqType.Get },
+		{ id: ActionId.PipSource, type: ReqType.Get },
+	]
+	return sendCommands(cmds)
+}
+export function update(state: UpstreamKeyerStateT, data: GoStreamCmd): boolean {
+	switch (data.id as ActionId) {
+		case ActionId.KeyOnAir:
+			state.transitionKey.KeyOnAir = data.value && data.value[0] === 1 ? true : false
+			break
+		case ActionId.UpStreamKeyType:
+			state.UpStreamKeyType = data.value && data.value[0]
+			break
+		case ActionId.LumaKeySourceFill:
+			state.ArrayKeySourceFill[0] = data.value && data.value[0]
+			break
+		case ActionId.ChromaKeyFill:
+			state.ArrayKeySourceFill[1] = data.value && data.value[0]
+			break
+		case ActionId.KeyPatternSourceFill:
+			state.ArrayKeySourceFill[2] = data.value && data.value[0]
+			break
+		case ActionId.PipSource:
+			state.ArrayKeySourceFill[3] = data.value && data.value[0]
+			break
+	}
+	return false
 }

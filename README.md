@@ -16,9 +16,9 @@ To manually build the latest version for your machine:
 
 ## Notes on OSEE GoStream protocol
 
-The GoStream protocol (GSP) is a TCP based request-response like protocol with a push functionallity. Data is send in JSON encoded datastructures and content is little-endian encoded. 
-There is no handshake procedure for connection (other than normal TCP handshake) and no keep-alive messages or similar, so quite a minimalistic API. 
-Communication is based on set/get of state variables using the following datapacket format 
+The GoStream protocol (GSP) is a TCP based request-response like protocol with a push functionallity. Data is send in JSON encoded datastructures and content is little-endian encoded.
+There is no handshake procedure for connection (other than normal TCP handshake) and no keep-alive messages or similar, so quite a minimalistic API.
+Communication is based on set/get of state variables using the following datapacket format
 
 ```
 enum CommandType:
@@ -37,15 +37,18 @@ struct GoStreamCommand:
   type: CommandType
   value: (number|string)[]
 ```
-each command is embedded in a packet with a header and a CRC 16 modbus sum 
+
+each command is embedded in a packet with a header and a CRC 16 modbus sum
+
 ```
 struct GoStreamPacket:
   header: U16 => 0xA6 0xEB
   protoid: U8 => currently 0
-  length: U16 => Total lenfth of data to follow, including crc 
+  length: U16 => Total lenfth of data to follow, including crc
   command: GoStreamCommand
-  crc: U16 
+  crc: U16
 ```
+
 The GoStream device might send several GoStreamPackets in same Ethernet frame, each Packet might be split in several parts depending on TCP load et.c.
 
 ## Help

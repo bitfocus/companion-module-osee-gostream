@@ -19,3 +19,7 @@ export function getOptString(action: CompanionActionEvent, key: string, defVal?:
 	}
 	return val
 }
+
+export function Range(end: number): number[] {
+	return [...Array(end).keys()]
+}

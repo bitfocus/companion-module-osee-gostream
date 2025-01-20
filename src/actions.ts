@@ -1,7 +1,6 @@
 import { SuperSourceActions } from './functions/superSource'
 import { MixEffectActions } from './functions/mixEffect'
 import { StreamingActions } from './functions/streaming'
-import { LiveActions } from './functions/live'
 import { RecordActions } from './functions/record'
 import { StillGeneratorActions } from './functions/stillGenerator'
 import { PlaybackActions } from './functions/playback'
@@ -20,7 +19,6 @@ export function GetActionsList(instance: GoStreamInstance): CompanionActionDefin
 		...MixEffectActions.create(instance),
 		...SuperSourceActions.create(instance),
 		...StreamingActions.create(instance),
-		...LiveActions.create(instance),
 		...RecordActions.create(instance),
 		...StillGeneratorActions.create(instance),
 		...PlaybackActions.create(instance),

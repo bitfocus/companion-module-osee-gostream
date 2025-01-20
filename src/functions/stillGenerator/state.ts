@@ -1,26 +1,33 @@
 import { ActionId } from './actionId'
-import { sendCommand } from '../../connection'
+import { sendCommands, GoStreamCmd } from '../../connection'
 import { ReqType } from '../../enums'
+import { Range } from '../../util'
+import type { IModelSpec } from '../../models/types'
 
-export type State = {
-	Still1: string
-	Still2: string
+export type StillGeneratorStateT = {
+	slots: string[]
 }
 
-export type StillGeneratorState = {
-	StillGenerator: State
-}
-
-export function create(): StillGeneratorState {
+export function create(model: IModelSpec): StillGeneratorStateT {
 	return {
-		StillGenerator: {
-			Still1: '',
-			Still2: '',
-		},
+		slots: Array(model.stillSlots),
 	}
 }
 
-export async function sync(): Promise<void> {
-	await sendCommand(ActionId.StillSelection, ReqType.Get, [0])
-	await sendCommand(ActionId.StillSelection, ReqType.Get, [1])
+export async function sync(model: IModelSpec): Promise<boolean> {
+	const cmds: GoStreamCmd[] = [
+		...Range(model.stillSlots).map((index) => ({ id: ActionId.StillSelection, type: ReqType.Get, value: [index] })),
+	]
+	return await sendCommands(cmds)
+}
+export function update(state: StillGeneratorStateT, data: GoStreamCmd): boolean {
+	switch (data.id as ActionId) {
+		case ActionId.StillSelection: {
+			const stype = data.value && data.value[0]
+			const stypeValue = data.value && data.value[1]
+			state.slots[stype] = stypeValue
+			return true
+		}
+	}
+	return false
 }
