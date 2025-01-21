@@ -10,7 +10,8 @@ import {
 	SettingsOutFormatChoices,
 	SettingsColorChoices,
 	SettingsOutSourceParamChoices,
-	SettingsMicInputChoices,
+	SettingsMic1InputChoices,
+	SettingsMic2InputChoices,
 	SettingsMvMeterChoices,
 	SettingsMvLayoutChoices,
 	SettingsInputWindowLayoutChoices,
@@ -132,17 +133,26 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 				},
 				{
 					type: 'dropdown',
-					label: 'Mic Input',
-					id: 'MicInput',
-					choices: SettingsMicInputChoices,
+					label: 'Input type',
+					id: 'MicInput1',
+					choices: SettingsMic1InputChoices,
 					default: 0,
+					isVisible: (options) => options.micid === 0,
+				},
+				{
+					type: 'dropdown',
+					label: 'Input type',
+					id: 'MicInput2',
+					choices: SettingsMic2InputChoices,
+					default: 0,
+					isVisible: (options) => options.micid === 1,
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.MicInput, ReqType.Set, [
-					getOptNumber(action, 'micid'),
-					getOptNumber(action, 'MicInput'),
-				])
+				let type = getOptNumber(action, 'MicInput1')
+				if (action.options.micid === 1) type = getOptNumber(action, 'MicInput2')
+
+				await sendCommand(ActionId.MicInput, ReqType.Set, [getOptNumber(action, 'micid'), type])
 			},
 		},
 		[ActionId.RecordFileName]: {

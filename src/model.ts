@@ -129,10 +129,14 @@ export const SettingsInputWindowLayoutChoices = [
 	{ id: 0, label: 'Style 1' },
 	{ id: 1, label: 'Style 2' },
 ]
-export const SettingsMicInputChoices = [
-	{ id: 0, label: 'mic+power' },
-	{ id: 1, label: 'mic' },
-	{ id: 2, label: 'line' },
+export const SettingsMic1InputChoices = [
+	{ id: 0, label: 'Mic+power' },
+	{ id: 1, label: 'Mic' },
+	{ id: 2, label: 'Line' },
+]
+export const SettingsMic2InputChoices = [
+	{ id: 0, label: 'Mic' },
+	{ id: 1, label: 'Line' },
 ]
 export const SettingsColorChoices = [
 	{ id: 0, label: 'auto' },

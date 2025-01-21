@@ -9,7 +9,8 @@ import {
 	SettingsColorChoices,
 	SettingsMvLayoutChoices,
 	AudioMicChoices,
-	SettingsMicInputChoices,
+	SettingsMic1InputChoices,
+	SettingsMic2InputChoices,
 } from './../../model'
 import { PortType } from './../../enums'
 import { getOutputChoices, getInputChoices } from './../../models'
@@ -235,10 +236,19 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 				},
 				{
 					type: 'dropdown',
-					label: 'Mic Input',
-					id: 'micInputId',
-					choices: SettingsMicInputChoices,
+					label: 'Input type',
+					id: 'MicInput1',
+					choices: SettingsMic1InputChoices,
 					default: 0,
+					isVisible: (options) => options.micId === 0,
+				},
+				{
+					type: 'dropdown',
+					label: 'Input type',
+					id: 'MicInput2',
+					choices: SettingsMic2InputChoices,
+					default: 0,
+					isVisible: (options) => options.micId === 1,
 				},
 			],
 			defaultStyle: {
@@ -246,12 +256,15 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 				bgcolor: combineRgb(0, 255, 0),
 			},
 			callback: (feedback) => {
-				return instance.states.Settings.MicInput[Number(feedback.options.micId)] === feedback.options.micInputId
+				const micid = Number(feedback.options.micId)
+				let type = Number(feedback.options.MicInput1)
+				if (micid === 1) type = Number(feedback.options.MicInput2)
+				return instance.states.Settings.micInput[micid] === type
 			},
 			learn: (feedback) => {
 				return {
 					...feedback.options,
-					micInputId: instance.states.Settings.MicInput[Number(feedback.options.micId)],
+					micInputId: instance.states.Settings.micInput[Number(feedback.options.micId)],
 				}
 			},
 		},
