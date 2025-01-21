@@ -51,6 +51,11 @@ export const KeySwitchChoices = [
 	{ id: 1, label: 'DSK' },
 	{ id: 2, label: 'BKGD' },
 ]
+export const SuperSourceChoices = [
+	{ id: 0, label: 'Source 1' },
+	{ id: 1, label: 'Source 2' },
+	{ id: 2, label: 'Background' },
+]
 export const ColorSwitchChoices = [
 	{ id: 0, label: 'Color1' },
 	{ id: 1, label: 'Color2' },

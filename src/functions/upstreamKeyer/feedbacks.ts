@@ -2,8 +2,9 @@ import { combineRgb, CompanionFeedbackDefinitions } from '@companion-module/base
 import { ActionType } from './../../enums'
 import { getChoices } from './../../choices'
 import { FeedbackId } from './feedbackId'
-import { UpStreamKeyTypeChoices, SwitchChoices } from './../../model'
+import { UpStreamKeyTypeChoices, SwitchChoices, KeyResizeSizeChoices } from './../../model'
 import type { GoStreamInstance } from './../../index'
+import { USKKeySourceType, USKKeyTypes } from './state'
 
 export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions {
 	return {
@@ -37,7 +38,7 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 		},
 		[FeedbackId.KeyOnAir]: {
 			type: 'boolean',
-			name: 'Next Transition:Key OnAir Switch',
+			name: 'USK: Key OnAir Switch',
 			description: 'Set the special effect Transition key switch',
 			options: [
 				{
@@ -87,7 +88,7 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 		},
 		[FeedbackId.KeySourceFill]: {
 			type: 'boolean',
-			name: 'UpStreamKey:UpStream Key Source Fill',
+			name: 'USK: Source Fill',
 			description: 'Set the special effect UpStream Key Source Fill',
 			options: [
 				{
@@ -111,12 +112,21 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 			},
 			callback: (feedback) => {
 				const typeId = Number(feedback.options.USKKeyType)
-				return instance.states.UpstreamKeyer.ArrayKeySourceFill[typeId] === Number(feedback.options.USKSourceFill)
+				console.log(
+					'KeySourceFill feedback',
+					instance.states.UpstreamKeyer.keyInfo[typeId].sources,
+					instance.states.UpstreamKeyer.keyInfo[typeId].sources[USKKeySourceType.Fill],
+					Number(feedback.options.USKSourceFill),
+				)
+				return (
+					instance.states.UpstreamKeyer.keyInfo[typeId].sources[USKKeySourceType.Fill] ===
+					Number(feedback.options.USKSourceFill)
+				)
 			},
 		},
 		[FeedbackId.UpStreamKeyType]: {
 			type: 'boolean',
-			name: 'UpStream Key: Set UpStream Key Type',
+			name: 'USK: Set type',
 			description: 'If you Select UpStream Key, change style of the bank',
 			options: [
 				{
@@ -134,6 +144,128 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 			callback: (feedback) => {
 				const typeid = Number(feedback.options.USKType)
 				return instance.states.UpstreamKeyer.UpStreamKeyType === typeid
+			},
+		},
+		[FeedbackId.PipXPosition]: {
+			type: 'boolean',
+			name: 'USK: PIP X position',
+			description: 'Change style of bank based on pip x position',
+			options: [
+				{
+					type: 'number',
+					label: 'X Position',
+					id: 'pipXPosId',
+					min: -16,
+					max: 16,
+					step: 0.2,
+					default: 0,
+					range: true,
+				},
+			],
+			defaultStyle: {
+				color: combineRgb(0, 0, 0),
+				bgcolor: combineRgb(255, 255, 0),
+			},
+			callback: (feedback) => {
+				const typeid = Number(feedback.options.pipXPosId)
+				return instance.states.UpstreamKeyer.keyInfo[USKKeyTypes.Pip].xPosition === typeid
+			},
+		},
+		[FeedbackId.PipYPosition]: {
+			type: 'boolean',
+			name: 'USK: PIP Y position',
+			description: 'Change style of bank based on pip y position',
+			options: [
+				{
+					type: 'number',
+					label: 'Y Position',
+					id: 'pipYPosId',
+					min: -9,
+					max: 9,
+					step: 0.2,
+					default: 0,
+					range: true,
+				},
+			],
+			defaultStyle: {
+				color: combineRgb(0, 0, 0),
+				bgcolor: combineRgb(255, 255, 0),
+			},
+			callback: (feedback) => {
+				const typeid = Number(feedback.options.pipYPosId)
+				return instance.states.UpstreamKeyer.keyInfo[USKKeyTypes.Pip].yPosition === typeid
+			},
+		},
+		[FeedbackId.KeyPatternResizeXPosition]: {
+			type: 'boolean',
+			name: 'USK: Key Pattern X position',
+			description: 'Change style of bank based on key pattern x position',
+			options: [
+				{
+					type: 'number',
+					label: 'X Position',
+					id: 'keyPatternResizeXId',
+					min: -16,
+					max: 16,
+					step: 0.2,
+					default: 0,
+					range: true,
+				},
+			],
+			defaultStyle: {
+				color: combineRgb(0, 0, 0),
+				bgcolor: combineRgb(255, 255, 0),
+			},
+			callback: (feedback) => {
+				const typeid = Number(feedback.options.keyPatternResizeXId)
+				return instance.states.UpstreamKeyer.keyInfo[USKKeyTypes.KeyPattern].xPosition === typeid
+			},
+		},
+		[FeedbackId.KeyPatternResizeYPosition]: {
+			type: 'boolean',
+			name: 'USK: Key Pattern Y position',
+			description: 'Change style of bank based on key pattern y position',
+			options: [
+				{
+					type: 'number',
+					label: 'Y Position',
+					id: 'keyPatternResizeYId',
+					min: -9,
+					max: 9,
+					step: 0.2,
+					default: 0,
+					range: true,
+				},
+			],
+			defaultStyle: {
+				color: combineRgb(0, 0, 0),
+				bgcolor: combineRgb(255, 255, 0),
+			},
+			callback: (feedback) => {
+				const typeid = Number(feedback.options.keyPatternResizeYId)
+				return instance.states.UpstreamKeyer.keyInfo[USKKeyTypes.KeyPattern].yPosition === typeid
+			},
+		},
+		[FeedbackId.KeyPatternResizeSize]: {
+			type: 'boolean',
+			name: 'USK: Key Pattern Resize Size',
+			description: 'Change style of bank based on key pattern resize size',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Size',
+					id: 'keyPatternResizeSizeId',
+					choices: KeyResizeSizeChoices,
+					default: 0,
+				},
+			],
+			defaultStyle: {
+				color: combineRgb(0, 0, 0),
+				bgcolor: combineRgb(255, 255, 0),
+			},
+			callback: (feedback) => {
+				const typeid = Number(feedback.options.keyPatternResizeSizeId)
+				return instance.states.UpstreamKeyer.keyInfo[USKKeyTypes.KeyPattern].size === typeid
 			},
 		},
 	}

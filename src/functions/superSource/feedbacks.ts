@@ -3,7 +3,7 @@ import { ActionType } from '../../enums'
 import { getChoices } from '../../choices'
 import type { GoStreamInstance } from '../../index'
 import { FeedbackId } from './feedbackId'
-import { SuperSourceStyleChoices } from '../../model'
+import { SuperSourceStyleChoices, SuperSourceChoices } from '../../model'
 
 export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions {
 	return {
@@ -17,7 +17,7 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: () => {
-				return instance.states.SuperSourcePorp.SSEnable
+				return instance.states.SuperSource.Enable
 			},
 		},
 		[FeedbackId.SuperSourceSelect]: {
@@ -27,13 +27,9 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 			options: [
 				{
 					type: 'dropdown',
-					label: 'type',
+					label: 'Super Source',
 					id: 'typeid',
-					choices: [
-						{ id: 0, label: 'superSourceSource1' },
-						{ id: 1, label: 'superSourceSource2' },
-						{ id: 2, label: 'superSourceBackgroud' },
-					],
+					choices: SuperSourceChoices,
 					default: 0,
 				},
 				{
@@ -50,13 +46,13 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 			},
 			callback: (feedback) => {
 				const type = Number(feedback.options.typeid)
-				const SourceID = Number(feedback.options.SourceID)
+				const sourceID = Number(feedback.options.SourceID)
 				if (type === 0) {
-					return instance.states.SuperSourcePorp.SuperSourceSource1.id === SourceID
+					return instance.states.SuperSource.source1 === sourceID
 				} else if (type === 1) {
-					return instance.states.SuperSourcePorp.SuperSourceSource2.id === SourceID
+					return instance.states.SuperSource.source2 === sourceID
 				} else if (type === 2) {
-					return instance.states.SuperSourcePorp.SuperSourceBackground.id === SourceID
+					return instance.states.SuperSource.background === sourceID
 				}
 				return false
 			},
@@ -79,7 +75,7 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: (feedback) => {
-				return instance.states.SuperSourcePorp.SuperSourceControlStyle.id === feedback.options.styleid
+				return instance.states.SuperSource.controlStyle === feedback.options.styleid
 			},
 		},
 		[FeedbackId.SuperSourceMask]: {
@@ -92,8 +88,8 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 					label: 'Type',
 					id: 'typeid',
 					choices: [
-						{ id: 0, label: 'mask1' },
-						{ id: 1, label: 'mask2' },
+						{ id: 0, label: 'mask 1' },
+						{ id: 1, label: 'mask 2' },
 					],
 					default: 0,
 				},
@@ -104,11 +100,30 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 			},
 			callback: (feedback) => {
 				const type = Number(feedback.options.typeid)
-				if (type === 0) {
-					return instance.states.SuperSourcePorp.SuperSourceMaskEnable.mask1
-				} else {
-					return instance.states.SuperSourcePorp.SuperSourceMaskEnable.mask2
-				}
+				return instance.states.SuperSource.maskEnable[type]
+			},
+		},
+		[FeedbackId.SuperSourceYPosition]: {
+			type: 'boolean',
+			name: 'Super Source: Super Source Y Position',
+			description: 'Change style of bank based on Super Source Y Position',
+			options: [
+				{
+					type: 'number',
+					label: 'Y Position (%)',
+					id: 'superSourceYPosition',
+					min: 0,
+					max: 100,
+					default: 50,
+				},
+			],
+			defaultStyle: {
+				color: combineRgb(0, 0, 0),
+				bgcolor: combineRgb(255, 255, 0),
+			},
+			callback: (feedback) => {
+				const pos = Number(feedback.options.superSourceYPosition)
+				return instance.states.SuperSource.controlYPosition === pos
 			},
 		},
 	}

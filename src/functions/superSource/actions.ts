@@ -1,13 +1,19 @@
 import { ActionId } from './actionId'
 import { getOptNumber } from '../../util'
 import { getChoices } from '../../choices'
-import { SwitchChoices, SuperSourceBorderChoices, SuperSourceMaskChoices, SuperSourceStyleChoices } from '../../model'
+import {
+	SwitchChoices,
+	SuperSourceBorderChoices,
+	SuperSourceMaskChoices,
+	SuperSourceStyleChoices,
+	SuperSourceChoices,
+} from '../../model'
 import { ReqType, ActionType } from '../../enums'
 import { sendCommand } from '../../connection'
 import type { GoStreamInstance } from '../../index'
 import type { CompanionActionDefinitions } from '@companion-module/base'
 
-export function create(_self: GoStreamInstance): CompanionActionDefinitions {
+export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 	return {
 		[ActionId.SuperSourceEnable]: {
 			name: 'Super Source:Super Source Enable',
@@ -24,7 +30,7 @@ export function create(_self: GoStreamInstance): CompanionActionDefinitions {
 				const opt = getOptNumber(action, 'SuperSourceEnable')
 				let paramOpt = 0
 				if (opt === 2) {
-					if (_self.states.SuperSourcePorp.SSEnable === true) {
+					if (instance.states.superSource.enable === true) {
 						paramOpt = 0
 					} else {
 						paramOpt = 1
@@ -35,49 +41,34 @@ export function create(_self: GoStreamInstance): CompanionActionDefinitions {
 				}
 			},
 		},
-		[ActionId.SuperSourceSource1]: {
-			name: 'Super Source:Super Source Source1',
+		[ActionId.SuperSourceSource]: {
+			name: 'Super Source: Set SuperSource Source',
 			options: [
 				{
 					type: 'dropdown',
-					label: 'SuperSource Source1:',
-					id: 'SuperSourceSource1',
+					label: 'Super Source',
+					id: 'typeid',
+					choices: SuperSourceChoices,
+					default: 0,
+				},
+				{
+					type: 'dropdown',
+					label: 'Source',
+					id: 'SourceID',
 					choices: getChoices(ActionType.SuperSourceSource),
 					default: 0,
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.SuperSourceSource1, ReqType.Set, [getOptNumber(action, 'SuperSourceSource1')])
-			},
-		},
-		[ActionId.SuperSourceSource2]: {
-			name: 'Super Source:Super Source Source2',
-			options: [
-				{
-					type: 'dropdown',
-					label: 'SuperSource Source2:',
-					id: 'SuperSourceSource2',
-					choices: getChoices(ActionType.SuperSourceSource),
-					default: 0,
-				},
-			],
-			callback: async (action) => {
-				await sendCommand(ActionId.SuperSourceSource2, ReqType.Set, [getOptNumber(action, 'SuperSourceSource2')])
-			},
-		},
-		[ActionId.SuperSourceBackground]: {
-			name: 'Super Source:Super Source Background',
-			options: [
-				{
-					type: 'dropdown',
-					label: 'SuperSource Background:',
-					id: 'SuperSourceBackground',
-					choices: getChoices(ActionType.SuperSourceSource),
-					default: 0,
-				},
-			],
-			callback: async (action) => {
-				await sendCommand(ActionId.SuperSourceBackground, ReqType.Set, [getOptNumber(action, 'SuperSourceBackground')])
+				const type = Number(action.options.typeid)
+				const sourceID = Number(action.options.SourceID)
+				if (type === 0) {
+					await sendCommand(ActionId.SuperSourceSource1, ReqType.Set, [sourceID])
+				} else if (type === 1) {
+					await sendCommand(ActionId.SuperSourceSource2, ReqType.Set, [sourceID])
+				} else if (type === 2) {
+					await sendCommand(ActionId.SuperSourceBackground, ReqType.Set, [sourceID])
+				}
 			},
 		},
 		[ActionId.SuperSourceControlStyle]: {
@@ -101,15 +92,15 @@ export function create(_self: GoStreamInstance): CompanionActionDefinitions {
 				{
 					type: 'number',
 					label: 'Y Position:',
-					id: 'SuperSourceYPosition',
+					id: 'superSourceYPosition',
 					min: 0,
 					max: 100,
-					default: 0,
+					default: 50,
 				},
 			],
 			callback: async (action) => {
 				await sendCommand(ActionId.SuperSourceControlYPosition, ReqType.Set, [
-					getOptNumber(action, 'SuperSourceYPosition'),
+					getOptNumber(action, 'superSourceYPosition'),
 				])
 			},
 		},

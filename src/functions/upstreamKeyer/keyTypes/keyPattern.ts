@@ -242,11 +242,6 @@ export function createKeyPatternActions(_self: GoStreamInstance): CompanionActio
 				},
 			],
 			callback: async (action) => {
-				//let value = 0.25
-				//const info = KeyResizeSizeChoices.find((s) => s.id === action.options.KeyPatternResizeSize)
-				//if (info !== null && info !== undefined) {
-				//		value = Number(info.label)
-				//	}
 				await sendCommand(ActionId.KeyPatternResizeSize, ReqType.Set, [getOptNumber(action, 'KeyPatternResizeSize')])
 			},
 		},

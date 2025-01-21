@@ -3,4 +3,5 @@ export enum FeedbackId {
 	SuperSourceSelect = 'superSourceSelect',
 	SuperSourceControlStyle = 'superSourceControlStyle',
 	SuperSourceMask = 'superSourceMask',
+	SuperSourceYPosition = 'superSourceControlYPosition',
 }
