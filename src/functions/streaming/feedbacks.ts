@@ -23,6 +23,7 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: (feedback) => {
+				console.log('Stream info', instance.states.Streaming.streamInfo)
 				return instance.states.Streaming.streamInfo[Number(feedback.options.StreamID)].enabled
 			},
 		},

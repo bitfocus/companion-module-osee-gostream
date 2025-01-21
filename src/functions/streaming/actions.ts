@@ -53,7 +53,7 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 				const opt1 = getOptNumber(action, 'StreamID')
 				const opt2 = getOptNumber(action, 'EnableId')
 				if (opt2 === 2) {
-					const paramOpt = instance.states.Streaming.enabled[opt1] ? 0 : 1
+					const paramOpt = instance.states.Streaming.streamInfo[opt1].enabled ? 0 : 1
 					await sendCommand(ActionId.StreamOutput, ReqType.Set, [opt1, paramOpt])
 				} else {
 					await sendCommand(ActionId.StreamOutput, ReqType.Set, [opt1, opt2])
