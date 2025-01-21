@@ -14,7 +14,12 @@ export type SettingsStateT = {
 	micInput: number[]
 	mvLayout: number
 	sourceSelection: number[]
+	sourceSelectionList: string[]
 	sourceName: string[]
+	version: string
+	buildInfo: string
+	deviceId: string
+	deviceName: string
 }
 
 export function create(model: IModelSpec): SettingsStateT {
@@ -33,7 +38,12 @@ export function create(model: IModelSpec): SettingsStateT {
 		micInput: Array(micInputs),
 		mvLayout: 0,
 		sourceSelection: Array(srcSelectable),
+		sourceSelectionList: ['Loading'], // Loading data per default
 		sourceName: new Array(nameableVideoInputs),
+		version: '',
+		buildInfo: '',
+		deviceId: '',
+		deviceName: '',
 	}
 }
 
@@ -53,6 +63,11 @@ export async function sync(model: IModelSpec): Promise<boolean> {
 		{ id: ActionId.MvLayout, type: ReqType.Get },
 		...Range(micInputs).map((id) => ({ id: ActionId.MicInput, type: ReqType.Get, value: [id] })),
 		...Range(nameableVideoInputs).map((id) => ({ id: ActionId.SrcName, type: ReqType.Get, value: [id] })),
+		{ id: ActionId.GetSrcSelectionList, type: ReqType.Get },
+		{ id: ActionId.Version, type: ReqType.Get },
+		{ id: ActionId.BuildInfo, type: ReqType.Get },
+		{ id: ActionId.DeviceId, type: ReqType.Get },
+		{ id: ActionId.DeviceName, type: ReqType.Get },
 	]
 	return sendCommands(cmds)
 }
@@ -92,6 +107,26 @@ export function update(state: SettingsStateT, data: GoStreamCmd): boolean {
 		case ActionId.SrcName:
 			if (!data.value) return true
 			state.sourceName[data.value[0]] = data.value[1]
+			break
+		case ActionId.GetSrcSelectionList:
+			if (!data.value) return true
+			state.sourceSelectionList = <string[]>data.value
+			return true
+		case ActionId.Version:
+			if (!data.value) return true
+			state.version = data.value[0]
+			break
+		case ActionId.BuildInfo:
+			if (!data.value) return true
+			state.buildInfo = data.value[0]
+			break
+		case ActionId.DeviceId:
+			if (!data.value) return true
+			state.deviceId = data.value[0]
+			break
+		case ActionId.DeviceName:
+			if (!data.value) return true
+			state.deviceName = data.value[0]
 			break
 	}
 	return false

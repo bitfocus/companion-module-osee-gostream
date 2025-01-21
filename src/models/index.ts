@@ -1,5 +1,5 @@
 import type { DropdownChoice } from '@companion-module/base'
-import { type IModelSpec, ModelId } from './types'
+import { type IModelSpec, ModelId, type IPortSpec } from './types'
 import { ModelSpecAuto } from './auto'
 import { ModelSpecDeck } from './deck'
 import { ModelSpecDuet } from './duet'
@@ -25,6 +25,12 @@ export function getInputChoices(model: IModelSpec, type?: PortType): DropdownCho
 		}
 	})
 	return choices
+}
+
+export function getInputs(model: IModelSpec, type?: PortType): IPortSpec[] {
+	const portType = type ? type : PortType.All
+	const ret = model.inputs.filter((input) => input.type & portType)
+	return ret
 }
 
 export function getOutputChoices(model: IModelSpec, type?: PortType): DropdownChoice[] {

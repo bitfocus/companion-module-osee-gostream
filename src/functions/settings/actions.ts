@@ -18,7 +18,7 @@ import {
 	SettingsUMDSrcChoices,
 	SwitchChoices,
 } from './../../model'
-import { getInputChoices, getColorChoices } from './../../models'
+import { getInputs /* getColorChoices*/ } from './../../models'
 
 export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 	return {
@@ -167,19 +167,24 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 					type: 'dropdown',
 					label: 'Src',
 					id: 'Srcid',
-					choices: getInputChoices(instance.model, PortType.External),
+					choices: getInputs(instance.model, PortType.External).map((item, index) => ({
+						id: index,
+						label: item.longName,
+					})),
 					default: '0',
 				},
 				{
 					type: 'dropdown',
 					label: 'Selection',
 					id: 'SrcSelection',
-					choices: getColorChoices(instance.model),
+					choices: instance.states.Settings.sourceSelectionList.map((item, index) => ({
+						id: index,
+						label: item,
+					})),
 					default: '0',
 				},
 			],
 			callback: async (action) => {
-				console.log(getOptNumber(action, 'Srcid'), getOptNumber(action, 'SrcSelection'))
 				await sendCommand(ActionId.SrcSelection, ReqType.Set, [
 					getOptNumber(action, 'Srcid'),
 					getOptNumber(action, 'SrcSelection'),

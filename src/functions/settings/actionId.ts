@@ -25,4 +25,9 @@ export enum ActionId {
 	SdFree = 'sdFree',
 	LiveStatus = 'liveStatus',
 	LiveInfo = 'liveInfo',
+	GetSrcSelectionList = 'getSrcSelectionList',
+	Version = 'version',
+	BuildInfo = 'buildInfo',
+	DeviceId = 'deviceId',
+	DeviceName = 'deviceName',
 }
