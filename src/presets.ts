@@ -8,6 +8,7 @@ import { MacroPresets } from './functions/macro'
 import { SuperSourcePresets } from './functions/superSource'
 import { PlaybackPresets } from './functions/playback'
 import { UpstreamKeyerPresets } from './functions/upstreamKeyer'
+import { SettingsPresets } from './functions/settings'
 
 export function presets(instance: GoStreamInstance): CompanionPresetDefinitions {
 	return {
@@ -19,5 +20,6 @@ export function presets(instance: GoStreamInstance): CompanionPresetDefinitions 
 		...SuperSourcePresets.create(),
 		...PlaybackPresets.create(),
 		...UpstreamKeyerPresets.create(),
+		...SettingsPresets.create(),
 	}
 }

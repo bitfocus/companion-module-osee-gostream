@@ -145,9 +145,9 @@ export const SettingsColorChoices = [
 ]
 export const SettingsAuxSourceChoices = [
 	//0~2，sd card,usb camera,ndi
-	{ id: 0, label: 'sd card' },
-	{ id: 1, label: 'usb camera' },
-	{ id: 2, label: 'ndi' },
+	{ id: 0, label: 'Player' },
+	{ id: 1, label: 'USB Camera' },
+	{ id: 2, label: 'NDI' },
 ]
 export const SettingsOutFormatChoices = [
 	{ id: 0, label: '1080p23.98' },

@@ -273,10 +273,10 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: (feedback) => {
-				return instance.states.Settings.AuxSource === Number(feedback.options.auxSourceID)
+				return instance.states.Settings.auxSource === Number(feedback.options.auxSourceID)
 			},
 			learn: (feedback) => {
-				const auxSource = instance.states.Settings.AuxSource
+				const auxSource = instance.states.Settings.auxSource
 				if (auxSource !== undefined) {
 					return {
 						...feedback.options,
