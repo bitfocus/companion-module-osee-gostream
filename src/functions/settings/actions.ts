@@ -1,7 +1,7 @@
 import { ActionId } from './actionId'
 import { getOptNumber, getOptString } from './../../util'
 import { getChoices } from './../../choices'
-import { ReqType, ActionType, PortType } from './../../enums'
+import { ReqType, ActionType, PortType, PortCaps } from './../../enums'
 import { sendCommand } from './../../connection'
 import type { GoStreamInstance } from './../../index'
 import type { CompanionActionDefinitions } from '@companion-module/base'
@@ -19,7 +19,7 @@ import {
 	SettingsUMDSrcChoices,
 	SwitchChoices,
 } from './../../model'
-import { getInputs /* getColorChoices*/ } from './../../models'
+import { getInputs } from './../../models'
 
 export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 	return {
@@ -92,7 +92,7 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 			},
 		},
 		[ActionId.InputWindowLayout]: {
-			name: ' Settings:Set Input Window Mv Layout',
+			name: ' Settings: Set Input Window Mv Layout',
 			options: [
 				{
 					type: 'dropdown',
@@ -107,7 +107,7 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 			},
 		},
 		[ActionId.Marker]: {
-			name: 'Settings:Set Marker',
+			name: 'Settings: Set Marker',
 			options: [
 				{
 					type: 'dropdown',
@@ -122,7 +122,7 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 			},
 		},
 		[ActionId.MicInput]: {
-			name: 'Settings:Mic Input',
+			name: 'Settings: Mic Input',
 			options: [
 				{
 					type: 'dropdown',
@@ -156,7 +156,7 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 			},
 		},
 		[ActionId.RecordFileName]: {
-			name: 'Settings:Record FileName',
+			name: 'Settings: Record FileName',
 			options: [
 				{
 					type: 'textinput',
@@ -171,7 +171,7 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 			},
 		},
 		[ActionId.SrcSelection]: {
-			name: 'Settings:Src Selection',
+			name: 'Settings: Src Selection',
 			options: [
 				{
 					type: 'dropdown',
@@ -202,7 +202,7 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 			},
 		},
 		[ActionId.AuxSource]: {
-			name: 'Settings:Aux Source',
+			name: 'Settings: Aux Source',
 			options: [
 				{
 					type: 'dropdown',
@@ -217,7 +217,7 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 			},
 		},
 		[ActionId.OutFormat]: {
-			name: 'Settings:OutFormat',
+			name: 'Settings: Out Format',
 			options: [
 				{
 					type: 'dropdown',
@@ -232,16 +232,17 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 			},
 		},
 		[ActionId.OutputColorSpace]: {
-			name: 'Settings:Output ColorSpace',
+			name: 'Settings: Output ColorSpace',
 			options: [
 				{
 					type: 'dropdown',
 					label: 'Out',
 					id: 'OutId',
-					choices: [
-						{ id: '0', label: 'out1' },
-						{ id: '1', label: 'out2' },
-					],
+					choices: instance.model.outputs
+						.filter((out) => out.caps & PortCaps.Colorspace)
+						.map((item, index) => {
+							return { id: index, label: item.longName }
+						}),
 					default: 0,
 				},
 				{

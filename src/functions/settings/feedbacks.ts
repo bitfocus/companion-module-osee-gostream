@@ -12,8 +12,8 @@ import {
 	SettingsMic1InputChoices,
 	SettingsMic2InputChoices,
 } from './../../model'
-import { PortType } from './../../enums'
-import { getOutputChoices, getInputChoices } from './../../models'
+import { PortType, PortCaps } from './../../enums'
+import { getOutputChoices, getInputs } from './../../models'
 
 export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions {
 	return {
@@ -39,7 +39,7 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 			},
 			learn: () => {
 				return {
-					StyleID: instance.states.Settings.InputWindowLayout,
+					StyleID: instance.states.Settings.inputWindowLayout,
 				}
 			},
 		},
@@ -68,13 +68,11 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: (feedback) => {
-				//const outSource = instance.states.Settings.OutSource
 				const OutTypeID = feedback.options.OutId
 				const SelectSource = feedback.options.OutSource
 				return OutTypeID === SelectSource
 			},
 			learn: (feedback) => {
-				//const outSource = instance.states.Settings.OutSource
 				const OutTypeID = feedback.options.OutId
 				if (OutTypeID === 0) {
 					return {
@@ -103,10 +101,11 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 					type: 'dropdown',
 					label: 'Output',
 					id: 'OutputId',
-					choices: [
-						{ id: '0', label: 'out1' },
-						{ id: '1', label: 'out2' },
-					],
+					choices: instance.model.outputs
+						.filter((out) => out.caps & PortCaps.Colorspace)
+						.map((item, index) => {
+							return { id: index, label: item.longName }
+						}),
 					default: 0,
 				},
 				{
@@ -123,14 +122,14 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 			},
 			callback: (feedback) => {
 				return (
-					instance.states.Settings.OutputColorSpace[Number(feedback.options.OutputId)] ===
+					instance.states.Settings.outputColorSpace[Number(feedback.options.OutputId)] ===
 					feedback.options.OutputColorSpaceId
 				)
 			},
 			learn: (feedback) => {
 				return {
 					...feedback.options,
-					OutputColorSpaceId: instance.states.Settings.OutputColorSpace[Number(feedback.options.OutputId)],
+					OutputColorSpaceId: instance.states.Settings.outputColorSpace[Number(feedback.options.OutputId)],
 				}
 			},
 		},
@@ -152,11 +151,11 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 				bgcolor: combineRgb(0, 255, 0),
 			},
 			callback: (feedback) => {
-				return instance.states.Settings.OutputFormat === feedback.options.OutputFormatId
+				return instance.states.Settings.outputFormat === feedback.options.OutputFormatId
 			},
 			learn: () => {
 				return {
-					OutputFormatId: instance.states.Settings.OutputFormat,
+					OutputFormatId: instance.states.Settings.outputFormat,
 				}
 			},
 		},
@@ -178,11 +177,11 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 				bgcolor: combineRgb(0, 255, 0),
 			},
 			callback: (feedback) => {
-				return instance.states.Settings.MvLayout === feedback.options.MvLayoutId
+				return instance.states.Settings.mvLayout === feedback.options.MvLayoutId
 			},
 			learn: () => {
 				return {
-					MvLayoutId: instance.states.Settings.MvLayoutId,
+					MvLayoutId: instance.states.Settings.mvLayout,
 				}
 			},
 		},
@@ -195,15 +194,21 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 					type: 'dropdown',
 					label: 'Src',
 					id: 'srcId',
-					choices: getInputChoices(instance.model, PortType.External),
-					default: 0,
+					choices: getInputs(instance.model, PortType.External).map((item, index) => ({
+						id: index,
+						label: item.longName,
+					})),
+					default: '0',
 				},
 				{
 					type: 'dropdown',
 					label: 'Selection',
 					id: 'srcSelectionId',
-					choices: SettingsColorChoices,
-					default: 0,
+					choices: instance.states.Settings.sourceSelectionList.map((item, index) => ({
+						id: index,
+						label: item,
+					})),
+					default: '0',
 				},
 			],
 			defaultStyle: {
@@ -211,14 +216,20 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 				bgcolor: combineRgb(0, 255, 0),
 			},
 			callback: (feedback) => {
+				console.log(
+					'FEEDBACK',
+					instance.states.Settings.sourceSelection,
+					Number(feedback.options.srcId),
+					feedback.options.srcSelectionId,
+				)
 				return (
-					instance.states.Settings.SourceSelection[Number(feedback.options.srcId)] === feedback.options.srcSelectionId
+					instance.states.Settings.sourceSelection[Number(feedback.options.srcId)] === feedback.options.srcSelectionId
 				)
 			},
 			learn: (feedback) => {
 				return {
 					...feedback.options,
-					srcSelectionId: instance.states.Settings.SourceSelection,
+					srcSelectionId: instance.states.Settings.sourceSelection,
 				}
 			},
 		},

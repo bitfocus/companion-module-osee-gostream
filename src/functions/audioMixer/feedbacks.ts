@@ -8,8 +8,8 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 	return {
 		[FeedbackId.AudioEnable]: {
 			type: 'boolean',
-			name: 'UpStream Key: Set UpStream Key Type',
-			description: 'If you Select UpStream Key, change style of the bank',
+			name: 'Audio Mixer: Set Audio Enabled',
+			description: 'If audio source is enabled change style of bank',
 			options: [
 				{
 					type: 'dropdown',

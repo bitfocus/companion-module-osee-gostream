@@ -122,8 +122,8 @@ export const SettingsMvMeterChoices = [
 	{ id: 5, label: 'aux' },
 ]
 export const SettingsMvLayoutChoices = [
-	{ id: 0, label: 'PGM|PVW' },
-	{ id: 1, label: 'PVW|PGM' },
+	{ id: 0, label: 'PVW|PGM' },
+	{ id: 1, label: 'PGM|PVW' },
 ]
 export const SettingsInputWindowLayoutChoices = [
 	{ id: 0, label: 'Style 1' },
@@ -139,13 +139,13 @@ export const SettingsMic2InputChoices = [
 	{ id: 1, label: 'Line' },
 ]
 export const SettingsColorChoices = [
-	{ id: 0, label: 'auto' },
-	{ id: 1, label: 'rgb full' },
-	{ id: 2, label: 'rgb limit' },
-	{ id: 3, label: 'ycbcr422 full' },
-	{ id: 4, label: 'ycbcr422 limit' },
-	{ id: 5, label: 'ycbcr444 full' },
-	{ id: 6, label: 'ycbcr444 limit' },
+	{ id: 0, label: 'HDMI Auto' },
+	{ id: 1, label: 'HDMI RGB Full' },
+	{ id: 2, label: 'HDMI RGB Limit' },
+	{ id: 3, label: 'HDMI YC422 Full' },
+	{ id: 4, label: 'HDMI YC422 Limit' },
+	{ id: 5, label: 'HDMI YC444 Full' },
+	{ id: 6, label: 'HDMI YC444 Limit' },
 ]
 export const SettingsAuxSourceChoices = [
 	//0~2，sd card,usb camera,ndi

@@ -10,6 +10,7 @@ import { MacroFeedbacks } from './functions/macro'
 import { PlaybackFeedbacks } from './functions/playback'
 import { SettingsFeedbacks } from './functions/settings'
 import { UpstreamKeyerFeedbacks } from './functions/upstreamKeyer'
+import { AudioMixerFeedbacks } from './functions/audioMixer'
 
 export function feedbacks(instance: GoStreamInstance): CompanionFeedbackDefinitions {
 	return {
@@ -23,5 +24,6 @@ export function feedbacks(instance: GoStreamInstance): CompanionFeedbackDefiniti
 		...MacroFeedbacks.create(instance),
 		...PlaybackFeedbacks.create(instance),
 		...SettingsFeedbacks.create(instance),
+		...AudioMixerFeedbacks.create(instance),
 	}
 }

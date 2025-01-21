@@ -53,6 +53,7 @@ export async function sync(model: IModelSpec): Promise<boolean> {
 	const audioCapableInputs = model.inputs.filter(
 		(inp) => inp.type & (PortType.HDMI | PortType.SDI) && inp.caps & PortCaps.Audio,
 	).length
+	const srcSelectable = model.inputs.filter((inp) => inp.type & (PortType.HDMI | PortType.SDI)).length
 	const cmds: GoStreamCmd[] = [
 		{ id: ActionId.AuxSource, type: ReqType.Get },
 		...Range(model.outputs.length).map((id) => ({ id: ActionId.OutSource, type: ReqType.Get, value: [id] })),
@@ -63,6 +64,7 @@ export async function sync(model: IModelSpec): Promise<boolean> {
 		{ id: ActionId.MvLayout, type: ReqType.Get },
 		...Range(micInputs).map((id) => ({ id: ActionId.MicInput, type: ReqType.Get, value: [id] })),
 		...Range(nameableVideoInputs).map((id) => ({ id: ActionId.SrcName, type: ReqType.Get, value: [id] })),
+		...Range(srcSelectable).map((id) => ({ id: ActionId.SrcSelection, type: ReqType.Get, value: [id] })),
 		{ id: ActionId.GetSrcSelectionList, type: ReqType.Get },
 		{ id: ActionId.Version, type: ReqType.Get },
 		{ id: ActionId.BuildInfo, type: ReqType.Get },
