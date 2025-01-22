@@ -2,16 +2,14 @@ import { combineRgb } from '@companion-module/base'
 import { CompanionPresetDefinitions } from '@companion-module/base'
 import { ActionId } from './actionId'
 import { FeedbackId } from './feedbackId'
-
 import { ActionType } from '../../enums'
-import { getChoices } from './../../choices'
 import { KeySwitchChoices } from './../../model'
-
+import { GoStreamModel } from '../../models/types'
 const ptzSize = '18'
-export function create(): CompanionPresetDefinitions {
+export function create(model: GoStreamModel): CompanionPresetDefinitions {
 	const presets = {}
 	//DSK
-	const dsk_sources = getChoices(ActionType.DskSourceFill)
+	const dsk_sources = model.getChoices(ActionType.DskSourceFill)
 	for (const s of dsk_sources) {
 		let id = Number(s.id) + 1
 		if (id === dsk_sources.length) id = 0

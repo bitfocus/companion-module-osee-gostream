@@ -7,10 +7,10 @@ import { CompanionVariableDefinition, CompanionVariableValues } from '@companion
 
 export function variables(instance: GoStreamInstance): CompanionVariableDefinition[] {
 	const vars: CompanionVariableDefinition[] = [
-		...PlaybackVariables.create(instance),
-		...RecordVariables.create(instance),
-		...StreamingVariables.create(instance),
-		...SettingsVariables.create(instance),
+		...PlaybackVariables.create(instance.model),
+		...RecordVariables.create(instance.model),
+		...StreamingVariables.create(instance.model),
+		...SettingsVariables.create(instance.model),
 	]
 
 	vars.push({
@@ -23,10 +23,10 @@ export function variables(instance: GoStreamInstance): CompanionVariableDefiniti
 
 export function updateVariables(instance: GoStreamInstance): void {
 	const newValues: CompanionVariableValues = {
-		...PlaybackVariables.getValues(instance),
-		...RecordVariables.getValues(instance),
-		...StreamingVariables.getValues(instance),
-		...SettingsVariables.getValues(instance),
+		...PlaybackVariables.getValues(instance.states.Playback),
+		...RecordVariables.getValues(instance.states.Record),
+		...StreamingVariables.getValues(instance.states.Streaming),
+		...SettingsVariables.getValues(instance.states.Settings),
 	}
 
 	instance.setVariableValues(newValues)

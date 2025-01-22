@@ -2,7 +2,7 @@ import { ActionId } from './actionId'
 import { sendCommands, GoStreamCmd } from '../../connection'
 import { ReqType } from '../../enums'
 import { LiveStatus } from './actions'
-import type { IModelSpec } from '../../models/types'
+import type { GoStreamModel } from '../../models/types'
 
 export type StreamPlatform = {
 	name: string
@@ -20,7 +20,7 @@ export type StreamingStateT = {
 	platforms: StreamPlatform[]
 }
 
-export function create(_model: IModelSpec): StreamingStateT {
+export function create(_model: GoStreamModel): StreamingStateT {
 	return {
 		status: LiveStatus.Off,
 		streamInfo: [
@@ -28,11 +28,11 @@ export function create(_model: IModelSpec): StreamingStateT {
 			{ enabled: false, status: LiveStatus.Off, platform: '' },
 			{ enabled: false, status: LiveStatus.Off, platform: '' },
 		],
-		platforms: [],
+		platforms: [{ name: 'Loading', servers: ['Loading'] }],
 	}
 }
 
-export async function sync(_model: IModelSpec): Promise<boolean> {
+export async function sync(_model: GoStreamModel): Promise<boolean> {
 	const cmds: GoStreamCmd[] = [
 		{ id: ActionId.StreamOutput, type: ReqType.Get, value: [0] },
 		{ id: ActionId.StreamOutput, type: ReqType.Get, value: [1] },

@@ -11,4 +11,6 @@ export enum FeedbackId {
 	KeyPatternResizeSize = 'keyPatternResizeSize',
 	KeyPatternResizeXPosition = 'keyPatternResizeXPosition',
 	KeyPatternResizeYPosition = 'keyPatternResizeYPosition',
+	TransitionKeySwitch = 'transitionKeySwitch',
+	TransitionSelection = 'transitionSelection',
 }

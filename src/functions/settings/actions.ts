@@ -1,9 +1,9 @@
 import { ActionId } from './actionId'
 import { getOptNumber, getOptString } from './../../util'
-import { getChoices } from './../../choices'
 import { ReqType, ActionType, PortType, PortCaps } from './../../enums'
 import { sendCommand } from './../../connection'
-import type { GoStreamInstance } from './../../index'
+import { SettingsStateT } from './state'
+import { GoStreamModel } from '../../models/types'
 import type { CompanionActionDefinitions } from '@companion-module/base'
 import {
 	SettingsAuxSourceChoices,
@@ -21,7 +21,7 @@ import {
 } from './../../model'
 import { getInputs } from './../../models'
 
-export function create(instance: GoStreamInstance): CompanionActionDefinitions {
+export function create(model: GoStreamModel, state: SettingsStateT): CompanionActionDefinitions {
 	return {
 		[ActionId.SrcName]: {
 			name: 'Settings:Set SrcName',
@@ -71,7 +71,7 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 				let enable = getOptNumber(action, 'MvMeterEnable')
 				if (enable === 2) {
 					// Toggle
-					enable = instance.states.SettingsProp.MvMeter[src] === 1 ? 0 : 1
+					enable = state.mvMeter[src] === 1 ? 0 : 1
 				}
 				await sendCommand(ActionId.MvMeter, ReqType.Set, [src, enable])
 			},
@@ -177,7 +177,7 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 					type: 'dropdown',
 					label: 'Src',
 					id: 'Srcid',
-					choices: getInputs(instance.model, PortType.External).map((item, index) => ({
+					choices: getInputs(model, PortType.External).map((item, index) => ({
 						id: index,
 						label: item.longName,
 					})),
@@ -187,7 +187,7 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 					type: 'dropdown',
 					label: 'Selection',
 					id: 'SrcSelection',
-					choices: instance.states.Settings.sourceSelectionList.map((item, index) => ({
+					choices: state.sourceSelectionList.map((item, index) => ({
 						id: index,
 						label: item,
 					})),
@@ -238,7 +238,7 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 					type: 'dropdown',
 					label: 'Out',
 					id: 'OutId',
-					choices: instance.model.outputs
+					choices: model.outputs
 						.filter((out) => out.caps & PortCaps.Colorspace)
 						.map((item, index) => {
 							return { id: index, label: item.longName }
@@ -274,7 +274,7 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 					type: 'dropdown',
 					label: 'OutSource',
 					id: 'OutSource',
-					choices: getChoices(ActionType.SettingsoutSource),
+					choices: model.getChoices(ActionType.SettingsoutSource),
 					default: 0,
 				},
 			],

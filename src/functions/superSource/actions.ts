@@ -1,6 +1,5 @@
 import { ActionId } from './actionId'
 import { getOptNumber } from '../../util'
-import { getChoices } from '../../choices'
 import {
 	SwitchChoices,
 	SuperSourceBorderChoices,
@@ -10,10 +9,11 @@ import {
 } from '../../model'
 import { ReqType, ActionType } from '../../enums'
 import { sendCommand } from '../../connection'
-import type { GoStreamInstance } from '../../index'
 import type { CompanionActionDefinitions } from '@companion-module/base'
+import { SuperSourceStateT } from './state'
+import { GoStreamModel } from '../../models/types'
 
-export function create(instance: GoStreamInstance): CompanionActionDefinitions {
+export function create(model: GoStreamModel, state: SuperSourceStateT): CompanionActionDefinitions {
 	return {
 		[ActionId.SuperSourceEnable]: {
 			name: 'Super Source:Super Source Enable',
@@ -30,7 +30,7 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 				const opt = getOptNumber(action, 'SuperSourceEnable')
 				let paramOpt = 0
 				if (opt === 2) {
-					if (instance.states.superSource.enable === true) {
+					if (state.enable === true) {
 						paramOpt = 0
 					} else {
 						paramOpt = 1
@@ -55,7 +55,7 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 					type: 'dropdown',
 					label: 'Source',
 					id: 'SourceID',
-					choices: getChoices(ActionType.SuperSourceSource),
+					choices: model.getChoices(ActionType.SuperSourceSource),
 					default: 0,
 				},
 			],

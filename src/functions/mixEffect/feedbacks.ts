@@ -1,11 +1,11 @@
 import { combineRgb, CompanionFeedbackDefinitions } from '@companion-module/base'
 import { TransitionStyle } from '../../enums'
-import type { GoStreamInstance } from '../../index'
 import { FeedbackId } from './feedbackId'
-import { KeySwitchChoices, TransitionStyleChoice } from '../../model'
+import { TransitionStyleChoice } from '../../model'
 import { getInputChoices } from './../../models'
-
-export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions {
+import { GoStreamModel } from '../../models/types'
+import { MixEffectStateT } from './state'
+export function create(model: GoStreamModel, state: MixEffectStateT): CompanionFeedbackDefinitions {
 	return {
 		[FeedbackId.PreviewBG]: {
 			type: 'boolean',
@@ -21,11 +21,11 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 					label: 'Source',
 					id: 'Source',
 					default: 0,
-					choices: getInputChoices(instance.model),
+					choices: getInputChoices(model),
 				},
 			],
 			callback: (feedback) => {
-				if (instance.states.MixEffect.PvwSrc === feedback.options.Source) {
+				if (state.PvwSrc === feedback.options.Source) {
 					return true
 				} else {
 					return false
@@ -46,11 +46,11 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 					label: 'Source',
 					id: 'Source',
 					default: 0,
-					choices: getInputChoices(instance.model),
+					choices: getInputChoices(model),
 				},
 			],
 			callback: (feedback) => {
-				if (instance.states.MixEffect.PgmSrc === feedback.options.Source) {
+				if (state.PgmSrc === feedback.options.Source) {
 					return true
 				} else {
 					return false
@@ -67,7 +67,7 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: () => {
-				return !!instance.states.transitionPosition.inTransition
+				return !!state.transitionPosition.inTransition
 			},
 		},
 		[FeedbackId.Cut]: {
@@ -93,7 +93,7 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: () => {
-				return instance.states.selectTransitionStyle.PrevState
+				return state.selectTransitionStyle.PrevState
 			},
 		},
 		[FeedbackId.TransitionStyle]: {
@@ -114,7 +114,7 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: (feedback) => {
-				if (instance.states.selectTransitionStyle?.style.id === feedback.options.TransitionStyle) {
+				if (state.selectTransitionStyle?.style === feedback.options.TransitionStyle) {
 					return true
 				} else {
 					return false
@@ -149,8 +149,8 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: (feedback) => {
-				const me = instance.states.selectTransitionStyle
-				if (me?.style.id === feedback.options.TransitionStyle) {
+				const me = state.selectTransitionStyle
+				if (me?.style === feedback.options.TransitionStyle) {
 					const style = Number(feedback.options.TransitionStyle)
 					const rate = Number(feedback.options.TransitionRate)
 					switch (style) {
@@ -168,8 +168,8 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 				return false
 			},
 			learn: (feedback) => {
-				const me = instance.states.selectTransitionStyle
-				if (me?.style.id === feedback.options.TransitionStyle) {
+				const me = state.selectTransitionStyle
+				if (me?.style === feedback.options.TransitionStyle) {
 					const style = Number(feedback.options.TransitionStyle)
 					switch (style) {
 						case 0:
@@ -193,102 +193,6 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 				} else {
 					return undefined
 				}
-			},
-		},
-		[FeedbackId.TransitionSelection]: {
-			type: 'boolean',
-			name: 'Transition: Selection',
-			description: 'If the specified transition selection is active, change style of the bank',
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Match method',
-					id: 'MatchState',
-					choices: [
-						{ id: 0, label: 'Exact' },
-						{ id: 1, label: 'Contains' },
-					],
-					default: 2,
-				},
-				{
-					type: 'checkbox',
-					label: 'Background',
-					id: 'Background',
-					default: false,
-				},
-				{
-					type: 'checkbox',
-					label: 'Key',
-					id: 'Key',
-					default: false,
-				},
-			],
-			defaultStyle: {
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(255, 255, 0),
-			},
-			callback: (feedback) => {
-				const seleOptions = feedback.options.MatchState
-				const BG = feedback.options.Background
-				const Key = feedback.options.Key
-				switch (seleOptions) {
-					case 0:
-						if ((BG && instance.states.TKeyeState.BKGD) || (Key && instance.states.TKeyeState.M_Key)) {
-							return true
-						} else if (BG && Key) {
-							return instance.states.TKeyeState.M_Key && instance.states.TKeyeState.BKGD
-						} else {
-							return false
-						}
-					case 1:
-						if (BG && Key) {
-							return instance.states.TKeyeState.M_Key || instance.states.TKeyeState.BKGD
-						} else {
-							if (BG) {
-								return instance.states.TKeyeState.BKGD
-							} else if (Key) {
-								return instance.states.TKeyeState.M_Key
-							} else {
-								return false
-							}
-						}
-					default:
-						return false
-				}
-			},
-		},
-		[FeedbackId.TransitionKeySwitch]: {
-			type: 'boolean',
-			name: 'Next Transition:Key Switch',
-			description: 'Set the special effect Transition key switch',
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Switch',
-					id: 'KeySwitch',
-					choices: KeySwitchChoices,
-					default: 2,
-				},
-			],
-			defaultStyle: {
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(255, 255, 0),
-			},
-			callback: (feedback) => {
-				const seleOptions = feedback.options.KeySwitch
-				if (seleOptions && Array.isArray(seleOptions)) {
-					const arratOptions = Array.from(seleOptions)
-					if (arratOptions.includes(0) && instance.states.TKeyeState.M_Key) {
-						return true
-					}
-					if (arratOptions.includes(1) && instance.states.TKeyeState.DSK) {
-						return true
-					}
-					if (arratOptions.includes(2) && instance.states.TKeyeState.BKGD) {
-						return true
-					}
-					return false
-				} else return false
 			},
 		},
 	}

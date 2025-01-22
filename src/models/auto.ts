@@ -1,11 +1,14 @@
-import { MODEL_AUTO_DETECT, type IModelSpec } from './types'
+import { MODEL_AUTO_DETECT, GoStreamModel } from './types'
 
-export const ModelSpecAuto: IModelSpec = {
-	id: MODEL_AUTO_DETECT,
-	label: 'Auto Detect',
-	outputs: [],
-	inputs: [],
-	streams: 0,
-	transitionTypes: 0,
-	stillSlots: 0,
+export class AutoModel extends GoStreamModel {
+	constructor() {
+		super()
+		this.id = MODEL_AUTO_DETECT
+		this.label = 'Auto Detect'
+		this.outputs = []
+		this.inputs = []
+		this.streams = 0
+		this.transitionTypes = 0
+		this.stillSlots = 0
+	}
 }

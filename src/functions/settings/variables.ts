@@ -1,7 +1,7 @@
 import { CompanionVariableDefinition, CompanionVariableValues } from '@companion-module/base'
-import type { GoStreamInstance } from '../../index'
-
-export function create(_instance: GoStreamInstance): CompanionVariableDefinition[] {
+import { GoStreamModel } from '../../models/types'
+import { SettingsStateT } from './state'
+export function create(_model: GoStreamModel): CompanionVariableDefinition[] {
 	const vars: CompanionVariableDefinition[] = []
 	for (let i = 0; i < 9; i++) {
 		vars.push({
@@ -30,15 +30,15 @@ export function create(_instance: GoStreamInstance): CompanionVariableDefinition
 	return vars
 }
 
-export function getValues(instance: GoStreamInstance): CompanionVariableValues {
+export function getValues(state: SettingsStateT): CompanionVariableValues {
 	const newValues: CompanionVariableValues = {}
 	for (let i = 0; i < 9; i++) {
-		newValues[`SrcId${i}_name`] = instance.states.Settings.sourceName[i]
+		newValues[`SrcId${i}_name`] = state.sourceName[i]
 	}
-	newValues['version'] = instance.states.Settings['version']
-	newValues['buildInfo'] = instance.states.Settings['buildInfo']
-	newValues['deviceId'] = instance.states.Settings['deviceId']
-	newValues['deviceName'] = instance.states.Settings['deviceName']
+	newValues['version'] = state['version']
+	newValues['buildInfo'] = state['buildInfo']
+	newValues['deviceId'] = state['deviceId']
+	newValues['deviceName'] = state['deviceName']
 
 	return newValues
 }

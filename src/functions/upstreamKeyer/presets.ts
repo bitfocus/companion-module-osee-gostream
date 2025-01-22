@@ -4,12 +4,12 @@ import { combineRgb } from '@companion-module/base'
 import { CompanionPresetDefinitions } from '@companion-module/base'
 
 import { ActionType } from './../../enums'
-import { getChoices } from './../../choices'
 import { KeySwitchChoices } from './../../model'
+import { GoStreamModel } from '../../models/types'
 
 const Keys = KeySwitchChoices
 const ptzSize = '18'
-export function create(): CompanionPresetDefinitions {
+export function create(model: GoStreamModel): CompanionPresetDefinitions {
 	const presets = {}
 	for (const key of Keys) {
 		if (key.label != 'BKGD' && key.label === 'Key') {
@@ -90,7 +90,7 @@ export function create(): CompanionPresetDefinitions {
 		],
 	}
 
-	const sources = getChoices(ActionType.LumaKeySourceKey)
+	const sources = model.getChoices(ActionType.LumaKeySourceKey)
 	for (const source of sources) {
 		let id = Number(source.id) + 1
 		if (id === sources.length) id = 0

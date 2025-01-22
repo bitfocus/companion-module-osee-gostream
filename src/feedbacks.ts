@@ -14,16 +14,16 @@ import { AudioMixerFeedbacks } from './functions/audioMixer'
 
 export function feedbacks(instance: GoStreamInstance): CompanionFeedbackDefinitions {
 	return {
-		...UpstreamKeyerFeedbacks.create(instance),
-		...RecordFeedbacks.create(instance),
-		...SuperSourceFeedbacks.create(instance),
-		...MixEffectFeedbacks.create(instance),
-		...StreamingFeedbacks.create(instance),
-		...StillGeneratorFeedbacks.create(instance),
-		...DownstreamKeyerFeedbacks.create(instance),
-		...MacroFeedbacks.create(instance),
-		...PlaybackFeedbacks.create(instance),
-		...SettingsFeedbacks.create(instance),
-		...AudioMixerFeedbacks.create(instance),
+		...UpstreamKeyerFeedbacks.create(instance.model, instance.states.UpstreamKeyer),
+		...RecordFeedbacks.create(instance.model, instance.states.Record),
+		...SuperSourceFeedbacks.create(instance.model, instance.states.SuperSource),
+		...MixEffectFeedbacks.create(instance.model, instance.states.MixEffect),
+		...StreamingFeedbacks.create(instance.model, instance.states.Streaming),
+		...StillGeneratorFeedbacks.create(instance.model, instance.states.StillGenerator),
+		...DownstreamKeyerFeedbacks.create(instance.model, instance.states.DownstreamKeyer),
+		...MacroFeedbacks.create(instance.model, instance.states.Macro),
+		...PlaybackFeedbacks.create(instance.model, instance.states.Playback),
+		...SettingsFeedbacks.create(instance.model, instance.states.Settings),
+		...AudioMixerFeedbacks.create(instance.model, instance.states.AudioMixer),
 	}
 }

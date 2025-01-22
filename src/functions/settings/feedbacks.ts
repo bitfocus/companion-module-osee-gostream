@@ -1,5 +1,4 @@
 import { FeedbackId } from './feedbackId'
-import type { GoStreamInstance } from '../../index'
 import { combineRgb, CompanionFeedbackDefinitions } from '@companion-module/base'
 import {
 	SettingsInputWindowLayoutChoices,
@@ -14,8 +13,10 @@ import {
 } from './../../model'
 import { PortType, PortCaps } from './../../enums'
 import { getOutputChoices, getInputs } from './../../models'
+import { SettingsStateT } from './state'
+import { GoStreamModel } from '../../models/types'
 
-export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions {
+export function create(model: GoStreamModel, state: SettingsStateT): CompanionFeedbackDefinitions {
 	return {
 		[FeedbackId.InputWindowLayout]: {
 			type: 'boolean',
@@ -35,11 +36,11 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 				bgcolor: combineRgb(0, 255, 0),
 			},
 			callback: (feedback) => {
-				return instance.states.Settings.inputWindowLayout === feedback.options.StyleID
+				return state.inputWindowLayout === feedback.options.StyleID
 			},
 			learn: () => {
 				return {
-					StyleID: instance.states.Settings.inputWindowLayout,
+					StyleID: state.inputWindowLayout,
 				}
 			},
 		},
@@ -59,7 +60,7 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 					type: 'dropdown',
 					label: 'OutSource',
 					id: 'OutSource',
-					choices: getOutputChoices(instance.model),
+					choices: getOutputChoices(model),
 					default: 0,
 				},
 			],
@@ -101,7 +102,7 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 					type: 'dropdown',
 					label: 'Output',
 					id: 'OutputId',
-					choices: instance.model.outputs
+					choices: model.outputs
 						.filter((out) => out.caps & PortCaps.Colorspace)
 						.map((item, index) => {
 							return { id: index, label: item.longName }
@@ -121,15 +122,12 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 				bgcolor: combineRgb(0, 255, 0),
 			},
 			callback: (feedback) => {
-				return (
-					instance.states.Settings.outputColorSpace[Number(feedback.options.OutputId)] ===
-					feedback.options.OutputColorSpaceId
-				)
+				return state.outputColorSpace[Number(feedback.options.OutputId)] === feedback.options.OutputColorSpaceId
 			},
 			learn: (feedback) => {
 				return {
 					...feedback.options,
-					OutputColorSpaceId: instance.states.Settings.outputColorSpace[Number(feedback.options.OutputId)],
+					OutputColorSpaceId: state.outputColorSpace[Number(feedback.options.OutputId)],
 				}
 			},
 		},
@@ -151,11 +149,11 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 				bgcolor: combineRgb(0, 255, 0),
 			},
 			callback: (feedback) => {
-				return instance.states.Settings.outputFormat === feedback.options.OutputFormatId
+				return state.outputFormat === feedback.options.OutputFormatId
 			},
 			learn: () => {
 				return {
-					OutputFormatId: instance.states.Settings.outputFormat,
+					OutputFormatId: state.outputFormat,
 				}
 			},
 		},
@@ -177,11 +175,11 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 				bgcolor: combineRgb(0, 255, 0),
 			},
 			callback: (feedback) => {
-				return instance.states.Settings.mvLayout === feedback.options.MvLayoutId
+				return state.mvLayout === feedback.options.MvLayoutId
 			},
 			learn: () => {
 				return {
-					MvLayoutId: instance.states.Settings.mvLayout,
+					MvLayoutId: state.mvLayout,
 				}
 			},
 		},
@@ -194,7 +192,7 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 					type: 'dropdown',
 					label: 'Src',
 					id: 'srcId',
-					choices: getInputs(instance.model, PortType.External).map((item, index) => ({
+					choices: getInputs(model, PortType.External).map((item, index) => ({
 						id: index,
 						label: item.longName,
 					})),
@@ -204,7 +202,7 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 					type: 'dropdown',
 					label: 'Selection',
 					id: 'srcSelectionId',
-					choices: instance.states.Settings.sourceSelectionList.map((item, index) => ({
+					choices: state.sourceSelectionList.map((item, index) => ({
 						id: index,
 						label: item,
 					})),
@@ -216,20 +214,12 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 				bgcolor: combineRgb(0, 255, 0),
 			},
 			callback: (feedback) => {
-				console.log(
-					'FEEDBACK',
-					instance.states.Settings.sourceSelection,
-					Number(feedback.options.srcId),
-					feedback.options.srcSelectionId,
-				)
-				return (
-					instance.states.Settings.sourceSelection[Number(feedback.options.srcId)] === feedback.options.srcSelectionId
-				)
+				return state.sourceSelection[Number(feedback.options.srcId)] === feedback.options.srcSelectionId
 			},
 			learn: (feedback) => {
 				return {
 					...feedback.options,
-					srcSelectionId: instance.states.Settings.sourceSelection,
+					srcSelectionId: state.sourceSelection,
 				}
 			},
 		},
@@ -270,12 +260,12 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 				const micid = Number(feedback.options.micId)
 				let type = Number(feedback.options.MicInput1)
 				if (micid === 1) type = Number(feedback.options.MicInput2)
-				return instance.states.Settings.micInput[micid] === type
+				return state.micInput[micid] === type
 			},
 			learn: (feedback) => {
 				return {
 					...feedback.options,
-					micInputId: instance.states.Settings.micInput[Number(feedback.options.micId)],
+					micInputId: state.micInput[Number(feedback.options.micId)],
 				}
 			},
 		},
@@ -297,10 +287,10 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: (feedback) => {
-				return instance.states.Settings.auxSource === Number(feedback.options.auxSourceID)
+				return state.auxSource === Number(feedback.options.auxSourceID)
 			},
 			learn: (feedback) => {
-				const auxSource = instance.states.Settings.auxSource
+				const auxSource = state.auxSource
 				if (auxSource !== undefined) {
 					return {
 						...feedback.options,

@@ -1,8 +1,8 @@
 import { combineRgb, CompanionFeedbackDefinitions } from '@companion-module/base'
-import type { GoStreamInstance } from '../../index'
 import { FeedbackId } from './feedbackId'
-
-export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions {
+import { RecordStateT } from './state'
+import { GoStreamModel } from '../../models/types'
+export function create(_model: GoStreamModel, state: RecordStateT): CompanionFeedbackDefinitions {
 	return {
 		[FeedbackId.Record]: {
 			type: 'boolean',
@@ -14,7 +14,7 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: () => {
-				return instance.states.recordState
+				return state.isRecording
 			},
 		},
 	}

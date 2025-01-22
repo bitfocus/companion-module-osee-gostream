@@ -1,12 +1,12 @@
 import { ActionId } from './actionId'
-import { getChoicesByMacro } from './../../choices'
 import { ReqType } from './../../enums'
 import { sendCommand } from './../../connection'
-import type { GoStreamInstance } from './../../index'
+import { GoStreamModel } from '../../models/types'
 import { getOptNumber, getOptString } from './../../util'
 import { type CompanionActionDefinitions, Regex } from '@companion-module/base'
+import { MacroStateT } from './state'
 
-export function create(_instance: GoStreamInstance): CompanionActionDefinitions {
+export function create(model: GoStreamModel, _state: MacroStateT): CompanionActionDefinitions {
 	return {
 		[ActionId.MacroRecord]: {
 			name: 'Macro:Set Start Record',
@@ -25,7 +25,7 @@ export function create(_instance: GoStreamInstance): CompanionActionDefinitions 
 					type: 'dropdown',
 					label: 'Macro',
 					id: 'MacroIndex',
-					choices: getChoicesByMacro(),
+					choices: model.getChoicesByMacro(),
 					default: 0,
 				},
 				{
@@ -59,7 +59,7 @@ export function create(_instance: GoStreamInstance): CompanionActionDefinitions 
 					type: 'dropdown',
 					label: 'Macro',
 					id: 'MacroIndex',
-					choices: getChoicesByMacro(),
+					choices: model.getChoicesByMacro(),
 					default: 0,
 				},
 				{
@@ -92,7 +92,7 @@ export function create(_instance: GoStreamInstance): CompanionActionDefinitions 
 					type: 'dropdown',
 					label: 'Macro',
 					id: 'MacroIndex',
-					choices: getChoicesByMacro(),
+					choices: model.getChoicesByMacro(),
 					default: 0,
 				},
 			],
@@ -117,7 +117,7 @@ export function create(_instance: GoStreamInstance): CompanionActionDefinitions 
 					type: 'dropdown',
 					label: 'Location',
 					id: 'MacroIndex',
-					choices: getChoicesByMacro(),
+					choices: model.getChoicesByMacro(),
 					default: 0,
 				},
 			],

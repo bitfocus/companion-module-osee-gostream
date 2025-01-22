@@ -2,10 +2,11 @@ import { ActionId } from './actionId'
 import { getOptNumber } from '../../util'
 import { ReqType } from '../../enums'
 import { sendCommand } from '../../connection'
-import type { GoStreamInstance } from '../../index'
 import type { CompanionActionDefinitions } from '@companion-module/base'
+import { RecordStateT } from './state'
+import { GoStreamModel } from '../../models/types'
 
-export function create(instance: GoStreamInstance): CompanionActionDefinitions {
+export function create(_model: GoStreamModel, state: RecordStateT): CompanionActionDefinitions {
 	return {
 		[ActionId.Record]: {
 			name: 'Record:Set Start or Stop Record',
@@ -26,7 +27,7 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 				const opt = getOptNumber(action, 'Record')
 				let paramOpt = 0
 				if (opt === 2) {
-					paramOpt = instance.states.RecordState === true ? 1 : 0
+					paramOpt = state.isRecording === true ? 1 : 0
 					await sendCommand(ActionId.Record, ReqType.Set, [paramOpt])
 				} else {
 					await sendCommand(ActionId.Record, ReqType.Set, [opt])

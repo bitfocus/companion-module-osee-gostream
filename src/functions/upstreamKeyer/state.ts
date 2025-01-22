@@ -1,7 +1,7 @@
 import { ActionId } from './actionId'
 import { sendCommands, GoStreamCmd } from '../../connection'
 import { ReqType } from '../../enums'
-import type { IModelSpec } from '../../models/types'
+import type { GoStreamModel } from '../../models/types'
 
 export enum USKKeyTypes {
 	Luma = 0,
@@ -39,7 +39,7 @@ export type UpstreamKeyerStateT = {
 	keyInfo: KeyInfoT[]
 }
 
-export function create(_model: IModelSpec): UpstreamKeyerStateT {
+export function create(_model: GoStreamModel): UpstreamKeyerStateT {
 	return {
 		transitionKey: {
 			BKGD: false,
@@ -61,7 +61,7 @@ export function create(_model: IModelSpec): UpstreamKeyerStateT {
 	}
 }
 
-export async function sync(_model: IModelSpec): Promise<boolean> {
+export async function sync(_model: GoStreamModel): Promise<boolean> {
 	const cmds: GoStreamCmd[] = [
 		{ id: ActionId.KeyOnAir, type: ReqType.Get },
 		{ id: ActionId.UpStreamKeyType, type: ReqType.Get },

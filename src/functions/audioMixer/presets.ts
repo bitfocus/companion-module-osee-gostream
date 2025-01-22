@@ -3,8 +3,9 @@ import { CompanionPresetDefinitions } from '@companion-module/base'
 import { ActionId } from './actionId'
 import { FeedbackId } from './feedbackId'
 import { AudioInputSourcesChoices, AudioMicChoices } from './../../model'
+import { GoStreamModel } from '../../models/types'
 const ptzSize = '18'
-export function create(): CompanionPresetDefinitions {
+export function create(_model: GoStreamModel): CompanionPresetDefinitions {
 	const presets = {}
 	presets[`AudioMixer_Trans`] = {
 		category: 'AudioMixer',

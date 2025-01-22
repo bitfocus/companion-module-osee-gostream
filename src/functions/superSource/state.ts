@@ -1,7 +1,7 @@
 import { ActionId } from './actionId'
 import { sendCommands, GoStreamCmd } from '../../connection'
 import { ReqType } from '../../enums'
-import type { IModelSpec } from '../../models/types'
+import type { GoStreamModel } from '../../models/types'
 
 export type SuperSourceStateT = {
 	enable: boolean
@@ -13,7 +13,7 @@ export type SuperSourceStateT = {
 	maskEnable: boolean[]
 }
 
-export function create(_model: IModelSpec): SuperSourceStateT {
+export function create(_model: GoStreamModel): SuperSourceStateT {
 	return {
 		enable: false,
 		source1: 0,
@@ -25,7 +25,7 @@ export function create(_model: IModelSpec): SuperSourceStateT {
 	}
 }
 
-export async function sync(_model: IModelSpec): Promise<boolean> {
+export async function sync(_model: GoStreamModel): Promise<boolean> {
 	const cmds: GoStreamCmd[] = [
 		{ id: ActionId.SuperSourceEnable, type: ReqType.Get },
 		{ id: ActionId.SuperSourceSource1, type: ReqType.Get },

@@ -1,12 +1,13 @@
 import { CompanionVariableDefinition, CompanionVariableValues } from '@companion-module/base'
-import type { GoStreamInstance } from '../../index'
+import { GoStreamModel } from '../../models/types'
+import { StreamingStateT } from './state'
 
 function variableIdFromNumber(num: number): string {
 	return 'Stream_' + num.toString() + '_state'
 }
-function createVariables(instance: GoStreamInstance): CompanionVariableDefinition[] {
+function createVariables(model: GoStreamModel): CompanionVariableDefinition[] {
 	const variables: CompanionVariableDefinition[] = []
-	for (let i = 0; i < instance.model.streams; i++) {
+	for (let i = 0; i < model.streams; i++) {
 		variables.push({
 			name: 'Stream ' + (i + 1).toString() + ' state',
 			variableId: variableIdFromNumber(i + 1),
@@ -15,8 +16,8 @@ function createVariables(instance: GoStreamInstance): CompanionVariableDefinitio
 
 	return variables
 }
-export function create(instance: GoStreamInstance): CompanionVariableDefinition[] {
-	return [...createVariables(instance)]
+export function create(model: GoStreamModel): CompanionVariableDefinition[] {
+	return [...createVariables(model)]
 }
 
 function getStateString(state: number): string {
@@ -24,10 +25,10 @@ function getStateString(state: number): string {
 	if (state === 1) return 'OnAir'
 	return 'Abnormal'
 }
-export function getValues(instance: GoStreamInstance): CompanionVariableValues {
+export function getValues(state: StreamingStateT): CompanionVariableValues {
 	const newValues = {}
-	for (let i = 0; i < instance.model.streams; i++) {
-		newValues[variableIdFromNumber(i + 1)] = getStateString(instance.states.Streaming.streamInfo[i].status)
+	for (let i = 0; i < state.streamInfo.length; i++) {
+		newValues[variableIdFromNumber(i + 1)] = getStateString(state.streamInfo[i].status)
 	}
 	return newValues
 }

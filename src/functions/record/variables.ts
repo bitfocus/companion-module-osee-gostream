@@ -1,7 +1,9 @@
 import { CompanionVariableDefinition, CompanionVariableValues } from '@companion-module/base'
-import type { GoStreamInstance } from '../../index'
 import { VariableId } from './variableId'
-export function create(_instance: GoStreamInstance): CompanionVariableDefinition[] {
+import { GoStreamModel } from '../../models/types'
+import { RecordStateT } from './state'
+
+export function create(_model: GoStreamModel): CompanionVariableDefinition[] {
 	return [
 		{
 			name: 'Recording duration (hh:mm)',
@@ -10,8 +12,8 @@ export function create(_instance: GoStreamInstance): CompanionVariableDefinition
 	]
 }
 
-export function getValues(instance: GoStreamInstance): CompanionVariableValues {
+export function getValues(state: RecordStateT): CompanionVariableValues {
 	const newValues: CompanionVariableValues = {}
-	newValues[VariableId.RecordDuration] = instance.states.Record.RecordTime
+	newValues[VariableId.RecordDuration] = state.recordTime
 	return newValues
 }

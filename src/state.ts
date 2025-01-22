@@ -9,7 +9,8 @@ import { DownstreamKeyerState } from './functions/downstreamKeyer'
 import { SettingsState } from './functions/settings'
 import { MacroState } from './functions/macro'
 import { UpstreamKeyerState } from './functions/upstreamKeyer'
-import type { IModelSpec } from './models/types'
+import { ColorBackState } from './functions/colorBack'
+import type { GoStreamModel } from './models/types'
 
 export type GoStreamState = {
 	MixEffect: MixEffectState.MixEffectStateT
@@ -18,11 +19,12 @@ export type GoStreamState = {
 	Playback: PlaybackState.PlaybackStateT
 	Record: RecordState.RecordStateT
 	SuperSource: SuperSourceState.SuperSourceStateT
-	AudioMixer: AudioMixerState.AudioMixerState
+	AudioMixer: AudioMixerState.AudioMixerStateT
 	DownstreamKeyer: DownstreamKeyerState.DownstreamKeyerStateT
 	Settings: SettingsState.SettingsStateT
-	Macro: MacroState.MacroState
+	Macro: MacroState.MacroStateT
 	UpstreamKeyer: UpstreamKeyerState.UpstreamKeyerStateT
+	ColorBack: ColorBackState.ColorBackStateT
 	infos: {
 		protocolVersion: string
 		deviceType: number
@@ -30,7 +32,7 @@ export type GoStreamState = {
 	selectOutputs: object
 }
 
-export function create(model: IModelSpec): GoStreamState {
+export function create(model: GoStreamModel): GoStreamState {
 	return {
 		MixEffect: { ...MixEffectState.create(model) },
 		Streaming: { ...StreamingState.create(model) },
@@ -43,6 +45,7 @@ export function create(model: IModelSpec): GoStreamState {
 		Settings: { ...SettingsState.create(model) },
 		Macro: { ...MacroState.create(model) },
 		UpstreamKeyer: { ...UpstreamKeyerState.create(model) },
+		ColorBack: { ...ColorBackState.create(model) },
 		infos: {
 			protocolVersion: '1.0',
 			deviceType: 0,

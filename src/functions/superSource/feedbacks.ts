@@ -1,11 +1,10 @@
 import { combineRgb, CompanionFeedbackDefinitions } from '@companion-module/base'
 import { ActionType } from '../../enums'
-import { getChoices } from '../../choices'
-import type { GoStreamInstance } from '../../index'
 import { FeedbackId } from './feedbackId'
 import { SuperSourceStyleChoices, SuperSourceChoices } from '../../model'
-
-export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions {
+import { SuperSourceStateT } from './state'
+import { GoStreamModel } from '../../models/types'
+export function create(model: GoStreamModel, state: SuperSourceStateT): CompanionFeedbackDefinitions {
 	return {
 		[FeedbackId.SuperSourceEnable]: {
 			type: 'boolean',
@@ -17,7 +16,7 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: () => {
-				return instance.states.SuperSource.Enable
+				return state.enable
 			},
 		},
 		[FeedbackId.SuperSourceSelect]: {
@@ -36,7 +35,7 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 					type: 'dropdown',
 					label: 'Source',
 					id: 'SourceID',
-					choices: getChoices(ActionType.SuperSourceSource),
+					choices: model.getChoices(ActionType.SuperSourceSource),
 					default: 0,
 				},
 			],
@@ -48,11 +47,11 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 				const type = Number(feedback.options.typeid)
 				const sourceID = Number(feedback.options.SourceID)
 				if (type === 0) {
-					return instance.states.SuperSource.source1 === sourceID
+					return state.source1 === sourceID
 				} else if (type === 1) {
-					return instance.states.SuperSource.source2 === sourceID
+					return state.source2 === sourceID
 				} else if (type === 2) {
-					return instance.states.SuperSource.background === sourceID
+					return state.background === sourceID
 				}
 				return false
 			},
@@ -75,7 +74,7 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: (feedback) => {
-				return instance.states.SuperSource.controlStyle === feedback.options.styleid
+				return state.controlStyle === feedback.options.styleid
 			},
 		},
 		[FeedbackId.SuperSourceMask]: {
@@ -100,7 +99,7 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 			},
 			callback: (feedback) => {
 				const type = Number(feedback.options.typeid)
-				return instance.states.SuperSource.maskEnable[type]
+				return state.maskEnable[type]
 			},
 		},
 		[FeedbackId.SuperSourceYPosition]: {
@@ -123,7 +122,7 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 			},
 			callback: (feedback) => {
 				const pos = Number(feedback.options.superSourceYPosition)
-				return instance.states.SuperSource.controlYPosition === pos
+				return state.controlYPosition === pos
 			},
 		},
 	}

@@ -1,9 +1,8 @@
 import { combineRgb, CompanionFeedbackDefinitions } from '@companion-module/base'
-import { getChoicesByStill } from '../../choices'
-import type { GoStreamInstance } from '../../index'
 import { FeedbackId } from './feedbackId'
-
-export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions {
+import { StillGeneratorStateT } from './state'
+import { GoStreamModel } from '../../models/types'
+export function create(model: GoStreamModel, state: StillGeneratorStateT): CompanionFeedbackDefinitions {
 	return {
 		[FeedbackId.Still]: {
 			type: 'boolean',
@@ -25,7 +24,7 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 					label: 'Pic index (0-32)',
 					id: 'PicIndex',
 					default: 0,
-					choices: getChoicesByStill(),
+					choices: model.getChoicesByStill(),
 				},
 			],
 			defaultStyle: {
@@ -35,7 +34,7 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 			callback: (feedback) => {
 				const stillIndex = Number(feedback.options.StillIndex)
 				const picIndex = Number(feedback.options.PicIndex)
-				return instance.states.StillGenerator.slots[stillIndex] == picIndex
+				return state.slots[stillIndex] == picIndex
 			},
 		},
 	}

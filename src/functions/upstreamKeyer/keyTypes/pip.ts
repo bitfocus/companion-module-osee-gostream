@@ -1,13 +1,12 @@
 import { ActionId } from './../actionId'
 import { getOptNumber } from './../../../util'
-import { getChoices } from './../../../choices'
 import { SwitchChoices, KeyResizeSizeChoices } from './../../../model'
 import { ReqType, ActionType } from './../../../enums'
 import { sendCommand } from './../../../connection'
-import type { GoStreamInstance } from './../../../index'
 import type { CompanionActionDefinitions } from '@companion-module/base'
-
-export function createPIPActions(_self: GoStreamInstance): CompanionActionDefinitions {
+import { UpstreamKeyerStateT } from '../state'
+import { GoStreamModel } from '../../../models/types'
+export function createPIPActions(model: GoStreamModel, _state: UpstreamKeyerStateT): CompanionActionDefinitions {
 	return {
 		[ActionId.PipSource]: {
 			name: 'UpStream Key:Set Pip Source',
@@ -16,7 +15,7 @@ export function createPIPActions(_self: GoStreamInstance): CompanionActionDefini
 					type: 'dropdown',
 					label: 'PIP Source',
 					id: 'KeyFill',
-					choices: getChoices(ActionType.PipSource),
+					choices: model.getChoices(ActionType.PipSource),
 					default: 0,
 				},
 			],

@@ -1,13 +1,12 @@
 import { ActionId } from '../actionId'
 import { getOptNumber } from './../../../util'
-import { getChoices } from './../../../choices'
 import { SwitchChoices, KeyResizeSizeChoices } from './../../../model'
 import { ReqType, ActionType } from './../../../enums'
 import { sendCommand } from './../../../connection'
-import type { GoStreamInstance } from './../../../index'
 import type { CompanionActionDefinitions } from '@companion-module/base'
-
-export function createLumaKeyActions(_self: GoStreamInstance): CompanionActionDefinitions {
+import { UpstreamKeyerStateT } from '../state'
+import { GoStreamModel } from '../../../models/types'
+export function createLumaKeyActions(model: GoStreamModel, _state: UpstreamKeyerStateT): CompanionActionDefinitions {
 	return {
 		[ActionId.LumaKeySourceFill]: {
 			name: 'UpStream Key:Set Luma Key Source Fill',
@@ -16,7 +15,7 @@ export function createLumaKeyActions(_self: GoStreamInstance): CompanionActionDe
 					type: 'dropdown',
 					label: 'Source Fill',
 					id: 'KeyFill',
-					choices: getChoices(ActionType.LumaKeySourceKey),
+					choices: model.getChoices(ActionType.LumaKeySourceKey),
 					default: 0,
 				},
 			],
@@ -31,7 +30,7 @@ export function createLumaKeyActions(_self: GoStreamInstance): CompanionActionDe
 					type: 'dropdown',
 					label: 'Key',
 					id: 'LumaKeySourceKey',
-					choices: getChoices(ActionType.LumaKeySourceKey),
+					choices: model.getChoices(ActionType.LumaKeySourceKey),
 					default: 0,
 				},
 			],

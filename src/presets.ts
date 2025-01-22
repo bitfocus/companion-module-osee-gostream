@@ -12,14 +12,14 @@ import { SettingsPresets } from './functions/settings'
 
 export function presets(instance: GoStreamInstance): CompanionPresetDefinitions {
 	return {
-		...MixEffectPresets.create(instance),
-		...StreamingPresets.create(),
-		...AudioMixerPresets.create(),
-		...DownstreamKeyerPresets.create(),
-		...MacroPresets.create(),
-		...SuperSourcePresets.create(),
-		...PlaybackPresets.create(),
-		...UpstreamKeyerPresets.create(),
-		...SettingsPresets.create(),
+		...MixEffectPresets.create(instance.model),
+		...StreamingPresets.create(instance.model),
+		...AudioMixerPresets.create(instance.model),
+		...DownstreamKeyerPresets.create(instance.model),
+		...MacroPresets.create(instance.model),
+		...SuperSourcePresets.create(instance.model),
+		...PlaybackPresets.create(instance.model),
+		...UpstreamKeyerPresets.create(instance.model),
+		...SettingsPresets.create(instance.model),
 	}
 }

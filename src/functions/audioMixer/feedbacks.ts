@@ -1,10 +1,9 @@
 import { combineRgb, CompanionFeedbackDefinitions } from '@companion-module/base'
-import type { GoStreamInstance } from '../../index'
 import { FeedbackId } from './feedbackId'
 import { ActionType } from '../../enums'
-import { getChoices } from '../../choices'
-
-export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions {
+import { AudioMixerStateT, AudioState } from './state'
+import { GoStreamModel } from '../../models/types'
+export function create(model: GoStreamModel, state: AudioMixerStateT): CompanionFeedbackDefinitions {
 	return {
 		[FeedbackId.AudioEnable]: {
 			type: 'boolean',
@@ -15,14 +14,14 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 					type: 'dropdown',
 					label: 'Source',
 					id: 'ASource',
-					choices: getChoices(ActionType.AudioEnableSource),
+					choices: model.getChoices(ActionType.AudioEnableSource),
 					default: 0,
 				},
 				{
 					type: 'dropdown',
 					label: 'Enable',
 					id: 'AudioEnable',
-					choices: getChoices(ActionType.AudioEnable),
+					choices: model.getChoices(ActionType.AudioEnable),
 					default: 0,
 				},
 			],
@@ -32,8 +31,8 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 			},
 			callback: (feedback) => {
 				const typeid = Number(feedback.options.ASource)
-				const t_enable = Number(feedback.options.AudioEnable)
-				return instance.states.AudioMixer.enabled[typeid] === t_enable
+				const t_enable = <AudioState>feedback.options.AudioEnable
+				return state.state[typeid] === t_enable
 			},
 		},
 		[FeedbackId.AudioTransition]: {
@@ -46,7 +45,7 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: () => {
-				return instance.states.AudioMixer.transitionEnabled
+				return state.transitionEnabled
 			},
 		},
 	}

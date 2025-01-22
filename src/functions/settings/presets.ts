@@ -3,9 +3,10 @@ import { CompanionPresetDefinitions } from '@companion-module/base'
 import { ActionId } from './actionId'
 import { FeedbackId } from './feedbackId'
 import { SettingsAuxSourceChoices } from './../../model'
+import { GoStreamModel } from '../../models/types'
 
 const ptzSize = '18'
-export function create(): CompanionPresetDefinitions {
+export function create(_model: GoStreamModel): CompanionPresetDefinitions {
 	const presets = {}
 	for (const aux of SettingsAuxSourceChoices) {
 		presets[`aux_${aux.id}`] = {

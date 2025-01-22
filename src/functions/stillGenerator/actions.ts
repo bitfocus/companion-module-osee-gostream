@@ -1,12 +1,11 @@
 import { ActionId } from './actionId'
 import { getOptNumber } from '../../util'
-import { getChoicesByStill } from '../../choices'
 import { ReqType } from '../../enums'
 import { sendCommand } from '../../connection'
-import type { GoStreamInstance } from '../../index'
 import type { CompanionActionDefinitions } from '@companion-module/base'
-
-export function create(_instance: GoStreamInstance): CompanionActionDefinitions {
+import { StillGeneratorStateT } from './state'
+import { GoStreamModel } from '../../models/types'
+export function create(model: GoStreamModel, _state: StillGeneratorStateT): CompanionActionDefinitions {
 	return {
 		[ActionId.StillSelection]: {
 			name: 'Still:Select pic index',
@@ -25,7 +24,7 @@ export function create(_instance: GoStreamInstance): CompanionActionDefinitions 
 					type: 'dropdown',
 					label: 'Pic index (0-31)',
 					id: 'PicIndex',
-					choices: getChoicesByStill(),
+					choices: model.getChoicesByStill(),
 					default: 0,
 				},
 			],

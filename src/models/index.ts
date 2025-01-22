@@ -1,22 +1,26 @@
 import type { DropdownChoice } from '@companion-module/base'
-import { type IModelSpec, ModelId, type IPortSpec } from './types'
-import { ModelSpecAuto } from './auto'
-import { ModelSpecDeck } from './deck'
-import { ModelSpecDuet } from './duet'
+import { type GoStreamModel, type IPortSpec } from './types'
+//import { AutoModel } from './auto'
+//import { GoStreamDeck } from './deck'
+//import { GoStreamDuet } from './duet'
 import { PortType } from '../enums'
 
-export const ALL_MODELS: IModelSpec[] = [ModelSpecAuto, ModelSpecDeck, ModelSpecDuet]
-export const ALL_MODEL_CHOICES: DropdownChoice[] = ALL_MODELS.map(({ id, label }) => ({ id, label }))
+//export const ALL_MODELS: GoStreamModel[] = [AutoModel, GoStreamDeck, GoStreamDuet]
+export const ALL_MODEL_CHOICES: DropdownChoice[] = [
+	{ id: 0, label: 'Auto' },
+	{ id: 1, label: 'Deck' },
+	{ id: 2, label: 'Duet' },
+]
 
-export function GetModelSpec(id: ModelId): IModelSpec | undefined {
-	return ALL_MODELS.find((m) => m.id === id)
+/*export function GetModelSpec(id: ModelId): GoStreamModel | undefined {
+	return ALL_MODEL_CHOICES.find((m) => m.id === id)
 }
 
-export function GetAutoDetectModel(): IModelSpec {
-	return ModelSpecAuto
-}
+export function GetAutoDetectModel(): GoStreamModel {
+	return AutoModel
+}*/
 
-export function getInputChoices(model: IModelSpec, type?: PortType): DropdownChoice[] {
+export function getInputChoices(model: GoStreamModel, type?: PortType): DropdownChoice[] {
 	const choices: DropdownChoice[] = []
 	const portType = type ? type : PortType.All
 	model.inputs.forEach((input) => {
@@ -27,13 +31,13 @@ export function getInputChoices(model: IModelSpec, type?: PortType): DropdownCho
 	return choices
 }
 
-export function getInputs(model: IModelSpec, type?: PortType): IPortSpec[] {
+export function getInputs(model: GoStreamModel, type?: PortType): IPortSpec[] {
 	const portType = type ? type : PortType.All
 	const ret = model.inputs.filter((input) => input.type & portType)
 	return ret
 }
 
-export function getOutputChoices(model: IModelSpec, type?: PortType): DropdownChoice[] {
+export function getOutputChoices(model: GoStreamModel, type?: PortType): DropdownChoice[] {
 	const choices: DropdownChoice[] = []
 	const portType = type ? type : PortType.All
 	model.outputs.forEach((output) => {
@@ -45,7 +49,7 @@ export function getOutputChoices(model: IModelSpec, type?: PortType): DropdownCh
 }
 
 export const SettingsColorChoices = []
-export function getColorChoices(model: IModelSpec): DropdownChoice[] {
+export function getColorChoices(model: GoStreamModel): DropdownChoice[] {
 	const choices: DropdownChoice[] = []
 	const HDMI_colorSpaces = [
 		'Auto',

@@ -2,12 +2,12 @@ import { combineRgb } from '@companion-module/base'
 import { CompanionPresetDefinitions } from '@companion-module/base'
 import { ActionId } from './actionId'
 import { FeedbackId } from './feedbackId'
-import { getChoices } from './../../choices'
 import { ActionType } from './../../enums'
 import { SuperSourceStyleChoices } from '../../model'
+import { GoStreamModel } from '../../models/types'
 
 const ptzSize = '18'
-export function create(): CompanionPresetDefinitions {
+export function create(model: GoStreamModel): CompanionPresetDefinitions {
 	const presets = {}
 	presets[`SuperSource_Enable`] = {
 		category: `SuperSource`,
@@ -41,7 +41,7 @@ export function create(): CompanionPresetDefinitions {
 			},
 		],
 	}
-	const SourceChoices = getChoices(ActionType.SuperSourceSource)
+	const SourceChoices = model.getChoices(ActionType.SuperSourceSource)
 	for (const ss of SourceChoices) {
 		presets[`SuperSource_Source1_${ss.id}`] = {
 			category: `SuperSource`,

@@ -2,8 +2,10 @@ import { runEntrypoint, InstanceBase, InstanceStatus, SomeCompanionConfigField }
 import { GetConfigFields, Config } from './config'
 import { GoStream } from './GoStream'
 import { GetActionsList } from './actions'
+import { GoStreamDuet } from './models/duet'
+
 //import { type IModelSpec } from './models/types'
-import { GetModelSpec, GetAutoDetectModel } from './models'
+//import { GetModelSpec, GetAutoDetectModel } from './models'
 export class GoStreamInstance extends InstanceBase<Config> {
 	config
 	gostream
@@ -11,7 +13,7 @@ export class GoStreamInstance extends InstanceBase<Config> {
 	model
 	async init(config: Config): Promise<void> {
 		this.config = config
-		this.model = GetModelSpec(this.config.modelId) || GetAutoDetectModel()
+		this.model = new GoStreamDuet() //GetModelSpec(this.config.modelId) || GetAutoDetectModel()
 		this.log('debug', 'Initializing module')
 		this.updateStatus(InstanceStatus.Disconnected)
 		this.saveConfig(this.config)

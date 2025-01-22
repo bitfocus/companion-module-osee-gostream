@@ -1,8 +1,7 @@
 import { ActionId } from './actionId'
 import { sendCommands, GoStreamCmd } from '../../connection'
-import { ReqType, ActionType } from '../../enums'
-import type { IModelSpec } from '../../models/types'
-import { getChoices } from './../../choices'
+import { ReqType } from '../../enums'
+import type { GoStreamModel } from '../../models/types'
 
 export type DownstreamKeyerStateT = {
 	onAir: boolean
@@ -13,7 +12,7 @@ export type DownstreamKeyerStateT = {
 	shapedKey: boolean
 }
 
-export function create(_model: IModelSpec): DownstreamKeyerStateT {
+export function create(_model: GoStreamModel): DownstreamKeyerStateT {
 	return {
 		onAir: false,
 		fill: 0,
@@ -24,7 +23,7 @@ export function create(_model: IModelSpec): DownstreamKeyerStateT {
 	}
 }
 
-export async function sync(_model: IModelSpec): Promise<boolean> {
+export async function sync(_model: GoStreamModel): Promise<boolean> {
 	const cmds: GoStreamCmd[] = [
 		{ id: ActionId.DskOnAir, type: ReqType.Get },
 		{ id: ActionId.DskSourceFill, type: ReqType.Get },
@@ -39,13 +38,11 @@ export function update(state: DownstreamKeyerStateT, data: GoStreamCmd): boolean
 	if (!data.value) return false
 	switch (data.id as ActionId) {
 		case ActionId.DskSourceFill: {
-			const select = getChoices(ActionType.DskSourceFill).find((s) => data.value && s.id === data.value[0])
-			if (select !== undefined) state.fill = select.id
+			if (data.value !== undefined) state.fill = data.value[0]
 			break
 		}
 		case ActionId.DskSourceKey: {
-			const select = getChoices(ActionType.DskSourceFill).find((s) => s.id === data.value && data.value[0])
-			if (select !== undefined) state.key = select.id
+			if (data.value !== undefined) state.key = data.value[0]
 			break
 		}
 		case ActionId.DskControlInvert:

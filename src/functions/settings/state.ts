@@ -1,7 +1,7 @@
 import { ActionId } from './actionId'
 import { sendCommands, GoStreamCmd } from '../../connection'
 import { PortCaps, PortType, ReqType } from '../../enums'
-import type { IModelSpec } from '../../models/types'
+import type { GoStreamModel } from '../../models/types'
 import { Range } from '../../util'
 
 export type SettingsStateT = {
@@ -22,7 +22,7 @@ export type SettingsStateT = {
 	deviceName: string
 }
 
-export function create(model: IModelSpec): SettingsStateT {
+export function create(model: GoStreamModel): SettingsStateT {
 	const micInputs = model.inputs.filter((inp) => inp.type & PortType.Mic).length
 	const nameableVideoInputs = model.inputs.filter((inp) => inp.caps & PortCaps.Renameable).length
 	const audioCapableInputs = model.inputs.filter((inp) => inp.caps & PortCaps.Audio).length
@@ -47,7 +47,7 @@ export function create(model: IModelSpec): SettingsStateT {
 	}
 }
 
-export async function sync(model: IModelSpec): Promise<boolean> {
+export async function sync(model: GoStreamModel): Promise<boolean> {
 	const micInputs = model.inputs.filter((inp) => inp.type & PortType.Mic).length
 	const nameableVideoInputs = model.inputs.filter((inp) => inp.caps & PortCaps.Renameable).length
 	const audioCapableInputs = model.inputs.filter(
