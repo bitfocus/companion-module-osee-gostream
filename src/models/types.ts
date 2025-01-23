@@ -1,4 +1,4 @@
-import { Model, PortCaps, PortType, ActionType } from '../enums'
+import { PortCaps, PortType, ActionType } from '../enums'
 import { DropdownChoice } from '@companion-module/base'
 import {} from './../enums'
 import {
@@ -14,7 +14,13 @@ import {
 	SettingsOutSourceChoices,
 } from '../model'
 
-export const MODEL_AUTO_DETECT = 0
+export enum Model {
+	Unknown = 'Unknown',
+	Deck = 'GOSECK',
+	Duet = 'GOSUET',
+}
+
+export const MODEL_AUTO_DETECT = Model.Unknown
 export type ModelId = 0 | Model
 export type IPortSpec = {
 	id: number
@@ -34,7 +40,7 @@ export function SourcesToChoices(
 }
 
 export class GoStreamModel {
-	id: ModelId
+	id: Model
 	label: string
 	outputs: IPortSpec[]
 	inputs: IPortSpec[]

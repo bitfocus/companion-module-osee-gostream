@@ -1,24 +1,20 @@
 import type { DropdownChoice } from '@companion-module/base'
-import { type GoStreamModel, type IPortSpec } from './types'
-//import { AutoModel } from './auto'
-//import { GoStreamDeck } from './deck'
-//import { GoStreamDuet } from './duet'
+import { type GoStreamModel, type IPortSpec, Model } from './types'
+import { AutoModel } from './auto'
+import { GoStreamDeck } from './deck'
+import { GoStreamDuet } from './duet'
 import { PortType } from '../enums'
 
-//export const ALL_MODELS: GoStreamModel[] = [AutoModel, GoStreamDeck, GoStreamDuet]
-export const ALL_MODEL_CHOICES: DropdownChoice[] = [
-	{ id: 0, label: 'Auto' },
-	{ id: 1, label: 'Deck' },
-	{ id: 2, label: 'Duet' },
-]
+export const ALL_MODELS: GoStreamModel[] = [new AutoModel(), new GoStreamDeck(), new GoStreamDuet()]
+export const ALL_MODEL_CHOICES: DropdownChoice[] = ALL_MODELS.map(({ id, label }) => ({ id, label }))
 
-/*export function GetModelSpec(id: ModelId): GoStreamModel | undefined {
-	return ALL_MODEL_CHOICES.find((m) => m.id === id)
+export function GetModelSpec(id: Model): GoStreamModel | undefined {
+	return ALL_MODELS.find((m) => m.id === id)
 }
 
 export function GetAutoDetectModel(): GoStreamModel {
-	return AutoModel
-}*/
+	return ALL_MODELS[0]
+}
 
 export function getInputChoices(model: GoStreamModel, type?: PortType): DropdownChoice[] {
 	const choices: DropdownChoice[] = []

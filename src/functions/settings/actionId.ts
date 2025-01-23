@@ -30,4 +30,6 @@ export enum ActionId {
 	BuildInfo = 'buildInfo',
 	DeviceId = 'deviceId',
 	DeviceName = 'deviceName',
+	NDIConnect = 'NDIConnect',
+	NDIList = 'NDIList',
 }

@@ -301,5 +301,50 @@ export function create(model: GoStreamModel, state: SettingsStateT): CompanionFe
 				}
 			},
 		},
+		[FeedbackId.NDIConnect]: {
+			type: 'boolean',
+			name: 'Aux: Connected NDI source',
+			description: 'If the input specified is connected to NDI, change style of the bank',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'NDI Source',
+					id: 'ndiSourceName',
+					choices:
+						state.ndiSources.length == 0
+							? [{ id: -1, label: 'No sources found' }]
+							: state.ndiSources.map((source) => ({
+									id: source.name,
+									label: source.name + ' [' + source.address + ']',
+								})),
+					default: state.ndiSources.length == 0 ? -1 : state.ndiSources[0].name,
+				},
+			],
+			defaultStyle: {
+				color: combineRgb(0, 0, 0),
+				bgcolor: combineRgb(255, 255, 0),
+			},
+			callback: (feedback) => {
+				const name = feedback.options.ndiSourceName
+				if (name === -1) return false
+				const selectedNdiSource = state.ndiSources.find((source) => source.name === name)
+				if (!selectedNdiSource) return false
+				return (
+					state.connectedNdiSouce.name === selectedNdiSource.name &&
+					state.connectedNdiSouce.address === selectedNdiSource.address
+				)
+			},
+			learn: (feedback) => {
+				const ndiSource = state.connectedNdiSouce
+				if (ndiSource !== undefined) {
+					return {
+						...feedback.options,
+						ndiSourceName: ndiSource.name,
+					}
+				} else {
+					return undefined
+				}
+			},
+		},
 	}
 }

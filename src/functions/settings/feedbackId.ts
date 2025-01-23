@@ -7,4 +7,5 @@ export enum FeedbackId {
 	MvLayout = 'mvLayout',
 	SettingOutSource = 'settingOutSource',
 	AuxBG = 'auxBG',
+	NDIConnect = 'NDIConnect',
 }

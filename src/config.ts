@@ -1,5 +1,6 @@
 import { Regex, SomeCompanionConfigField } from '@companion-module/base'
 import { ALL_MODEL_CHOICES } from './models/index'
+import { MODEL_AUTO_DETECT } from './models/types'
 
 export interface Config {
 	host: string
@@ -27,7 +28,7 @@ export function GetConfigFields(): SomeCompanionConfigField[] {
 			label: 'Model',
 			width: 6,
 			choices: ALL_MODEL_CHOICES,
-			default: 0,
+			default: MODEL_AUTO_DETECT,
 			isVisible: (options) => !options['bonjourDevices'],
 		},
 		{

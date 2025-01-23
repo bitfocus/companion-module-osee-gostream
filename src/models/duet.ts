@@ -1,5 +1,5 @@
-import { generatePorts, GoStreamModel } from './types'
-import { Model, PortType, PortCaps } from '../enums'
+import { generatePorts, GoStreamModel, Model } from './types'
+import { PortType, PortCaps } from '../enums'
 
 export class GoStreamDuet extends GoStreamModel {
 	constructor() {

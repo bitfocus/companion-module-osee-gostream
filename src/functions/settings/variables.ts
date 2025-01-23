@@ -26,6 +26,14 @@ export function create(_model: GoStreamModel): CompanionVariableDefinition[] {
 		name: 'device name',
 		variableId: 'deviceName',
 	})
+	vars.push({
+		name: 'connected NDI source name',
+		variableId: 'connectedNDISource_name',
+	})
+	vars.push({
+		name: 'connected NDI source address',
+		variableId: 'connectedNDISource_address',
+	})
 
 	return vars
 }
@@ -40,5 +48,7 @@ export function getValues(state: SettingsStateT): CompanionVariableValues {
 	newValues['deviceId'] = state['deviceId']
 	newValues['deviceName'] = state['deviceName']
 
+	newValues['connectedNDISource_name'] = state.connectedNdiSouce.name
+	newValues['connectedNDISource_address'] = state.connectedNdiSouce.address
 	return newValues
 }

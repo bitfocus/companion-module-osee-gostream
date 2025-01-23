@@ -1,8 +1,13 @@
 import { ActionId } from './actionId'
-import { sendCommands, GoStreamCmd } from '../../connection'
+import { sendCommands, GoStreamCmd, sendCommand } from '../../connection'
 import { PortCaps, PortType, ReqType } from '../../enums'
 import type { GoStreamModel } from '../../models/types'
 import { Range } from '../../util'
+
+export type NDISource = {
+	name: string
+	address: string
+}
 
 export type SettingsStateT = {
 	auxSource: number
@@ -20,6 +25,8 @@ export type SettingsStateT = {
 	buildInfo: string
 	deviceId: string
 	deviceName: string
+	ndiSources: NDISource[]
+	connectedNdiSouce: NDISource
 }
 
 export function create(model: GoStreamModel): SettingsStateT {
@@ -44,6 +51,8 @@ export function create(model: GoStreamModel): SettingsStateT {
 		buildInfo: '',
 		deviceId: '',
 		deviceName: '',
+		ndiSources: [],
+		connectedNdiSouce: { name: '', address: '' },
 	}
 }
 
@@ -74,11 +83,27 @@ export async function sync(model: GoStreamModel): Promise<boolean> {
 	return sendCommands(cmds)
 }
 
+let interval: any = undefined
+const ndiListTimeout = 5000
+
 export function update(state: SettingsStateT, data: GoStreamCmd): boolean {
 	switch (data.id as ActionId) {
-		case ActionId.AuxSource:
+		case ActionId.AuxSource: {
 			if (data.value) state.auxSource = data.value[0]
+			if (state.auxSource == 2) {
+				interval = setInterval(() => {
+					sendCommand(ActionId.NDIList, ReqType.Get)
+						.catch((err) => {
+							console.log('Unexpected NDI sync error', err)
+						})
+						.then((_err) => {})
+						.catch((_err) => {})
+				}, ndiListTimeout)
+			} else {
+				clearInterval(interval)
+			}
 			break
+		}
 		case ActionId.InputWindowLayout:
 			if (data.value) state.inputWindowLayout = data.value[0]
 			break
@@ -130,6 +155,25 @@ export function update(state: SettingsStateT, data: GoStreamCmd): boolean {
 			if (!data.value) return true
 			state.deviceName = data.value[0]
 			break
+		case ActionId.NDIConnect:
+			if (!data.value) return false
+			state.connectedNdiSouce = { name: data.value[0], address: data.value[1] }
+			break
+		case ActionId.NDIList: {
+			if (!data.value) {
+				state.ndiSources = []
+				return true
+			}
+			const values = data.value as string[]
+			const ndiSources: NDISource[] = []
+			for (let i = 0; i < values.length; i += 2) {
+				ndiSources.push({ name: String(values[i]), address: String(values[i + 1]) })
+			}
+			ndiSources.sort((a, b) => (a.name < b.name ? -1 : 1))
+			state.ndiSources = ndiSources
+			// Reload actions etc
+			return true
+		}
 	}
 	return false
 }

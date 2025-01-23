@@ -317,5 +317,25 @@ export function create(model: GoStreamModel, state: SettingsStateT): CompanionAc
 				])
 			},
 		},
+		[ActionId.NDIConnect]: {
+			name: 'Settings: Select NDI source',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Source name',
+					id: 'sourceId',
+					choices:
+						state.ndiSources.length == 0
+							? [{ id: -1, label: 'No sources found' }]
+							: state.ndiSources.map((source, index) => ({ id: index, label: source.name })),
+					default: 0,
+				},
+			],
+			callback: async (action) => {
+				const id = getOptNumber(action, 'sourceId')
+				if (id === -1) return
+				await sendCommand(ActionId.NDIConnect, ReqType.Set, [state.ndiSources[id].name, state.ndiSources[id].address])
+			},
+		},
 	}
 }
