@@ -16,17 +16,17 @@ import type { CompanionActionDefinitions } from '@companion-module/base'
 
 export function GetActionsList(instance: GoStreamInstance): CompanionActionDefinitions {
 	return {
-		...MixEffectActions.create(instance),
-		...SuperSourceActions.create(instance),
-		...StreamingActions.create(instance),
-		...RecordActions.create(instance),
-		...StillGeneratorActions.create(instance),
-		...PlaybackActions.create(instance),
-		...AudioMixerActions.create(instance),
-		...ColorBackActions.create(instance),
-		...DownstreamKeyerActions.create(instance),
-		...SettingsActions.create(instance),
-		...MacroActions.create(instance),
-		...UpstreamKeyerActions.create(instance),
+		...MixEffectActions.create(instance.model, instance.states.MixEffect),
+		...SuperSourceActions.create(instance.model, instance.states.SuperSource),
+		...StreamingActions.create(instance.model, instance.states.Streaming),
+		...RecordActions.create(instance.model, instance.states.Record),
+		...StillGeneratorActions.create(instance.model, instance.states.StillGenerator),
+		...PlaybackActions.create(instance.model, instance.states.Playback),
+		...AudioMixerActions.create(instance.model, instance.states.AudioMixer),
+		...ColorBackActions.create(instance.model, instance.states.ColorBack),
+		...DownstreamKeyerActions.create(instance.model, instance.states.DownstreamKeyer),
+		...SettingsActions.create(instance.model, instance.states.Settings),
+		...MacroActions.create(instance.model, instance.states.Macros),
+		...UpstreamKeyerActions.create(instance.model, instance.states.UpstreamKeyer),
 	}
 }

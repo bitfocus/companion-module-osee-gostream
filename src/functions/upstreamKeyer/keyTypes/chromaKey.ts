@@ -1,13 +1,12 @@
 import { ActionId } from '../actionId'
 import { getOptNumber } from './../../../util'
-import { getChoices } from './../../../choices'
 import { SwitchChoices, KeyResizeSizeChoices } from './../../../model'
 import { ReqType, ActionType } from './../../../enums'
 import { sendCommand } from './../../../connection'
-import type { GoStreamInstance } from './../../../index'
 import type { CompanionActionDefinitions } from '@companion-module/base'
-
-export function createChromaKeyActions(_self: GoStreamInstance): CompanionActionDefinitions {
+import { UpstreamKeyerStateT } from '../state'
+import { GoStreamModel } from '../../../models/types'
+export function createChromaKeyActions(model: GoStreamModel, _state: UpstreamKeyerStateT): CompanionActionDefinitions {
 	return {
 		[ActionId.ChromaKeyFill]: {
 			name: 'UpStream Key:Set Chroma Key Source Fill',
@@ -16,7 +15,7 @@ export function createChromaKeyActions(_self: GoStreamInstance): CompanionAction
 					type: 'dropdown',
 					label: 'Source Fill',
 					id: 'KeyFill',
-					choices: getChoices(ActionType.ChromaKeySourceKey),
+					choices: model.getChoices(ActionType.ChromaKeySourceKey),
 					default: 0,
 				},
 			],

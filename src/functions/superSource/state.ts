@@ -1,7 +1,7 @@
 import { ActionId } from './actionId'
 import { sendCommands, GoStreamCmd } from '../../connection'
 import { ReqType } from '../../enums'
-import type { IModelSpec } from '../../models/types'
+import type { GoStreamModel } from '../../models/types'
 
 export type SuperSourceStateT = {
 	enable: boolean
@@ -9,21 +9,23 @@ export type SuperSourceStateT = {
 	source2: number
 	background: number
 	controlStyle: number
+	controlYPosition: number
 	maskEnable: boolean[]
 }
 
-export function create(_model: IModelSpec): SuperSourceStateT {
+export function create(_model: GoStreamModel): SuperSourceStateT {
 	return {
 		enable: false,
 		source1: 0,
 		source2: 0,
 		background: 0,
 		controlStyle: 0,
+		controlYPosition: 0,
 		maskEnable: [false, false],
 	}
 }
 
-export async function sync(_model: IModelSpec): Promise<boolean> {
+export async function sync(_model: GoStreamModel): Promise<boolean> {
 	const cmds: GoStreamCmd[] = [
 		{ id: ActionId.SuperSourceEnable, type: ReqType.Get },
 		{ id: ActionId.SuperSourceSource1, type: ReqType.Get },
@@ -45,10 +47,6 @@ export async function sync(_model: IModelSpec): Promise<boolean> {
 }
 export function update(state: SuperSourceStateT, data: GoStreamCmd): boolean {
 	switch (data.id as ActionId) {
-		case ActionId.SuperSourceBackground: {
-			if (data.value !== undefined) state.background = data.value[0]
-			break
-		}
 		case ActionId.SuperSourceBorderBrightness: {
 			return true
 		}
@@ -66,6 +64,7 @@ export function update(state: SuperSourceStateT, data: GoStreamCmd): boolean {
 			break
 		}
 		case ActionId.SuperSourceControlYPosition: {
+			if (data.value !== undefined) state.controlYPosition = data.value[0]
 			break
 		}
 		case ActionId.SuperSourceEnable: {
@@ -94,6 +93,10 @@ export function update(state: SuperSourceStateT, data: GoStreamCmd): boolean {
 		}
 		case ActionId.SuperSourceSource2: {
 			if (data.value !== undefined) state.source2 = data.value[0]
+			break
+		}
+		case ActionId.SuperSourceBackground: {
+			if (data.value !== undefined) state.background = data.value[0]
 			break
 		}
 	}

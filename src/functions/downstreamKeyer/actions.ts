@@ -1,13 +1,13 @@
 import { ActionId } from './actionId'
 import { getOptNumber } from './../../util'
-import { getChoices } from './../../choices'
 import { SwitchChoices } from './../../model'
 import { ReqType, ActionType } from './../../enums'
 import { sendCommand } from './../../connection'
-import type { GoStreamInstance } from './../../index'
+import { GoStreamModel } from '../../models/types'
 import type { CompanionActionDefinitions } from '@companion-module/base'
+import { DownstreamKeyerStateT } from './state'
 
-export function create(instance: GoStreamInstance): CompanionActionDefinitions {
+export function create(model: GoStreamModel, state: DownstreamKeyerStateT): CompanionActionDefinitions {
 	return {
 		[ActionId.DskOnAir]: {
 			name: 'Next Transition:Set DSKOnAir',
@@ -28,7 +28,7 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 				const opt = getOptNumber(action, 'DSKOnAir')
 				let paramOpt = 0
 				if (opt === 2) {
-					if (instance.states.TKeyeState.DSKOnAir === true) {
+					if (state.onAir === true) {
 						paramOpt = 0
 					} else {
 						paramOpt = 1
@@ -46,14 +46,14 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 					type: 'dropdown',
 					label: 'Fill',
 					id: 'DSKFill',
-					choices: getChoices(ActionType.DskSourceFill),
+					choices: model.getChoices(ActionType.DskSourceFill),
 					default: 0,
 				},
 				{
 					type: 'dropdown',
 					label: 'Key',
 					id: 'DSKKey',
-					choices: getChoices(ActionType.DskSourceFill),
+					choices: model.getChoices(ActionType.DskSourceFill),
 					default: 0,
 				},
 			],
@@ -71,7 +71,7 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 					type: 'dropdown',
 					label: 'DSK Fill',
 					id: 'DSKFill',
-					choices: getChoices(ActionType.DskSourceFill),
+					choices: model.getChoices(ActionType.DskSourceFill),
 					default: 0,
 				},
 			],
@@ -86,7 +86,7 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 					type: 'dropdown',
 					label: 'DSK Key',
 					id: 'DSKKey',
-					choices: getChoices(ActionType.DskSourceFill),
+					choices: model.getChoices(ActionType.DskSourceFill),
 					default: 0,
 				},
 			],
@@ -109,7 +109,7 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 				const opt = getOptNumber(action, 'DskMaskEnable')
 				let paramOpt = 0
 				if (opt === 2) {
-					if (instance.states.DSKState.DskMask === true) {
+					if (state.mask === true) {
 						paramOpt = 0
 					} else {
 						paramOpt = 1
@@ -133,7 +133,6 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 				},
 			],
 			callback: async (action) => {
-				//_self.states.dskOnAir=true;
 				await sendCommand(ActionId.DskMaskHStart, ReqType.Set, [getOptNumber(action, 'HStart')])
 			},
 		},
@@ -150,7 +149,6 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 				},
 			],
 			callback: async (action) => {
-				//_self.states.dskOnAir=true;
 				await sendCommand(ActionId.DskMaskVStart, ReqType.Set, [getOptNumber(action, 'VStart')])
 			},
 		},
@@ -167,7 +165,6 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 				},
 			],
 			callback: async (action) => {
-				//_self.states.dskOnAir=true;
 				await sendCommand(ActionId.DskMaskHEnd, ReqType.Set, [getOptNumber(action, 'HEnd')])
 			},
 		},
@@ -202,7 +199,7 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 				const opt = getOptNumber(action, 'ShapedKey')
 				let paramOpt = 0
 				if (opt === 2) {
-					if (instance.states.DSKState.DskControlShapedKey === true) {
+					if (state.shapedKey === true) {
 						paramOpt = 0
 					} else {
 						paramOpt = 1
@@ -260,7 +257,7 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 				const opt = getOptNumber(action, 'Invert')
 				let paramOpt = 0
 				if (opt === 2) {
-					if (instance.states.DSKState.DskControlInvert === true) {
+					if (state.invert === true) {
 						paramOpt = 0
 					} else {
 						paramOpt = 1

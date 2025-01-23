@@ -4,14 +4,14 @@ import { ActionId } from './actionId'
 import { FeedbackId } from './feedbackId'
 import { TransitionStyleChoice } from '../../model'
 import { getInputChoices } from './../../models'
-import type { GoStreamInstance } from '../../index'
+import { GoStreamModel } from '../../models/types'
 
 const rateOptions = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0]
 const ptzSize = '18'
-export function create(instance: GoStreamInstance): CompanionPresetDefinitions {
+export function create(model: GoStreamModel): CompanionPresetDefinitions {
 	const presets = {}
 
-	const MeChoice = getInputChoices(instance.model)
+	const MeChoice = getInputChoices(model)
 	for (const src of MeChoice) {
 		presets[`Preview_${src.id}`] = {
 			type: 'button',

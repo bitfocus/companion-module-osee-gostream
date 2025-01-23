@@ -2,19 +2,19 @@ import { ActionId } from './actionId'
 import { sendCommands, GoStreamCmd } from '../../connection'
 import { ReqType } from '../../enums'
 import { Range } from '../../util'
-import type { IModelSpec } from '../../models/types'
+import type { GoStreamModel } from '../../models/types'
 
 export type StillGeneratorStateT = {
-	slots: string[]
+	slots: number[]
 }
 
-export function create(model: IModelSpec): StillGeneratorStateT {
+export function create(model: GoStreamModel): StillGeneratorStateT {
 	return {
 		slots: Array(model.stillSlots),
 	}
 }
 
-export async function sync(model: IModelSpec): Promise<boolean> {
+export async function sync(model: GoStreamModel): Promise<boolean> {
 	const cmds: GoStreamCmd[] = [
 		...Range(model.stillSlots).map((index) => ({ id: ActionId.StillSelection, type: ReqType.Get, value: [index] })),
 	]

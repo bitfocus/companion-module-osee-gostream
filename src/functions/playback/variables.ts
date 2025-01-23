@@ -1,8 +1,8 @@
 import { CompanionVariableDefinition, CompanionVariableValues } from '@companion-module/base'
-import type { GoStreamInstance } from '../../index'
 import { VariableId } from './variableId'
-
-export function create(_instance: GoStreamInstance): CompanionVariableDefinition[] {
+import { GoStreamModel } from '../../models/types'
+import { PlaybackStateT } from './state'
+export function create(_model: GoStreamModel): CompanionVariableDefinition[] {
 	return [
 		{
 			name: 'Play State of PlayBack',
@@ -15,9 +15,9 @@ export function create(_instance: GoStreamInstance): CompanionVariableDefinition
 	]
 }
 
-export function getValues(instance: GoStreamInstance): CompanionVariableValues {
+export function getValues(state: PlaybackStateT): CompanionVariableValues {
 	const newValues = {}
-	newValues[VariableId.PlayState] = instance.states.Playback.Pause ? 'Play' : 'Pause'
-	newValues[VariableId.PlayFile] = instance.states.Playback.FileList[instance.states.Playback.File]
+	newValues[VariableId.PlayState] = state.Pause ? 'Play' : 'Pause'
+	newValues[VariableId.PlayFile] = state.FileList[state.File]
 	return newValues
 }

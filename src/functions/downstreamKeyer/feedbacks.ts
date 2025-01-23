@@ -1,11 +1,11 @@
 import { FeedbackId } from './feedbackId'
-import type { GoStreamInstance } from '../../index'
 import { combineRgb, CompanionFeedbackDefinitions } from '@companion-module/base'
 import { SwitchChoices } from './../../model'
-import { getChoices } from '../../choices'
 import { ActionType } from '../../enums'
+import { GoStreamModel } from '../../models/types'
+import { DownstreamKeyerStateT } from './state'
 
-export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions {
+export function create(model: GoStreamModel, state: DownstreamKeyerStateT): CompanionFeedbackDefinitions {
 	return {
 		[FeedbackId.DskOnAir]: {
 			type: 'boolean',
@@ -25,11 +25,7 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: (feedback) => {
-				if (instance.states.TKeyeState.DSKOnAir && feedback.options.DSKOnAir === 1) {
-					return true
-				} else {
-					return false
-				}
+				return state.onAir && feedback.options.DSKOnAir === 1
 			},
 		},
 		[FeedbackId.DskSourceFill]: {
@@ -51,7 +47,7 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 					type: 'dropdown',
 					label: 'Fill:',
 					id: 'DSKFill',
-					choices: getChoices(ActionType.KeyPatternSourceKey),
+					choices: model.getChoices(ActionType.KeyPatternSourceKey),
 					default: 0,
 				},
 			],
@@ -63,9 +59,9 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 				const typeId = Number(feedback.options.TypeID)
 				const dsk_source = Number(feedback.options.DSKFill)
 				if (typeId === 0) {
-					return instance.states.DSKState.DSKSourceKeyFill.id === dsk_source
+					return state.key === dsk_source
 				} else {
-					return instance.states.DSKState.DSKSourceFill.id === dsk_source
+					return state.fill === dsk_source
 				}
 			},
 		},

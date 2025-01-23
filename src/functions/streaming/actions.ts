@@ -3,10 +3,10 @@ import { getOptNumber, getOptString } from '../../util'
 import { StreamingChoices, SwitchChoices } from '../../model'
 import { ReqType } from '../../enums'
 import { sendCommand } from '../../connection'
-import type { GoStreamInstance } from '../../index'
 import type { CompanionActionDefinitions, SomeCompanionActionInputField } from '@companion-module/base'
 import type { StreamPlatform } from './state'
-
+import { StreamingStateT } from './state'
+import { GoStreamModel } from '../../models/types'
 export enum LiveStatus {
 	Off,
 	OnAir,
@@ -29,7 +29,7 @@ function getPlatformOptions(platforms: StreamPlatform[]): SomeCompanionActionInp
 	})
 }
 
-export function create(instance: GoStreamInstance): CompanionActionDefinitions {
+export function create(_model: GoStreamModel, state: StreamingStateT): CompanionActionDefinitions {
 	return {
 		[ActionId.StreamOutput]: {
 			name: 'Streaming: Enable stream',
@@ -53,7 +53,7 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 				const opt1 = getOptNumber(action, 'StreamID')
 				const opt2 = getOptNumber(action, 'EnableId')
 				if (opt2 === 2) {
-					const paramOpt = instance.states.Streaming.enabled[opt1] ? 0 : 1
+					const paramOpt = state.streamInfo[opt1].enabled ? 0 : 1
 					await sendCommand(ActionId.StreamOutput, ReqType.Set, [opt1, paramOpt])
 				} else {
 					await sendCommand(ActionId.StreamOutput, ReqType.Set, [opt1, opt2])
@@ -74,10 +74,10 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 					type: 'dropdown',
 					label: 'Platform',
 					id: 'PlatformId',
-					choices: instance.states.Streaming.platforms.map((platform) => ({ id: platform.name, label: platform.name })),
-					default: instance.states.Streaming.platforms[0]?.name,
+					choices: state.platforms.map((platform) => ({ id: platform.name, label: platform.name })),
+					default: state.platforms[0]?.name,
 				},
-				...getPlatformOptions(instance.states.Streaming.platforms),
+				...getPlatformOptions(state.platforms),
 			],
 			callback: async (action) => {
 				const opt1 = getOptNumber(action, 'StreamID')
@@ -129,7 +129,7 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 				const opt = getOptNumber(action, 'LiveEnable')
 				let paramOpt = 0
 				if (opt === 2) {
-					if (instance.states.Streaming.status === LiveStatus.Off) {
+					if (state.status === LiveStatus.Off) {
 						paramOpt = 1
 					} else {
 						paramOpt = 0

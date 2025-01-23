@@ -1,14 +1,14 @@
 import { ActionId } from './actionId'
 import { getOptNumber } from '../../util'
-import { getChoices } from '../../choices'
 import { ReqType, ActionType, TransitionStyle } from '../../enums'
 import { sendCommand } from '../../connection'
-import type { GoStreamInstance } from '../../index'
 import type { CompanionActionDefinitions } from '@companion-module/base'
 import { TransitionStyleChoice, WipeDirectionChoices, SwitchChoices } from '../../model'
 import { getInputChoices } from './../../models'
+import { GoStreamModel } from '../../models/types'
+import { MixEffectStateT } from './state'
 
-export function create(instance: GoStreamInstance): CompanionActionDefinitions {
+export function create(model: GoStreamModel, state: MixEffectStateT): CompanionActionDefinitions {
 	return {
 		[ActionId.PgmIndex]: {
 			name: 'Set PGM Source',
@@ -18,7 +18,7 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 					label: 'Source',
 					id: 'Source',
 					default: 0,
-					choices: getInputChoices(instance.model),
+					choices: getInputChoices(model),
 				},
 			],
 			callback: async (action) => {
@@ -34,7 +34,7 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 					label: 'Source',
 					id: 'Source',
 					default: 0,
-					choices: getInputChoices(instance.model),
+					choices: getInputChoices(model),
 				},
 			],
 			callback: async (action) => {
@@ -78,7 +78,7 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 				const opt = getOptNumber(action, 'FtbAudioAFV')
 				let paramOpt = 0
 				if (opt === 2) {
-					if (instance.states.fadeToBlack.AFV === true) {
+					if (state.fadeToBlack.AFV === true) {
 						paramOpt = 0
 					} else {
 						paramOpt = 1
@@ -121,7 +121,7 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 				const opt = getOptNumber(action, 'prevEnable')
 				let paramOpt = 0
 				if (opt === 2) {
-					if (instance.states.selectTransitionStyle.PrevState === true) {
+					if (state.selectTransitionStyle.PrevState === true) {
 						paramOpt = 0
 					} else {
 						paramOpt = 1
@@ -183,7 +183,7 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 					label: 'Change Dip Source',
 					id: 'TransitionDipSource',
 					default: 0,
-					choices: getChoices(ActionType.TransitionDipSource),
+					choices: model.getChoices(ActionType.TransitionDipSource),
 				},
 			],
 			callback: async (action) => {
@@ -318,7 +318,7 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 					label: 'Fill Source',
 					id: 'WipeFillSource',
 					default: 0,
-					choices: getChoices(ActionType.TransitionWipeFillSource),
+					choices: model.getChoices(ActionType.TransitionWipeFillSource),
 				},
 			],
 			callback: async (action) => {
@@ -334,47 +334,14 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 					id: 'Background',
 					default: false,
 				},
-				{
-					type: 'checkbox',
-					label: 'Key',
-					id: 'Key',
-					default: false,
-				},
 			],
 			callback: async (action) => {
 				let num = 0
 				const bg = action.options.Background
-				const key = action.options.Key
-				if (key === true) {
-					num += 1
-				}
 				if (bg === true) {
 					num += 1 << 2
 				}
 				await sendCommand(ActionId.TransitionSource, ReqType.Set, [num])
-			},
-		},
-		[ActionId.TransitionSource]: {
-			name: 'UpStream Key: Tie USK to next transition',
-			options: [
-				{
-					type: 'dropdown',
-					label: 'State',
-					id: 'USKTieState',
-					choices: [
-						{ id: 5, label: 'on' },
-						{ id: 4, label: 'off' },
-						{ id: 0, label: 'toggle' },
-					],
-					default: 0,
-				},
-			],
-			callback: async (action) => {
-				let nextState = action.options.USKTieState
-				if (nextState === 0) {
-					nextState = instance.states.UpstreamKeyer.Tied ? 4 : 5
-				}
-				await sendCommand(ActionId.TransitionSource, ReqType.Set, [nextState])
 			},
 		},
 	}

@@ -1,7 +1,7 @@
 import { ActionId } from './actionId'
 import { sendCommands, GoStreamCmd, valueAsBoolean } from '../../connection'
 import { ReqType } from '../../enums'
-import type { IModelSpec } from '../../models/types'
+import type { GoStreamModel } from '../../models/types'
 
 export type PlaybackStateT = {
 	Mode: number
@@ -14,7 +14,7 @@ export type PlaybackStateT = {
 	FileList: string[]
 }
 
-export function create(_model: IModelSpec): PlaybackStateT {
+export function create(_model: GoStreamModel): PlaybackStateT {
 	return {
 		Mode: 0,
 		Repeat: false,
@@ -25,7 +25,7 @@ export function create(_model: IModelSpec): PlaybackStateT {
 	}
 }
 
-export async function sync(_model: IModelSpec): Promise<boolean> {
+export async function sync(_model: GoStreamModel): Promise<boolean> {
 	const cmds: GoStreamCmd[] = [
 		{ id: ActionId.PlaybackMode, type: ReqType.Get },
 		{ id: ActionId.PlaybackRepeat, type: ReqType.Get },

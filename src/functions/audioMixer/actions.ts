@@ -2,12 +2,12 @@ import { ActionId } from './actionId'
 import { getOptNumber } from '../../util'
 import { ReqType, ActionType } from '../../enums'
 import { sendCommand } from '../../connection'
-import type { GoStreamInstance } from '../../index'
-import { getChoices } from '../../choices'
+import { AudioMixerStateT, AudioState } from './state'
+import { GoStreamModel } from '../../models/types'
 import { AudioMicChoices, AudioInputSourcesChoices, SwitchChoices } from '../../model'
 import type { CompanionActionDefinitions } from '@companion-module/base'
 
-export function create(instance: GoStreamInstance): CompanionActionDefinitions {
+export function create(model: GoStreamModel, state: AudioMixerStateT): CompanionActionDefinitions {
 	return {
 		[ActionId.AudioTransition]: {
 			name: 'Audio Mixer:Set audio fade in and out switch',
@@ -24,7 +24,7 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 				const opt = getOptNumber(action, 'AudioTrans')
 				let paramOpt = 0
 				if (opt === 2) {
-					if (instance.states.AudioMixerPorp.AudioTransition === true) {
+					if (state.transitionEnabled === true) {
 						paramOpt = 0
 					} else {
 						paramOpt = 1
@@ -42,7 +42,7 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 					type: 'dropdown',
 					label: 'Source',
 					id: 'ASource',
-					choices: getChoices(ActionType.AudioFader),
+					choices: model.getChoices(ActionType.AudioFader),
 					default: 0,
 				},
 				{
@@ -70,7 +70,7 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 					type: 'dropdown',
 					label: 'Source',
 					id: 'ASource',
-					choices: getChoices(ActionType.AudioEnableSource),
+					choices: model.getChoices(ActionType.AudioEnableSource),
 					default: 0,
 				},
 				{
@@ -98,7 +98,7 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 					type: 'dropdown',
 					label: 'Source',
 					id: 'ASource',
-					choices: getChoices(ActionType.AudioEnableSource),
+					choices: model.getChoices(ActionType.AudioEnableSource),
 					default: 0,
 				},
 				{
@@ -146,7 +146,7 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 				const opt2 = getOptNumber(action, 'AudioEnable')
 				let paramOpt = 0
 				if (opt2 === 2) {
-					paramOpt = instance.states.AudioMixer.enabled[opt1] === 0 ? 1 : 0
+					paramOpt = state.state[opt1] === AudioState.Off ? 1 : 0
 					await sendCommand(ActionId.AudioEnable, ReqType.Set, [opt1, paramOpt])
 				} else {
 					await sendCommand(ActionId.AudioEnable, ReqType.Set, [opt1, opt2])
@@ -181,9 +181,9 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 				const opt2 = getOptNumber(action, 'ASource')
 				let paramOpt = 0
 				if (opt1 === 3) {
-					if (instance.states.AudioMixer.enabled[opt1] === 0) paramOpt = 1
-					else if (instance.states.AudioMixer.enabled[opt1] === 1) paramOpt = 2
-					else paramOpt = 0
+					if (state.state[opt1] === AudioState.Off) paramOpt = AudioState.On
+					else if (state.state[opt1] === AudioState.On) paramOpt = AudioState.AFV
+					else paramOpt = AudioState.Off
 					await sendCommand(ActionId.AudioEnable, ReqType.Set, [opt2, paramOpt])
 				} else {
 					await sendCommand(ActionId.AudioEnable, ReqType.Set, [opt2, opt1])
@@ -241,7 +241,7 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 					type: 'dropdown',
 					label: 'Source',
 					id: 'AudioSource',
-					choices: getChoices(ActionType.AudioMonitorSource),
+					choices: model.getChoices(ActionType.AudioMonitorSource),
 					default: 0,
 				},
 			],

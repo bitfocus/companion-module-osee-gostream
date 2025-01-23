@@ -12,9 +12,8 @@ export enum FeedbackId {
 	Cut = 'cut',
 	Prev = 'prev',
 	TransitionRate = 'transitionRate',
-	TransitionKeySwitch = 'transitionKeySwitch',
-	TransitionSelection = 'transitionSelection',
 	FadeToBlackIsBlack = 'fadeToBlackIsBlack',
 	FadeToBlackRate = 'fadeToBlackRate',
 	FTBAFV = 'FTBAFV',
+	TransitionSelection = 'transitionSelection',
 }

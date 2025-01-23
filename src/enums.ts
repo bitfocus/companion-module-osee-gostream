@@ -1,9 +1,3 @@
-export enum Model {
-	Unknown = 0x00,
-	Deck = 0x01, // TODO: Find out the ID number from handshake
-	Duet = 0x02,
-}
-
 export enum PortType {
 	Unknown = 0,
 	SDI = 1 << 0,

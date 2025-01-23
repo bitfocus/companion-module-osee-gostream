@@ -4,7 +4,7 @@ import crc16modbus from 'crc/crc16modbus'
 
 import { GoStreamInstance } from './index'
 import { updateVariables } from './variables'
-import type { IModelSpec } from './models/types'
+import type { GoStreamModel } from './models/types'
 
 import { MixEffectState } from './functions/mixEffect'
 import { PlaybackState } from './functions/playback'
@@ -192,7 +192,7 @@ function handleCommands(instance: GoStreamInstance, data: GoStreamCmd[]): void {
 	updateVariables(instance)
 }
 
-export async function ReqStateData(model?: IModelSpec): Promise<boolean> {
+export async function ReqStateData(model?: GoStreamModel): Promise<boolean> {
 	if (!model) return false
 	await MixEffectState.sync(model)
 	await PlaybackState.sync(model)

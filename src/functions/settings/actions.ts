@@ -1,16 +1,17 @@
 import { ActionId } from './actionId'
 import { getOptNumber, getOptString } from './../../util'
-import { getChoices } from './../../choices'
-import { ReqType, ActionType, PortType } from './../../enums'
+import { ReqType, ActionType, PortType, PortCaps } from './../../enums'
 import { sendCommand } from './../../connection'
-import type { GoStreamInstance } from './../../index'
+import { SettingsStateT } from './state'
+import { GoStreamModel } from '../../models/types'
 import type { CompanionActionDefinitions } from '@companion-module/base'
 import {
 	SettingsAuxSourceChoices,
 	SettingsOutFormatChoices,
 	SettingsColorChoices,
 	SettingsOutSourceParamChoices,
-	SettingsMicInputChoices,
+	SettingsMic1InputChoices,
+	SettingsMic2InputChoices,
 	SettingsMvMeterChoices,
 	SettingsMvLayoutChoices,
 	SettingsInputWindowLayoutChoices,
@@ -18,9 +19,9 @@ import {
 	SettingsUMDSrcChoices,
 	SwitchChoices,
 } from './../../model'
-import { getInputChoices, getColorChoices } from './../../models'
+import { getInputs } from './../../models'
 
-export function create(instance: GoStreamInstance): CompanionActionDefinitions {
+export function create(model: GoStreamModel, state: SettingsStateT): CompanionActionDefinitions {
 	return {
 		[ActionId.SrcName]: {
 			name: 'Settings:Set SrcName',
@@ -70,7 +71,7 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 				let enable = getOptNumber(action, 'MvMeterEnable')
 				if (enable === 2) {
 					// Toggle
-					enable = instance.states.SettingsProp.MvMeter[src] === 1 ? 0 : 1
+					enable = state.mvMeter[src] === 1 ? 0 : 1
 				}
 				await sendCommand(ActionId.MvMeter, ReqType.Set, [src, enable])
 			},
@@ -91,7 +92,7 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 			},
 		},
 		[ActionId.InputWindowLayout]: {
-			name: ' Settings:Set Input Window Mv Layout',
+			name: ' Settings: Set Input Window Mv Layout',
 			options: [
 				{
 					type: 'dropdown',
@@ -106,7 +107,7 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 			},
 		},
 		[ActionId.Marker]: {
-			name: 'Settings:Set Marker',
+			name: 'Settings: Set Marker',
 			options: [
 				{
 					type: 'dropdown',
@@ -121,7 +122,7 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 			},
 		},
 		[ActionId.MicInput]: {
-			name: 'Settings:Mic Input',
+			name: 'Settings: Mic Input',
 			options: [
 				{
 					type: 'dropdown',
@@ -132,21 +133,30 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 				},
 				{
 					type: 'dropdown',
-					label: 'Mic Input',
-					id: 'MicInput',
-					choices: SettingsMicInputChoices,
+					label: 'Input type',
+					id: 'MicInput1',
+					choices: SettingsMic1InputChoices,
 					default: 0,
+					isVisible: (options) => options.micid === 0,
+				},
+				{
+					type: 'dropdown',
+					label: 'Input type',
+					id: 'MicInput2',
+					choices: SettingsMic2InputChoices,
+					default: 0,
+					isVisible: (options) => options.micid === 1,
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.MicInput, ReqType.Set, [
-					getOptNumber(action, 'micid'),
-					getOptNumber(action, 'MicInput'),
-				])
+				let type = getOptNumber(action, 'MicInput1')
+				if (action.options.micid === 1) type = getOptNumber(action, 'MicInput2')
+
+				await sendCommand(ActionId.MicInput, ReqType.Set, [getOptNumber(action, 'micid'), type])
 			},
 		},
 		[ActionId.RecordFileName]: {
-			name: 'Settings:Record FileName',
+			name: 'Settings: Record FileName',
 			options: [
 				{
 					type: 'textinput',
@@ -161,25 +171,30 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 			},
 		},
 		[ActionId.SrcSelection]: {
-			name: 'Settings:Src Selection',
+			name: 'Settings: Src Selection',
 			options: [
 				{
 					type: 'dropdown',
 					label: 'Src',
 					id: 'Srcid',
-					choices: getInputChoices(instance.model, PortType.External),
+					choices: getInputs(model, PortType.External).map((item, index) => ({
+						id: index,
+						label: item.longName,
+					})),
 					default: '0',
 				},
 				{
 					type: 'dropdown',
 					label: 'Selection',
 					id: 'SrcSelection',
-					choices: getColorChoices(instance.model),
+					choices: state.sourceSelectionList.map((item, index) => ({
+						id: index,
+						label: item,
+					})),
 					default: '0',
 				},
 			],
 			callback: async (action) => {
-				console.log(getOptNumber(action, 'Srcid'), getOptNumber(action, 'SrcSelection'))
 				await sendCommand(ActionId.SrcSelection, ReqType.Set, [
 					getOptNumber(action, 'Srcid'),
 					getOptNumber(action, 'SrcSelection'),
@@ -187,7 +202,7 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 			},
 		},
 		[ActionId.AuxSource]: {
-			name: 'Settings:Aux Source',
+			name: 'Settings: Aux Source',
 			options: [
 				{
 					type: 'dropdown',
@@ -202,7 +217,7 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 			},
 		},
 		[ActionId.OutFormat]: {
-			name: 'Settings:OutFormat',
+			name: 'Settings: Out Format',
 			options: [
 				{
 					type: 'dropdown',
@@ -217,16 +232,17 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 			},
 		},
 		[ActionId.OutputColorSpace]: {
-			name: 'Settings:Output ColorSpace',
+			name: 'Settings: Output ColorSpace',
 			options: [
 				{
 					type: 'dropdown',
 					label: 'Out',
 					id: 'OutId',
-					choices: [
-						{ id: '0', label: 'out1' },
-						{ id: '1', label: 'out2' },
-					],
+					choices: model.outputs
+						.filter((out) => out.caps & PortCaps.Colorspace)
+						.map((item, index) => {
+							return { id: index, label: item.longName }
+						}),
 					default: 0,
 				},
 				{
@@ -258,7 +274,7 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 					type: 'dropdown',
 					label: 'OutSource',
 					id: 'OutSource',
-					choices: getChoices(ActionType.SettingsoutSource),
+					choices: model.getChoices(ActionType.SettingsoutSource),
 					default: 0,
 				},
 			],
@@ -299,6 +315,26 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 					getOptNumber(action, 'TypeID'),
 					getOptNumber(action, 'Quality'),
 				])
+			},
+		},
+		[ActionId.NDIConnect]: {
+			name: 'Settings: Select NDI source',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Source name',
+					id: 'sourceId',
+					choices:
+						state.ndiSources.length == 0
+							? [{ id: -1, label: 'No sources found' }]
+							: state.ndiSources.map((source, index) => ({ id: index, label: source.name })),
+					default: 0,
+				},
+			],
+			callback: async (action) => {
+				const id = getOptNumber(action, 'sourceId')
+				if (id === -1) return
+				await sendCommand(ActionId.NDIConnect, ReqType.Set, [state.ndiSources[id].name, state.ndiSources[id].address])
 			},
 		},
 	}

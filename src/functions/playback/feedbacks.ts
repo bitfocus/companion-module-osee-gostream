@@ -1,8 +1,8 @@
 import { FeedbackId } from './feedbackId'
-import type { GoStreamInstance } from '../../index'
 import { combineRgb, CompanionFeedbackDefinitions } from '@companion-module/base'
-
-export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions {
+import { PlaybackStateT } from './state'
+import type { GoStreamModel } from '../../models/types'
+export function create(_model: GoStreamModel, state: PlaybackStateT): CompanionFeedbackDefinitions {
 	return {
 		[FeedbackId.PlaybackMode]: {
 			type: 'boolean',
@@ -25,7 +25,7 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: (feedback) => {
-				return feedback.options.ModeID === instance.states.Playback.Mode
+				return feedback.options.ModeID === state.Mode
 			},
 		},
 		[FeedbackId.PlaybackRepeat]: {
@@ -38,7 +38,7 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: () => {
-				return instance.states.Playback.Repeat
+				return state.Repeat
 			},
 		},
 		[FeedbackId.PlaybackPause]: {
@@ -51,7 +51,7 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: () => {
-				return instance.states.Playback.Pause
+				return state.Pause
 			},
 		},
 		[FeedbackId.PlaybackBar]: {
@@ -64,7 +64,7 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: () => {
-				return instance.states.Playback.Bar
+				return state.Bar
 			},
 		},
 		[FeedbackId.PlayFile]: {
@@ -76,7 +76,7 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 					type: 'dropdown',
 					label: 'Video file',
 					id: 'PlayFileID',
-					choices: instance.states.Playback.FileList.map((s, index) => ({
+					choices: state.FileList.map((s, index) => ({
 						id: index,
 						label: s,
 					})),
@@ -88,7 +88,7 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: (feedback) => {
-				return feedback.options.PlayFileID === instance.states.Playback.PlayFile
+				return feedback.options.PlayFileID === state.File
 			},
 		},
 	}

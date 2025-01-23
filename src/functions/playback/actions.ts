@@ -3,10 +3,11 @@ import { getOptNumber } from '../../util'
 import { SwitchChoices } from '../../model'
 import { ReqType } from '../../enums'
 import { sendCommand } from '../../connection'
-import type { GoStreamInstance } from '../../index'
 import type { CompanionActionDefinitions } from '@companion-module/base'
+import { PlaybackStateT } from './state'
+import type { GoStreamModel } from '../../models/types'
 
-export function create(instance: GoStreamInstance): CompanionActionDefinitions {
+export function create(_model: GoStreamModel, state: PlaybackStateT): CompanionActionDefinitions {
 	return {
 		[ActionId.PlayModeRepeatPause]: {
 			name: 'Playback:Set playback Info',
@@ -47,7 +48,7 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 				const opt = getOptNumber(action, 'pauseId')
 				let paramOpt = 0
 				if (opt === 2) {
-					if (instance.states.PlayBackState.PlaybackPause === true) {
+					if (state.Pause === true) {
 						paramOpt = 0
 					} else {
 						paramOpt = 1
@@ -91,7 +92,7 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 					type: 'dropdown',
 					label: 'PlayFile',
 					id: 'PlayFileID',
-					choices: instance.states.Playback.FileList.map((s, index) => ({
+					choices: state.FileList.map((s, index) => ({
 						id: index,
 						label: s,
 					})),
@@ -100,7 +101,7 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 			],
 			callback: async (action) => {
 				const opt = getOptNumber(action, 'PlayFileID')
-				await sendCommand(ActionId.PlayFile, ReqType.Set, [instance.states.Playback.FileList[opt]])
+				await sendCommand(ActionId.PlayFile, ReqType.Set, [state.FileList[opt]])
 			},
 		},
 		[ActionId.PlaybackRepeat]: {
@@ -118,7 +119,7 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 				const opt = getOptNumber(action, 'EnableID')
 				let paramOpt = 0
 				if (opt === 2) {
-					if (instance.states.Playback.Repeat === true) {
+					if (state.Repeat === true) {
 						paramOpt = 0
 					} else {
 						paramOpt = 1
@@ -148,7 +149,7 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 				const opt = getOptNumber(action, 'EnableID')
 				let paramOpt = 0
 				if (opt === 2) {
-					if (instance.states.Playback.Pause === true) {
+					if (state.Pause === true) {
 						paramOpt = 0
 					} else {
 						paramOpt = 1
@@ -174,7 +175,7 @@ export function create(instance: GoStreamInstance): CompanionActionDefinitions {
 				const opt = getOptNumber(action, 'EnableID')
 				let paramOpt = 0
 				if (opt === 2) {
-					if (instance.states.Playback.Bar === true) {
+					if (state.Bar === true) {
 						paramOpt = 0
 					} else {
 						paramOpt = 1

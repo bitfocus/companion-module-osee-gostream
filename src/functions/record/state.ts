@@ -1,7 +1,7 @@
 import { ActionId } from './actionId'
 import { sendCommand } from '../../connection'
 import { ReqType } from '../../enums'
-import type { IModelSpec } from '../../models/types'
+import type { GoStreamModel } from '../../models/types'
 import { GoStreamCmd } from '../../connection'
 
 export type RecordStateT = {
@@ -9,14 +9,14 @@ export type RecordStateT = {
 	recordTime: string
 }
 
-export function create(_model: IModelSpec): RecordStateT {
+export function create(_model: GoStreamModel): RecordStateT {
 	return {
 		isRecording: false,
 		recordTime: '',
 	}
 }
 
-export async function sync(_model: IModelSpec): Promise<boolean> {
+export async function sync(_model: GoStreamModel): Promise<boolean> {
 	return await sendCommand(ActionId.Record, ReqType.Get)
 }
 

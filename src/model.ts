@@ -51,6 +51,11 @@ export const KeySwitchChoices = [
 	{ id: 1, label: 'DSK' },
 	{ id: 2, label: 'BKGD' },
 ]
+export const SuperSourceChoices = [
+	{ id: 0, label: 'Source 1' },
+	{ id: 1, label: 'Source 2' },
+	{ id: 2, label: 'Background' },
+]
 export const ColorSwitchChoices = [
 	{ id: 0, label: 'Color1' },
 	{ id: 1, label: 'Color2' },
@@ -122,32 +127,36 @@ export const SettingsMvMeterChoices = [
 	{ id: 5, label: 'aux' },
 ]
 export const SettingsMvLayoutChoices = [
-	{ id: 0, label: 'PGM|PVW' },
-	{ id: 1, label: 'PVW|PGM' },
+	{ id: 0, label: 'PVW|PGM' },
+	{ id: 1, label: 'PGM|PVW' },
 ]
 export const SettingsInputWindowLayoutChoices = [
 	{ id: 0, label: 'Style 1' },
 	{ id: 1, label: 'Style 2' },
 ]
-export const SettingsMicInputChoices = [
-	{ id: 0, label: 'mic+power' },
-	{ id: 1, label: 'mic' },
-	{ id: 2, label: 'line' },
+export const SettingsMic1InputChoices = [
+	{ id: 0, label: 'Mic+power' },
+	{ id: 1, label: 'Mic' },
+	{ id: 2, label: 'Line' },
+]
+export const SettingsMic2InputChoices = [
+	{ id: 0, label: 'Mic' },
+	{ id: 1, label: 'Line' },
 ]
 export const SettingsColorChoices = [
-	{ id: 0, label: 'auto' },
-	{ id: 1, label: 'rgb full' },
-	{ id: 2, label: 'rgb limit' },
-	{ id: 3, label: 'ycbcr422 full' },
-	{ id: 4, label: 'ycbcr422 limit' },
-	{ id: 5, label: 'ycbcr444 full' },
-	{ id: 6, label: 'ycbcr444 limit' },
+	{ id: 0, label: 'HDMI Auto' },
+	{ id: 1, label: 'HDMI RGB Full' },
+	{ id: 2, label: 'HDMI RGB Limit' },
+	{ id: 3, label: 'HDMI YC422 Full' },
+	{ id: 4, label: 'HDMI YC422 Limit' },
+	{ id: 5, label: 'HDMI YC444 Full' },
+	{ id: 6, label: 'HDMI YC444 Limit' },
 ]
 export const SettingsAuxSourceChoices = [
 	//0~2，sd card,usb camera,ndi
-	{ id: 0, label: 'sd card' },
-	{ id: 1, label: 'usb camera' },
-	{ id: 2, label: 'ndi' },
+	{ id: 0, label: 'Player' },
+	{ id: 1, label: 'USB Camera' },
+	{ id: 2, label: 'NDI' },
 ]
 export const SettingsOutFormatChoices = [
 	{ id: 0, label: '1080p23.98' },

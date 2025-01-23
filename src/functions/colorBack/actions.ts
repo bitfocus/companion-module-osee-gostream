@@ -4,9 +4,10 @@ import { ColorSwitchChoices } from './../../model'
 import { ReqType } from './../../enums'
 import { sendCommand } from './../../connection'
 import type { CompanionActionDefinitions } from '@companion-module/base'
-import type { GoStreamInstance } from './../../index'
+import { GoStreamModel } from '../../models/types'
+import { ColorBackStateT } from './state'
 
-export function create(_instance: GoStreamInstance): CompanionActionDefinitions {
+export function create(_model: GoStreamModel, _state: ColorBackStateT): CompanionActionDefinitions {
 	return {
 		[ActionId.ColorHue]: {
 			name: 'Color Back:Set Color Hue',

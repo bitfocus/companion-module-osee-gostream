@@ -1,9 +1,10 @@
 import { combineRgb, CompanionFeedbackDefinitions } from '@companion-module/base'
-import type { GoStreamInstance } from '../../index'
 import { FeedbackId } from './feedbackId'
 import { StreamingChoices } from '../../model'
+import { StreamingStateT } from './state'
+import { GoStreamModel } from '../../models/types'
 
-export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions {
+export function create(_model: GoStreamModel, state: StreamingStateT): CompanionFeedbackDefinitions {
 	return {
 		[FeedbackId.StreamOutput]: {
 			type: 'boolean',
@@ -23,7 +24,7 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: (feedback) => {
-				return instance.states.Streaming.streamInfo[Number(feedback.options.StreamID)].enabled
+				return state.streamInfo[Number(feedback.options.StreamID)].enabled
 			},
 		},
 		[FeedbackId.LiveInfo]: {
@@ -48,7 +49,7 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: (feedback) => {
-				return instance.states.Streaming.status === feedback.options.statesId
+				return state.status === feedback.options.statesId
 			},
 		},
 	}

@@ -3,9 +3,9 @@ import { CompanionPresetDefinitions } from '@companion-module/base'
 import { ActionId } from './actionId'
 import { FeedbackId } from './feedbackId'
 import { MacroFeedbackType } from './feedbacks'
-
+import { GoStreamModel } from '../../models/types'
 const ptzSize = '14'
-export function create(): CompanionPresetDefinitions {
+export function create(_model: GoStreamModel): CompanionPresetDefinitions {
 	const presets = {}
 	for (let macro = 0; macro < 100; macro++) {
 		presets[`macro_run_${macro}`] = {

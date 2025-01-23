@@ -1,9 +1,7 @@
 import { ActionId } from './actionId'
 import { sendCommands, GoStreamCmd } from '../../connection'
 import { ReqType } from '../../enums'
-import { Choice } from '../../choices'
-import type { IModelSpec } from '../../models/types'
-import { TransitionStyleChoice } from '../../model'
+import type { GoStreamModel } from '../../models/types'
 
 export type MixEffectStateT = {
 	PvwSrc: number
@@ -20,14 +18,14 @@ export type MixEffectStateT = {
 	}
 	selectTransitionStyle: {
 		PrevState: boolean
-		style: Choice
+		style: number
 		mixrate: number
 		diprate: number
 		wiperate: number
 	}
 }
 
-export function create(_model: IModelSpec): MixEffectStateT {
+export function create(_model: GoStreamModel): MixEffectStateT {
 	return {
 		PvwSrc: 0,
 		PgmSrc: 0,
@@ -43,7 +41,7 @@ export function create(_model: IModelSpec): MixEffectStateT {
 		},
 		selectTransitionStyle: {
 			PrevState: false,
-			style: { id: 0, label: 'MIX' },
+			style: 0,
 			mixrate: 0,
 			diprate: 0,
 			wiperate: 0,
@@ -51,7 +49,7 @@ export function create(_model: IModelSpec): MixEffectStateT {
 	}
 }
 
-export async function sync(model: IModelSpec): Promise<boolean> {
+export async function sync(model: GoStreamModel): Promise<boolean> {
 	const cmds: GoStreamCmd[] = [
 		{ id: ActionId.PgmIndex, type: ReqType.Get },
 		{ id: ActionId.PvwIndex, type: ReqType.Get },
@@ -106,14 +104,11 @@ export function update(state: MixEffectStateT, data: GoStreamCmd): boolean {
 			state.fadeToBlack.rate = data.value[0]
 			break
 		case ActionId.Prev:
-			state.selectTransitionStyle.PrevState = data.value[0] === 1 ? true : false
+			state.selectTransitionStyle.PrevState = Boolean(data.value[0])
 			break
 		case ActionId.TransitionIndex: {
 			const selectValue = Number(data.value[0])
-			const selectStyle = TransitionStyleChoice.find((s) => s.id === selectValue)
-			if (selectStyle !== undefined) {
-				state.selectTransitionStyle.style = selectStyle
-			}
+			state.selectTransitionStyle.style = selectValue
 			break
 		}
 		case ActionId.TransitionRate: {

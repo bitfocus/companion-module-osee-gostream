@@ -1,5 +1,4 @@
 import { FeedbackId } from './feedbackId'
-import type { GoStreamInstance } from '../../index'
 import { combineRgb, CompanionFeedbackDefinitions } from '@companion-module/base'
 import {
 	SettingsInputWindowLayoutChoices,
@@ -9,12 +8,15 @@ import {
 	SettingsColorChoices,
 	SettingsMvLayoutChoices,
 	AudioMicChoices,
-	SettingsMicInputChoices,
+	SettingsMic1InputChoices,
+	SettingsMic2InputChoices,
 } from './../../model'
-import { PortType } from './../../enums'
-import { getOutputChoices, getInputChoices } from './../../models'
+import { PortType, PortCaps } from './../../enums'
+import { getOutputChoices, getInputs } from './../../models'
+import { SettingsStateT } from './state'
+import { GoStreamModel } from '../../models/types'
 
-export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions {
+export function create(model: GoStreamModel, state: SettingsStateT): CompanionFeedbackDefinitions {
 	return {
 		[FeedbackId.InputWindowLayout]: {
 			type: 'boolean',
@@ -34,11 +36,11 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 				bgcolor: combineRgb(0, 255, 0),
 			},
 			callback: (feedback) => {
-				return instance.states.Settings.inputWindowLayout === feedback.options.StyleID
+				return state.inputWindowLayout === feedback.options.StyleID
 			},
 			learn: () => {
 				return {
-					StyleID: instance.states.Settings.InputWindowLayout,
+					StyleID: state.inputWindowLayout,
 				}
 			},
 		},
@@ -58,7 +60,7 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 					type: 'dropdown',
 					label: 'OutSource',
 					id: 'OutSource',
-					choices: getOutputChoices(instance.model),
+					choices: getOutputChoices(model),
 					default: 0,
 				},
 			],
@@ -67,13 +69,11 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: (feedback) => {
-				//const outSource = instance.states.Settings.OutSource
 				const OutTypeID = feedback.options.OutId
 				const SelectSource = feedback.options.OutSource
 				return OutTypeID === SelectSource
 			},
 			learn: (feedback) => {
-				//const outSource = instance.states.Settings.OutSource
 				const OutTypeID = feedback.options.OutId
 				if (OutTypeID === 0) {
 					return {
@@ -102,10 +102,11 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 					type: 'dropdown',
 					label: 'Output',
 					id: 'OutputId',
-					choices: [
-						{ id: '0', label: 'out1' },
-						{ id: '1', label: 'out2' },
-					],
+					choices: model.outputs
+						.filter((out) => out.caps & PortCaps.Colorspace)
+						.map((item, index) => {
+							return { id: index, label: item.longName }
+						}),
 					default: 0,
 				},
 				{
@@ -121,15 +122,12 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 				bgcolor: combineRgb(0, 255, 0),
 			},
 			callback: (feedback) => {
-				return (
-					instance.states.Settings.OutputColorSpace[Number(feedback.options.OutputId)] ===
-					feedback.options.OutputColorSpaceId
-				)
+				return state.outputColorSpace[Number(feedback.options.OutputId)] === feedback.options.OutputColorSpaceId
 			},
 			learn: (feedback) => {
 				return {
 					...feedback.options,
-					OutputColorSpaceId: instance.states.Settings.OutputColorSpace[Number(feedback.options.OutputId)],
+					OutputColorSpaceId: state.outputColorSpace[Number(feedback.options.OutputId)],
 				}
 			},
 		},
@@ -151,11 +149,11 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 				bgcolor: combineRgb(0, 255, 0),
 			},
 			callback: (feedback) => {
-				return instance.states.Settings.OutputFormat === feedback.options.OutputFormatId
+				return state.outputFormat === feedback.options.OutputFormatId
 			},
 			learn: () => {
 				return {
-					OutputFormatId: instance.states.Settings.OutputFormat,
+					OutputFormatId: state.outputFormat,
 				}
 			},
 		},
@@ -177,11 +175,11 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 				bgcolor: combineRgb(0, 255, 0),
 			},
 			callback: (feedback) => {
-				return instance.states.Settings.MvLayout === feedback.options.MvLayoutId
+				return state.mvLayout === feedback.options.MvLayoutId
 			},
 			learn: () => {
 				return {
-					MvLayoutId: instance.states.Settings.MvLayoutId,
+					MvLayoutId: state.mvLayout,
 				}
 			},
 		},
@@ -194,15 +192,21 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 					type: 'dropdown',
 					label: 'Src',
 					id: 'srcId',
-					choices: getInputChoices(instance.model, PortType.External),
-					default: 0,
+					choices: getInputs(model, PortType.External).map((item, index) => ({
+						id: index,
+						label: item.longName,
+					})),
+					default: '0',
 				},
 				{
 					type: 'dropdown',
 					label: 'Selection',
 					id: 'srcSelectionId',
-					choices: SettingsColorChoices,
-					default: 0,
+					choices: state.sourceSelectionList.map((item, index) => ({
+						id: index,
+						label: item,
+					})),
+					default: '0',
 				},
 			],
 			defaultStyle: {
@@ -210,14 +214,12 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 				bgcolor: combineRgb(0, 255, 0),
 			},
 			callback: (feedback) => {
-				return (
-					instance.states.Settings.SourceSelection[Number(feedback.options.srcId)] === feedback.options.srcSelectionId
-				)
+				return state.sourceSelection[Number(feedback.options.srcId)] === feedback.options.srcSelectionId
 			},
 			learn: (feedback) => {
 				return {
 					...feedback.options,
-					srcSelectionId: instance.states.Settings.SourceSelection,
+					srcSelectionId: state.sourceSelection,
 				}
 			},
 		},
@@ -235,10 +237,19 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 				},
 				{
 					type: 'dropdown',
-					label: 'Mic Input',
-					id: 'micInputId',
-					choices: SettingsMicInputChoices,
+					label: 'Input type',
+					id: 'MicInput1',
+					choices: SettingsMic1InputChoices,
 					default: 0,
+					isVisible: (options) => options.micId === 0,
+				},
+				{
+					type: 'dropdown',
+					label: 'Input type',
+					id: 'MicInput2',
+					choices: SettingsMic2InputChoices,
+					default: 0,
+					isVisible: (options) => options.micId === 1,
 				},
 			],
 			defaultStyle: {
@@ -246,12 +257,15 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 				bgcolor: combineRgb(0, 255, 0),
 			},
 			callback: (feedback) => {
-				return instance.states.Settings.MicInput[Number(feedback.options.micId)] === feedback.options.micInputId
+				const micid = Number(feedback.options.micId)
+				let type = Number(feedback.options.MicInput1)
+				if (micid === 1) type = Number(feedback.options.MicInput2)
+				return state.micInput[micid] === type
 			},
 			learn: (feedback) => {
 				return {
 					...feedback.options,
-					micInputId: instance.states.Settings.MicInput[Number(feedback.options.micId)],
+					micInputId: state.micInput[Number(feedback.options.micId)],
 				}
 			},
 		},
@@ -273,14 +287,59 @@ export function create(instance: GoStreamInstance): CompanionFeedbackDefinitions
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: (feedback) => {
-				return instance.states.Settings.AuxSource === Number(feedback.options.auxSourceID)
+				return state.auxSource === Number(feedback.options.auxSourceID)
 			},
 			learn: (feedback) => {
-				const auxSource = instance.states.Settings.AuxSource
+				const auxSource = state.auxSource
 				if (auxSource !== undefined) {
 					return {
 						...feedback.options,
 						auxSourceID: auxSource,
+					}
+				} else {
+					return undefined
+				}
+			},
+		},
+		[FeedbackId.NDIConnect]: {
+			type: 'boolean',
+			name: 'Aux: Connected NDI source',
+			description: 'If the input specified is connected to NDI, change style of the bank',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'NDI Source',
+					id: 'ndiSourceName',
+					choices:
+						state.ndiSources.length == 0
+							? [{ id: -1, label: 'No sources found' }]
+							: state.ndiSources.map((source) => ({
+									id: source.name,
+									label: source.name + ' [' + source.address + ']',
+								})),
+					default: state.ndiSources.length == 0 ? -1 : state.ndiSources[0].name,
+				},
+			],
+			defaultStyle: {
+				color: combineRgb(0, 0, 0),
+				bgcolor: combineRgb(255, 255, 0),
+			},
+			callback: (feedback) => {
+				const name = feedback.options.ndiSourceName
+				if (name === -1) return false
+				const selectedNdiSource = state.ndiSources.find((source) => source.name === name)
+				if (!selectedNdiSource) return false
+				return (
+					state.connectedNdiSouce.name === selectedNdiSource.name &&
+					state.connectedNdiSouce.address === selectedNdiSource.address
+				)
+			},
+			learn: (feedback) => {
+				const ndiSource = state.connectedNdiSouce
+				if (ndiSource !== undefined) {
+					return {
+						...feedback.options,
+						ndiSourceName: ndiSource.name,
 					}
 				} else {
 					return undefined

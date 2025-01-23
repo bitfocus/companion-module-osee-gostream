@@ -1,7 +1,7 @@
 import { ActionId } from './actionId'
 import { sendCommand, GoStreamCmd } from '../../connection'
 import { ReqType } from '../../enums'
-import type { IModelSpec } from '../../models/types'
+import type { GoStreamModel } from '../../models/types'
 
 export type MacroT = {
 	name: string
@@ -13,21 +13,21 @@ export type MacroT = {
 	index: number
 }
 
-export type MacroState = {
+export type MacroStateT = {
 	macros: MacroT[]
 }
 
-export function create(_model: IModelSpec): MacroState {
+export function create(_model: GoStreamModel): MacroStateT {
 	return {
 		macros: [],
 	}
 }
 
-export async function sync(_model: IModelSpec): Promise<boolean> {
+export async function sync(_model: GoStreamModel): Promise<boolean> {
 	return await sendCommand(ActionId.GetMacroInfoAll, ReqType.Get)
 }
 
-export function update(state: MacroState, data: GoStreamCmd): boolean {
+export function update(state: MacroStateT, data: GoStreamCmd): boolean {
 	if (!data.value) return false
 	switch (data.id as ActionId) {
 		case ActionId.MacroInfo: {
