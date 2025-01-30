@@ -330,12 +330,12 @@ export function create(model: GoStreamModel, state: SettingsStateT): CompanionFe
 				const selectedNdiSource = state.ndiSources.find((source) => source.name === name)
 				if (!selectedNdiSource) return false
 				return (
-					state.connectedNdiSouce.name === selectedNdiSource.name &&
-					state.connectedNdiSouce.address === selectedNdiSource.address
+					state.connectedNdiSource.name === selectedNdiSource.name &&
+					state.connectedNdiSource.address === selectedNdiSource.address
 				)
 			},
 			learn: (feedback) => {
-				const ndiSource = state.connectedNdiSouce
+				const ndiSource = state.connectedNdiSource
 				if (ndiSource !== undefined) {
 					return {
 						...feedback.options,
