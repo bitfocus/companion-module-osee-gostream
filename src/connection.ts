@@ -50,7 +50,7 @@ export function valueAsBoolean(val: string | number | any[]): boolean {
  * U16 crc
  *
  * A TCP datagram might contain many data packets
- * A Packet might be cut based on TCP datagram lenght,
+ * A Packet might be cut based on TCP datagram length,
  * the next packet will then start with rest of data
  * without the header
  * E.g.

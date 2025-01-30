@@ -8,7 +8,7 @@ export function create(_model: GoStreamModel, state: StreamingStateT): Companion
 	return {
 		[FeedbackId.StreamOutput]: {
 			type: 'boolean',
-			name: 'Streamming: Set Stream Enable',
+			name: 'Streaming: Set Stream Enable',
 			description: 'If you turn on Stream Enable, change style of the bank',
 			options: [
 				{
