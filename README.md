@@ -51,6 +51,22 @@ struct GoStreamPacket:
 
 The GoStream device might send several GoStreamPackets in the same Ethernet frame, each Packet might be split in several parts depending on TCP load etc.
 
+
+## Notes on module development 
+
+The Osee GoStream module follows normal companion release numbering 
+using <major>.<minor>.<fix> . Major numbers are increased with big 
+changes and non backwards compatible changes . Minor numbering is 
+increased with feature growth whether internal or external , fix 
+increases with bugfixes of issues on the release . So v 1.1.0 would 
+be v1.1.1 when a release fixing one or more bugs is released.
+
+Development will always take place on a branch named after 
+the coming release , so all v1.3.0 development happens on the 
+branch v1.3.0 . When planned content is delivered to the branch 
+a pre-release for testing  is done on that branch . If all seem 
+well a PR to master is done and the release is tagged . 
+
 ## Help
 
 See [HELP.md](./companion/HELP.md)
