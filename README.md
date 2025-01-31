@@ -16,7 +16,7 @@ To manually build the latest version for your machine:
 
 ## Notes on OSEE GoStream protocol
 
-The GoStream protocol (GSP) is a TCP based request-response like protocol with a push functionallity. Data is send in JSON encoded datastructures and content is little-endian encoded.
+The GoStream protocol (GSP) is a TCP based request-response like protocol with a push functionality. Data is send in JSON encoded datastructures and content is little-endian encoded.
 There is no handshake procedure for connection (other than normal TCP handshake) and no keep-alive messages or similar, so quite a minimalistic API.
 Communication is based on set/get of state variables using the following datapacket format
 

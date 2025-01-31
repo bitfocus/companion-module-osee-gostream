@@ -10,7 +10,7 @@ export function create(_model: GoStreamModel): CompanionPresetDefinitions {
 	for (let Still = 0; Still < 31; Still++) {
 		presets[`Still_Selection_${Still}`] = {
 			category: 'Still',
-			name: `Still: Slect pic index`,
+			name: `Still: Select pic index`,
 			type: 'button',
 			style: {
 				text: `Still${Still + 1}`,
