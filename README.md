@@ -55,7 +55,7 @@ The GoStream device might send several GoStreamPackets in the same Ethernet fram
 ## Notes on module development 
 
 The Osee GoStream module follows normal companion release numbering 
-using <major>.<minor>.<fix> . Major numbers are increased with big 
+using major.minor.fix format. Major numbers are increased with big 
 changes and non backwards compatible changes . Minor numbering is 
 increased with feature growth whether internal or external , fix 
 increases with bugfixes of issues on the release . So v 1.1.0 would 
