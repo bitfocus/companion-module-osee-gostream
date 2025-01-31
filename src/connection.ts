@@ -163,7 +163,7 @@ export function handleGoStreamPacket(msg_data: Buffer): GoStreamCmd[] {
 }
 
 function unpackData(msg_data: Buffer): GoStreamCmd {
-	const jsonContent = UpackDatas(msg_data)
+	const jsonContent = UnpackDatas(msg_data)
 	const jsonStr = jsonContent.toString('utf8')
 	const json = JSON.parse(jsonStr)
 	return json
@@ -251,7 +251,7 @@ function PackData(data: Buffer): Buffer {
 	packet.writeUInt16LE(crc16modbus(packet.subarray(0, packetLen - 2)), packet.length - 2)
 	return packet
 }
-function UpackDatas(resp: Buffer): Buffer {
+function UnpackDatas(resp: Buffer): Buffer {
 	if (resp.length == 0) {
 		throw new Error('recv null')
 	}
