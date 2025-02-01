@@ -8,11 +8,24 @@ This module is created for use with GoStream Devices.
 - [Read the docs](./How%20to%20connect%20to%20computer%20software%20and%20companion.pdf)
 - [Follow on github](https://github.com/bitfocus/companion-module-osee-gostream)
 
-## Build
+## On developing the module
 
-To manually build the latest version for your machine:
+Follow the [developing module guidelines](https://github.com/bitfocus/companion-module-base/wiki) to setup the environment. 
+Install all the dependencies using 
 
-- `yarn install`
+'yarn' 
+
+The GoStream module is written in TypeScript and need to be compiled before changes takes place. This is done using 
+
+'yarn build'
+
+When done with a change make sure you lint it, there should be no warnings 
+
+'yarn eslint' 
+
+and also format the code
+
+'yarn format'
 
 ## Notes on OSEE GoStream protocol
 
