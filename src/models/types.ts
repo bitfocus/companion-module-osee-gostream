@@ -8,7 +8,7 @@ import {
 	OtherDSKSourceModels,
 	AudioMicChoices,
 	AudioInputSourcesChoices,
-	OtherAudioSourcesChoices,
+	HeadphoneSourceChoices,
 	AudioSourcesEnableChoices,
 	OtherAudioSourcesEnableChoices,
 	SettingsOutSourceChoices,
@@ -93,11 +93,11 @@ export class GoStreamModel {
 			}
 			case ActionType.AudioFader:
 			case ActionType.AudioMonitorSource: {
-				const mic_sources = AudioMicChoices
-				const in_sources = AudioInputSourcesChoices
-				const o_sources = OtherAudioSourcesChoices
-				const audio_sources = mic_sources.concat(in_sources).concat(o_sources)
-				return audio_sources
+				//	const mic_sources = AudioMicChoices
+				//	const in_sources = AudioInputSourcesChoices
+				//	const o_sources = OtherAudioSourcesChoices
+				//	const audio_sources = in_sources.concat(mic_sources).concat(o_sources)
+				return HeadphoneSourceChoices
 			}
 			case ActionType.AudioEnable: {
 				const ac_enables = AudioSourcesEnableChoices
