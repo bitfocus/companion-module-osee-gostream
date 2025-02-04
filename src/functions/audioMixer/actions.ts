@@ -155,7 +155,7 @@ export function create(model: GoStreamModel, state: AudioMixerStateT): Companion
 			},
 		},
 		[ActionId.AudioEnable1]: {
-			name: 'Audio Mixer:Set Input Audio Enable',
+			name: 'Audio Mixer:Set Video-In Audio Enable',
 			options: [
 				{
 					type: 'dropdown',
