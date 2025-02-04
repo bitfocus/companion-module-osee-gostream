@@ -142,15 +142,16 @@ export function create(model: GoStreamModel, state: AudioMixerStateT): Companion
 				},
 			],
 			callback: async (action) => {
-				const opt1 = getOptNumber(action, 'ASource')
-				const opt2 = getOptNumber(action, 'AudioEnable')
-				let paramOpt = 0
-				if (opt2 === 2) {
-					paramOpt = state.state[opt1] === AudioState.Off ? 1 : 0
-					await sendCommand(ActionId.AudioEnable, ReqType.Set, [opt1, paramOpt])
-				} else {
-					await sendCommand(ActionId.AudioEnable, ReqType.Set, [opt1, opt2])
+				// set audio source to audio state
+				const asource = getOptNumber(action, 'ASource')
+				let astate = getOptNumber(action, 'AudioEnable')
+				if (astate === 2) {
+					astate = AudioState.Off
+					if (state.state[asource] === AudioState.Off) {
+						astate = AudioState.On
+					}
 				}
+				await sendCommand(ActionId.AudioEnable, ReqType.Set, [asource, astate])
 			},
 		},
 		[ActionId.AudioEnable1]: {
@@ -177,17 +178,17 @@ export function create(model: GoStreamModel, state: AudioMixerStateT): Companion
 				},
 			],
 			callback: async (action) => {
-				const opt1 = getOptNumber(action, 'AudioEnable')
-				const opt2 = getOptNumber(action, 'ASource')
-				let paramOpt = 0
-				if (opt1 === 3) {
-					if (state.state[opt1] === AudioState.Off) paramOpt = AudioState.On
-					else if (state.state[opt1] === AudioState.On) paramOpt = AudioState.AFV
-					else paramOpt = AudioState.Off
-					await sendCommand(ActionId.AudioEnable, ReqType.Set, [opt2, paramOpt])
-				} else {
-					await sendCommand(ActionId.AudioEnable, ReqType.Set, [opt2, opt1])
+				// set audio source to audio state
+				const asource = getOptNumber(action, 'ASource')
+				let astate = getOptNumber(action, 'AudioEnable')
+				if (astate === 3) {
+					// Toggle: switch between on & off (including AFV in the rotation doesn't seem right)
+					astate = AudioState.Off
+					if (state.state[asource] === AudioState.Off) {
+						astate = AudioState.On
+					}
 				}
+				await sendCommand(ActionId.AudioEnable, ReqType.Set, [asource, astate])
 			},
 		},
 		[ActionId.AudioDelay]: {
