@@ -120,7 +120,7 @@ export function create(model: GoStreamModel, state: AudioMixerStateT): Companion
 			},
 		},
 		[ActionId.AudioEnable]: {
-			name: 'Audio Mixer:Set Mic Audio Enable',
+			name: 'Deprecated (Mic) - Use Audio Mixer: Set Audio Enable',
 			options: [
 				{
 					type: 'dropdown',
@@ -155,40 +155,83 @@ export function create(model: GoStreamModel, state: AudioMixerStateT): Companion
 			},
 		},
 		[ActionId.AudioEnable1]: {
-			name: 'Audio Mixer:Set Video-In Audio Enable',
+			name: 'Audio Mixer:Set Audio Enable',
 			options: [
 				{
 					type: 'dropdown',
 					label: 'Source',
 					id: 'ASource',
-					choices: AudioInputSourcesChoices,
+					choices: AudioMicChoices.concat(AudioInputSourcesChoices),
 					default: 0,
 				},
 				{
 					type: 'dropdown',
 					label: 'Enable',
+					id: 'MicEnable',
+					choices: [
+						{ id: 0, label: 'off' },
+						{ id: 1, label: 'on' },
+						{ id: 4, label: 'Toggle on/off' },
+					],
+					default: 0,
+					isVisibleData: AudioMicChoices.map((choice) => choice.id),
+					isVisible: (options, micIDs) => micIDs.includes(Number(options.ASource)),
+				},
+				{
+					type: 'dropdown',
+					label: 'Enable',
+					// id should be VideoEnable, but is kept "AudioEnable" for backward compatibility
 					id: 'AudioEnable',
 					choices: [
 						{ id: 0, label: 'off' },
 						{ id: 1, label: 'on' },
 						{ id: 2, label: 'afv' },
-						{ id: 3, label: 'Toggle' },
+						{ id: 3, label: 'Toggle All' },
+						{ id: 4, label: 'Toggle on/off' },
 					],
 					default: 0,
+					isVisibleData: AudioMicChoices.map((choice) => choice.id),
+					isVisible: (options, micIDs) => !micIDs.includes(Number(options.ASource)),
 				},
 			],
 			callback: async (action) => {
 				// set audio source to audio state
 				const asource = getOptNumber(action, 'ASource')
-				let astate = getOptNumber(action, 'AudioEnable')
-				if (astate === 3) {
-					// Toggle: switch between on & off (including AFV in the rotation doesn't seem right)
+				const micIds = AudioMicChoices.map((choice) => choice.id)
+				let achoice = 0
+				if (micIds.includes(asource)) {
+					achoice = getOptNumber(action, 'MicEnable')
+				} else {
+					achoice = getOptNumber(action, 'AudioEnable')
+				}
+				let astate = achoice
+				// choices 3 and 4 are dynamic, so convert into audio state here:
+				if (achoice >= 3) {
+					// Toggle: switch between on & off (including AFV if id 3 was selected)
+					const includeAFV = achoice === 3
 					astate = AudioState.Off
 					if (state.state[asource] === AudioState.Off) {
 						astate = AudioState.On
+					} else if (includeAFV && state.state[asource] === AudioState.On) {
+						astate = AudioState.AFV
 					}
 				}
 				await sendCommand(ActionId.AudioEnable, ReqType.Set, [asource, astate])
+			},
+			learn: async (action) => {
+				const micIds = AudioMicChoices.map((choice) => choice.id)
+				const asource = Number(action.options['ASource'])
+				if (asource == undefined || isNaN(asource)) {
+					// source needs to be selected for learn to work.
+					return undefined
+				}
+				if (micIds.includes(asource)) {
+					action.options.MicEnable = state.state[asource]
+				} else {
+					action.options.AudioEnable = state.state[asource]
+				}
+
+				return action.options
 			},
 		},
 		[ActionId.AudioDelay]: {
