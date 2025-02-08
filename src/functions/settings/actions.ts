@@ -166,8 +166,11 @@ export function create(model: GoStreamModel, state: SettingsStateT): CompanionAc
 					default: '',
 				},
 			],
-			callback: async (action) => {
-				await sendCommand(ActionId.RecordFileName, ReqType.Set, [getOptString(action, 'RecordFileName')])
+			callback: async (action, context) => {
+				const rawString = getOptString(action, 'RecordFileName')
+				const newName = await context.parseVariablesInString(rawString)
+				// allow but replace ":" with a valid character, so user can specify system time in the variable
+				await sendCommand(ActionId.RecordFileName, ReqType.Set, [newName.replaceAll(':', '_')])
 			},
 		},
 		[ActionId.SrcSelection]: {
