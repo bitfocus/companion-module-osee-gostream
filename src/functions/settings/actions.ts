@@ -155,24 +155,6 @@ export function create(model: GoStreamModel, state: SettingsStateT): CompanionAc
 				await sendCommand(ActionId.MicInput, ReqType.Set, [getOptNumber(action, 'micid'), type])
 			},
 		},
-		[ActionId.RecordFileName]: {
-			name: 'Settings: Record FileName',
-			options: [
-				{
-					type: 'textinput',
-					label: 'FileName',
-					id: 'RecordFileName',
-					required: true,
-					default: '',
-				},
-			],
-			callback: async (action, context) => {
-				const rawString = getOptString(action, 'RecordFileName')
-				const newName = await context.parseVariablesInString(rawString)
-				// allow but replace ":" with a valid character, so user can specify system time in the variable
-				await sendCommand(ActionId.RecordFileName, ReqType.Set, [newName.replaceAll(':', '_')])
-			},
-		},
 		[ActionId.SrcSelection]: {
 			name: 'Settings: Src Selection',
 			options: [
