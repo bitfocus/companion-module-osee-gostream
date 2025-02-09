@@ -2,7 +2,6 @@ import { FeedbackId } from './feedbackId'
 import { combineRgb, CompanionFeedbackDefinitions } from '@companion-module/base'
 import {
 	SettingsInputWindowLayoutChoices,
-	SettingsOutSourceParamChoices,
 	SettingsOutFormatChoices,
 	SettingsAuxSourceChoices,
 	SettingsColorChoices,
@@ -12,7 +11,7 @@ import {
 	SettingsMic2InputChoices,
 } from './../../model'
 import { PortType, PortCaps } from './../../enums'
-import { getOutputChoices, getInputs } from './../../models'
+import { getInputs } from './../../models'
 import { SettingsStateT } from './state'
 import { GoStreamModel } from '../../models/types'
 
@@ -53,14 +52,14 @@ export function create(model: GoStreamModel, state: SettingsStateT): CompanionFe
 					type: 'dropdown',
 					label: 'Out',
 					id: 'OutId',
-					choices: SettingsOutSourceParamChoices,
+					choices: model.outputPorts.map((item) => ({ id: item.id, label: item.name })),
 					default: 0,
 				},
 				{
 					type: 'dropdown',
 					label: 'OutSource',
 					id: 'OutSource',
-					choices: getOutputChoices(model),
+					choices: model.OutputSources().map((item) => ({ id: item.id, label: item.name })),
 					default: 0,
 				},
 			],
