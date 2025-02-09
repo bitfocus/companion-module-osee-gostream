@@ -36,7 +36,7 @@ export class GoStreamDuet extends GoStreamModel {
 			{
 				id: 7,
 				longName: 'S/SRC',
-				shortName: 'SSRC',
+				shortName: 'S/SRC',
 				type: PortType.Internal,
 				caps: PortCaps.NoCaps,
 			},

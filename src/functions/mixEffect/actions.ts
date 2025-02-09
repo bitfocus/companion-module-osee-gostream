@@ -4,7 +4,6 @@ import { ReqType, ActionType, TransitionStyle } from '../../enums'
 import { sendCommand } from '../../connection'
 import type { CompanionActionDefinitions } from '@companion-module/base'
 import { TransitionStyleChoice, WipeDirectionChoices, SwitchChoices } from '../../model'
-import { getInputChoices } from './../../models'
 import { GoStreamModel } from '../../models/types'
 import { MixEffectStateT } from './state'
 
@@ -18,7 +17,7 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionA
 					label: 'Source',
 					id: 'Source',
 					default: 0,
-					choices: getInputChoices(model),
+					choices: model.InputChoices().map((item) => ({ id: item.id, label: item.name })),
 				},
 			],
 			callback: async (action) => {
@@ -34,7 +33,7 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionA
 					label: 'Source',
 					id: 'Source',
 					default: 0,
-					choices: getInputChoices(model),
+					choices: model.InputChoices().map((item) => ({ id: item.id, label: item.name })),
 				},
 			],
 			callback: async (action) => {

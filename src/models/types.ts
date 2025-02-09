@@ -30,6 +30,10 @@ export type IPortSpec = {
 	caps: PortCaps
 }
 
+export type PortT = {
+	id: number
+	name: string
+}
 export function SourcesToChoices(
 	sources: { inputId: number; longName: string; shortName: string }[],
 ): DropdownChoice[] {
@@ -155,6 +159,19 @@ export class GoStreamModel {
 			id: s.inputId,
 			label: s.longName,
 		}))
+	}
+
+	InputChoices(): PortT[] {
+		return [
+			{ id: 0, name: 'In 1' },
+			{ id: 1, name: 'In 2' },
+			{ id: 2, name: 'In 3' },
+			{ id: 3, name: 'In 4' },
+			{ id: 4, name: 'Aux' },
+			{ id: 5, name: 'S/SRC' },
+			{ id: 6, name: 'Still 1' },
+			{ id: 7, name: 'Still 2' },
+		]
 	}
 }
 
