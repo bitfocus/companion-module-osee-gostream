@@ -128,6 +128,30 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionF
 				return feedback.options.KeyOnAir === 1 ? state.keyOnAir : !state.keyOnAir
 			},
 		},
+		[FeedbackId.DskOnAir]: {
+			type: 'boolean',
+			name: createFeedbackName('DSK OnAir state'),
+			description: 'Change bank style based on DSK OnAir state',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'DSK OnAir',
+					id: 'DSKOnAir',
+					choices: [
+						{ id: 0, label: 'Off' },
+						{ id: 1, label: 'On' },
+					],
+					default: 1,
+				},
+			],
+			defaultStyle: {
+				color: combineRgb(0, 0, 0),
+				bgcolor: combineRgb(255, 255, 0),
+			},
+			callback: (feedback) => {
+				return feedback.options.DSKOnAir === 1 ? state.dskOnAir : !state.dskOnAir
+			},
+		},
 		[FeedbackId.KeyOnPvw]: {
 			type: 'boolean',
 			name: createFeedbackName('Key on preview'),

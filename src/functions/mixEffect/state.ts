@@ -30,9 +30,9 @@ export type MixEffectStateT = {
 		wiperate: number
 	}
 	keyOnAir: boolean
+	dskOnAir: boolean
 	pvwOnAir: boolean
 	tied: boolean
-	onAir: boolean
 	transitionKeys: number
 }
 
@@ -58,9 +58,9 @@ export function create(_model: GoStreamModel): MixEffectStateT {
 			wiperate: 0,
 		},
 		keyOnAir: false,
+		dskOnAir: false,
 		pvwOnAir: false,
 		tied: false,
-		onAir: false,
 		transitionKeys: TransitionKey.BKGD,
 	}
 }
@@ -68,6 +68,7 @@ export function create(_model: GoStreamModel): MixEffectStateT {
 export async function sync(model: GoStreamModel): Promise<boolean> {
 	const cmds: GoStreamCmd[] = [
 		{ id: ActionId.KeyOnAir, type: ReqType.Get },
+		{ id: ActionId.DskOnAir, type: ReqType.Get },
 		{ id: ActionId.PgmIndex, type: ReqType.Get },
 		{ id: ActionId.PvwIndex, type: ReqType.Get },
 		{ id: ActionId.AutoTransition, type: ReqType.Get },
@@ -102,6 +103,9 @@ export function update(state: MixEffectStateT, data: GoStreamCmd): boolean {
 		}
 		case ActionId.KeyOnAir:
 			state.keyOnAir = data.value && data.value[0] === 1 ? true : false
+			break
+		case ActionId.DskOnAir:
+			state.dskOnAir = data.value[0] === 1 ? true : false
 			break
 		case ActionId.AutoTransition:
 			state.transitionPosition.inTransition = data.value[0] === 1 ? true : false

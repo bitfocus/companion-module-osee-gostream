@@ -22,4 +22,5 @@ export enum ActionId {
 	TransitionSource = 'transitionSource',
 	USKOnPreview = 'uskOnPreview', // This is custom function
 	KeyOnAir = 'keyOnAir',
+	DskOnAir = 'dskOnAir',
 }

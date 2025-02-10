@@ -375,6 +375,34 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionA
 				await sendCommand(ActionId.KeyOnAir, ReqType.Set, [paramOpt])
 			},
 		},
+		[ActionId.DskOnAir]: {
+			name: createActionName('Set DSK OnAir'),
+			options: [
+				{
+					type: 'dropdown',
+					label: 'DSK OnAir',
+					id: 'DSKOnAir',
+					choices: [
+						{ id: 0, label: 'Off' },
+						{ id: 1, label: 'On Air' },
+						{ id: 2, label: 'Toggle' },
+					],
+					default: 0,
+				},
+			],
+			callback: async (action) => {
+				const opt = getOptNumber(action, 'DSKOnAir')
+				let paramOpt = opt
+				if (opt === 2) {
+					if (state.dskOnAir === true) {
+						paramOpt = 0
+					} else {
+						paramOpt = 1
+					}
+				}
+				await sendCommand(ActionId.DskOnAir, ReqType.Set, [paramOpt])
+			},
+		},
 		[ActionId.TransitionSource]: {
 			name: createActionName('Set transition key switch'),
 			options: [
@@ -432,9 +460,9 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionA
 					label: 'State',
 					id: 'USKPvwState',
 					choices: [
-						{ id: 5, label: 'on' },
-						{ id: 4, label: 'off' },
-						{ id: 0, label: 'toggle' },
+						{ id: 0, label: 'Off' },
+						{ id: 1, label: 'On' },
+						{ id: 2, label: 'Toggle' },
 					],
 					default: 0,
 				},
@@ -442,21 +470,21 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionA
 			callback: async (action) => {
 				let nextState = action.options.USKPvwState
 
-				if (nextState === 0) {
+				if (nextState === 2) {
 					// Figure out if it is visible in pvw or not
-					if (state.tied && !state.onAir)
+					if (state.tied && !(state.transitionKeys & TransitionKey.USK))
 						// it is currently visible, so should be hidden
 						nextState = 4
-					else if (!state.tied && state.onAir)
+					else if (!state.tied && state.transitionKeys & TransitionKey.USK)
 						// it is currently visible, so should be hidden. As it is on air we do this by tie:ing
 						nextState = 5
-					else if (state.tied && state.onAir)
+					else if (state.tied && state.transitionKeys & TransitionKey.USK)
 						// it is currently hidden, so should be visible. As it is on air we do this by untie:ing
 						nextState = 4
-					else if (!state.tied && !state.onAir)
+					else if (!state.tied && !(state.transitionKeys & TransitionKey.USK))
 						// it is currently hidden, so should be visible
 						nextState = 5
-				} else if (state.onAir) {
+				} else if (state.transitionKeys & TransitionKey.USK) {
 					// Invert next state if On Air is true
 					nextState = nextState === 5 ? 4 : 5
 				}

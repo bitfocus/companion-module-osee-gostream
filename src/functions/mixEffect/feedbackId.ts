@@ -19,5 +19,6 @@ export enum FeedbackId {
 	TransitionSelection = 'transitionSelection',
 	TransitionKeySwitch = 'transitionKeySwitch',
 	KeyOnAir = 'keyOnAir',
+	DskOnAir = 'dskOnAir',
 	KeyOnPvw = 'keyOnPvw',
 }

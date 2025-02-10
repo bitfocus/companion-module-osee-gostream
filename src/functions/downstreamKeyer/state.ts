@@ -4,7 +4,6 @@ import { ReqType } from '../../enums'
 import type { GoStreamModel } from '../../models/types'
 
 export type DownstreamKeyerStateT = {
-	onAir: boolean
 	fill: number
 	key: number
 	invert: boolean
@@ -14,7 +13,6 @@ export type DownstreamKeyerStateT = {
 
 export function create(_model: GoStreamModel): DownstreamKeyerStateT {
 	return {
-		onAir: false,
 		fill: 0,
 		key: 0,
 		invert: false,
@@ -25,7 +23,6 @@ export function create(_model: GoStreamModel): DownstreamKeyerStateT {
 
 export async function sync(_model: GoStreamModel): Promise<boolean> {
 	const cmds: GoStreamCmd[] = [
-		{ id: ActionId.DskOnAir, type: ReqType.Get },
 		{ id: ActionId.DskSourceFill, type: ReqType.Get },
 		{ id: ActionId.DskSourceKey, type: ReqType.Get },
 		{ id: ActionId.DskMaskEnable, type: ReqType.Get },
@@ -53,9 +50,6 @@ export function update(state: DownstreamKeyerStateT, data: GoStreamCmd): boolean
 			break
 		case ActionId.DskControlShapedKey:
 			state.shapedKey = data.value[0] === 1 ? true : false
-			break
-		case ActionId.DskOnAir:
-			state.onAir = data.value[0] === 1 ? true : false
 			break
 	}
 	return false

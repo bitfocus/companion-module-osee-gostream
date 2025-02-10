@@ -9,36 +9,6 @@ import { DownstreamKeyerStateT } from './state'
 
 export function create(model: GoStreamModel, state: DownstreamKeyerStateT): CompanionActionDefinitions {
 	return {
-		[ActionId.DskOnAir]: {
-			name: 'Next Transition:Set DSKOnAir',
-			options: [
-				{
-					type: 'dropdown',
-					label: 'DSK OnAir',
-					id: 'DSKOnAir',
-					choices: [
-						{ id: 0, label: 'Off' },
-						{ id: 1, label: 'On Air' },
-						{ id: 2, label: 'Toggle' },
-					],
-					default: 0,
-				},
-			],
-			callback: async (action) => {
-				const opt = getOptNumber(action, 'DSKOnAir')
-				let paramOpt = 0
-				if (opt === 2) {
-					if (state.onAir === true) {
-						paramOpt = 0
-					} else {
-						paramOpt = 1
-					}
-					await sendCommand(ActionId.DskOnAir, ReqType.Set, [paramOpt])
-				} else {
-					await sendCommand(ActionId.DskOnAir, ReqType.Set, [opt])
-				}
-			},
-		},
 		[ActionId.DskSourceFillKey]: {
 			name: 'DSK:Set Source And Key',
 			options: [
