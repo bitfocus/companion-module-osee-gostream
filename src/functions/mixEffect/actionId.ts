@@ -20,4 +20,6 @@ export enum ActionId {
 	TransitionWipeFillSource = 'transitionWipeFillSource',
 	TransitionSourceBG = 'transitionSourceBG',
 	TransitionSource = 'transitionSource',
+	USKOnPreview = 'uskOnPreview', // This is custom function
+	KeyOnAir = 'keyOnAir',
 }

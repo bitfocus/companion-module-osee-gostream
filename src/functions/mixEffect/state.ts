@@ -3,6 +3,12 @@ import { sendCommands, GoStreamCmd } from '../../connection'
 import { ReqType } from '../../enums'
 import type { GoStreamModel } from '../../models/types'
 
+export enum TransitionKey {
+	USK = 1 << 0,
+	DSK = 1 << 1,
+	BKGD = 1 << 2,
+}
+
 export type MixEffectStateT = {
 	PvwSrc: number
 	PgmSrc: number
@@ -23,6 +29,11 @@ export type MixEffectStateT = {
 		diprate: number
 		wiperate: number
 	}
+	keyOnAir: boolean
+	pvwOnAir: boolean
+	tied: boolean
+	onAir: boolean
+	transitionKeys: number
 }
 
 export function create(_model: GoStreamModel): MixEffectStateT {
@@ -46,11 +57,17 @@ export function create(_model: GoStreamModel): MixEffectStateT {
 			diprate: 0,
 			wiperate: 0,
 		},
+		keyOnAir: false,
+		pvwOnAir: false,
+		tied: false,
+		onAir: false,
+		transitionKeys: TransitionKey.BKGD,
 	}
 }
 
 export async function sync(model: GoStreamModel): Promise<boolean> {
 	const cmds: GoStreamCmd[] = [
+		{ id: ActionId.KeyOnAir, type: ReqType.Get },
 		{ id: ActionId.PgmIndex, type: ReqType.Get },
 		{ id: ActionId.PvwIndex, type: ReqType.Get },
 		{ id: ActionId.AutoTransition, type: ReqType.Get },
@@ -83,6 +100,9 @@ export function update(state: MixEffectStateT, data: GoStreamCmd): boolean {
 			}
 			break
 		}
+		case ActionId.KeyOnAir:
+			state.keyOnAir = data.value && data.value[0] === 1 ? true : false
+			break
 		case ActionId.AutoTransition:
 			state.transitionPosition.inTransition = data.value[0] === 1 ? true : false
 			break
@@ -123,27 +143,10 @@ export function update(state: MixEffectStateT, data: GoStreamCmd): boolean {
 			}
 			break
 		}
-		//TODO: MOVE TO USK
-		/*	case ActionId.TransitionSource: {
-			const intstate = Number(data.value[0])
-			if ((intstate & 1) === 1) {
-				instance.states.UpstreamKeyer.transitionKey.M_Key = true
-			} else {
-				instance.states.UpstreamKeyer.transitionKey.M_Key = false
-			}
-			if (((intstate >> 1) & 1) === 1) {
-				instance.states.UpstreamKeyer.transitionKey.DSK = true
-			} else {
-				instance.states.UpstreamKeyer.transitionKey.DSK = false
-			}
-			if (((intstate >> 2) & 1) === 1) {
-				instance.states.UpstreamKeyer.transitionKey.BKGD = true
-			} else {
-				instance.states.UpstreamKeyer.transitionKey.BKGD = false
-			}
-			//instance.log('info',intstate.toString());
-			return true
-		}*/
+		case ActionId.TransitionSource:
+			if (!data.value) return false
+			state.transitionKeys = data.value[0]
+			break
 	}
 	return false
 }

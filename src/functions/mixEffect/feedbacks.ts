@@ -1,15 +1,19 @@
 import { combineRgb, CompanionFeedbackDefinitions } from '@companion-module/base'
 import { TransitionStyle } from '../../enums'
 import { FeedbackId } from './feedbackId'
-import { TransitionStyleChoice } from '../../model'
+import { TransitionStyleChoice, SwitchChoices, KeySwitchChoices } from '../../model'
 import { getInputChoices } from './../../models'
 import { GoStreamModel } from '../../models/types'
-import { MixEffectStateT } from './state'
+import { MixEffectStateT, TransitionKey } from './state'
+function createFeedbackName(name: string): string {
+	return 'MixEffect: ' + name
+}
+
 export function create(model: GoStreamModel, state: MixEffectStateT): CompanionFeedbackDefinitions {
 	return {
 		[FeedbackId.PreviewBG]: {
 			type: 'boolean',
-			name: 'Preview source',
+			name: createFeedbackName('Preview source'),
 			description: 'If the input specified is selected in preview, change style of the bank',
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),
@@ -34,7 +38,7 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionF
 		},
 		[FeedbackId.ProgramBG]: {
 			type: 'boolean',
-			name: 'Program source',
+			name: createFeedbackName('Program source'),
 			description: 'If the input specified is selected in program, change style of the bank',
 			defaultStyle: {
 				color: combineRgb(255, 255, 255),
@@ -57,9 +61,101 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionF
 				}
 			},
 		},
+		[FeedbackId.TransitionSource]: {
+			type: 'boolean',
+			name: createFeedbackName('Transition key state'),
+			description: 'Change bank style based on transition key state',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Switch',
+					id: 'KeySwitch',
+					choices: KeySwitchChoices,
+					default: 2,
+				},
+				{
+					type: 'dropdown',
+					label: 'Key Tied',
+					id: 'OnOffSwitch',
+					choices: [
+						{ id: 0, label: 'On' },
+						{ id: 1, label: 'Off' },
+					],
+					default: 0,
+				},
+			],
+			defaultStyle: {
+				color: combineRgb(0, 0, 0),
+				bgcolor: combineRgb(255, 255, 0),
+			},
+			callback: (feedback) => {
+				const key = feedback.options.KeySwitch
+				const keystate = feedback.options.OnOffSwitch!
+				if (keystate === 0) {
+					if (key === 0) return (state.transitionKeys & TransitionKey.USK) !== 0
+					if (key === 1) return (state.transitionKeys & TransitionKey.DSK) !== 0
+					if (key === 2) return (state.transitionKeys & TransitionKey.BKGD) !== 0
+				} else if (keystate === 1) {
+					if (key === 0) return (state.transitionKeys & TransitionKey.USK) === 0
+					if (key === 1) return (state.transitionKeys & TransitionKey.DSK) === 0
+					if (key === 2) return (state.transitionKeys & TransitionKey.BKGD) === 0
+				}
+
+				return false
+			},
+		},
+		[FeedbackId.KeyOnAir]: {
+			type: 'boolean',
+			name: createFeedbackName('Key OnAir state'),
+			description: 'Change bank style based on key OnAir state',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Key OnAir',
+					id: 'KeyOnAir',
+					choices: [
+						{ id: 0, label: 'Off' },
+						{ id: 1, label: 'On' },
+					],
+					default: 1,
+				},
+			],
+			defaultStyle: {
+				color: combineRgb(0, 0, 0),
+				bgcolor: combineRgb(255, 255, 0),
+			},
+			callback: (feedback) => {
+				return feedback.options.KeyOnAir === 1 ? state.keyOnAir : !state.keyOnAir
+			},
+		},
+		[FeedbackId.KeyOnPvw]: {
+			type: 'boolean',
+			name: createFeedbackName('Key on preview'),
+			description: 'Indicates if USK on on air on the preview bus',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Key OnAir',
+					id: 'KeyOnAir',
+					choices: SwitchChoices,
+					default: 1,
+				},
+			],
+			defaultStyle: {
+				color: combineRgb(0, 0, 0),
+				bgcolor: combineRgb(0, 255, 0),
+			},
+			callback: (feedback) => {
+				if (state.pvwOnAir && feedback.options.KeyOnAir === 1) {
+					return true
+				} else {
+					return false
+				}
+			},
+		},
 		[FeedbackId.InTransition]: {
 			type: 'boolean',
-			name: 'Transition: Active/Running',
+			name: createFeedbackName('Transition is Active/Running'),
 			description: 'If the specified transition is active, change style of the bank',
 			options: [],
 			defaultStyle: {
@@ -70,22 +166,9 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionF
 				return !!state.transitionPosition.inTransition
 			},
 		},
-		[FeedbackId.Cut]: {
-			type: 'boolean',
-			name: 'Transition: Active/Running',
-			description: 'If the specified transition is active, change style of the bank',
-			options: [],
-			defaultStyle: {
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(255, 255, 0),
-			},
-			callback: () => {
-				return false
-			},
-		},
 		[FeedbackId.Prev]: {
 			type: 'boolean',
-			name: 'Transition: Active/Running',
+			name: createFeedbackName('Prev transition Active/Running'),
 			description: 'If the PREV is active, change style of the bank',
 			options: [],
 			defaultStyle: {
@@ -98,7 +181,7 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionF
 		},
 		[FeedbackId.TransitionStyle]: {
 			type: 'boolean',
-			name: 'Transition: Style',
+			name: createFeedbackName('Transition style'),
 			description: 'If the specified transition style is active, change style of the bank',
 			options: [
 				{
@@ -123,7 +206,7 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionF
 		},
 		[FeedbackId.TransitionRate]: {
 			type: 'boolean',
-			name: 'Transition: Rate',
+			name: createFeedbackName('Transition rate'),
 			description: 'If the specified transition rate is active, change style of the bank',
 			options: [
 				{
@@ -193,6 +276,104 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionF
 				} else {
 					return undefined
 				}
+			},
+		},
+		[FeedbackId.TransitionSelection]: {
+			type: 'boolean',
+			name: createFeedbackName('Transition selection'),
+			description: 'If the specified transition selection is active, change style of the bank',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Match method',
+					id: 'MatchState',
+					choices: [
+						{ id: 0, label: 'Exact' },
+						{ id: 1, label: 'Contains' },
+					],
+					default: 2,
+				},
+				{
+					type: 'checkbox',
+					label: 'Background',
+					id: 'Background',
+					default: false,
+				},
+				{
+					type: 'checkbox',
+					label: 'Key',
+					id: 'Key',
+					default: false,
+				},
+			],
+			defaultStyle: {
+				color: combineRgb(0, 0, 0),
+				bgcolor: combineRgb(255, 255, 0),
+			},
+			callback: (feedback) => {
+				const seleOptions = feedback.options.MatchState
+				const BG = feedback.options.Background
+				const Key = feedback.options.Key
+				const BKGDArmed = (state.transitionKeys & TransitionKey.BKGD) > 0
+				const USKArmed = (state.transitionKeys & TransitionKey.USK) > 0
+				switch (seleOptions) {
+					case 0:
+						if ((BG && BKGDArmed) || (Key && USKArmed)) {
+							return true
+						} else if (BG && Key) {
+							return BKGDArmed && USKArmed
+						} else {
+							return false
+						}
+					case 1:
+						if (BG && Key) {
+							return BKGDArmed || USKArmed
+						} else {
+							if (BG) {
+								return BKGDArmed
+							} else if (Key) {
+								return USKArmed
+							} else {
+								return false
+							}
+						}
+					default:
+						return false
+				}
+			},
+		},
+		[FeedbackId.TransitionKeySwitch]: {
+			type: 'boolean',
+			name: createFeedbackName('Transition key switch'),
+			description: 'Set the special effect Transition key switch',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Switch',
+					id: 'KeySwitch',
+					choices: KeySwitchChoices,
+					default: 2,
+				},
+			],
+			defaultStyle: {
+				color: combineRgb(0, 0, 0),
+				bgcolor: combineRgb(255, 255, 0),
+			},
+			callback: (feedback) => {
+				const seleOptions = feedback.options.KeySwitch
+				if (seleOptions && Array.isArray(seleOptions)) {
+					const arratOptions = Array.from(seleOptions)
+					if (arratOptions.includes(0) && state.transitionKeys & TransitionKey.USK) {
+						return true
+					}
+					if (arratOptions.includes(1) && state.transitionKeys & TransitionKey.DSK) {
+						return true
+					}
+					if (arratOptions.includes(2) && state.transitionKeys & TransitionKey.BKGD) {
+						return true
+					}
+					return false
+				} else return false
 			},
 		},
 	}

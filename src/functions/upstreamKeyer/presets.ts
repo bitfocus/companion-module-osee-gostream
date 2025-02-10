@@ -2,94 +2,11 @@ import { ActionId } from './actionId'
 import { FeedbackId } from './feedbackId'
 import { combineRgb } from '@companion-module/base'
 import { CompanionPresetDefinitions } from '@companion-module/base'
-
 import { ActionType } from './../../enums'
-import { KeySwitchChoices } from './../../model'
 import { GoStreamModel } from '../../models/types'
 
-const Keys = KeySwitchChoices
-const ptzSize = '18'
 export function create(model: GoStreamModel): CompanionPresetDefinitions {
 	const presets = {}
-	for (const key of Keys) {
-		if (key.label != 'BKGD' && key.label === 'Key') {
-			presets[`keys_Next_Air_${key.id}`] = {
-				category: 'Keys On Air',
-				name: `Toggle upstream KEY ${key.label} OnAir`,
-				type: 'button',
-				style: {
-					text: `${key.label}`,
-					size: ptzSize,
-					color: combineRgb(255, 255, 255),
-					bgcolor: combineRgb(0, 0, 0),
-				},
-				feedbacks: [
-					{
-						feedbackId: FeedbackId.KeyOnAir,
-						options: {
-							KeyOnAir: 1,
-							DSKOnAir: 1,
-						},
-						style: {
-							bgcolor: combineRgb(255, 255, 0),
-							color: combineRgb(0, 0, 0),
-						},
-					},
-				],
-				steps: [
-					{
-						down: [
-							{
-								actionId: ActionId.KeyOnAir,
-								options: {
-									KeyOnAir: 2,
-									DSKOnAir: 2,
-								},
-							},
-						],
-						up: [],
-					},
-				],
-			}
-		}
-	}
-
-	// USK
-	presets[`USKOnPvw`] = {
-		category: `Keys On Air`,
-		name: `Toggle USK on preview`,
-		type: 'button',
-		style: {
-			text: `USK on PVW`,
-			size: ptzSize,
-			color: combineRgb(255, 255, 255),
-			bgcolor: combineRgb(0, 0, 0),
-		},
-		feedbacks: [
-			{
-				feedbackId: FeedbackId.KeyOnPvw,
-				options: {
-					KeyOnAir: 1,
-				},
-				style: {
-					bgcolor: combineRgb(0, 255, 0),
-					color: combineRgb(0, 0, 0),
-				},
-			},
-		],
-		steps: [
-			{
-				down: [
-					{
-						actionId: ActionId.USKOnPreview,
-						options: { USKPvwState: 0 },
-					},
-				],
-				up: [],
-			},
-		],
-	}
-
 	const sources = model.getChoices(ActionType.LumaKeySourceKey)
 	for (const source of sources) {
 		let id = Number(source.id) + 1

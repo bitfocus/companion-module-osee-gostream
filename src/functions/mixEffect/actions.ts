@@ -3,15 +3,18 @@ import { getOptNumber } from '../../util'
 import { ReqType, ActionType, TransitionStyle } from '../../enums'
 import { sendCommand } from '../../connection'
 import type { CompanionActionDefinitions } from '@companion-module/base'
-import { TransitionStyleChoice, WipeDirectionChoices, SwitchChoices } from '../../model'
+import { TransitionStyleChoice, WipeDirectionChoices, SwitchChoices, KeySwitchChoices } from '../../model'
 import { getInputChoices } from './../../models'
 import { GoStreamModel } from '../../models/types'
-import { MixEffectStateT } from './state'
+import { MixEffectStateT, TransitionKey } from './state'
 
+function createActionName(name: string): string {
+	return 'MixEffect: ' + name
+}
 export function create(model: GoStreamModel, state: MixEffectStateT): CompanionActionDefinitions {
 	return {
 		[ActionId.PgmIndex]: {
-			name: 'Set PGM Source',
+			name: createActionName('Set PGM Source'),
 			options: [
 				{
 					type: 'dropdown',
@@ -27,7 +30,7 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionA
 			},
 		},
 		[ActionId.PvwIndex]: {
-			name: 'Set PVW Source',
+			name: createActionName('Set PVW Source'),
 			options: [
 				{
 					type: 'dropdown',
@@ -43,28 +46,28 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionA
 			},
 		},
 		[ActionId.CutTransition]: {
-			name: 'Perform CUT transition',
+			name: createActionName('Perform CUT transition'),
 			options: [],
 			callback: async () => {
 				await sendCommand(ActionId.CutTransition, ReqType.Set)
 			},
 		},
 		[ActionId.AutoTransition]: {
-			name: 'Perform AUTO transition',
+			name: createActionName('Perform AUTO transition'),
 			options: [],
 			callback: async () => {
 				await sendCommand(ActionId.AutoTransition, ReqType.Set)
 			},
 		},
 		[ActionId.FTB]: {
-			name: 'Perform FTB Transition',
+			name: createActionName('Perform FTB Transition'),
 			options: [],
 			callback: async () => {
 				await sendCommand(ActionId.FTB, ReqType.Set)
 			},
 		},
 		[ActionId.FtbAudioAFV]: {
-			name: 'Perform FTB Transition,Audio follows video and pops in',
+			name: createActionName('Perform FTB Transition,Audio follows video and pops in'),
 			options: [
 				{
 					type: 'dropdown',
@@ -90,7 +93,7 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionA
 			},
 		},
 		[ActionId.FtbRate]: {
-			name: 'Fade to black: Change rate',
+			name: createActionName('Set rate of FTB'),
 			options: [
 				{
 					type: 'number',
@@ -107,7 +110,7 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionA
 			},
 		},
 		[ActionId.Prev]: {
-			name: 'Preview switch',
+			name: createActionName('Preview switch'),
 			options: [
 				{
 					type: 'dropdown',
@@ -133,7 +136,7 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionA
 			},
 		},
 		[ActionId.TransitionIndex]: {
-			name: 'Transition: Set style/pattern',
+			name: createActionName('Set transition style/pattern'),
 			options: [
 				{
 					type: 'dropdown',
@@ -148,7 +151,7 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionA
 			},
 		},
 		[ActionId.TransitionRate]: {
-			name: 'Transition: Change rate',
+			name: createActionName('Change transition rate'),
 			options: [
 				{
 					type: 'dropdown',
@@ -176,7 +179,7 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionA
 			},
 		},
 		[ActionId.TransitionDipSource]: {
-			name: 'Transition:Change Dip Source',
+			name: createActionName('Change transition dip source'),
 			options: [
 				{
 					type: 'dropdown',
@@ -191,7 +194,7 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionA
 			},
 		},
 		[ActionId.TransitionWipePattern]: {
-			name: 'Transition:Change Wipe Pattern',
+			name: createActionName('Change transition wipe pattern'),
 			options: [
 				{
 					type: 'number',
@@ -209,7 +212,7 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionA
 			},
 		},
 		[ActionId.TransitionWipeXPosition]: {
-			name: 'Transition:Change Wipe X Position',
+			name: createActionName('Change transition wipe X position'),
 			options: [
 				{
 					type: 'number',
@@ -227,7 +230,7 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionA
 			},
 		},
 		[ActionId.TransitionWipeYPosition]: {
-			name: 'Transition:Change Wipe Y Position',
+			name: createActionName('Change transition wipe Y position'),
 			options: [
 				{
 					type: 'number',
@@ -245,7 +248,7 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionA
 			},
 		},
 		[ActionId.TransitionWipeDirection]: {
-			name: 'Transition:Change Wipe Style Direction',
+			name: createActionName('Change transition wipe style direction'),
 			options: [
 				{
 					type: 'dropdown',
@@ -260,7 +263,7 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionA
 			},
 		},
 		[ActionId.TransitionWipeSymmetry]: {
-			name: 'Transition:Change Wipe Style Symmetry',
+			name: createActionName('Change transition wipe style symmetry'),
 			options: [
 				{
 					type: 'number',
@@ -277,7 +280,7 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionA
 			},
 		},
 		[ActionId.TransitionWipeSoftness]: {
-			name: 'Transition:Change Wipe Style Softness',
+			name: createActionName('Change transition wipe style softness'),
 			options: [
 				{
 					type: 'number',
@@ -294,7 +297,7 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionA
 			},
 		},
 		[ActionId.TransitionWipeBorder]: {
-			name: 'Transition:Change Wipe Style Border',
+			name: createActionName('Change transitions wipe style border'),
 			options: [
 				{
 					type: 'number',
@@ -311,7 +314,7 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionA
 			},
 		},
 		[ActionId.TransitionWipeFillSource]: {
-			name: 'Transition:Change Wipe Style Fill Source',
+			name: createActionName('Change transition wipe style fill source'),
 			options: [
 				{
 					type: 'dropdown',
@@ -326,7 +329,7 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionA
 			},
 		},
 		[ActionId.TransitionSourceBG]: {
-			name: 'Transition: Change selection',
+			name: createActionName('Change transition selection'),
 			options: [
 				{
 					type: 'checkbox',
@@ -342,6 +345,123 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionA
 					num += 1 << 2
 				}
 				await sendCommand(ActionId.TransitionSource, ReqType.Set, [num])
+			},
+		},
+		[ActionId.KeyOnAir]: {
+			name: createActionName('Set USK OnAir'),
+			options: [
+				{
+					type: 'dropdown',
+					label: 'USK OnAir',
+					id: 'KeyOnAir',
+					choices: [
+						{ id: 0, label: 'Off' },
+						{ id: 1, label: 'On Air' },
+						{ id: 2, label: 'Toggle' },
+					],
+					default: 2,
+				},
+			],
+			callback: async (action) => {
+				const opt = getOptNumber(action, 'KeyOnAir')
+				let paramOpt = opt
+				if (opt === 2) {
+					if (state.keyOnAir === true) {
+						paramOpt = 0
+					} else {
+						paramOpt = 1
+					}
+				}
+				await sendCommand(ActionId.KeyOnAir, ReqType.Set, [paramOpt])
+			},
+		},
+		[ActionId.TransitionSource]: {
+			name: createActionName('Set transition key switch'),
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Switch',
+					id: 'KeySwitch',
+					choices: KeySwitchChoices,
+					default: 2,
+				},
+				{
+					type: 'dropdown',
+					label: 'Switch',
+					id: 'OnOffSwitch',
+					choices: [
+						{ id: 0, label: 'Off' },
+						{ id: 1, label: 'On' },
+						{ id: 2, label: 'Toggle' },
+					],
+					default: 0,
+				},
+			],
+			callback: async (action) => {
+				const key = getOptNumber(action, 'KeySwitch')
+				const operation = getOptNumber(action, 'OnOffSwitch')
+				let num = state.transitionKeys
+
+				if (operation === 0) {
+					// OFF
+					if (key === 0) num &= ~TransitionKey.USK
+					if (key === 1) num &= ~TransitionKey.DSK
+					if (key === 2) num &= ~TransitionKey.BKGD
+				} else if (operation === 1) {
+					// ON
+					if (key === 0) num |= TransitionKey.USK
+					if (key === 1) num |= TransitionKey.DSK
+					if (key === 2) num |= TransitionKey.BKGD
+				} else if (operation === 2) {
+					// TOGGLE
+					if (key === 0) num ^= TransitionKey.USK
+					if (key === 1) num ^= TransitionKey.DSK
+					if (key === 2) num ^= TransitionKey.BKGD
+				} else {
+					console.log('Unknown operation')
+					return
+				}
+				await sendCommand(ActionId.TransitionSource, ReqType.Set, [num])
+			},
+		},
+		[ActionId.USKOnPreview]: {
+			name: createActionName('Set USK on preview bus'),
+			options: [
+				{
+					type: 'dropdown',
+					label: 'State',
+					id: 'USKPvwState',
+					choices: [
+						{ id: 5, label: 'on' },
+						{ id: 4, label: 'off' },
+						{ id: 0, label: 'toggle' },
+					],
+					default: 0,
+				},
+			],
+			callback: async (action) => {
+				let nextState = action.options.USKPvwState
+
+				if (nextState === 0) {
+					// Figure out if it is visible in pvw or not
+					if (state.tied && !state.onAir)
+						// it is currently visible, so should be hidden
+						nextState = 4
+					else if (!state.tied && state.onAir)
+						// it is currently visible, so should be hidden. As it is on air we do this by tie:ing
+						nextState = 5
+					else if (state.tied && state.onAir)
+						// it is currently hidden, so should be visible. As it is on air we do this by untie:ing
+						nextState = 4
+					else if (!state.tied && !state.onAir)
+						// it is currently hidden, so should be visible
+						nextState = 5
+				} else if (state.onAir) {
+					// Invert next state if On Air is true
+					nextState = nextState === 5 ? 4 : 5
+				}
+
+				await sendCommand(ActionId.TransitionSource, ReqType.Set, [nextState])
 			},
 		},
 	}

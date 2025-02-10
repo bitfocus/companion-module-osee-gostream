@@ -22,35 +22,13 @@ export type KeyInfoT = {
 	yPosition: number
 }
 
-export type TransitionKeyState = {
-	BKGD: boolean
-	DSK: boolean
-	M_Key: boolean
-	KeyOnAir: boolean
-	DSKOnAir: boolean
-}
-
 export type UpstreamKeyerStateT = {
-	transitionKey: TransitionKeyState
-	PvwOnAir: boolean
-	Tied: boolean
-	OnAir: boolean
 	UpStreamKeyType: number
 	keyInfo: KeyInfoT[]
 }
 
 export function create(_model: GoStreamModel): UpstreamKeyerStateT {
 	return {
-		transitionKey: {
-			BKGD: false,
-			DSK: false,
-			M_Key: false,
-			KeyOnAir: false,
-			DSKOnAir: false,
-		},
-		PvwOnAir: false,
-		Tied: false,
-		OnAir: false,
 		UpStreamKeyType: 0,
 		keyInfo: [
 			{ enabled: false, sources: [0, 0], size: 0, xPosition: 0, yPosition: 0 },
@@ -63,7 +41,6 @@ export function create(_model: GoStreamModel): UpstreamKeyerStateT {
 
 export async function sync(_model: GoStreamModel): Promise<boolean> {
 	const cmds: GoStreamCmd[] = [
-		{ id: ActionId.KeyOnAir, type: ReqType.Get },
 		{ id: ActionId.UpStreamKeyType, type: ReqType.Get },
 		{ id: ActionId.LumaKeySourceFill, type: ReqType.Get },
 		{ id: ActionId.LumaKeyResizeEnable, type: ReqType.Get },
@@ -89,9 +66,6 @@ export async function sync(_model: GoStreamModel): Promise<boolean> {
 }
 export function update(state: UpstreamKeyerStateT, data: GoStreamCmd): boolean {
 	switch (data.id as ActionId) {
-		case ActionId.KeyOnAir:
-			state.transitionKey.KeyOnAir = data.value && data.value[0] === 1 ? true : false
-			break
 		case ActionId.UpStreamKeyType:
 			state.UpStreamKeyType = data.value && data.value[0]
 			break
