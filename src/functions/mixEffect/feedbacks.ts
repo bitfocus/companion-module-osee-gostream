@@ -2,7 +2,6 @@ import { combineRgb, CompanionFeedbackDefinitions } from '@companion-module/base
 import { TransitionStyle } from '../../enums'
 import { FeedbackId } from './feedbackId'
 import { TransitionStyleChoice } from '../../model'
-import { getInputChoices } from './../../models'
 import { GoStreamModel } from '../../models/types'
 import { MixEffectStateT } from './state'
 export function create(model: GoStreamModel, state: MixEffectStateT): CompanionFeedbackDefinitions {
@@ -21,7 +20,7 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionF
 					label: 'Source',
 					id: 'Source',
 					default: 0,
-					choices: getInputChoices(model),
+					choices: model.InputSources().map((item) => ({ id: item.id, label: item.name })),
 				},
 			],
 			callback: (feedback) => {
@@ -46,7 +45,7 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionF
 					label: 'Source',
 					id: 'Source',
 					default: 0,
-					choices: getInputChoices(model),
+					choices: model.InputSources().map((item) => ({ id: item.id, label: item.name })),
 				},
 			],
 			callback: (feedback) => {

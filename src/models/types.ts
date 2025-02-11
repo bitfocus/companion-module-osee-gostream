@@ -30,6 +30,15 @@ export type IPortSpec = {
 	caps: PortCaps
 }
 
+export type PortT = {
+	id: number
+	name: string
+}
+
+export type SourceT = {
+	id: number
+	name: string
+}
 export function SourcesToChoices(
 	sources: { inputId: number; longName: string; shortName: string }[],
 ): DropdownChoice[] {
@@ -47,6 +56,7 @@ export class GoStreamModel {
 	streams: number
 	transitionTypes: number
 	stillSlots: number
+	outputPorts: PortT[]
 
 	constructor() {
 		this.id = Model.Unknown
@@ -56,6 +66,11 @@ export class GoStreamModel {
 		this.streams = 0
 		this.transitionTypes = 0
 		this.stillSlots = 0
+		this.outputPorts = [
+			{ id: 0, name: 'HDMI 1' },
+			{ id: 1, name: 'HDMI 2' },
+			{ id: 2, name: 'UVC' },
+		]
 	}
 
 	// TODO: re-write all these getters below
@@ -155,6 +170,32 @@ export class GoStreamModel {
 			id: s.inputId,
 			label: s.longName,
 		}))
+	}
+
+	InputSources(): SourceT[] {
+		return [
+			{ id: 0, name: 'In 1' },
+			{ id: 1, name: 'In 2' },
+			{ id: 2, name: 'In 3' },
+			{ id: 3, name: 'In 4' },
+			{ id: 4, name: 'Aux' },
+			{ id: 5, name: 'S/SRC' },
+			{ id: 6, name: 'Still 1' },
+			{ id: 7, name: 'Still 2' },
+		]
+	}
+
+	OutputSources(): SourceT[] {
+		return [
+			{ id: 0, name: 'In 1' },
+			{ id: 1, name: 'In 2' },
+			{ id: 2, name: 'In 3' },
+			{ id: 3, name: 'In 4' },
+			{ id: 4, name: 'Aux' },
+			{ id: 5, name: 'PGM' },
+			{ id: 6, name: 'PVW' },
+			{ id: 7, name: 'Multiview' },
+		]
 	}
 }
 

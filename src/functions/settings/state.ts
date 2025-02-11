@@ -26,7 +26,7 @@ export type SettingsStateT = {
 	deviceId: string
 	deviceName: string
 	ndiSources: NDISource[]
-	connectedNdiSouce: NDISource
+	connectedNdiSource: NDISource
 }
 
 export function create(model: GoStreamModel): SettingsStateT {
@@ -52,7 +52,7 @@ export function create(model: GoStreamModel): SettingsStateT {
 		deviceId: '',
 		deviceName: '',
 		ndiSources: [],
-		connectedNdiSouce: { name: '', address: '' },
+		connectedNdiSource: { name: '', address: '' },
 	}
 }
 
@@ -157,7 +157,7 @@ export function update(state: SettingsStateT, data: GoStreamCmd): boolean {
 			break
 		case ActionId.NDIConnect:
 			if (!data.value) return false
-			state.connectedNdiSouce = { name: data.value[0], address: data.value[1] }
+			state.connectedNdiSource = { name: data.value[0], address: data.value[1] }
 			break
 		case ActionId.NDIList: {
 			if (!data.value) {

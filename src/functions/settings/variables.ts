@@ -48,7 +48,7 @@ export function getValues(state: SettingsStateT): CompanionVariableValues {
 	newValues['deviceId'] = state['deviceId']
 	newValues['deviceName'] = state['deviceName']
 
-	newValues['connectedNDISource_name'] = state.connectedNdiSouce.name
-	newValues['connectedNDISource_address'] = state.connectedNdiSouce.address
+	newValues['connectedNDISource_name'] = state.connectedNdiSource.name
+	newValues['connectedNDISource_address'] = state.connectedNdiSource.address
 	return newValues
 }

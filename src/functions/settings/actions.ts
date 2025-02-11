@@ -1,6 +1,6 @@
 import { ActionId } from './actionId'
 import { getOptNumber, getOptString } from './../../util'
-import { ReqType, ActionType, PortType, PortCaps } from './../../enums'
+import { ReqType, PortType, PortCaps } from './../../enums'
 import { sendCommand } from './../../connection'
 import { SettingsStateT } from './state'
 import { GoStreamModel } from '../../models/types'
@@ -9,7 +9,6 @@ import {
 	SettingsAuxSourceChoices,
 	SettingsOutFormatChoices,
 	SettingsColorChoices,
-	SettingsOutSourceParamChoices,
 	SettingsMic1InputChoices,
 	SettingsMic2InputChoices,
 	SettingsMvMeterChoices,
@@ -267,14 +266,14 @@ export function create(model: GoStreamModel, state: SettingsStateT): CompanionAc
 					type: 'dropdown',
 					label: 'Out',
 					id: 'OutId',
-					choices: SettingsOutSourceParamChoices,
+					choices: model.outputPorts.map((item) => ({ id: item.id, label: item.name })),
 					default: 0,
 				},
 				{
 					type: 'dropdown',
 					label: 'OutSource',
 					id: 'OutSource',
-					choices: model.getChoices(ActionType.SettingsoutSource),
+					choices: model.OutputSources().map((item) => ({ id: item.id, label: item.name })),
 					default: 0,
 				},
 			],

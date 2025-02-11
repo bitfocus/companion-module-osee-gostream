@@ -3,7 +3,6 @@ import { CompanionPresetDefinitions } from '@companion-module/base'
 import { ActionId } from './actionId'
 import { FeedbackId } from './feedbackId'
 import { TransitionStyleChoice } from '../../model'
-import { getInputChoices } from './../../models'
 import { GoStreamModel } from '../../models/types'
 
 const rateOptions = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0]
@@ -11,7 +10,7 @@ const ptzSize = '18'
 export function create(model: GoStreamModel): CompanionPresetDefinitions {
 	const presets = {}
 
-	const MeChoice = getInputChoices(model)
+	const MeChoice = model.InputSources().map((item) => ({ id: item.id, label: item.name }))
 	for (const src of MeChoice) {
 		presets[`Preview_${src.id}`] = {
 			type: 'button',
