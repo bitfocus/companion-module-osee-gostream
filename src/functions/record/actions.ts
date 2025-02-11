@@ -50,13 +50,14 @@ export function create(_model: GoStreamModel, state: RecordStateT): CompanionAct
 				},
 			],
 			callback: async (action, context) => {
-				if (action.options.SafeMode && state.isRecording) return
-				// else
+				if (action.options.SafeMode && state.isRecording) {
+					return
+				}
 
 				const rawString = getOptString(action, 'RecordFileName')
 				const newName = await context.parseVariablesInString(rawString)
-				// allow but replace ":" with a valid character, so user can specify system time in the variable
-				await sendCommand(ActionId.RecordFileName, ReqType.Set, [newName.replaceAll(':', '_')])
+				// allow but replace ":" and other invalid chars, so user can specify system time in the variable
+				await sendCommand(ActionId.RecordFileName, ReqType.Set, [newName.replaceAll(/[\\/:*?"<>|]/g, '_')])
 			},
 		},
 	}
