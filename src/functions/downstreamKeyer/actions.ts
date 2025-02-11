@@ -79,7 +79,7 @@ export function create(model: GoStreamModel, state: DownstreamKeyerStateT): Comp
 				const opt = getOptNumber(action, 'DskMaskEnable')
 				let paramOpt = 0
 				if (opt === 2) {
-					if (state.mask === true) {
+					if (state.mask.enabled === true) {
 						paramOpt = 0
 					} else {
 						paramOpt = 1
@@ -169,7 +169,7 @@ export function create(model: GoStreamModel, state: DownstreamKeyerStateT): Comp
 				const opt = getOptNumber(action, 'ShapedKey')
 				let paramOpt = 0
 				if (opt === 2) {
-					if (state.shapedKey === true) {
+					if (state.control.shapedKey === true) {
 						paramOpt = 0
 					} else {
 						paramOpt = 1
@@ -227,7 +227,7 @@ export function create(model: GoStreamModel, state: DownstreamKeyerStateT): Comp
 				const opt = getOptNumber(action, 'Invert')
 				let paramOpt = 0
 				if (opt === 2) {
-					if (state.invert === true) {
+					if (state.control.invert === true) {
 						paramOpt = 0
 					} else {
 						paramOpt = 1

@@ -1,6 +1,6 @@
 export enum ActionId {
-	DskSourceFillKey = 'dskSourceFillKey',
 	DskSourceFill = 'dskSourceFill',
+	DskSourceFillKey = 'dskSourceFillKey',
 	DskSourceKey = 'dskSourceKey',
 	DskMaskEnable = 'dskMaskEnable',
 	DskMaskHStart = 'dskMaskHStart',

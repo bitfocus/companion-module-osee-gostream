@@ -37,9 +37,9 @@ export function create(model: GoStreamModel, state: DownstreamKeyerStateT): Comp
 				const typeId = Number(feedback.options.TypeID)
 				const dsk_source = Number(feedback.options.DSKFill)
 				if (typeId === 0) {
-					return state.key === dsk_source
+					return state.source.key === dsk_source
 				} else {
-					return state.fill === dsk_source
+					return state.source.fill === dsk_source
 				}
 			},
 		},
