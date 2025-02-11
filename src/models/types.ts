@@ -93,10 +93,6 @@ export class GoStreamModel {
 			}
 			case ActionType.AudioFader:
 			case ActionType.AudioMonitorSource: {
-				//	const mic_sources = AudioMicChoices
-				//	const in_sources = AudioInputSourcesChoices
-				//	const o_sources = OtherAudioSourcesChoices
-				//	const audio_sources = in_sources.concat(mic_sources).concat(o_sources)
 				return HeadphoneSourceChoices
 			}
 			case ActionType.AudioEnable: {

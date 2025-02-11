@@ -96,7 +96,6 @@ export const AudioInputSourcesChoices = [
 	{ id: 5, label: 'in4' },
 	{ id: 6, label: 'aux' },
 ]
-//export const OtherAudioSourcesChoices = [{ id: 7, label: 'pgm' }]
 export const AudioSourcesEnableChoices = [
 	{ id: 0, label: 'off' },
 	{ id: 1, label: 'on' },
