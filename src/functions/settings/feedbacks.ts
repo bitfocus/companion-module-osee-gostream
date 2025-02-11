@@ -68,27 +68,15 @@ export function create(model: GoStreamModel, state: SettingsStateT): CompanionFe
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: (feedback) => {
-				const OutTypeID = feedback.options.OutId
+				const OutTypeID = <number>feedback.options.OutId
 				const SelectSource = feedback.options.OutSource
-				return OutTypeID === SelectSource
+				return state.outSource[OutTypeID] === SelectSource
 			},
 			learn: (feedback) => {
-				const OutTypeID = feedback.options.OutId
-				if (OutTypeID === 0) {
-					return {
-						...feedback.options,
-						OutSource: 0,
-					}
-				} else if (OutTypeID === 1) {
-					return {
-						...feedback.options,
-						OutSource: 1,
-					}
-				} else {
-					return {
-						...feedback.options,
-						OutSource: 2,
-					}
+				const OutTypeID = <number>feedback.options.OutId
+				return {
+					...feedback.options,
+					OutSource: state.outSource[OutTypeID],
 				}
 			},
 		},
