@@ -24,10 +24,10 @@ export function create(model: GoStreamModel): CompanionPresetDefinitions {
 			},
 			feedbacks: [
 				{
-					feedbackId: FeedbackId.DskSourceFill,
+					feedbackId: FeedbackId.DskSourceFillKey,
 					options: {
 						TypeID: 1,
-						DSKFill: s.id,
+						DSKSource: s.id,
 					},
 					style: {
 						bgcolor: combineRgb(255, 0, 0),

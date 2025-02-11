@@ -106,8 +106,7 @@ export function update(state: DownstreamKeyerStateT, data: GoStreamCmd): boolean
 			state.mask.vStart = data.value[0]
 			break
 		case ActionId.DskRate:
-			// First value is whole number, second is first decimal value
-			state.rate.rate = data.value[0] + data.value[1] / 10
+			state.rate.rate = data.value[0]
 			break
 	}
 	return false

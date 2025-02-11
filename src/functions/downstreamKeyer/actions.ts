@@ -38,7 +38,7 @@ export function create(model: GoStreamModel, state: DownstreamKeyerStateT): Comp
 			},
 		},
 		[ActionId.DskSourceFill]: {
-			name: createActionName('Set source'),
+			name: createActionName('Set fill source'),
 			options: [
 				{
 					type: 'dropdown',
