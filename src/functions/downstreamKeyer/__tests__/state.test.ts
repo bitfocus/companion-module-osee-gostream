@@ -12,8 +12,8 @@ test('Check state default values', () => {
 	const state = DSKState.create(model!)
 
 	// source
-	expect(state.source.fill).toBe(sourcesDomainRange.indexOf("Still 2"))
-	expect(state.source.key).toBe(sourcesDomainRange.indexOf("Still 2 Key"))
+	expect(state.source.fill).toBe(sourcesDomainRange.indexOf('Still 2'))
+	expect(state.source.key).toBe(sourcesDomainRange.indexOf('Still 2 Key'))
 
 	// mask
 	expect(state.mask.enabled).toBeFalsy()
@@ -35,22 +35,22 @@ test('Check state default values', () => {
 test('Update with DskSourceFill action', () => {
 	const model = Models.GetModelSpec(Model.Duet)
 	const state = DSKState.create(model!)
-	let cmd: GoStreamCmd = {
+	const cmd: GoStreamCmd = {
 		id: ActionId.DskSourceFill,
 		type: ReqType.Push,
-		value: [sourcesDomainRange.indexOf("In 4")]
+		value: [sourcesDomainRange.indexOf('In 4')],
 	}
 	DSKState.update(state, cmd)
-	expect(state.source.fill).toBe(sourcesDomainRange.indexOf("In 4"))
+	expect(state.source.fill).toBe(sourcesDomainRange.indexOf('In 4'))
 })
 
 test('Update with DskControlInvert action', () => {
 	const model = Models.GetModelSpec(Model.Duet)
 	const state = DSKState.create(model!)
-	let cmd: GoStreamCmd = {
+	const cmd: GoStreamCmd = {
 		id: ActionId.DskControlInvert,
 		type: ReqType.Push,
-		value: [1]
+		value: [1],
 	}
 	DSKState.update(state, cmd)
 	expect(state.control.invert).toBeTruthy()
@@ -63,10 +63,10 @@ test('Update with DskControlInvert action', () => {
 test('Update with DskMaskEnable action', () => {
 	const model = Models.GetModelSpec(Model.Duet)
 	const state = DSKState.create(model!)
-	let cmd: GoStreamCmd = {
+	const cmd: GoStreamCmd = {
 		id: ActionId.DskMaskEnable,
 		type: ReqType.Push,
-		value: [1]
+		value: [1],
 	}
 	DSKState.update(state, cmd)
 	expect(state.mask.enabled).toBeTruthy()
@@ -79,10 +79,10 @@ test('Update with DskMaskEnable action', () => {
 test('Update with DskControlShapedKey action', () => {
 	const model = Models.GetModelSpec(Model.Duet)
 	const state = DSKState.create(model!)
-	let cmd: GoStreamCmd = {
+	const cmd: GoStreamCmd = {
 		id: ActionId.DskControlShapedKey,
 		type: ReqType.Push,
-		value: [1]
+		value: [1],
 	}
 	DSKState.update(state, cmd)
 	expect(state.control.shapedKey).toBeTruthy()
@@ -95,10 +95,10 @@ test('Update with DskControlShapedKey action', () => {
 test('Update with DskRate action', () => {
 	const model = Models.GetModelSpec(Model.Duet)
 	const state = DSKState.create(model!)
-	let cmd: GoStreamCmd = {
+	const cmd: GoStreamCmd = {
 		id: ActionId.DskRate,
 		type: ReqType.Push,
-		value: [4, 5]
+		value: [4, 5],
 	}
 	DSKState.update(state, cmd)
 	expect(state.rate.rate).toBe(4.5)

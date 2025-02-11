@@ -17,8 +17,8 @@ test('Check DskSourceFillKey choices', () => {
 	const model = Models.GetModelSpec(Model.Duet)!
 	const state = DSKState.create(model)
 	const actionDefs = DSKActions.create(model, state)
-	let dropdownChoices = <CompanionInputFieldDropdown>actionDefs[ActionId.DskSourceFillKey]!.options[0]
+	const dropdownChoices = <CompanionInputFieldDropdown>actionDefs[ActionId.DskSourceFillKey]!.options[0]
 	expect(dropdownChoices.choices.length).toBe(sourcesDomainRange.length)
-	let actualSources = dropdownChoices.choices.map((item) => item.label)
+	const actualSources = dropdownChoices.choices.map((item) => item.label)
 	expect(JSON.stringify(actualSources)).toBe(JSON.stringify(sourcesDomainRange))
 })

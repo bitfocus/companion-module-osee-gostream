@@ -29,7 +29,7 @@ export function create(_model: GoStreamModel): DownstreamKeyerStateT {
 	return {
 		source: {
 			fill: 7, // Still 2
-			key: 8,  // Still 2 key
+			key: 8, // Still 2 key
 		},
 		mask: {
 			enabled: false,
@@ -46,7 +46,7 @@ export function create(_model: GoStreamModel): DownstreamKeyerStateT {
 		},
 		rate: {
 			rate: 1.0,
-		}
+		},
 	}
 }
 
@@ -107,7 +107,7 @@ export function update(state: DownstreamKeyerStateT, data: GoStreamCmd): boolean
 			break
 		case ActionId.DskRate:
 			// First value is whole number, second is first decimal value
-			state.rate.rate = data.value[0] + data.value[1]/10
+			state.rate.rate = data.value[0] + data.value[1] / 10
 			break
 	}
 	return false
