@@ -48,5 +48,32 @@ export function create(model: GoStreamModel, state: AudioMixerStateT): Companion
 				return state.transitionEnabled
 			},
 		},
+		[FeedbackId.AudioMonitorSource]: {
+			type: 'boolean',
+			name: 'Audio Mixer: Set Monitor Source',
+			description: 'If monitor (headphone) is set to selected value, change the button style',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Source',
+					id: 'AudioSource',
+					choices: model.getChoices(ActionType.AudioMonitorSource),
+					default: model.getChoices(ActionType.AudioMonitorSource)[0].id,
+				},
+			],
+			defaultStyle: {
+				color: combineRgb(0, 0, 0),
+				bgcolor: combineRgb(255, 255, 0),
+			},
+			callback: (feedback) => {
+				return state.monitorSource === Number(feedback.options.AudioSource)
+			},
+			learn: (feedback) => {
+				return {
+					...feedback.options,
+					AudioSource: state.monitorSource,
+				}
+			},
+		},
 	}
 }

@@ -96,12 +96,22 @@ export const AudioInputSourcesChoices = [
 	{ id: 5, label: 'in4' },
 	{ id: 6, label: 'aux' },
 ]
-export const OtherAudioSourcesChoices = [{ id: 7, label: 'pgm' }]
+//export const OtherAudioSourcesChoices = [{ id: 7, label: 'pgm' }]
 export const AudioSourcesEnableChoices = [
 	{ id: 0, label: 'off' },
 	{ id: 1, label: 'on' },
 ]
 export const OtherAudioSourcesEnableChoices = [{ id: 2, label: 'afv' }]
+export const HeadphoneSourceChoices = [
+	{ id: 5, label: 'mic1' },
+	{ id: 6, label: 'mic2' },
+	{ id: 0, label: 'in1' },
+	{ id: 1, label: 'in2' },
+	{ id: 2, label: 'in3' },
+	{ id: 3, label: 'in4' },
+	{ id: 4, label: 'aux' },
+	{ id: 7, label: 'pgm' },
+]
 export const StreamingChoices = [
 	{ id: 0, label: 'Stream1' },
 	{ id: 1, label: 'Stream2' },
