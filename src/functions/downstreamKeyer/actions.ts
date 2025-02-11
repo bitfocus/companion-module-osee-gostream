@@ -7,10 +7,13 @@ import { GoStreamModel } from '../../models/types'
 import type { CompanionActionDefinitions } from '@companion-module/base'
 import { DownstreamKeyerStateT } from './state'
 
+function createActionName(name: string): string {
+	return 'DownstreamKeyer: ' + name
+}
 export function create(model: GoStreamModel, state: DownstreamKeyerStateT): CompanionActionDefinitions {
 	return {
 		[ActionId.DskSourceFillKey]: {
-			name: 'DSK:Set Source And Key',
+			name: createActionName('Set source and key'),
 			options: [
 				{
 					type: 'dropdown',
@@ -35,7 +38,7 @@ export function create(model: GoStreamModel, state: DownstreamKeyerStateT): Comp
 			},
 		},
 		[ActionId.DskSourceFill]: {
-			name: 'DSK:Set Source',
+			name: createActionName('Set source'),
 			options: [
 				{
 					type: 'dropdown',
@@ -50,7 +53,7 @@ export function create(model: GoStreamModel, state: DownstreamKeyerStateT): Comp
 			},
 		},
 		[ActionId.DskSourceKey]: {
-			name: 'DSK:Set Source Key',
+			name: createActionName('Set key'),
 			options: [
 				{
 					type: 'dropdown',
@@ -65,7 +68,7 @@ export function create(model: GoStreamModel, state: DownstreamKeyerStateT): Comp
 			},
 		},
 		[ActionId.DskMaskEnable]: {
-			name: 'DSK:Set Mask Enable',
+			name: createActionName('Set mask enable'),
 			options: [
 				{
 					type: 'dropdown',
@@ -91,7 +94,7 @@ export function create(model: GoStreamModel, state: DownstreamKeyerStateT): Comp
 			},
 		},
 		[ActionId.DskMaskHStart]: {
-			name: 'DSK:Set Mask H Start',
+			name: createActionName('Set mask h start'),
 			options: [
 				{
 					type: 'number',
@@ -107,7 +110,7 @@ export function create(model: GoStreamModel, state: DownstreamKeyerStateT): Comp
 			},
 		},
 		[ActionId.DskMaskVStart]: {
-			name: 'DSK:Set Mask V Start',
+			name: createActionName('Set mask v start'),
 			options: [
 				{
 					type: 'number',
@@ -123,7 +126,7 @@ export function create(model: GoStreamModel, state: DownstreamKeyerStateT): Comp
 			},
 		},
 		[ActionId.DskMaskHEnd]: {
-			name: 'DSK:Set Mask H End',
+			name: createActionName('Set mask h end'),
 			options: [
 				{
 					type: 'number',
@@ -139,7 +142,7 @@ export function create(model: GoStreamModel, state: DownstreamKeyerStateT): Comp
 			},
 		},
 		[ActionId.DskMaskVEnd]: {
-			name: 'DSK:Set Mask V End',
+			name: createActionName('Set mask v end'),
 			options: [
 				{
 					type: 'number',
@@ -155,7 +158,7 @@ export function create(model: GoStreamModel, state: DownstreamKeyerStateT): Comp
 			},
 		},
 		[ActionId.DskControlShapedKey]: {
-			name: 'DSK:Set Control Shaped Key',
+			name: createActionName('Set shaped key'),
 			options: [
 				{
 					type: 'dropdown',
@@ -181,7 +184,7 @@ export function create(model: GoStreamModel, state: DownstreamKeyerStateT): Comp
 			},
 		},
 		[ActionId.DskControlClip]: {
-			name: 'DSK:Set Control Clip',
+			name: createActionName('Set clip'),
 			options: [
 				{
 					type: 'number',
@@ -197,7 +200,7 @@ export function create(model: GoStreamModel, state: DownstreamKeyerStateT): Comp
 			},
 		},
 		[ActionId.DskControlGain]: {
-			name: 'DSK:Set Control Gain',
+			name: createActionName('Set gain'),
 			options: [
 				{
 					type: 'number',
@@ -213,7 +216,7 @@ export function create(model: GoStreamModel, state: DownstreamKeyerStateT): Comp
 			},
 		},
 		[ActionId.DskControlInvert]: {
-			name: 'DSK:Set Control Invert',
+			name: createActionName('Set invert'),
 			options: [
 				{
 					type: 'dropdown',
@@ -239,7 +242,7 @@ export function create(model: GoStreamModel, state: DownstreamKeyerStateT): Comp
 			},
 		},
 		[ActionId.DskRate]: {
-			name: 'DSK:Set Control Rate',
+			name: createActionName('Set rate'),
 			options: [
 				{
 					type: 'number',

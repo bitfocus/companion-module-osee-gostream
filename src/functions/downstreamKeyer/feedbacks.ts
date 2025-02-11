@@ -4,11 +4,14 @@ import { ActionType } from '../../enums'
 import { GoStreamModel } from '../../models/types'
 import { DownstreamKeyerStateT } from './state'
 
+function createFeedbackName(name: string): string {
+	return 'DownstreamKeyer: ' + name
+}
 export function create(model: GoStreamModel, state: DownstreamKeyerStateT): CompanionFeedbackDefinitions {
 	return {
 		[FeedbackId.DskSourceFill]: {
 			type: 'boolean',
-			name: 'DSK:DSK source fill or key fill',
+			name: createFeedbackName('source fill or key fill'),
 			description: 'Set the special effect DSK source fill or key fill',
 			options: [
 				{
