@@ -11,8 +11,8 @@ const ptzSize = '18'
 export function create(model: GoStreamModel): CompanionPresetDefinitions {
 	const presets = {}
 
-	const MeChoice = model.InputSources().map((item) => ({ id: item.id, label: item.name }))
-	for (const src of MeChoice) {
+	const InputSources = model.InputSources().map((item) => ({ id: item.id, label: item.name }))
+	for (const src of InputSources) {
 		presets[`Preview_${src.id}`] = {
 			type: 'button',
 			category: 'Preview',
@@ -40,7 +40,7 @@ export function create(model: GoStreamModel): CompanionPresetDefinitions {
 			],
 			feedbacks: [
 				{
-					FeedbackId: FeedbackId.PreviewBG,
+					feedbackId: FeedbackId.PreviewBG,
 					options: {
 						Source: src.id,
 					},
@@ -78,7 +78,7 @@ export function create(model: GoStreamModel): CompanionPresetDefinitions {
 			],
 			feedbacks: [
 				{
-					FeedbackId: FeedbackId.ProgramBG,
+					feedbackId: FeedbackId.ProgramBG,
 					options: {
 						Source: src.id,
 					},
