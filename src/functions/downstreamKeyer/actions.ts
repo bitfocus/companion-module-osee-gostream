@@ -1,7 +1,7 @@
 import { ActionId } from './actionId'
 import { getOptNumber } from './../../util'
 import { SwitchChoices } from './../../model'
-import { ReqType, ActionType } from './../../enums'
+import { ReqType } from './../../enums'
 import { sendCommand } from './../../connection'
 import { GoStreamModel } from '../../models/types'
 import type { CompanionActionDefinitions } from '@companion-module/base'
@@ -19,14 +19,14 @@ export function create(model: GoStreamModel, state: DownstreamKeyerStateT): Comp
 					type: 'dropdown',
 					label: 'Fill',
 					id: 'DSKFill',
-					choices: model.getChoices(ActionType.DskSourceFill),
+					choices: model.FillKeySources().map((item) => ({ id: item.id, label: item.name })),
 					default: 0,
 				},
 				{
 					type: 'dropdown',
 					label: 'Key',
 					id: 'DSKKey',
-					choices: model.getChoices(ActionType.DskSourceFill),
+					choices: model.FillKeySources().map((item) => ({ id: item.id, label: item.name })),
 					default: 0,
 				},
 			],
@@ -44,7 +44,7 @@ export function create(model: GoStreamModel, state: DownstreamKeyerStateT): Comp
 					type: 'dropdown',
 					label: 'DSK Fill',
 					id: 'DSKFill',
-					choices: model.getChoices(ActionType.DskSourceFill),
+					choices: model.FillKeySources().map((item) => ({ id: item.id, label: item.name })),
 					default: 0,
 				},
 			],
@@ -59,7 +59,7 @@ export function create(model: GoStreamModel, state: DownstreamKeyerStateT): Comp
 					type: 'dropdown',
 					label: 'DSK Key',
 					id: 'DSKKey',
-					choices: model.getChoices(ActionType.DskSourceFill),
+					choices: model.FillKeySources().map((item) => ({ id: item.id, label: item.name })),
 					default: 0,
 				},
 			],

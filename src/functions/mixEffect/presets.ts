@@ -3,7 +3,6 @@ import { CompanionPresetDefinitions } from '@companion-module/base'
 import { ActionId } from './actionId'
 import { FeedbackId } from './feedbackId'
 import { TransitionStyleChoice, KeySwitchChoices } from '../../model'
-import { getInputChoices } from './../../models'
 import { GoStreamModel } from '../../models/types'
 
 const Keys = KeySwitchChoices
@@ -12,7 +11,7 @@ const ptzSize = '18'
 export function create(model: GoStreamModel): CompanionPresetDefinitions {
 	const presets = {}
 
-	const MeChoice = getInputChoices(model)
+	const MeChoice = model.InputSources().map((item) => ({ id: item.id, label: item.name }))
 	for (const src of MeChoice) {
 		presets[`Preview_${src.id}`] = {
 			type: 'button',

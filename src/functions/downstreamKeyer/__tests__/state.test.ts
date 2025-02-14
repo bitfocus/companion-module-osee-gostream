@@ -98,7 +98,7 @@ test('Update with DskRate action', () => {
 	const cmd: GoStreamCmd = {
 		id: ActionId.DskRate,
 		type: ReqType.Push,
-		value: [4, 5],
+		value: [4.5],
 	}
 	DSKState.update(state, cmd)
 	expect(state.rate.rate).toBe(4.5)

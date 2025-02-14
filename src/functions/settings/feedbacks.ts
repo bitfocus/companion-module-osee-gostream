@@ -2,7 +2,6 @@ import { FeedbackId } from './feedbackId'
 import { combineRgb, CompanionFeedbackDefinitions } from '@companion-module/base'
 import {
 	SettingsInputWindowLayoutChoices,
-	SettingsOutSourceParamChoices,
 	SettingsOutFormatChoices,
 	SettingsAuxSourceChoices,
 	SettingsColorChoices,
@@ -12,7 +11,7 @@ import {
 	SettingsMic2InputChoices,
 } from './../../model'
 import { PortType, PortCaps } from './../../enums'
-import { getOutputChoices, getInputs } from './../../models'
+import { getInputs } from './../../models'
 import { SettingsStateT } from './state'
 import { GoStreamModel } from '../../models/types'
 
@@ -53,14 +52,14 @@ export function create(model: GoStreamModel, state: SettingsStateT): CompanionFe
 					type: 'dropdown',
 					label: 'Out',
 					id: 'OutId',
-					choices: SettingsOutSourceParamChoices,
+					choices: model.outputPorts.map((item) => ({ id: item.id, label: item.name })),
 					default: 0,
 				},
 				{
 					type: 'dropdown',
 					label: 'OutSource',
 					id: 'OutSource',
-					choices: getOutputChoices(model),
+					choices: model.OutputSources().map((item) => ({ id: item.id, label: item.name })),
 					default: 0,
 				},
 			],
@@ -69,27 +68,15 @@ export function create(model: GoStreamModel, state: SettingsStateT): CompanionFe
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: (feedback) => {
-				const OutTypeID = feedback.options.OutId
+				const OutTypeID = <number>feedback.options.OutId
 				const SelectSource = feedback.options.OutSource
-				return OutTypeID === SelectSource
+				return state.outSource[OutTypeID] === SelectSource
 			},
 			learn: (feedback) => {
-				const OutTypeID = feedback.options.OutId
-				if (OutTypeID === 0) {
-					return {
-						...feedback.options,
-						OutSource: 0,
-					}
-				} else if (OutTypeID === 1) {
-					return {
-						...feedback.options,
-						OutSource: 1,
-					}
-				} else {
-					return {
-						...feedback.options,
-						OutSource: 2,
-					}
+				const OutTypeID = <number>feedback.options.OutId
+				return {
+					...feedback.options,
+					OutSource: state.outSource[OutTypeID],
 				}
 			},
 		},
@@ -330,12 +317,12 @@ export function create(model: GoStreamModel, state: SettingsStateT): CompanionFe
 				const selectedNdiSource = state.ndiSources.find((source) => source.name === name)
 				if (!selectedNdiSource) return false
 				return (
-					state.connectedNdiSouce.name === selectedNdiSource.name &&
-					state.connectedNdiSouce.address === selectedNdiSource.address
+					state.connectedNdiSource.name === selectedNdiSource.name &&
+					state.connectedNdiSource.address === selectedNdiSource.address
 				)
 			},
 			learn: (feedback) => {
-				const ndiSource = state.connectedNdiSouce
+				const ndiSource = state.connectedNdiSource
 				if (ndiSource !== undefined) {
 					return {
 						...feedback.options,
