@@ -33,7 +33,7 @@ export function create(model: GoStreamModel, state: UpstreamKeyerStateT): Compan
 			],
 			callback: async (action) => {
 				await sendCommand(ActionId.UpStreamKeyFillKeyType, ReqType.Set, [
-					0,
+					state.UpStreamKeyType,
 					getOptNumber(action, 'FillSource'),
 					getOptNumber(action, 'KeySource'),
 				])
