@@ -15,9 +15,9 @@ export enum FeedbackId {
 	FadeToBlackIsBlack = 'fadeToBlackIsBlack',
 	FadeToBlackRate = 'fadeToBlackRate',
 	FTBAFV = 'FTBAFV',
-	TransitionSource = 'transitionSource',
+	NextTransitionState = 'transitionSource',
 	TransitionSelection = 'transitionSelection',
-	TransitionKeySwitch = 'transitionKeySwitch',
+	TransitionKeySwitch = 'transitionKeySwitch', // @deprecated
 	KeyOnAir = 'keyOnAir',
 	DskOnAir = 'dskOnAir',
 	KeyOnPvw = 'keyOnPvw',

@@ -3,6 +3,61 @@ import { sendCommands, GoStreamCmd } from '../../connection'
 import { ReqType } from '../../enums'
 import type { GoStreamModel } from '../../models/types'
 
+// Class for next transition group: KEY, DSK, BKGD, OnAir (KEY), OnAir (DSK)
+export class nextTransitionState {
+	static bitmask = {
+		KEY_bit: 1 << 0,
+		DSK_bit: 1 << 1,
+		BKGD_bit: 1 << 2,
+	}
+	BKGD = false
+	DSK = false
+	KEY = false
+	keyOnAir = false
+	dskOnAir = false
+	// don't need an explicit constructor
+	getChoices(includeBKGD: boolean): any {
+		const choices: string[] = ['KEY', 'DSK']
+		if (includeBKGD) {
+			choices.push('BKGD')
+		}
+		return choices.map((item) => {
+			return { id: item, label: item }
+		})
+	}
+	getDefaultChoice(): string {
+		return 'KEY'
+	}
+	getOnAirStatus(NTKey:string): boolean {
+		if (NTKey.toUpperCase() == "KEY") {
+			return this.keyOnAir
+		} else {
+			return this.dskOnAir
+		}
+	}
+	pack(): number {
+		if (!this.KEY && !this.DSK) {
+			this.BKGD = true
+		}
+		let value = 0
+		value += this.KEY ? nextTransitionState.bitmask.KEY_bit : 0
+		value += this.DSK ? nextTransitionState.bitmask.DSK_bit : 0
+		value += this.BKGD ? nextTransitionState.bitmask.BKGD_bit : 0
+		return value
+	}
+	unpackNTState(value: number): void {
+		// the explicit conversion may not be necessary in typescript
+		this.BKGD = value & nextTransitionState.bitmask.BKGD_bit ? true : false
+		this.DSK = value & nextTransitionState.bitmask.DSK_bit ? true : false
+		this.KEY = value & nextTransitionState.bitmask.KEY_bit ? true : false
+	}
+	copy(): nextTransitionState {
+		const result = Object.assign(new nextTransitionState(), this)
+		return result
+	}
+}
+
+/* @deprecated */
 export enum TransitionKey {
 	USK = 1 << 0,
 	DSK = 1 << 1,
@@ -29,11 +84,10 @@ export type MixEffectStateT = {
 		diprate: number
 		wiperate: number
 	}
-	keyOnAir: boolean
-	dskOnAir: boolean
 	pvwOnAir: boolean
 	tied: boolean
-	transitionKeys: number
+	transitionKeys: number // @deprecated
+	nextTState: nextTransitionState
 }
 
 export function create(_model: GoStreamModel): MixEffectStateT {
@@ -57,11 +111,10 @@ export function create(_model: GoStreamModel): MixEffectStateT {
 			diprate: 0,
 			wiperate: 0,
 		},
-		keyOnAir: false,
-		dskOnAir: false,
 		pvwOnAir: false,
 		tied: false,
 		transitionKeys: TransitionKey.BKGD,
+		nextTState: new nextTransitionState(),
 	}
 }
 
@@ -77,7 +130,7 @@ export async function sync(model: GoStreamModel): Promise<boolean> {
 		{ id: ActionId.FtbRate, type: ReqType.Get },
 		{ id: ActionId.FtbAudioAFV, type: ReqType.Get },
 		{ id: ActionId.TransitionIndex, type: ReqType.Get },
-		{ id: ActionId.TransitionSource, type: ReqType.Get },
+		{ id: ActionId.NextTransitionButtons, type: ReqType.Get },
 	]
 
 	for (let i = 0; i < model.transitionTypes; i++) {
@@ -102,10 +155,10 @@ export function update(state: MixEffectStateT, data: GoStreamCmd): boolean {
 			break
 		}
 		case ActionId.KeyOnAir:
-			state.keyOnAir = data.value && data.value[0] === 1 ? true : false
+			state.nextTState.keyOnAir = data.value && data.value[0] === 1 ? true : false
 			break
 		case ActionId.DskOnAir:
-			state.dskOnAir = data.value[0] === 1 ? true : false
+			state.nextTState.dskOnAir = data.value[0] === 1 ? true : false
 			break
 		case ActionId.AutoTransition:
 			state.transitionPosition.inTransition = data.value[0] === 1 ? true : false
@@ -147,9 +200,10 @@ export function update(state: MixEffectStateT, data: GoStreamCmd): boolean {
 			}
 			break
 		}
-		case ActionId.TransitionSource:
-			if (!data.value) return false
-			state.transitionKeys = data.value[0]
+		case ActionId.NextTransitionButtons:
+			// Next Transition group (KEY, DSK, BKGD)
+			state.transitionKeys = data.value[0] // @deprecated
+			state.nextTState.unpackNTState(data.value[0])
 			break
 	}
 	return false

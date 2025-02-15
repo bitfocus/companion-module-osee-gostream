@@ -1,4 +1,5 @@
 import { combineRgb, CompanionFeedbackDefinitions } from '@companion-module/base'
+import { getOptNumber, getOptString } from '../../util'
 import { TransitionStyle } from '../../enums'
 import { FeedbackId } from './feedbackId'
 import { TransitionStyleChoice, SwitchChoices, KeySwitchChoices } from '../../model'
@@ -61,22 +62,22 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionF
 				}
 			},
 		},
-		[FeedbackId.TransitionSource]: {
+		[FeedbackId.NextTransitionState]: {
 			type: 'boolean',
-			name: createFeedbackName('Transition key state'),
-			description: 'Change bank style based on transition key state',
+			name: createFeedbackName('State of Next Transition buttons'),
+			description: 'Change button style based on state of a "next transition" button (KEY, DSK, BKGD)',
 			options: [
 				{
 					type: 'dropdown',
-					label: 'Switch',
-					id: 'KeySwitch',
-					choices: KeySwitchChoices,
-					default: 2,
+					label: 'Layer',
+					id: 'KeyButton',
+					choices: state.nextTState.getChoices(true),
+					default: state.nextTState.getDefaultChoice(),
 				},
 				{
 					type: 'dropdown',
-					label: 'Key Tied',
-					id: 'OnOffSwitch',
+					label: 'State',
+					id: 'ButtonAction',
 					choices: [
 						{ id: 0, label: 'On' },
 						{ id: 1, label: 'Off' },
@@ -89,19 +90,10 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionF
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: (feedback) => {
-				const key = feedback.options.KeySwitch
-				const keystate = feedback.options.OnOffSwitch!
-				if (keystate === 0) {
-					if (key === 0) return (state.transitionKeys & TransitionKey.USK) !== 0
-					if (key === 1) return (state.transitionKeys & TransitionKey.DSK) !== 0
-					if (key === 2) return (state.transitionKeys & TransitionKey.BKGD) !== 0
-				} else if (keystate === 1) {
-					if (key === 0) return (state.transitionKeys & TransitionKey.USK) === 0
-					if (key === 1) return (state.transitionKeys & TransitionKey.DSK) === 0
-					if (key === 2) return (state.transitionKeys & TransitionKey.BKGD) === 0
-				}
+				const keyName = getOptString(feedback, 'KeyButton')
+				const keystate = getOptNumber(feedback, 'ButtonAction')
 
-				return false
+				return keystate == 0 ? state.nextTState[keyName] : !state.nextTState[keyName]
 			},
 		},
 		[FeedbackId.KeyOnAir]: {
@@ -125,7 +117,7 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionF
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: (feedback) => {
-				return feedback.options.KeyOnAir === 1 ? state.keyOnAir : !state.keyOnAir
+				return feedback.options.KeyOnAir === 1 ? state.nextTState.keyOnAir : !state.nextTState.keyOnAir
 			},
 		},
 		[FeedbackId.DskOnAir]: {
@@ -149,7 +141,7 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionF
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: (feedback) => {
-				return feedback.options.DSKOnAir === 1 ? state.dskOnAir : !state.dskOnAir
+				return feedback.options.DSKOnAir === 1 ? state.nextTState.dskOnAir : !state.nextTState.dskOnAir
 			},
 		},
 		[FeedbackId.KeyOnPvw]: {

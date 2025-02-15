@@ -18,9 +18,9 @@ export enum ActionId {
 	TransitionWipeSoftness = 'transitionWipeSoftness',
 	TransitionWipeBorder = 'transitionWipeBorder',
 	TransitionWipeFillSource = 'transitionWipeFillSource',
-	TransitionSourceBG = 'transitionSourceBG',
-	TransitionSource = 'transitionSource',
-	USKOnPreview = 'uskOnPreview', // This is custom function
-	KeyOnAir = 'keyOnAir',
-	DskOnAir = 'dskOnAir',
+	TransitionSourceBG = 'transitionSourceBG', // @deprecated
+	NextTransitionButtons = 'transitionSource',
+	USKOnPreview = 'uskOnPreview', // @deprecated This is custom function
+	KeyOnAir = 'keyOnAir', // needed for communications; action is deprecated
+	DskOnAir = 'dskOnAir', // needed for communications; action is deprecated
 }
