@@ -1,7 +1,7 @@
 import { ActionId } from './actionId'
 import { getOptNumber, getOptString } from '../../util'
 import { ReqType, ActionType, TransitionStyle } from '../../enums'
-import { sendCommand } from '../../connection'
+import { sendCommand, sendCommands } from '../../connection'
 import type { CompanionActionDefinitions } from '@companion-module/base'
 import { TransitionStyleChoice, WipeDirectionChoices, SwitchChoices } from '../../model'
 import { GoStreamModel } from '../../models/types'
@@ -465,8 +465,8 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionA
 						{ id: 0, label: 'Off' },
 						{ id: 1, label: 'On' },
 						{ id: 2, label: 'Toggle' },
-						{ id: 3, label: 'Off PVW' },
-						{ id: 4, label: 'On PVW' },
+						{ id: 3, label: 'Off PVW only' },
+						{ id: 4, label: 'On PVW only' },
 					],
 					default: 0,
 					isVisible: (options) => options.KeyButton != 'BKGD',
@@ -498,7 +498,7 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionA
 				if (isNaN(operation) || operation === undefined || operation < 0 || operation > 4) {
 					console.log('Next Transition:Tie key to next transition - Unknown ButtonAction: ' + action.options.operation)
 					return
-				} else if (keyName === undefined || state.nextTState.getChoices(true).find((item)=>item.id ===keyName) === undefined) {
+				} else if (keyName === undefined || state.nextTState.isChoiceValid(keyName, true)) {
 					console.log('Next Transition:Tie key to next transition - Unknown KeyButton: ' + action.options.KeyButton)
 					return
 				} else if (operation === 0) {
@@ -519,6 +519,66 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionA
 				}
 
 				await sendCommand(ActionId.NextTransitionButtons, ReqType.Set, [ntState.pack()])
+			},
+		},
+		[ActionId.OnAirButtons]: {
+			name: createActionName('Set an On Air Button (KEY or DSK)'),
+			description:
+				'Set an "On Air" button: On/Off/Toggle is equivalent to pressing the button, so it will affect both PGM and PVW. The last three options ensure that the action affects PGM only (althought PVW may flicker)',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Layer',
+					id: 'KeyButton',
+					choices: state.nextTState.getChoices(true),
+					default: state.nextTState.getDefaultChoice(),
+				},
+				{
+					type: 'dropdown',
+					label: 'Action',
+					id: 'ButtonAction',
+					choices: [
+						{ id: 0, label: 'Off' },
+						{ id: 1, label: 'On' },
+						{ id: 2, label: 'Toggle' },
+						{ id: 3, label: 'Off PGM only' },
+						{ id: 4, label: 'On PGM only' },
+						{ id: 5, label: 'Toggle PGM only' }, // needed here unlike NextTransition
+					],
+					default: 0,
+				},
+			],
+			callback: async (action) => {
+				const keyName = getOptString(action, 'KeyButton')
+				const operation = getOptNumber(action, 'ButtonAction')
+				const ntState = state.nextTState.copy()
+
+				if (isNaN(operation) || operation === undefined || operation < 0 || operation > 5) {
+					console.log('Next Transition:Key On Air - Unknown ButtonAction: ' + action.options.operation)
+					return
+				} else if (keyName === undefined || state.nextTState.isChoiceValid(keyName, false)) {
+					console.log('Next Transition:Key On Air - Unknown KeyButton: ' + action.options.KeyButton)
+					return
+				} else if (operation === 0 || operation == 3) {
+					// Off
+					ntState.setOnAirStatus(keyName, false)
+				} else if (operation === 1 || operation == 4) {
+					// On
+					ntState.setOnAirStatus(keyName, true)
+				} else if (operation === 2 || operation == 5) {
+					// Toggle
+					ntState.setOnAirStatus(keyName, !ntState.getOnAirStatus(keyName))
+				}
+
+				const commands = [ntState.getOnAirCommand(keyName)]
+				if (operation >= 3 && ntState.getOnAirStatus(keyName) != state.nextTState.getOnAirStatus(keyName)) {
+					// Off/On in PGM (ops 3 - 5): if we're changing the On Air value then:
+					//  we need to flip the status of the "next transition" key
+					ntState[keyName] = !ntState[keyName]
+					commands.push({ id: ActionId.NextTransitionButtons, type: ReqType.Set, value: [ntState.pack()] })
+				}
+
+				await sendCommands(commands)
 			},
 		},
 	}

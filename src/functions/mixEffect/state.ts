@@ -28,11 +28,35 @@ export class nextTransitionState {
 	getDefaultChoice(): string {
 		return 'KEY'
 	}
-	getOnAirStatus(NTKey:string): boolean {
-		if (NTKey.toUpperCase() == "KEY") {
+	isChoiceValid(choice: string, includeBKGD: boolean): boolean {
+		const keynames = ['KEY', 'DSK']
+		if (includeBKGD) {
+			keynames.push('BKGD')
+		}
+		return keynames.includes(choice)
+	}
+	getOnAirStatus(NTKey: string): boolean {
+		if (NTKey.toUpperCase() == 'KEY') {
 			return this.keyOnAir
 		} else {
 			return this.dskOnAir
+		}
+	}
+	setOnAirStatus(NTKey: string, value: boolean): void {
+		if (NTKey.toUpperCase() == 'KEY') {
+			this.keyOnAir = value
+		} else {
+			this.dskOnAir = value
+		}
+	}
+	getOnAirCommand(NTKey: string): any {
+		switch (NTKey) {
+			case 'KEY':
+				return { id: ActionId.KeyOnAir, type: ReqType.Set, value: [this.keyOnAir ? 1 : 0] }
+			case 'DSK':
+				return { id: ActionId.DskOnAir, type: ReqType.Set, value: [this.dskOnAir ? 1 : 0] }
+			default:
+				console.log('getOnAirCommand called with illegal argument: ' + NTKey)
 		}
 	}
 	pack(): number {
