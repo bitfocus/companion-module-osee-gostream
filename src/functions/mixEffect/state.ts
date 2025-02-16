@@ -16,7 +16,7 @@ export class nextTransitionState {
 	keyOnAir = false
 	dskOnAir = false
 	// don't need an explicit constructor
-	getChoices(includeBKGD: boolean): any {
+	getChoices(includeBKGD = true): any {
 		const choices: string[] = ['KEY', 'DSK']
 		if (includeBKGD) {
 			choices.push('BKGD')
@@ -28,7 +28,7 @@ export class nextTransitionState {
 	getDefaultChoice(): string {
 		return 'KEY'
 	}
-	isChoiceValid(choice: string, includeBKGD: boolean): boolean {
+	isChoiceValid(choice: string, includeBKGD = true): boolean {
 		const keynames = ['KEY', 'DSK']
 		if (includeBKGD) {
 			keynames.push('BKGD')

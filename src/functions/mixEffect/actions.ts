@@ -498,7 +498,7 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionA
 				if (isNaN(operation) || operation === undefined || operation < 0 || operation > 4) {
 					console.log('Next Transition:Tie key to next transition - Unknown ButtonAction: ' + action.options.operation)
 					return
-				} else if (keyName === undefined || state.nextTState.isChoiceValid(keyName, true)) {
+				} else if (keyName === undefined || !state.nextTState.isChoiceValid(keyName, true)) {
 					console.log('Next Transition:Tie key to next transition - Unknown KeyButton: ' + action.options.KeyButton)
 					return
 				} else if (operation === 0) {
@@ -556,7 +556,7 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionA
 				if (isNaN(operation) || operation === undefined || operation < 0 || operation > 5) {
 					console.log('Next Transition:Key On Air - Unknown ButtonAction: ' + action.options.operation)
 					return
-				} else if (keyName === undefined || state.nextTState.isChoiceValid(keyName, false)) {
+				} else if (keyName === undefined || !state.nextTState.isChoiceValid(keyName, false)) {
 					console.log('Next Transition:Key On Air - Unknown KeyButton: ' + action.options.KeyButton)
 					return
 				} else if (operation === 0 || operation == 3) {
