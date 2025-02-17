@@ -207,7 +207,7 @@ export function create(model: GoStreamModel, state: SuperSourceStateT): Companio
 						value: [maskId, getOptNumber(action, 'SuperSourceMaskVStart')],
 					})
 				}
-				if (props.includes('hMaskEnd')) {
+				if (props.includes('vMaskEnd')) {
 					commands.push({
 						id: ActionId.SuperSourceMaskVEnd,
 						type: ReqType.Set,
