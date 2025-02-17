@@ -15,10 +15,10 @@ export enum FeedbackId {
 	FadeToBlackIsBlack = 'fadeToBlackIsBlack',
 	FadeToBlackRate = 'fadeToBlackRate',
 	FTBAFV = 'FTBAFV',
-	TransitionSource = 'transitionSource',
-	TransitionSelection = 'transitionSelection',
-	TransitionKeySwitch = 'transitionKeySwitch',
-	KeyOnAir = 'keyOnAir',
-	DskOnAir = 'dskOnAir',
-	KeyOnPvw = 'keyOnPvw',
+	KeysVisibility = 'transitionSource', // keeping the string for backward compatibility?
+	TransitionSelection = 'transitionSelection', // @deprecated
+	TransitionKeySwitch = 'transitionKeySwitch', // @deprecated
+	KeyOnAir = 'keyOnAir', // @deprecated
+	DskOnAir = 'dskOnAir', // @deprecated
+	KeyOnPvw = 'keyOnPvw', // @deprecated
 }
