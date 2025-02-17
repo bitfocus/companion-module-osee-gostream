@@ -1,5 +1,5 @@
 import { ActionId } from './actionId'
-import { sendCommands, GoStreamCmd } from '../../connection'
+import { sendCommands, GoStreamCmd, valueAsBoolean } from '../../connection'
 import { ReqType } from '../../enums'
 import type { GoStreamModel } from '../../models/types'
 
@@ -72,7 +72,7 @@ export function update(state: SuperSourceStateT, data: GoStreamCmd): boolean {
 			break
 		}
 		case ActionId.SuperSourceMaskEnable: {
-			if (data.value !== undefined) state.maskEnable[data.value[0]] = data.value[1]
+			if (data.value !== undefined) state.maskEnable[data.value[0]] = valueAsBoolean(data.value[1])
 			break
 		}
 		case ActionId.SuperSourceMaskHEnd: {
