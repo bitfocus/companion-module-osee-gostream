@@ -4,11 +4,13 @@ import {
 	CompanionUpgradeContext,
 	CompanionStaticUpgradeProps,
 	CompanionMigrationAction,
-    CompanionOptionValues,
+	CompanionOptionValues,
 } from '@companion-module/base'
 
-export function getScripts(_context: CompanionUpgradeContext<Config>, props: CompanionStaticUpgradeProps<Config>): CompanionStaticUpgradeResult<Config> {
-
+export function getScripts(
+	_context: CompanionUpgradeContext<Config>,
+	props: CompanionStaticUpgradeProps<Config>,
+): CompanionStaticUpgradeResult<Config> {
 	const result: CompanionStaticUpgradeResult<Config> = {
 		updatedActions: [],
 		updatedConfig: null,
@@ -16,16 +18,16 @@ export function getScripts(_context: CompanionUpgradeContext<Config>, props: Com
 	}
 
 	const actions: CompanionMigrationAction[] = props.actions
-	
+
 	for (const action of actions) {
 		if (actionIdsToUpgrade.includes(action.actionId)) {
 			const oldActionId = action.actionId
-			
-			let newOpts: CompanionOptionValues = {
-				'SuperSourceMask': action.options.SuperSourceMask,
-				'props': []
+
+			const newOpts: CompanionOptionValues = {
+				SuperSourceMask: action.options.SuperSourceMask,
+				props: [],
 			}
-			const newProps : string[] = [];
+			const newProps: string[] = []
 
 			if (oldActionId === 'superSourceMaskEnable') {
 				newProps.push('enable')

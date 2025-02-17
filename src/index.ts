@@ -69,4 +69,4 @@ export class GoStreamInstance extends InstanceBase<Config> {
 	}
 }
 
-runEntrypoint(GoStreamInstance, [ ...UpgradeScriptList ])
+runEntrypoint(GoStreamInstance, [...UpgradeScriptList])
