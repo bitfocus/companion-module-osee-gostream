@@ -14,8 +14,8 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionF
 	return {
 		[FeedbackId.PreviewBG]: {
 			type: 'boolean',
-			name: createFeedbackName('Preview source'),
-			description: 'If the input specified is selected in preview, change style of the bank',
+			name: createFeedbackName('Preview (PVW) source'),
+			description: 'If the input specified is selected in preview, change style of the button',
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),
 				bgcolor: combineRgb(0, 204, 0),
@@ -39,8 +39,8 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionF
 		},
 		[FeedbackId.ProgramBG]: {
 			type: 'boolean',
-			name: createFeedbackName('Program source'),
-			description: 'If the input specified is selected in program, change style of the bank',
+			name: createFeedbackName('Program (PGM) source'),
+			description: 'If the input specified is selected in program (PGM), change style of the button',
 			defaultStyle: {
 				color: combineRgb(255, 255, 255),
 				bgcolor: combineRgb(204, 0, 0),
@@ -62,10 +62,11 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionF
 				}
 			},
 		},
-		[FeedbackId.NextTransitionState]: {
+		[FeedbackId.KeysVisibility]: {
 			type: 'boolean',
-			name: createFeedbackName('State of Next Transition buttons'),
-			description: 'Change button style based on state of a "next transition" button (KEY, DSK, BKGD)',
+			name: createFeedbackName('"Next Transition" / "On Air" state (KEY, DSK, BKGD)'),
+			description:
+				'Change button style based on state of "next transition" (KEY, DSK, BKGD). The first options refers to the button states; the last one refers to the actual visibility PVW, which depends on two button-states',
 			options: [
 				{
 					type: 'dropdown',
@@ -76,13 +77,15 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionF
 				},
 				{
 					type: 'dropdown',
-					label: 'State',
-					id: 'ButtonAction',
+					label: 'Status',
+					id: 'LayerState',
 					choices: [
-						{ id: 0, label: 'On' },
-						{ id: 1, label: 'Off' },
+						{ id: 0, label: 'Next Transition Button On' },
+						{ id: 2, label: 'On Air' },
+						{ id: 3, label: 'Showing in PVW' },
 					],
 					default: 0,
+					isVisible: (options) => options.KeyButton != 'BKGD',
 				},
 			],
 			defaultStyle: {
@@ -91,15 +94,26 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionF
 			},
 			callback: (feedback) => {
 				const keyName = getOptString(feedback, 'KeyButton')
-				const keystate = getOptNumber(feedback, 'ButtonAction')
+				const keystate = getOptNumber(feedback, 'LayerState')
 
-				return keystate == 0 ? state.nextTState[keyName] : !state.nextTState[keyName]
+				if (keystate === 1) {
+					// for compatibility with previous versions.
+					return !state.nextTState[keyName]
+				} else if (keystate === 0) {
+					return state.nextTState[keyName]
+				} else if (keystate === 3) {
+					return state.nextTState[keyName] != state.nextTState.getOnAirStatus(keyName)
+				} else if (keystate === 2) {
+					return state.nextTState.getOnAirStatus(keyName)
+				} else {
+					console.log('Feedback: Next Transition state received illegal option: ' + keystate)
+				}
 			},
 		},
 		[FeedbackId.KeyOnAir]: {
 			type: 'boolean',
-			name: createFeedbackName('Key OnAir state'),
-			description: 'Change bank style based on key OnAir state',
+			name: 'Deprecated use: \'"Next Transition" / "On Air" state\' (KEY "On Air" state)',
+			description: 'Change bank style based on KEY (USK) OnAir state',
 			options: [
 				{
 					type: 'dropdown',
@@ -122,7 +136,7 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionF
 		},
 		[FeedbackId.DskOnAir]: {
 			type: 'boolean',
-			name: createFeedbackName('DSK OnAir state'),
+			name: 'Deprecated use: \'"Next Transition" / "On Air" state\' (DSK "On Air" state)',
 			description: 'Change bank style based on DSK OnAir state',
 			options: [
 				{
@@ -145,8 +159,9 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionF
 			},
 		},
 		[FeedbackId.KeyOnPvw]: {
+			// note state.pvwOnAir is never updated so this feedback never returns true
 			type: 'boolean',
-			name: createFeedbackName('Key on preview'),
+			name: 'Deprecated and broken use: \'"Next Transition" / "On Air" state\' (KEY (USK) visible in preview (PVW))',
 			description: 'Indicates if USK on on air on the preview bus',
 			options: [
 				{
@@ -295,8 +310,11 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionF
 			},
 		},
 		[FeedbackId.TransitionSelection]: {
+			// The only thing this feedback adds is a combined Key && BKGD status,
+			//    which can be done using the internal "Logic: AND"
+			// Also it doesn't include DSK.
 			type: 'boolean',
-			name: createFeedbackName('Transition selection'),
+			name: 'Deprecated use: \'"Next Transition" / "On Air" state\' (and "Logic: AND" if needed) (Transition selection)',
 			description: 'If the specified transition selection is active, change style of the bank',
 			options: [
 				{
@@ -359,8 +377,11 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionF
 			},
 		},
 		[FeedbackId.TransitionKeySwitch]: {
+			// note that this doesn't work as coded, since the callback code expects a multidropdown type,
+			//  but the options specifies 'dropdown.
+			// The add value of the logic also seems questionable (return true if any of the selected options are on)
 			type: 'boolean',
-			name: createFeedbackName('Transition key switch'),
+			name: 'Deprecated and broken use: \'"Next Transition" / "On Air" state\' (Transition key switch)',
 			description: 'Set the special effect Transition key switch',
 			options: [
 				{

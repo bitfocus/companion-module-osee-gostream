@@ -331,7 +331,8 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionA
 		//  Next Transition block of buttons: On Air (USK), On Air (DSK), KEY (USK), DSK, BKGD
 		//----------------->>>>>>
 		[ActionId.TransitionSourceBG]: {
-			name: createActionName('Change transition selection'),
+			// this incorrectly resets KEY and DSK and also does other than what the name says.
+			name: 'Deprecated & broken, use \'Set "Next Transition" Button\' (Change transition selection)',
 			options: [
 				{
 					type: 'checkbox',
@@ -350,7 +351,7 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionA
 			},
 		},
 		[ActionId.KeyOnAir]: {
-			name: createActionName('Set USK OnAir'),
+			name: 'Deprecated, use \'Set "On Air" Button\' (Set USK OnAir)',
 			options: [
 				{
 					type: 'dropdown',
@@ -378,7 +379,7 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionA
 			},
 		},
 		[ActionId.DskOnAir]: {
-			name: createActionName('Set DSK OnAir'),
+			name: 'Deprecated, use \'Set "On Air" Button\' (Set DSK OnAir)',
 			options: [
 				{
 					type: 'dropdown',
@@ -406,7 +407,8 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionA
 			},
 		},
 		[ActionId.USKOnPreview]: {
-			name: createActionName('Set USK on preview bus'),
+			name: 'Deprecated & broken, use \'Set "Next Transition" Button\' (Set USK on preview bus)',
+			// this always turns off DSK! Also this was rewritten from 1.3.1  by JF with different 'id' values so it breaks any existing instances as well.
 			options: [
 				{
 					type: 'dropdown',
@@ -446,9 +448,9 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionA
 			},
 		},
 		[ActionId.NextTransitionButtons]: {
-			name: createActionName('Set Next Transition Button (KEY, DSK, BKGD)'),
+			name: createActionName('Set "Next Transition" Button (KEY, DSK, or BKGD)'),
 			description:
-				'Set a button in the Next Transition group: On/Off/Toggle is equivalent to pressing the button: its effect on PVW depends on the state of "On Air". The last two options ensure that the action affects PVW independently of the state of "On Air"',
+				'Set a button in the Next Transition group: On/Off/Toggle is the normal "Tie" behavior: its effect on PVW depends on the state of "On Air". The last two options ensure that the key is On/Off PVW regardless of the state of "On Air"',
 			options: [
 				{
 					type: 'dropdown',
@@ -465,8 +467,8 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionA
 						{ id: 0, label: 'Off' },
 						{ id: 1, label: 'On' },
 						{ id: 2, label: 'Toggle' },
-						{ id: 3, label: 'Off PVW only' },
-						{ id: 4, label: 'On PVW only' },
+						{ id: 3, label: 'Off PVW' },
+						{ id: 4, label: 'On PVW' },
 					],
 					default: 0,
 					isVisible: (options) => options.KeyButton != 'BKGD',
@@ -522,9 +524,9 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionA
 			},
 		},
 		[ActionId.OnAirButtons]: {
-			name: createActionName('Set an On Air Button (KEY or DSK)'),
+			name: createActionName('Set "On Air" Button (KEY or DSK)'),
 			description:
-				'Set an "On Air" button: On/Off/Toggle is equivalent to pressing the button, so it will affect both PGM and PVW. The last three options ensure that the action affects PGM only (althought PVW may flicker)',
+				'Set an "On Air" button. On/Off/Toggle is the "normal" behavior, showing/hiding in PGM and flipping the visibility in PVW. The last three options ensure that the action affects PGM only (althought PVW may flicker)',
 			options: [
 				{
 					type: 'dropdown',
