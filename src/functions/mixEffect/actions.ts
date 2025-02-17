@@ -1,9 +1,9 @@
 import { ActionId } from './actionId'
-import { getOptNumber } from '../../util'
+import { getOptNumber, getOptString } from '../../util'
 import { ReqType, ActionType, TransitionStyle } from '../../enums'
-import { sendCommand } from '../../connection'
+import { sendCommand, sendCommands } from '../../connection'
 import type { CompanionActionDefinitions } from '@companion-module/base'
-import { TransitionStyleChoice, WipeDirectionChoices, SwitchChoices, KeySwitchChoices } from '../../model'
+import { TransitionStyleChoice, WipeDirectionChoices, SwitchChoices } from '../../model'
 import { GoStreamModel } from '../../models/types'
 import { MixEffectStateT, TransitionKey } from './state'
 
@@ -109,7 +109,7 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionA
 			},
 		},
 		[ActionId.Prev]: {
-			name: createActionName('Preview switch'),
+			name: createActionName('Preview Button'),
 			options: [
 				{
 					type: 'dropdown',
@@ -327,8 +327,12 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionA
 				await sendCommand(ActionId.TransitionWipeFillSource, ReqType.Set, [getOptNumber(action, 'WipeFillSource')])
 			},
 		},
+		//---------------------------------------------------------------------------------------
+		//  Next Transition block of buttons: On Air (USK), On Air (DSK), KEY (USK), DSK, BKGD
+		//----------------->>>>>>
 		[ActionId.TransitionSourceBG]: {
-			name: createActionName('Change transition selection'),
+			// this incorrectly resets KEY and DSK and also does other than what the name says.
+			name: 'Deprecated & broken, use \'Set "Next Transition" Button\' (Change transition selection)',
 			options: [
 				{
 					type: 'checkbox',
@@ -343,11 +347,11 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionA
 				if (bg === true) {
 					num += 1 << 2
 				}
-				await sendCommand(ActionId.TransitionSource, ReqType.Set, [num])
+				await sendCommand(ActionId.NextTransitionButtons, ReqType.Set, [num])
 			},
 		},
 		[ActionId.KeyOnAir]: {
-			name: createActionName('Set USK OnAir'),
+			name: 'Deprecated, use \'Set "On Air" Button\' (Set USK OnAir)',
 			options: [
 				{
 					type: 'dropdown',
@@ -365,7 +369,7 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionA
 				const opt = getOptNumber(action, 'KeyOnAir')
 				let paramOpt = opt
 				if (opt === 2) {
-					if (state.keyOnAir === true) {
+					if (state.nextTState.keyOnAir === true) {
 						paramOpt = 0
 					} else {
 						paramOpt = 1
@@ -375,7 +379,7 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionA
 			},
 		},
 		[ActionId.DskOnAir]: {
-			name: createActionName('Set DSK OnAir'),
+			name: 'Deprecated, use \'Set "On Air" Button\' (Set DSK OnAir)',
 			options: [
 				{
 					type: 'dropdown',
@@ -393,7 +397,7 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionA
 				const opt = getOptNumber(action, 'DSKOnAir')
 				let paramOpt = opt
 				if (opt === 2) {
-					if (state.dskOnAir === true) {
+					if (state.nextTState.dskOnAir === true) {
 						paramOpt = 0
 					} else {
 						paramOpt = 1
@@ -402,57 +406,9 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionA
 				await sendCommand(ActionId.DskOnAir, ReqType.Set, [paramOpt])
 			},
 		},
-		[ActionId.TransitionSource]: {
-			name: createActionName('Set transition key switch'),
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Switch',
-					id: 'KeySwitch',
-					choices: KeySwitchChoices,
-					default: 2,
-				},
-				{
-					type: 'dropdown',
-					label: 'Switch',
-					id: 'OnOffSwitch',
-					choices: [
-						{ id: 0, label: 'Off' },
-						{ id: 1, label: 'On' },
-						{ id: 2, label: 'Toggle' },
-					],
-					default: 0,
-				},
-			],
-			callback: async (action) => {
-				const key = getOptNumber(action, 'KeySwitch')
-				const operation = getOptNumber(action, 'OnOffSwitch')
-				let num = state.transitionKeys
-
-				if (operation === 0) {
-					// OFF
-					if (key === 0) num &= ~TransitionKey.USK
-					if (key === 1) num &= ~TransitionKey.DSK
-					if (key === 2) num &= ~TransitionKey.BKGD
-				} else if (operation === 1) {
-					// ON
-					if (key === 0) num |= TransitionKey.USK
-					if (key === 1) num |= TransitionKey.DSK
-					if (key === 2) num |= TransitionKey.BKGD
-				} else if (operation === 2) {
-					// TOGGLE
-					if (key === 0) num ^= TransitionKey.USK
-					if (key === 1) num ^= TransitionKey.DSK
-					if (key === 2) num ^= TransitionKey.BKGD
-				} else {
-					console.log('Unknown operation')
-					return
-				}
-				await sendCommand(ActionId.TransitionSource, ReqType.Set, [num])
-			},
-		},
 		[ActionId.USKOnPreview]: {
-			name: createActionName('Set USK on preview bus'),
+			name: 'Deprecated & broken, use \'Set "Next Transition" Button\' (Set USK on preview bus)',
+			// this always turns off DSK! Also this was rewritten from 1.3.1  by JF with different 'id' values so it breaks any existing instances as well.
 			options: [
 				{
 					type: 'dropdown',
@@ -488,7 +444,143 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionA
 					nextState = nextState === 5 ? 4 : 5
 				}
 
-				await sendCommand(ActionId.TransitionSource, ReqType.Set, [nextState])
+				await sendCommand(ActionId.NextTransitionButtons, ReqType.Set, [nextState])
+			},
+		},
+		[ActionId.NextTransitionButtons]: {
+			name: createActionName('Set "Next Transition" Button (KEY, DSK, or BKGD)'),
+			description:
+				'Set a button in the Next Transition group: On/Off/Toggle is the normal "Tie" behavior: its effect on PVW depends on the state of "On Air". The last two options ensure that the key is On/Off PVW regardless of the state of "On Air"',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Layer',
+					id: 'KeyButton',
+					choices: state.nextTState.getChoices(true),
+					default: state.nextTState.getDefaultChoice(),
+				},
+				{
+					type: 'dropdown',
+					label: 'Action',
+					id: 'ButtonAction',
+					choices: [
+						{ id: 0, label: 'Off' },
+						{ id: 1, label: 'On' },
+						{ id: 2, label: 'Toggle' },
+						{ id: 3, label: 'Off PVW' },
+						{ id: 4, label: 'On PVW' },
+					],
+					default: 0,
+					isVisible: (options) => options.KeyButton != 'BKGD',
+				},
+				{
+					type: 'dropdown',
+					label: 'Action',
+					id: 'BKGDAction',
+					choices: [
+						{ id: 0, label: 'Off' },
+						{ id: 1, label: 'On' },
+						{ id: 2, label: 'Toggle' },
+					],
+					default: 0,
+					isVisible: (options) => options.KeyButton === 'BKGD',
+				},
+			],
+			callback: async (action) => {
+				const keyName = getOptString(action, 'KeyButton')
+				let operation = 0
+				const ntState = state.nextTState.copy()
+
+				if (action.options.KeyButton === 'BKGD') {
+					operation = getOptNumber(action, 'BKGDAction')
+				} else {
+					operation = getOptNumber(action, 'ButtonAction')
+				}
+
+				if (isNaN(operation) || operation === undefined || operation < 0 || operation > 4) {
+					console.log('Next Transition:Tie key to next transition - Unknown ButtonAction: ' + action.options.operation)
+					return
+				} else if (keyName === undefined || !state.nextTState.isChoiceValid(keyName, true)) {
+					console.log('Next Transition:Tie key to next transition - Unknown KeyButton: ' + action.options.KeyButton)
+					return
+				} else if (operation === 0) {
+					// Off
+					ntState[keyName] = false
+				} else if (operation === 1) {
+					// On
+					ntState[keyName] = true
+				} else if (operation === 2) {
+					// Toggle
+					ntState[keyName] = !ntState[keyName]
+				} else if (ntState.getOnAirStatus(keyName)) {
+					// Off/On in PVW (ops 3, 4)
+					// if OnAir, "Key" logic is reversed, so correct for it here
+					ntState[keyName] = operation === 3
+				} else {
+					ntState[keyName] = operation === 4
+				}
+
+				await sendCommand(ActionId.NextTransitionButtons, ReqType.Set, [ntState.pack()])
+			},
+		},
+		[ActionId.OnAirButtons]: {
+			name: createActionName('Set "On Air" Button (KEY or DSK)'),
+			description:
+				'Set an "On Air" button. On/Off/Toggle is the "normal" behavior, showing/hiding in PGM and flipping the visibility in PVW. The last three options ensure that the action affects PGM only (althought PVW may flicker)',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Layer',
+					id: 'KeyButton',
+					choices: state.nextTState.getChoices(true),
+					default: state.nextTState.getDefaultChoice(),
+				},
+				{
+					type: 'dropdown',
+					label: 'Action',
+					id: 'ButtonAction',
+					choices: [
+						{ id: 0, label: 'Off' },
+						{ id: 1, label: 'On' },
+						{ id: 2, label: 'Toggle' },
+						{ id: 3, label: 'Off PGM only' },
+						{ id: 4, label: 'On PGM only' },
+						{ id: 5, label: 'Toggle PGM only' }, // needed here unlike NextTransition
+					],
+					default: 0,
+				},
+			],
+			callback: async (action) => {
+				const keyName = getOptString(action, 'KeyButton')
+				const operation = getOptNumber(action, 'ButtonAction')
+				const ntState = state.nextTState.copy()
+
+				if (isNaN(operation) || operation === undefined || operation < 0 || operation > 5) {
+					console.log('Next Transition:Key On Air - Unknown ButtonAction: ' + action.options.operation)
+					return
+				} else if (keyName === undefined || !state.nextTState.isChoiceValid(keyName, false)) {
+					console.log('Next Transition:Key On Air - Unknown KeyButton: ' + action.options.KeyButton)
+					return
+				} else if (operation === 0 || operation == 3) {
+					// Off
+					ntState.setOnAirStatus(keyName, false)
+				} else if (operation === 1 || operation == 4) {
+					// On
+					ntState.setOnAirStatus(keyName, true)
+				} else if (operation === 2 || operation == 5) {
+					// Toggle
+					ntState.setOnAirStatus(keyName, !ntState.getOnAirStatus(keyName))
+				}
+
+				const commands = [ntState.getOnAirCommand(keyName)]
+				if (operation >= 3 && ntState.getOnAirStatus(keyName) != state.nextTState.getOnAirStatus(keyName)) {
+					// Off/On in PGM (ops 3 - 5): if we're changing the On Air value then:
+					//  we need to flip the status of the "next transition" key
+					ntState[keyName] = !ntState[keyName]
+					commands.push({ id: ActionId.NextTransitionButtons, type: ReqType.Set, value: [ntState.pack()] })
+				}
+
+				await sendCommands(commands)
 			},
 		},
 	}
