@@ -39,7 +39,7 @@ export function create(model: GoStreamModel, state: UpstreamKeyerStateT): Compan
 		[FeedbackId.UpStreamKeyType]: {
 			type: 'boolean',
 			name: 'USK: Set type',
-			description: 'If you Select UpStream Key, change style of the bank',
+			description: 'If you Select UpStream Key, change style of the button',
 			options: [
 				{
 					type: 'dropdown',
@@ -61,7 +61,7 @@ export function create(model: GoStreamModel, state: UpstreamKeyerStateT): Compan
 		[FeedbackId.PipXPosition]: {
 			type: 'boolean',
 			name: 'USK: PIP X position',
-			description: 'Change style of bank based on pip x position',
+			description: 'Change style of button based on pip x position',
 			options: [
 				{
 					type: 'number',
@@ -86,7 +86,7 @@ export function create(model: GoStreamModel, state: UpstreamKeyerStateT): Compan
 		[FeedbackId.PipYPosition]: {
 			type: 'boolean',
 			name: 'USK: PIP Y position',
-			description: 'Change style of bank based on pip y position',
+			description: 'Change style of button based on pip y position',
 			options: [
 				{
 					type: 'number',
@@ -111,7 +111,7 @@ export function create(model: GoStreamModel, state: UpstreamKeyerStateT): Compan
 		[FeedbackId.KeyPatternResizeXPosition]: {
 			type: 'boolean',
 			name: 'USK: Key Pattern X position',
-			description: 'Change style of bank based on key pattern x position',
+			description: 'Change style of button based on key pattern x position',
 			options: [
 				{
 					type: 'number',
@@ -136,7 +136,7 @@ export function create(model: GoStreamModel, state: UpstreamKeyerStateT): Compan
 		[FeedbackId.KeyPatternResizeYPosition]: {
 			type: 'boolean',
 			name: 'USK: Key Pattern Y position',
-			description: 'Change style of bank based on key pattern y position',
+			description: 'Change style of button based on key pattern y position',
 			options: [
 				{
 					type: 'number',
@@ -161,7 +161,7 @@ export function create(model: GoStreamModel, state: UpstreamKeyerStateT): Compan
 		[FeedbackId.KeyPatternResizeSize]: {
 			type: 'boolean',
 			name: 'USK: Key Pattern Resize Size',
-			description: 'Change style of bank based on key pattern resize size',
+			description: 'Change style of button based on key pattern resize size',
 			options: [
 				{
 					type: 'dropdown',

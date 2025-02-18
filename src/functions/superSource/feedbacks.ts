@@ -9,7 +9,7 @@ export function create(model: GoStreamModel, state: SuperSourceStateT): Companio
 		[FeedbackId.SuperSourceEnable]: {
 			type: 'boolean',
 			name: 'SuperSource: Set Super Source Enable',
-			description: 'If you turn on Super Source, change style of the bank',
+			description: 'If you turn on Super Source, change style of the button',
 			options: [],
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),
@@ -22,7 +22,7 @@ export function create(model: GoStreamModel, state: SuperSourceStateT): Companio
 		[FeedbackId.SuperSourceSelect]: {
 			type: 'boolean',
 			name: 'SuperSource: Set SuperSource Source',
-			description: 'If you Select SuperSource, change style of the bank',
+			description: 'If you Select SuperSource, change style of the button',
 			options: [
 				{
 					type: 'dropdown',
@@ -59,7 +59,7 @@ export function create(model: GoStreamModel, state: SuperSourceStateT): Companio
 		[FeedbackId.SuperSourceControlStyle]: {
 			type: 'boolean',
 			name: 'SuperSource: Set SuperSource ControlStyle',
-			description: 'If you Select SuperSource, change style of the bank',
+			description: 'If you Select SuperSource, change style of the button',
 			options: [
 				{
 					type: 'dropdown',
@@ -80,7 +80,7 @@ export function create(model: GoStreamModel, state: SuperSourceStateT): Companio
 		[FeedbackId.SuperSourceMask]: {
 			type: 'boolean',
 			name: 'SuperSource: Set SuperSource Mask',
-			description: 'If you Select SuperSource, change style of the bank',
+			description: 'If you Select SuperSource, change style of the button',
 			options: [
 				{
 					type: 'dropdown',
@@ -105,7 +105,7 @@ export function create(model: GoStreamModel, state: SuperSourceStateT): Companio
 		[FeedbackId.SuperSourceYPosition]: {
 			type: 'boolean',
 			name: 'Super Source: Super Source Y Position',
-			description: 'Change style of bank based on Super Source Y Position',
+			description: 'Change style of button based on Super Source Y Position',
 			options: [
 				{
 					type: 'number',
