@@ -46,7 +46,7 @@ export function create(model: GoStreamModel, state: SettingsStateT): CompanionFe
 		[FeedbackId.SettingOutSource]: {
 			type: 'boolean',
 			name: 'Setting: Set Out Source',
-			description: 'If the input specified is selected in the OutSource specified, change style of the bank',
+			description: 'If the input specified is selected in the OutSource specified, change style of the button',
 			options: [
 				{
 					type: 'dropdown',
@@ -83,7 +83,7 @@ export function create(model: GoStreamModel, state: SettingsStateT): CompanionFe
 		[FeedbackId.OutputColorSpace]: {
 			type: 'boolean',
 			name: 'Setting: Output color space',
-			description: 'If the colorspace of specified output is the selected, change style of the bank',
+			description: 'If the colorspace of specified output is the selected, change style of the button',
 			options: [
 				{
 					type: 'dropdown',
@@ -121,7 +121,7 @@ export function create(model: GoStreamModel, state: SettingsStateT): CompanionFe
 		[FeedbackId.OutputFormat]: {
 			type: 'boolean',
 			name: 'Setting: Out format',
-			description: 'If the out format is matching, change style of the bank',
+			description: 'If the out format is matching, change style of the button',
 			options: [
 				{
 					type: 'dropdown',
@@ -147,7 +147,7 @@ export function create(model: GoStreamModel, state: SettingsStateT): CompanionFe
 		[FeedbackId.MvLayout]: {
 			type: 'boolean',
 			name: 'Setting: Mv layout',
-			description: 'If the mv layout is matching, change style of the bank',
+			description: 'If the mv layout is matching, change style of the button',
 			options: [
 				{
 					type: 'dropdown',
@@ -173,7 +173,7 @@ export function create(model: GoStreamModel, state: SettingsStateT): CompanionFe
 		[FeedbackId.SrcSelection]: {
 			type: 'boolean',
 			name: 'Setting: Src selection',
-			description: 'If the source selection format is matching, change style of the bank',
+			description: 'If the source selection format is matching, change style of the button',
 			options: [
 				{
 					type: 'dropdown',
@@ -213,7 +213,7 @@ export function create(model: GoStreamModel, state: SettingsStateT): CompanionFe
 		[FeedbackId.MicInput]: {
 			type: 'boolean',
 			name: 'Setting: Mic input',
-			description: 'If the mic input for selected mic is matching, change style of the bank',
+			description: 'If the mic input for selected mic is matching, change style of the button',
 			options: [
 				{
 					type: 'dropdown',
@@ -259,7 +259,7 @@ export function create(model: GoStreamModel, state: SettingsStateT): CompanionFe
 		[FeedbackId.AuxBG]: {
 			type: 'boolean',
 			name: 'Aux: Source',
-			description: 'If the input specified is selected in the aux bus specified, change style of the bank',
+			description: 'If the input specified is selected in the aux bus specified, change style of the button',
 			options: [
 				{
 					type: 'dropdown',
@@ -291,7 +291,7 @@ export function create(model: GoStreamModel, state: SettingsStateT): CompanionFe
 		[FeedbackId.NDIConnect]: {
 			type: 'boolean',
 			name: 'Aux: Connected NDI source',
-			description: 'If the input specified is connected to NDI, change style of the bank',
+			description: 'If the input specified is connected to NDI, change style of the button',
 			options: [
 				{
 					type: 'dropdown',

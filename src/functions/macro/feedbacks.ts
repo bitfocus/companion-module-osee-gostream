@@ -14,7 +14,7 @@ export function create(model: GoStreamModel, state: MacroStateT): CompanionFeedb
 		[FeedbackId.Macro]: {
 			type: 'boolean',
 			name: 'Macro: State',
-			description: 'If the specified macro is running, change style of the bank',
+			description: 'If the specified macro is running, change style of the button',
 			options: [
 				{
 					type: 'dropdown',
