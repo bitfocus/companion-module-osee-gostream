@@ -8,7 +8,7 @@ import {
 	SuperSourceChoices,
 } from '../../model'
 import { ReqType, ActionType } from '../../enums'
-import { sendCommand } from '../../connection'
+import { sendCommand, sendCommands, GoStreamCmd } from '../../connection'
 import type { CompanionActionDefinitions } from '@companion-module/base'
 import { SuperSourceStateT } from './state'
 import { GoStreamModel } from '../../models/types'
@@ -104,8 +104,8 @@ export function create(model: GoStreamModel, state: SuperSourceStateT): Companio
 				])
 			},
 		},
-		[ActionId.SuperSourceMaskEnable]: {
-			name: 'Super Source:Super Source Mask Enable',
+		[ActionId.SuperSourceSetMaskProperties]: {
+			name: 'Super Source: set mask properties',
 			options: [
 				{
 					type: 'dropdown',
@@ -113,6 +113,20 @@ export function create(model: GoStreamModel, state: SuperSourceStateT): Companio
 					id: 'SuperSourceMask',
 					choices: SuperSourceMaskChoices,
 					default: 0,
+				},
+				{
+					id: 'props',
+					type: 'multidropdown',
+					label: 'Select properties',
+					choices: [
+						{ id: 'enable', label: 'enable' },
+						{ id: 'hMaskStart', label: 'hMaskStart' },
+						{ id: 'hMaskEnd', label: 'hMaskEnd' },
+						{ id: 'vMaskStart', label: 'vMaskStart' },
+						{ id: 'vMaskEnd', label: 'vMaskEnd' },
+					],
+					minSelection: 1,
+					default: ['enable', 'hMaskStart', 'hMaskEnd', 'vMaskStart', 'vMaskEnd'],
 				},
 				{
 					type: 'dropdown',
@@ -120,24 +134,7 @@ export function create(model: GoStreamModel, state: SuperSourceStateT): Companio
 					id: 'SuperSourceMaskEnable',
 					choices: SwitchChoices,
 					default: 0,
-				},
-			],
-			callback: async (action) => {
-				await sendCommand(ActionId.SuperSourceMaskEnable, ReqType.Set, [
-					getOptNumber(action, 'SuperSourceMask'),
-					getOptNumber(action, 'SuperSourceMaskEnable'),
-				])
-			},
-		},
-		[ActionId.SuperSourceMaskHStart]: {
-			name: 'Super Source:Super Source H Start',
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Mask',
-					id: 'SuperSourceMask',
-					choices: SuperSourceMaskChoices,
-					default: 0,
+					isVisible: (options) => (<string[]>options.props!).includes('enable'),
 				},
 				{
 					type: 'number',
@@ -146,24 +143,16 @@ export function create(model: GoStreamModel, state: SuperSourceStateT): Companio
 					min: 0,
 					max: 100,
 					default: 0,
+					isVisible: (options) => (<string[]>options.props!).includes('hMaskStart'),
 				},
-			],
-			callback: async (action) => {
-				await sendCommand(ActionId.SuperSourceMaskHStart, ReqType.Set, [
-					getOptNumber(action, 'SuperSourceMask'),
-					getOptNumber(action, 'SuperSourceMaskHStart'),
-				])
-			},
-		},
-		[ActionId.SuperSourceMaskVStart]: {
-			name: 'Super Source:Super Source V Start',
-			options: [
 				{
-					type: 'dropdown',
-					label: 'Mask',
-					id: 'SuperSourceMask',
-					choices: SuperSourceMaskChoices,
-					default: 0,
+					type: 'number',
+					label: 'H End',
+					id: 'SuperSourceMaskHEnd',
+					min: 0,
+					max: 100,
+					default: 100,
+					isVisible: (options) => (<string[]>options.props!).includes('hMaskEnd'),
 				},
 				{
 					type: 'number',
@@ -172,50 +161,7 @@ export function create(model: GoStreamModel, state: SuperSourceStateT): Companio
 					min: 0,
 					max: 100,
 					default: 0,
-				},
-			],
-			callback: async (action) => {
-				await sendCommand(ActionId.SuperSourceMaskVStart, ReqType.Set, [
-					getOptNumber(action, 'SuperSourceMask'),
-					getOptNumber(action, 'SuperSourceMaskVStart'),
-				])
-			},
-		},
-		[ActionId.SuperSourceMaskHEnd]: {
-			name: 'Super Source:Super Source H End',
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Mask',
-					id: 'SuperSourceMask',
-					choices: SuperSourceMaskChoices,
-					default: 0,
-				},
-				{
-					type: 'number',
-					label: 'H End',
-					id: 'SuperSourceMaskHEnd',
-					min: 0,
-					max: 100,
-					default: 0,
-				},
-			],
-			callback: async (action) => {
-				await sendCommand(ActionId.SuperSourceMaskHEnd, ReqType.Set, [
-					getOptNumber(action, 'SuperSourceMask'),
-					getOptNumber(action, 'SuperSourceMaskHEnd'),
-				])
-			},
-		},
-		[ActionId.SuperSourceMaskVEnd]: {
-			name: 'Super Source:Super Source V End',
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Mask',
-					id: 'SuperSourceMask',
-					choices: SuperSourceMaskChoices,
-					default: 0,
+					isVisible: (options) => (<string[]>options.props!).includes('vMaskStart'),
 				},
 				{
 					type: 'number',
@@ -223,14 +169,53 @@ export function create(model: GoStreamModel, state: SuperSourceStateT): Companio
 					id: 'SuperSourceMaskVEnd',
 					min: 0,
 					max: 100,
-					default: 0,
+					default: 100,
+					isVisible: (options) => (<string[]>options.props!).includes('vMaskEnd'),
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.SuperSourceMaskVEnd, ReqType.Set, [
-					getOptNumber(action, 'SuperSourceMask'),
-					getOptNumber(action, 'SuperSourceMaskVEnd'),
-				])
+				const props = <string[]>action.options.props
+				const commands: GoStreamCmd[] = []
+				const maskId = getOptNumber(action, 'SuperSourceMask')
+				if (props.includes('enable')) {
+					let paramOpt = getOptNumber(action, 'SuperSourceMaskEnable')
+					if (paramOpt === 2) paramOpt = state.maskEnable[maskId] ? 0 : 1
+					commands.push({
+						id: ActionId.SuperSourceMaskEnable,
+						type: ReqType.Set,
+						value: [maskId, paramOpt],
+					})
+				}
+				if (props.includes('hMaskStart')) {
+					commands.push({
+						id: ActionId.SuperSourceMaskHStart,
+						type: ReqType.Set,
+						value: [maskId, getOptNumber(action, 'SuperSourceMaskHStart')],
+					})
+				}
+				if (props.includes('hMaskEnd')) {
+					commands.push({
+						id: ActionId.SuperSourceMaskHEnd,
+						type: ReqType.Set,
+						value: [maskId, getOptNumber(action, 'SuperSourceMaskHEnd')],
+					})
+				}
+				if (props.includes('vMaskStart')) {
+					commands.push({
+						id: ActionId.SuperSourceMaskVStart,
+						type: ReqType.Set,
+						value: [maskId, getOptNumber(action, 'SuperSourceMaskVStart')],
+					})
+				}
+				if (props.includes('vMaskEnd')) {
+					commands.push({
+						id: ActionId.SuperSourceMaskVEnd,
+						type: ReqType.Set,
+						value: [maskId, getOptNumber(action, 'SuperSourceMaskVEnd')],
+					})
+				}
+
+				if (commands.length > 0) await sendCommands(commands)
 			},
 		},
 		[ActionId.SuperSourceBorderWidth]: {

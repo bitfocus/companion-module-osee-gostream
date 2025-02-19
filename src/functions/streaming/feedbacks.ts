@@ -9,7 +9,7 @@ export function create(_model: GoStreamModel, state: StreamingStateT): Companion
 		[FeedbackId.StreamOutput]: {
 			type: 'boolean',
 			name: 'Streaming: Set Stream Enable',
-			description: 'If you turn on Stream Enable, change style of the bank',
+			description: 'If you turn on Stream Enable, change style of the button',
 			options: [
 				{
 					type: 'dropdown',
@@ -30,7 +30,7 @@ export function create(_model: GoStreamModel, state: StreamingStateT): Companion
 		[FeedbackId.LiveInfo]: {
 			type: 'boolean',
 			name: 'Live: Set Live Start or Stop',
-			description: 'If you turn on Live Start, change style of the bank',
+			description: 'If you turn on Live Start, change style of the button',
 			options: [
 				{
 					type: 'dropdown',

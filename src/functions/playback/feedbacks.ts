@@ -7,7 +7,7 @@ export function create(_model: GoStreamModel, state: PlaybackStateT): CompanionF
 		[FeedbackId.PlaybackMode]: {
 			type: 'boolean',
 			name: 'Playback: Set Playback Mode',
-			description: 'If you turn on Playback Mode, change style of the bank',
+			description: 'If you turn on Playback Mode, change style of the button',
 			options: [
 				{
 					type: 'dropdown',
@@ -31,7 +31,7 @@ export function create(_model: GoStreamModel, state: PlaybackStateT): CompanionF
 		[FeedbackId.PlaybackRepeat]: {
 			type: 'boolean',
 			name: 'Playback: Set Playback Repeat',
-			description: 'If you turn on Playback Repeat, change style of the bank',
+			description: 'If you turn on Playback Repeat, change style of the button',
 			options: [],
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),
@@ -44,7 +44,7 @@ export function create(_model: GoStreamModel, state: PlaybackStateT): CompanionF
 		[FeedbackId.PlaybackPause]: {
 			type: 'boolean',
 			name: 'Playback: Set Playback Pause',
-			description: 'If you turn on Playback Pause, change style of the bank',
+			description: 'If you turn on Playback Pause, change style of the button',
 			options: [],
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),
@@ -57,7 +57,7 @@ export function create(_model: GoStreamModel, state: PlaybackStateT): CompanionF
 		[FeedbackId.PlaybackBar]: {
 			type: 'boolean',
 			name: 'Playback: Set Playback Bar',
-			description: 'If you turn on Playback Bar, change style of the bank',
+			description: 'If you turn on Playback Bar, change style of the button',
 			options: [],
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),
@@ -70,7 +70,7 @@ export function create(_model: GoStreamModel, state: PlaybackStateT): CompanionF
 		[FeedbackId.PlayFile]: {
 			type: 'boolean',
 			name: 'PlayFile: feedback based on current loaded video file',
-			description: 'Change style of bank if video file is loaded',
+			description: 'Change style of button if video file is loaded',
 			options: [
 				{
 					type: 'dropdown',

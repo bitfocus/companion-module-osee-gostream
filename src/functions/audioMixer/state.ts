@@ -14,6 +14,7 @@ export enum AudioState {
 export type AudioMixerStateT = {
 	transitionEnabled: boolean
 	state: AudioState[]
+	monitorSource: number
 }
 
 export function create(model: GoStreamModel): AudioMixerStateT {
@@ -22,6 +23,7 @@ export function create(model: GoStreamModel): AudioMixerStateT {
 	return {
 		transitionEnabled: false,
 		state: Array(audioCapableInputs),
+		monitorSource: 0,
 	}
 }
 
@@ -31,6 +33,7 @@ export async function sync(model: GoStreamModel): Promise<boolean> {
 	const cmds = [
 		{ id: ActionId.AudioTransition, type: ReqType.Get },
 		...Range(audioCapableInputs).map((id) => ({ id: ActionId.AudioEnable, type: ReqType.Get, value: [id] })),
+		{ id: ActionId.AudioMonitorSource, type: ReqType.Get },
 	]
 	return await sendCommands(cmds)
 }
@@ -45,6 +48,10 @@ export function update(state: AudioMixerStateT, data: GoStreamCmd): boolean {
 			const audiotype = data.value[0]
 			const audiotypeValue = data.value[1]
 			state.state[audiotype] = audiotypeValue
+			break
+		}
+		case ActionId.AudioMonitorSource: {
+			state.monitorSource = data.value[0]
 			break
 		}
 	}

@@ -1,6 +1,10 @@
-import type { CompanionActionEvent } from '@companion-module/base'
+import type { CompanionActionEvent, CompanionFeedbackInfo } from '@companion-module/base'
 
-export function getOptNumber(action: CompanionActionEvent, key: string, defVal?: number): number {
+export function getOptNumber(
+	action: CompanionActionEvent | CompanionFeedbackInfo,
+	key: string,
+	defVal?: number,
+): number {
 	const rawVal = action.options[key]
 	if (defVal !== undefined && rawVal === undefined) return defVal
 	const val = Number(rawVal)
@@ -10,7 +14,11 @@ export function getOptNumber(action: CompanionActionEvent, key: string, defVal?:
 	return val
 }
 
-export function getOptString(action: CompanionActionEvent, key: string, defVal?: string): string {
+export function getOptString(
+	action: CompanionActionEvent | CompanionFeedbackInfo,
+	key: string,
+	defVal?: string,
+): string {
 	const rawVal = action.options[key]
 	if (defVal !== undefined && rawVal === undefined) return defVal
 	const val = String(rawVal)

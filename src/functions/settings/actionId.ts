@@ -5,7 +5,6 @@ export enum ActionId {
 	InputWindowLayout = 'inputWindowLayout',
 	Marker = 'marker',
 	MicInput = 'micInput',
-	RecordFileName = 'recordFileName',
 	SrcSelection = 'srcSelection',
 	AuxSource = 'auxSource',
 	OutFormat = 'outFormat',

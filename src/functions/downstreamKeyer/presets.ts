@@ -3,7 +3,6 @@ import { CompanionPresetDefinitions } from '@companion-module/base'
 import { ActionId } from './actionId'
 import { FeedbackId } from './feedbackId'
 import { ActionType } from '../../enums'
-import { KeySwitchChoices } from './../../model'
 import { GoStreamModel } from '../../models/types'
 const ptzSize = '18'
 export function create(model: GoStreamModel): CompanionPresetDefinitions {
@@ -25,10 +24,10 @@ export function create(model: GoStreamModel): CompanionPresetDefinitions {
 			},
 			feedbacks: [
 				{
-					feedbackId: FeedbackId.DskSourceFill,
+					feedbackId: FeedbackId.DskSourceFillKey,
 					options: {
 						TypeID: 1,
-						DSKFill: s.id,
+						DSKSource: s.id,
 					},
 					style: {
 						bgcolor: combineRgb(255, 0, 0),
@@ -49,50 +48,5 @@ export function create(model: GoStreamModel): CompanionPresetDefinitions {
 			],
 		}
 	}
-
-	const Keys = KeySwitchChoices
-	for (const key of Keys) {
-		if (key.label != 'BKGD' && key.label !== 'Key') {
-			presets[`keys_Next_Air_${key.id}`] = {
-				category: 'Keys On Air',
-				name: `Toggle upstream KEY ${key.label} OnAir`,
-				type: 'button',
-				style: {
-					text: `${key.label}`,
-					size: ptzSize,
-					color: combineRgb(255, 255, 255),
-					bgcolor: combineRgb(0, 0, 0),
-				},
-				feedbacks: [
-					{
-						feedbackId: FeedbackId.DskOnAir,
-						options: {
-							KeyOnAir: 1,
-							DSKOnAir: 1,
-						},
-						style: {
-							bgcolor: combineRgb(255, 255, 0),
-							color: combineRgb(0, 0, 0),
-						},
-					},
-				],
-				steps: [
-					{
-						down: [
-							{
-								actionId: ActionId.DskOnAir,
-								options: {
-									KeyOnAir: 2,
-									DSKOnAir: 2,
-								},
-							},
-						],
-						up: [],
-					},
-				],
-			}
-		}
-	}
-
 	return presets
 }

@@ -8,7 +8,7 @@ import {
 	OtherDSKSourceModels,
 	AudioMicChoices,
 	AudioInputSourcesChoices,
-	OtherAudioSourcesChoices,
+	HeadphoneSourceChoices,
 	AudioSourcesEnableChoices,
 	OtherAudioSourcesEnableChoices,
 	SettingsOutSourceChoices,
@@ -108,11 +108,7 @@ export class GoStreamModel {
 			}
 			case ActionType.AudioFader:
 			case ActionType.AudioMonitorSource: {
-				const mic_sources = AudioMicChoices
-				const in_sources = AudioInputSourcesChoices
-				const o_sources = OtherAudioSourcesChoices
-				const audio_sources = mic_sources.concat(in_sources).concat(o_sources)
-				return audio_sources
+				return HeadphoneSourceChoices
 			}
 			case ActionType.AudioEnable: {
 				const ac_enables = AudioSourcesEnableChoices
@@ -195,6 +191,24 @@ export class GoStreamModel {
 			{ id: 5, name: 'PGM' },
 			{ id: 6, name: 'PVW' },
 			{ id: 7, name: 'Multiview' },
+		]
+	}
+
+	FillKeySources(): SourceT[] {
+		return [
+			{ id: 0, name: 'In 1' },
+			{ id: 1, name: 'In 2' },
+			{ id: 2, name: 'In 3' },
+			{ id: 3, name: 'In 4' },
+			{ id: 4, name: 'Aux' },
+			{ id: 5, name: 'Still 1' },
+			{ id: 6, name: 'Still 1 Key' },
+			{ id: 7, name: 'Still 2' },
+			{ id: 8, name: 'Still 2 Key' },
+			{ id: 9, name: 'Color 1' },
+			{ id: 10, name: 'Color 2' },
+			{ id: 11, name: 'Color Bar' },
+			{ id: 12, name: 'Black' },
 		]
 	}
 }

@@ -1,15 +1,21 @@
 import { combineRgb, CompanionFeedbackDefinitions } from '@companion-module/base'
+import { getOptNumber, getOptString } from '../../util'
 import { TransitionStyle } from '../../enums'
 import { FeedbackId } from './feedbackId'
 import { TransitionStyleChoice } from '../../model'
 import { GoStreamModel } from '../../models/types'
 import { MixEffectStateT } from './state'
+
+function createFeedbackName(name: string): string {
+	return 'MixEffect: ' + name
+}
+
 export function create(model: GoStreamModel, state: MixEffectStateT): CompanionFeedbackDefinitions {
 	return {
 		[FeedbackId.PreviewBG]: {
 			type: 'boolean',
-			name: 'Preview source',
-			description: 'If the input specified is selected in preview, change style of the bank',
+			name: createFeedbackName('Preview (PVW) source'),
+			description: 'If the input specified is selected in preview, change style of the button',
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),
 				bgcolor: combineRgb(0, 204, 0),
@@ -33,8 +39,8 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionF
 		},
 		[FeedbackId.ProgramBG]: {
 			type: 'boolean',
-			name: 'Program source',
-			description: 'If the input specified is selected in program, change style of the bank',
+			name: createFeedbackName('Program (PGM) source'),
+			description: 'If the input specified is selected in program (PGM), change style of the button',
 			defaultStyle: {
 				color: combineRgb(255, 255, 255),
 				bgcolor: combineRgb(204, 0, 0),
@@ -56,10 +62,58 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionF
 				}
 			},
 		},
+		[FeedbackId.KeysVisibility]: {
+			type: 'boolean',
+			name: createFeedbackName('"Next Transition" / "On Air" state (KEY, DSK, BKGD)'),
+			description:
+				'Change button style based on state of "next transition" (KEY, DSK, BKGD). The first options refers to the button states; the last one refers to the actual visibility PVW, which depends on two button-states',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Layer',
+					id: 'KeyButton',
+					choices: state.nextTState.getChoices(true),
+					default: state.nextTState.getDefaultChoice(),
+				},
+				{
+					type: 'dropdown',
+					label: 'Status',
+					id: 'LayerState',
+					choices: [
+						{ id: 0, label: 'Next Transition Button On' },
+						{ id: 2, label: 'On Air' },
+						{ id: 3, label: 'Showing in PVW' },
+					],
+					default: 0,
+					isVisible: (options) => options.KeyButton != 'BKGD',
+				},
+			],
+			defaultStyle: {
+				color: combineRgb(0, 0, 0),
+				bgcolor: combineRgb(255, 255, 0),
+			},
+			callback: (feedback) => {
+				const keyName = getOptString(feedback, 'KeyButton')
+				const keystate = getOptNumber(feedback, 'LayerState')
+
+				if (keystate === 1) {
+					// for compatibility with previous versions.
+					return !state.nextTState[keyName]
+				} else if (keystate === 0) {
+					return state.nextTState[keyName]
+				} else if (keystate === 3) {
+					return state.nextTState[keyName] != state.nextTState.getOnAirStatus(keyName)
+				} else if (keystate === 2) {
+					return state.nextTState.getOnAirStatus(keyName)
+				} else {
+					console.log('Feedback: Next Transition state received illegal option: ' + keystate)
+				}
+			},
+		},
 		[FeedbackId.InTransition]: {
 			type: 'boolean',
-			name: 'Transition: Active/Running',
-			description: 'If the specified transition is active, change style of the bank',
+			name: createFeedbackName('Transition is Active/Running'),
+			description: 'If the specified transition is active, change style of the button',
 			options: [],
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),
@@ -69,23 +123,10 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionF
 				return !!state.transitionPosition.inTransition
 			},
 		},
-		[FeedbackId.Cut]: {
-			type: 'boolean',
-			name: 'Transition: Active/Running',
-			description: 'If the specified transition is active, change style of the bank',
-			options: [],
-			defaultStyle: {
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(255, 255, 0),
-			},
-			callback: () => {
-				return false
-			},
-		},
 		[FeedbackId.Prev]: {
 			type: 'boolean',
-			name: 'Transition: Active/Running',
-			description: 'If the PREV is active, change style of the bank',
+			name: createFeedbackName('Prev transition Active/Running'),
+			description: 'If the PREV is active, change style of the button',
 			options: [],
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),
@@ -97,8 +138,8 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionF
 		},
 		[FeedbackId.TransitionStyle]: {
 			type: 'boolean',
-			name: 'Transition: Style',
-			description: 'If the specified transition style is active, change style of the bank',
+			name: createFeedbackName('Transition style'),
+			description: 'If the specified transition style is active, change style of the button',
 			options: [
 				{
 					type: 'dropdown',
@@ -122,8 +163,8 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionF
 		},
 		[FeedbackId.TransitionRate]: {
 			type: 'boolean',
-			name: 'Transition: Rate',
-			description: 'If the specified transition rate is active, change style of the bank',
+			name: createFeedbackName('Transition rate'),
+			description: 'If the specified transition rate is active, change style of the button',
 			options: [
 				{
 					type: 'dropdown',

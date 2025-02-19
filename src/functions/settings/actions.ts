@@ -154,21 +154,6 @@ export function create(model: GoStreamModel, state: SettingsStateT): CompanionAc
 				await sendCommand(ActionId.MicInput, ReqType.Set, [getOptNumber(action, 'micid'), type])
 			},
 		},
-		[ActionId.RecordFileName]: {
-			name: 'Settings: Record FileName',
-			options: [
-				{
-					type: 'textinput',
-					label: 'FileName',
-					id: 'RecordFileName',
-					required: true,
-					default: '',
-				},
-			],
-			callback: async (action) => {
-				await sendCommand(ActionId.RecordFileName, ReqType.Set, [getOptString(action, 'RecordFileName')])
-			},
-		},
 		[ActionId.SrcSelection]: {
 			name: 'Settings: Src Selection',
 			options: [

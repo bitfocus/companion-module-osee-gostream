@@ -18,6 +18,8 @@ export enum ActionId {
 	TransitionWipeSoftness = 'transitionWipeSoftness',
 	TransitionWipeBorder = 'transitionWipeBorder',
 	TransitionWipeFillSource = 'transitionWipeFillSource',
-	TransitionSourceBG = 'transitionSourceBG',
-	TransitionSource = 'transitionSource',
+	NextTransitionButtons = 'transitionSource',
+	OnAirButtons = 'onAirButtons', // this is a custom function for KEY and DSK On Air
+	KeyOnAir = 'keyOnAir', // needed for communications
+	DskOnAir = 'dskOnAir', // needed for communications
 }

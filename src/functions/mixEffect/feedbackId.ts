@@ -15,5 +15,5 @@ export enum FeedbackId {
 	FadeToBlackIsBlack = 'fadeToBlackIsBlack',
 	FadeToBlackRate = 'fadeToBlackRate',
 	FTBAFV = 'FTBAFV',
-	TransitionSelection = 'transitionSelection',
+	KeysVisibility = 'transitionSource', // keeping the string for backward compatibility?
 }

@@ -3,6 +3,7 @@ import { GetConfigFields, Config } from './config'
 import { GoStream } from './GoStream'
 import { GetActionsList } from './actions'
 import { GoStreamDuet } from './models/duet'
+import { UpgradeScriptList } from './upgrades'
 
 //import { type IModelSpec } from './models/types'
 //import { GetModelSpec, GetAutoDetectModel } from './models'
@@ -67,4 +68,5 @@ export class GoStreamInstance extends InstanceBase<Config> {
 		this.setPresetDefinitions(this.gostream.getPresets(this))
 	}
 }
-runEntrypoint(GoStreamInstance, [])
+
+runEntrypoint(GoStreamInstance, [...UpgradeScriptList])

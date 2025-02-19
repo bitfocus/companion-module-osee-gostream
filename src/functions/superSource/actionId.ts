@@ -15,4 +15,5 @@ export enum ActionId {
 	SuperSourceBorderHue = 'superSourceBorderHue',
 	SuperSourceBorderSaturation = 'superSourceBorderSaturation',
 	SuperSourceBorderBrightness = 'superSourceBorderBrightness',
+	SuperSourceSetMaskProperties = 'superSourceSetMaskProperties',
 }

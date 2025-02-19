@@ -1,59 +1,32 @@
 import { ActionId } from './actionId'
 import { getOptNumber } from './../../util'
 import { SwitchChoices } from './../../model'
-import { ReqType, ActionType } from './../../enums'
+import { ReqType } from './../../enums'
 import { sendCommand } from './../../connection'
 import { GoStreamModel } from '../../models/types'
 import type { CompanionActionDefinitions } from '@companion-module/base'
 import { DownstreamKeyerStateT } from './state'
 
+function createActionName(name: string): string {
+	return 'DownstreamKeyer: ' + name
+}
 export function create(model: GoStreamModel, state: DownstreamKeyerStateT): CompanionActionDefinitions {
 	return {
-		[ActionId.DskOnAir]: {
-			name: 'Next Transition:Set DSKOnAir',
-			options: [
-				{
-					type: 'dropdown',
-					label: 'DSK OnAir',
-					id: 'DSKOnAir',
-					choices: [
-						{ id: 0, label: 'Off' },
-						{ id: 1, label: 'On Air' },
-						{ id: 2, label: 'Toggle' },
-					],
-					default: 0,
-				},
-			],
-			callback: async (action) => {
-				const opt = getOptNumber(action, 'DSKOnAir')
-				let paramOpt = 0
-				if (opt === 2) {
-					if (state.onAir === true) {
-						paramOpt = 0
-					} else {
-						paramOpt = 1
-					}
-					await sendCommand(ActionId.DskOnAir, ReqType.Set, [paramOpt])
-				} else {
-					await sendCommand(ActionId.DskOnAir, ReqType.Set, [opt])
-				}
-			},
-		},
 		[ActionId.DskSourceFillKey]: {
-			name: 'DSK:Set Source And Key',
+			name: createActionName('Set source and key'),
 			options: [
 				{
 					type: 'dropdown',
 					label: 'Fill',
 					id: 'DSKFill',
-					choices: model.getChoices(ActionType.DskSourceFill),
+					choices: model.FillKeySources().map((item) => ({ id: item.id, label: item.name })),
 					default: 0,
 				},
 				{
 					type: 'dropdown',
 					label: 'Key',
 					id: 'DSKKey',
-					choices: model.getChoices(ActionType.DskSourceFill),
+					choices: model.FillKeySources().map((item) => ({ id: item.id, label: item.name })),
 					default: 0,
 				},
 			],
@@ -65,13 +38,13 @@ export function create(model: GoStreamModel, state: DownstreamKeyerStateT): Comp
 			},
 		},
 		[ActionId.DskSourceFill]: {
-			name: 'DSK:Set Source',
+			name: createActionName('Set fill source'),
 			options: [
 				{
 					type: 'dropdown',
 					label: 'DSK Fill',
 					id: 'DSKFill',
-					choices: model.getChoices(ActionType.DskSourceFill),
+					choices: model.FillKeySources().map((item) => ({ id: item.id, label: item.name })),
 					default: 0,
 				},
 			],
@@ -80,13 +53,13 @@ export function create(model: GoStreamModel, state: DownstreamKeyerStateT): Comp
 			},
 		},
 		[ActionId.DskSourceKey]: {
-			name: 'DSK:Set Source Key',
+			name: createActionName('Set key'),
 			options: [
 				{
 					type: 'dropdown',
 					label: 'DSK Key',
 					id: 'DSKKey',
-					choices: model.getChoices(ActionType.DskSourceFill),
+					choices: model.FillKeySources().map((item) => ({ id: item.id, label: item.name })),
 					default: 0,
 				},
 			],
@@ -95,7 +68,7 @@ export function create(model: GoStreamModel, state: DownstreamKeyerStateT): Comp
 			},
 		},
 		[ActionId.DskMaskEnable]: {
-			name: 'DSK:Set Mask Enable',
+			name: createActionName('Set mask enable'),
 			options: [
 				{
 					type: 'dropdown',
@@ -109,7 +82,7 @@ export function create(model: GoStreamModel, state: DownstreamKeyerStateT): Comp
 				const opt = getOptNumber(action, 'DskMaskEnable')
 				let paramOpt = 0
 				if (opt === 2) {
-					if (state.mask === true) {
+					if (state.mask.enabled === true) {
 						paramOpt = 0
 					} else {
 						paramOpt = 1
@@ -121,7 +94,7 @@ export function create(model: GoStreamModel, state: DownstreamKeyerStateT): Comp
 			},
 		},
 		[ActionId.DskMaskHStart]: {
-			name: 'DSK:Set Mask H Start',
+			name: createActionName('Set mask h start'),
 			options: [
 				{
 					type: 'number',
@@ -137,7 +110,7 @@ export function create(model: GoStreamModel, state: DownstreamKeyerStateT): Comp
 			},
 		},
 		[ActionId.DskMaskVStart]: {
-			name: 'DSK:Set Mask V Start',
+			name: createActionName('Set mask v start'),
 			options: [
 				{
 					type: 'number',
@@ -153,7 +126,7 @@ export function create(model: GoStreamModel, state: DownstreamKeyerStateT): Comp
 			},
 		},
 		[ActionId.DskMaskHEnd]: {
-			name: 'DSK:Set Mask H End',
+			name: createActionName('Set mask h end'),
 			options: [
 				{
 					type: 'number',
@@ -169,7 +142,7 @@ export function create(model: GoStreamModel, state: DownstreamKeyerStateT): Comp
 			},
 		},
 		[ActionId.DskMaskVEnd]: {
-			name: 'DSK:Set Mask V End',
+			name: createActionName('Set mask v end'),
 			options: [
 				{
 					type: 'number',
@@ -185,7 +158,7 @@ export function create(model: GoStreamModel, state: DownstreamKeyerStateT): Comp
 			},
 		},
 		[ActionId.DskControlShapedKey]: {
-			name: 'DSK:Set Control Shaped Key',
+			name: createActionName('Set shaped key'),
 			options: [
 				{
 					type: 'dropdown',
@@ -199,7 +172,7 @@ export function create(model: GoStreamModel, state: DownstreamKeyerStateT): Comp
 				const opt = getOptNumber(action, 'ShapedKey')
 				let paramOpt = 0
 				if (opt === 2) {
-					if (state.shapedKey === true) {
+					if (state.control.shapedKey === true) {
 						paramOpt = 0
 					} else {
 						paramOpt = 1
@@ -211,7 +184,7 @@ export function create(model: GoStreamModel, state: DownstreamKeyerStateT): Comp
 			},
 		},
 		[ActionId.DskControlClip]: {
-			name: 'DSK:Set Control Clip',
+			name: createActionName('Set clip'),
 			options: [
 				{
 					type: 'number',
@@ -227,7 +200,7 @@ export function create(model: GoStreamModel, state: DownstreamKeyerStateT): Comp
 			},
 		},
 		[ActionId.DskControlGain]: {
-			name: 'DSK:Set Control Gain',
+			name: createActionName('Set gain'),
 			options: [
 				{
 					type: 'number',
@@ -243,7 +216,7 @@ export function create(model: GoStreamModel, state: DownstreamKeyerStateT): Comp
 			},
 		},
 		[ActionId.DskControlInvert]: {
-			name: 'DSK:Set Control Invert',
+			name: createActionName('Set invert'),
 			options: [
 				{
 					type: 'dropdown',
@@ -257,7 +230,7 @@ export function create(model: GoStreamModel, state: DownstreamKeyerStateT): Comp
 				const opt = getOptNumber(action, 'Invert')
 				let paramOpt = 0
 				if (opt === 2) {
-					if (state.invert === true) {
+					if (state.control.invert === true) {
 						paramOpt = 0
 					} else {
 						paramOpt = 1
@@ -269,7 +242,7 @@ export function create(model: GoStreamModel, state: DownstreamKeyerStateT): Comp
 			},
 		},
 		[ActionId.DskRate]: {
-			name: 'DSK:Set Control Rate',
+			name: createActionName('Set rate'),
 			options: [
 				{
 					type: 'number',

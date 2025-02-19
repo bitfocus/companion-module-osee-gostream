@@ -1,7 +1,4 @@
 export enum ActionId {
-	KeyOnAir = 'keyOnAir',
-	TransitionSource = 'transitionSource',
-	USKOnPreview = 'uskOnPreview', // This is custom function
 	UpStreamKeyFillKeyType = 'upStreamKeyFillKeyType',
 	UpStreamKeyType = 'upStreamKeyType',
 	LumaKeySourceFill = 'lumaKeySourceFill',

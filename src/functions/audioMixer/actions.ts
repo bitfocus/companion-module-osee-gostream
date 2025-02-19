@@ -120,7 +120,7 @@ export function create(model: GoStreamModel, state: AudioMixerStateT): Companion
 			},
 		},
 		[ActionId.AudioEnable]: {
-			name: 'Audio Mixer:Set Mic Audio Enable',
+			name: 'Deprecated (Mic) - Use Audio Mixer: Set Audio Enable',
 			options: [
 				{
 					type: 'dropdown',
@@ -142,52 +142,96 @@ export function create(model: GoStreamModel, state: AudioMixerStateT): Companion
 				},
 			],
 			callback: async (action) => {
-				const opt1 = getOptNumber(action, 'ASource')
-				const opt2 = getOptNumber(action, 'AudioEnable')
-				let paramOpt = 0
-				if (opt2 === 2) {
-					paramOpt = state.state[opt1] === AudioState.Off ? 1 : 0
-					await sendCommand(ActionId.AudioEnable, ReqType.Set, [opt1, paramOpt])
-				} else {
-					await sendCommand(ActionId.AudioEnable, ReqType.Set, [opt1, opt2])
+				// set audio source to audio state
+				const asource = getOptNumber(action, 'ASource')
+				let astate = getOptNumber(action, 'AudioEnable')
+				if (astate === 2) {
+					astate = AudioState.Off
+					if (state.state[asource] === AudioState.Off) {
+						astate = AudioState.On
+					}
 				}
+				await sendCommand(ActionId.AudioEnable, ReqType.Set, [asource, astate])
 			},
 		},
 		[ActionId.AudioEnable1]: {
-			name: 'Audio Mixer:Set Input Audio Enable',
+			name: 'Audio Mixer:Set Audio Enable',
 			options: [
 				{
 					type: 'dropdown',
 					label: 'Source',
 					id: 'ASource',
-					choices: AudioInputSourcesChoices,
+					choices: AudioMicChoices.concat(AudioInputSourcesChoices),
 					default: 0,
 				},
 				{
 					type: 'dropdown',
 					label: 'Enable',
+					id: 'MicEnable',
+					choices: [
+						{ id: 0, label: 'off' },
+						{ id: 1, label: 'on' },
+						{ id: 4, label: 'Toggle on/off' },
+					],
+					default: 0,
+					isVisibleData: AudioMicChoices.map((choice) => choice.id),
+					isVisible: (options, micIDs) => micIDs.includes(Number(options.ASource)),
+				},
+				{
+					type: 'dropdown',
+					label: 'Enable',
+					// id should be VideoEnable, but is kept "AudioEnable" for backward compatibility
 					id: 'AudioEnable',
 					choices: [
 						{ id: 0, label: 'off' },
 						{ id: 1, label: 'on' },
 						{ id: 2, label: 'afv' },
-						{ id: 3, label: 'Toggle' },
+						{ id: 3, label: 'Toggle All' },
+						{ id: 4, label: 'Toggle on/off' },
 					],
 					default: 0,
+					isVisibleData: AudioMicChoices.map((choice) => choice.id),
+					isVisible: (options, micIDs) => !micIDs.includes(Number(options.ASource)),
 				},
 			],
 			callback: async (action) => {
-				const opt1 = getOptNumber(action, 'AudioEnable')
-				const opt2 = getOptNumber(action, 'ASource')
-				let paramOpt = 0
-				if (opt1 === 3) {
-					if (state.state[opt1] === AudioState.Off) paramOpt = AudioState.On
-					else if (state.state[opt1] === AudioState.On) paramOpt = AudioState.AFV
-					else paramOpt = AudioState.Off
-					await sendCommand(ActionId.AudioEnable, ReqType.Set, [opt2, paramOpt])
+				// set audio source to audio state
+				const asource = getOptNumber(action, 'ASource')
+				const micIds = AudioMicChoices.map((choice) => choice.id)
+				let achoice = 0
+				if (micIds.includes(asource)) {
+					achoice = getOptNumber(action, 'MicEnable')
 				} else {
-					await sendCommand(ActionId.AudioEnable, ReqType.Set, [opt2, opt1])
+					achoice = getOptNumber(action, 'AudioEnable')
 				}
+				let astate = achoice
+				// choices 3 and 4 are dynamic, so convert into audio state here:
+				if (achoice >= 3) {
+					// Toggle: switch between on & off (including AFV if id 3 was selected)
+					const includeAFV = achoice === 3
+					astate = AudioState.Off
+					if (state.state[asource] === AudioState.Off) {
+						astate = AudioState.On
+					} else if (includeAFV && state.state[asource] === AudioState.On) {
+						astate = AudioState.AFV
+					}
+				}
+				await sendCommand(ActionId.AudioEnable, ReqType.Set, [asource, astate])
+			},
+			learn: async (action) => {
+				const micIds = AudioMicChoices.map((choice) => choice.id)
+				const asource = Number(action.options['ASource'])
+				if (asource == undefined || isNaN(asource)) {
+					// source needs to be selected for learn to work.
+					return undefined
+				}
+				if (micIds.includes(asource)) {
+					action.options.MicEnable = state.state[asource]
+				} else {
+					action.options.AudioEnable = state.state[asource]
+				}
+
+				return action.options
 			},
 		},
 		[ActionId.AudioDelay]: {

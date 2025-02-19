@@ -8,7 +8,7 @@ export function create(model: GoStreamModel, state: AudioMixerStateT): Companion
 		[FeedbackId.AudioEnable]: {
 			type: 'boolean',
 			name: 'Audio Mixer: Set Audio Enabled',
-			description: 'If audio source is enabled change style of bank',
+			description: 'If audio source is enabled change style of button',
 			options: [
 				{
 					type: 'dropdown',
@@ -38,7 +38,7 @@ export function create(model: GoStreamModel, state: AudioMixerStateT): Companion
 		[FeedbackId.AudioTransition]: {
 			type: 'boolean',
 			name: 'Audio Mixer: Set AudioTransition	Enable',
-			description: 'If you turn on AudioTransition, change style of the bank',
+			description: 'If you turn on AudioTransition, change style of the button',
 			options: [],
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),
@@ -46,6 +46,33 @@ export function create(model: GoStreamModel, state: AudioMixerStateT): Companion
 			},
 			callback: () => {
 				return state.transitionEnabled
+			},
+		},
+		[FeedbackId.AudioMonitorSource]: {
+			type: 'boolean',
+			name: 'Audio Mixer: Set Monitor Source',
+			description: 'If monitor (headphone) is set to selected value, change the button style',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Source',
+					id: 'AudioSource',
+					choices: model.getChoices(ActionType.AudioMonitorSource),
+					default: model.getChoices(ActionType.AudioMonitorSource)[0].id,
+				},
+			],
+			defaultStyle: {
+				color: combineRgb(0, 0, 0),
+				bgcolor: combineRgb(255, 255, 0),
+			},
+			callback: (feedback) => {
+				return state.monitorSource === Number(feedback.options.AudioSource)
+			},
+			learn: (feedback) => {
+				return {
+					...feedback.options,
+					AudioSource: state.monitorSource,
+				}
 			},
 		},
 	}
