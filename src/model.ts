@@ -46,11 +46,6 @@ export const WipeDirectionChoices = [
 	{ id: 0, label: 'Normal' },
 	{ id: 1, label: 'Inverse' },
 ]
-export const KeySwitchChoices = [
-	{ id: 0, label: 'Key' },
-	{ id: 1, label: 'DSK' },
-	{ id: 2, label: 'BKGD' },
-]
 export const SuperSourceChoices = [
 	{ id: 0, label: 'Source 1' },
 	{ id: 1, label: 'Source 2' },

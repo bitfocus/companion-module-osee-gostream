@@ -76,9 +76,9 @@ export function tryUpdateNTFeedback(feedback: CompanionMigrationFeedback): boole
 				return false
 			}
 		case 'transitionSelection':
-			// doesn't map to new feedback function...
-			//feedback.feedbackId = FeedbackId.KeysVisibility
-			//feedback.options = {KeyButton:  , LayerState: }
+			// doesn't map to new feedback function, but it didn't do anything anyway, so let's just do _something_ ...
+			feedback.feedbackId = FeedbackId.KeysVisibility
+			feedback.options = { KeyButton: 'KEY', LayerState: 0 }
 			return false
 		case 'transitionKeySwitch':
 			// note: this works because the option type was incorrectly set to dropdown!
