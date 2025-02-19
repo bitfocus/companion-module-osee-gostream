@@ -24,10 +24,10 @@ type UpdConfig = CompanionStaticUpgradeProps<Config>
 
 // return a function that will receive a set of actions,feedbacks and config and must return the upgraded ones.
 // This returned function sends each action/feedback to the functions passed in here as `actionsUpgrader` and `feedbackUpgrader`.
-//    the actionsUpgrader/feedbackUpgrader funcs take a single argument (one action or feedback)
-//    and is called once for each action or feedback currently defined
-//        it should return true only if the action was updated.
-//        The Upgrader functions must modify the passed object, not create a new one (JavaScript does not copy on write)
+// The actionsUpgrader/feedbackUpgrader funcs take a single argument (one action or feedback)
+// and is called once for each action or feedback currently defined
+// it should return true only if the action was updated.
+// The Upgrader functions must modify the passed object, not create a new one (JavaScript does not copy on write)
 export function ModuleUpgrader(
 	actionsUpgrader: actionUpgradeFn = falseFn,
 	feedbackUpgrader: feedbackUpgradeFn = falseFn,

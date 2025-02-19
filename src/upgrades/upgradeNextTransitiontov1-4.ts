@@ -1,12 +1,4 @@
-import {
-	//	CompanionStaticUpgradeResult,
-	//	CompanionUpgradeContext,
-	//	CompanionStaticUpgradeProps,
-	CompanionMigrationAction,
-	CompanionMigrationFeedback,
-	InputValue,
-	//CompanionOptionValues,
-} from '@companion-module/base'
+import { CompanionMigrationAction, CompanionMigrationFeedback, InputValue } from '@companion-module/base'
 
 import { ActionId } from '../functions/mixEffect/actionId'
 import { FeedbackId } from '../functions/mixEffect/feedbackId'
@@ -33,7 +25,7 @@ export function tryUpdateNTAction(action: CompanionMigrationAction): boolean {
 				action.options = { KeyButton: keyName, ButtonAction: 1, BKGDAction: 1 }
 				return true
 			} else {
-				// first optionis now called 'KeyButton', no need to test
+				// first option is now called 'KeyButton', no need to test
 				return false
 			}
 		case 'transitionSourceBG':
@@ -76,12 +68,11 @@ export function tryUpdateNTFeedback(feedback: CompanionMigrationFeedback): boole
 				return false
 			}
 		case 'transitionSelection':
-			// doesn't map to new feedback function, but it didn't do anything anyway, so let's just do _something_ ...
 			feedback.feedbackId = FeedbackId.KeysVisibility
 			feedback.options = { KeyButton: 'KEY', LayerState: 0 }
-			return false
+			return true
 		case 'transitionKeySwitch':
-			// note: this works because the option type was incorrectly set to dropdown!
+			// note: this maintains equivalence because the option type was incorrectly set to dropdown!
 			feedback.feedbackId = FeedbackId.KeysVisibility
 			feedback.options = { KeyButton: keyswitchMap[String(options['KeySwitch'])], LayerState: 0 }
 			return true
