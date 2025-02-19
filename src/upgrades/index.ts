@@ -11,8 +11,8 @@ import * as UpgradeToConsolidatedSSRCMaskAction from './upgradeToConsolidatedSSR
 import { tryUpdateNTAction, tryUpdateNTFeedback } from './upgradeNextTransitiontov1-4'
 
 // The following functions are modified from:
-//   https://github.com/bitfocus/companion-module-allenheath-sq/blob/main/src/upgrades.ts
-//  used with permission
+// https://github.com/bitfocus/companion-module-allenheath-sq/blob/main/src/upgrades.ts
+// used with permission
 type actionUpgradeFn = (action: CompanionMigrationAction) => boolean
 type feedbackUpgradeFn = (action: CompanionMigrationFeedback) => boolean
 type configUpgradeFn = (config: Config | null) => boolean
@@ -43,8 +43,8 @@ export function ModuleUpgrader(
 }
 
 // The list of upgrade scripts that will be passed to Companion's init method...
-//  Note: the number of items in this list must grow monotonically, and new items must be added to the end for this to work properly
-//    (In some cases very old upgraders can be replaced by EmptyUpgradeScript)
+// Note: the number of items in this list must grow monotonically, and new items must be added to the end for this to work properly
+// (In some cases very old upgraders can be replaced by EmptyUpgradeScript)
 export const UpgradeScriptList: CompanionStaticUpgradeScript<Config>[] = [
 	UpgradeToConsolidatedSSRCMaskAction.getScripts,
 	ModuleUpgrader(tryUpdateNTAction, tryUpdateNTFeedback),

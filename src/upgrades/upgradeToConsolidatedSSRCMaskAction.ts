@@ -19,6 +19,7 @@ export function getScripts(
 
 	const actions: CompanionMigrationAction[] = props.actions
 
+	console.log('PROPT', JSON.stringify(props))
 	for (const action of actions) {
 		if (actionIdsToUpgrade.includes(action.actionId)) {
 			const oldActionId = action.actionId

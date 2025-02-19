@@ -4,8 +4,8 @@ import { ActionId } from '../functions/mixEffect/actionId'
 import { FeedbackId } from '../functions/mixEffect/feedbackId'
 
 // note: use string constants rather than variables for the comparisons
-//   so we are not dependent on code changes down the line
-//  (these conversion are supposed to persist beyond any code removals)
+// so we are not dependent on code changes down the line
+// (these conversion are supposed to persist beyond any code removals)
 
 // note: unlike some languages, these modification affect the original object (no copy on write)
 
@@ -18,7 +18,7 @@ export function tryUpdateNTAction(action: CompanionMigrationAction): boolean {
 	switch (actionId) {
 		case 'transitionSource':
 			// in 1.3.1 option type was incorrectly set to dropdown, so it didn't work. This is a bit of handwaving...
-			//  If it was, indeed, a single-choice dropdown it would only turn the key on; never off...
+			// If it was, indeed, a single-choice dropdown it would only turn the key on; never off...
 			if (Object.keys(options).includes('KeySwitch')) {
 				action.actionId = ActionId.NextTransitionButtons // this is a no-op
 				keyName = keyswitchMap[String(options['KeySwitch'])]

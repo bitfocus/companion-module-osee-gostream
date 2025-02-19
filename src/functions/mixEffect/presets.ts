@@ -448,7 +448,7 @@ export function create(model: GoStreamModel): CompanionPresetDefinitions {
 	}
 
 	// Keys on Preview (note "Toggle" doesn't make sense in this context,
-	//     so make both "on" and "off" buttons:
+	// so make both "on" and "off" buttons:
 	for (const key of NTState.getChoices(false)) {
 		for (const keystate of [3, 4]) {
 			const statename = keystate === 3 ? 'off' : 'on'
