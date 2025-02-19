@@ -2,10 +2,12 @@ import { combineRgb } from '@companion-module/base'
 import { CompanionPresetDefinitions } from '@companion-module/base'
 import { ActionId } from './actionId'
 import { FeedbackId } from './feedbackId'
-import { TransitionStyleChoice, KeySwitchChoices } from '../../model'
+import { nextTransitionState } from './state'
+import { TransitionStyleChoice } from '../../model'
 import { GoStreamModel } from '../../models/types'
 
-const Keys = KeySwitchChoices
+const NTState = new nextTransitionState()
+
 const rateOptions = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0]
 const ptzSize = '18'
 export function create(model: GoStreamModel): CompanionPresetDefinitions {
@@ -265,102 +267,6 @@ export function create(model: GoStreamModel): CompanionPresetDefinitions {
 			},
 		],
 	}
-	presets[`transition_BG`] = {
-		category: `Transitions`,
-		name: `Transition: Change selection`,
-		type: 'button',
-		style: {
-			text: 'BG',
-			size: ptzSize,
-			color: combineRgb(255, 255, 255),
-			bgcolor: combineRgb(0, 0, 0),
-		},
-		feedbacks: [
-			{
-				FeedbackId: FeedbackId.TransitionSelection,
-				options: { MatchState: 1, Background: true, Key: false },
-				style: {
-					bgcolor: combineRgb(255, 0, 0),
-					color: combineRgb(255, 255, 255),
-				},
-			},
-		],
-		steps: [
-			{
-				down: [
-					{
-						actionId: ActionId.TransitionSourceBG,
-						options: { Background: true, Key: false },
-					},
-				],
-				up: [],
-			},
-		],
-	}
-	presets[`transition_Key`] = {
-		category: `Transitions`,
-		name: `Transition: Change selection`,
-		type: 'button',
-		style: {
-			text: 'Key',
-			size: ptzSize,
-			color: combineRgb(255, 255, 255),
-			bgcolor: combineRgb(0, 0, 0),
-		},
-		feedbacks: [
-			{
-				FeedbackId: FeedbackId.TransitionSelection,
-				options: { MatchState: 1, Background: false, Key: true },
-				style: {
-					bgcolor: combineRgb(255, 0, 0),
-					color: combineRgb(255, 255, 255),
-				},
-			},
-		],
-		steps: [
-			{
-				down: [
-					{
-						actionId: ActionId.TransitionSourceBG,
-						options: { Background: false, Key: true },
-					},
-				],
-				up: [],
-			},
-		],
-	}
-	presets[`transition_BG&Key`] = {
-		category: `Transitions`,
-		name: `Transition: Change selection`,
-		type: 'button',
-		style: {
-			text: 'BG&Key',
-			size: ptzSize,
-			color: combineRgb(255, 255, 255),
-			bgcolor: combineRgb(0, 0, 0),
-		},
-		feedbacks: [
-			{
-				FeedbackId: FeedbackId.TransitionSelection,
-				options: { MatchState: 1, Background: true, Key: true },
-				style: {
-					bgcolor: combineRgb(255, 0, 0),
-					color: combineRgb(255, 255, 255),
-				},
-			},
-		],
-		steps: [
-			{
-				down: [
-					{
-						actionId: ActionId.TransitionSourceBG,
-						options: { Background: true, Key: true },
-					},
-				],
-				up: [],
-			},
-		],
-	}
 	presets[`ftb_AFV`] = {
 		category: `Fade to black`,
 		name: `FTB:Audio Follow Video Enable`,
@@ -497,39 +403,88 @@ export function create(model: GoStreamModel): CompanionPresetDefinitions {
 			],
 		}
 	}
-	for (const key of Keys) {
-		if (key.label != 'BKGD' && key.label === 'Key') {
-			presets[`keys_Next_Air_${key.id}`] = {
-				category: 'Keys On Air',
-				name: `Toggle upstream KEY ${key.label} OnAir`,
+	// -------------------------------------------------------
+	// ----- Next Transitions groups
+	// Key/DSK on Air
+	for (const key of NTState.getChoices(false)) {
+		presets[`keys_Next_Air_${key.id}`] = {
+			category: 'Keys On Air',
+			name: `Toggle ${key.label} On Air`,
+			type: 'button',
+			style: {
+				text: `${key.label} On Air`,
+				size: ptzSize,
+				color: combineRgb(255, 255, 255),
+				bgcolor: combineRgb(0, 0, 0),
+			},
+			feedbacks: [
+				{
+					feedbackId: FeedbackId.KeysVisibility,
+					options: {
+						KeyButton: key.id,
+						LayerState: 2,
+					},
+					style: {
+						bgcolor: combineRgb(255, 255, 0),
+						color: combineRgb(0, 0, 0),
+					},
+				},
+			],
+			steps: [
+				{
+					down: [
+						{
+							actionId: ActionId.OnAirButtons,
+							options: {
+								KeyButton: key.id,
+								ButtonAction: 2,
+							},
+						},
+					],
+					up: [],
+				},
+			],
+		}
+	}
+
+	// Keys on Preview (note "Toggle" doesn't make sense in this context,
+	//     so make both "on" and "off" buttons:
+	for (const key of NTState.getChoices(false)) {
+		for (const keystate of [3, 4]) {
+			const statename = keystate === 3 ? 'off' : 'on'
+			presets[`keys_${statename}_PVW_${key.id}`] = {
+				category: 'Keys On PVW',
+				name: `Show ${key.label} ${statename} preview`,
 				type: 'button',
 				style: {
-					text: `${key.label}`,
+					text: `${key.label} ${statename} PVW`,
 					size: ptzSize,
 					color: combineRgb(255, 255, 255),
 					bgcolor: combineRgb(0, 0, 0),
 				},
 				feedbacks: [
 					{
-						feedbackId: FeedbackId.KeyOnAir,
+						feedbackId: FeedbackId.KeysVisibility,
 						options: {
-							KeyOnAir: 1,
-							DSKOnAir: 1,
+							KeyButton: key.id,
+							LayerState: 3,
 						},
 						style: {
-							bgcolor: combineRgb(255, 255, 0),
+							bgcolor: keystate === 3 ? combineRgb(180, 0, 180) : combineRgb(255, 255, 0),
 							color: combineRgb(0, 0, 0),
 						},
+						isInverted: keystate === 3,
 					},
 				],
 				steps: [
 					{
 						down: [
 							{
-								actionId: ActionId.KeyOnAir,
+								actionId: ActionId.NextTransitionButtons,
 								options: {
-									KeyOnAir: 2,
-									DSKOnAir: 2,
+									KeyButton: key.id,
+									ButtonAction: keystate,
+									BKGDAction: keystate, // not strictly necessary
 								},
 							},
 						],
@@ -540,82 +495,46 @@ export function create(model: GoStreamModel): CompanionPresetDefinitions {
 		}
 	}
 
-	// USK
-	presets[`USKOnPvw`] = {
-		category: `Keys On Air`,
-		name: `Toggle USK on preview`,
-		type: 'button',
-		style: {
-			text: `USK on PVW`,
-			size: ptzSize,
-			color: combineRgb(255, 255, 255),
-			bgcolor: combineRgb(0, 0, 0),
-		},
-		feedbacks: [
-			{
-				feedbackId: FeedbackId.KeyOnPvw,
-				options: {
-					KeyOnAir: 1,
-				},
-				style: {
-					bgcolor: combineRgb(0, 255, 0),
-					color: combineRgb(0, 0, 0),
-				},
+	// Next Transitions:
+	for (const key of NTState.getChoices(true)) {
+		presets[`keys_Next_Trans_${key.id}`] = {
+			category: 'Keys Next Transition',
+			name: `Toggle ${key.label} (Next Transition)`,
+			type: 'button',
+			style: {
+				text: `${key.label}`,
+				size: ptzSize,
+				color: combineRgb(255, 255, 255),
+				bgcolor: combineRgb(0, 0, 0),
 			},
-		],
-		steps: [
-			{
-				down: [
-					{
-						actionId: ActionId.USKOnPreview,
-						options: { USKPvwState: 0 },
+			feedbacks: [
+				{
+					feedbackId: FeedbackId.KeysVisibility,
+					options: {
+						KeyButton: key.id,
+						LayerState: 0,
 					},
-				],
-				up: [],
-			},
-		],
-	}
-
-	for (const key of Keys) {
-		if (key.label != 'BKGD' && key.label !== 'Key') {
-			presets[`keys_Next_Air_${key.id}`] = {
-				category: 'Keys On Air',
-				name: `Toggle upstream KEY ${key.label} OnAir`,
-				type: 'button',
-				style: {
-					text: `${key.label}`,
-					size: ptzSize,
-					color: combineRgb(255, 255, 255),
-					bgcolor: combineRgb(0, 0, 0),
+					style: {
+						bgcolor: combineRgb(255, 255, 0),
+						color: combineRgb(0, 0, 0),
+					},
 				},
-				feedbacks: [
-					{
-						feedbackId: FeedbackId.DskOnAir,
-						options: {
-							KeyOnAir: 1,
-							DSKOnAir: 1,
-						},
-						style: {
-							bgcolor: combineRgb(255, 255, 0),
-							color: combineRgb(0, 0, 0),
-						},
-					},
-				],
-				steps: [
-					{
-						down: [
-							{
-								actionId: ActionId.DskOnAir,
-								options: {
-									KeyOnAir: 2,
-									DSKOnAir: 2,
-								},
+			],
+			steps: [
+				{
+					down: [
+						{
+							actionId: ActionId.NextTransitionButtons,
+							options: {
+								KeyButton: key.id,
+								ButtonAction: 2,
+								BKGDAction: 2,
 							},
-						],
-						up: [],
-					},
-				],
-			}
+						},
+					],
+					up: [],
+				},
+			],
 		}
 	}
 	return presets
