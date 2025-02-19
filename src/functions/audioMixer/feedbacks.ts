@@ -8,7 +8,7 @@ export function create(model: GoStreamModel, state: AudioMixerStateT): Companion
 		[FeedbackId.AudioEnable]: {
 			type: 'boolean',
 			name: 'Audio Mixer: Set Audio Enabled',
-			description: 'If audio source is enabled change style of bank',
+			description: 'If audio source is enabled change style of button',
 			options: [
 				{
 					type: 'dropdown',
@@ -38,7 +38,7 @@ export function create(model: GoStreamModel, state: AudioMixerStateT): Companion
 		[FeedbackId.AudioTransition]: {
 			type: 'boolean',
 			name: 'Audio Mixer: Set AudioTransition	Enable',
-			description: 'If you turn on AudioTransition, change style of the bank',
+			description: 'If you turn on AudioTransition, change style of the button',
 			options: [],
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),

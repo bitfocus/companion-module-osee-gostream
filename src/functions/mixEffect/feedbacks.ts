@@ -113,7 +113,7 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionF
 		[FeedbackId.InTransition]: {
 			type: 'boolean',
 			name: createFeedbackName('Transition is Active/Running'),
-			description: 'If the specified transition is active, change style of the bank',
+			description: 'If the specified transition is active, change style of the button',
 			options: [],
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),
@@ -126,7 +126,7 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionF
 		[FeedbackId.Prev]: {
 			type: 'boolean',
 			name: createFeedbackName('Prev transition Active/Running'),
-			description: 'If the PREV is active, change style of the bank',
+			description: 'If the PREV is active, change style of the button',
 			options: [],
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),
@@ -139,7 +139,7 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionF
 		[FeedbackId.TransitionStyle]: {
 			type: 'boolean',
 			name: createFeedbackName('Transition style'),
-			description: 'If the specified transition style is active, change style of the bank',
+			description: 'If the specified transition style is active, change style of the button',
 			options: [
 				{
 					type: 'dropdown',
@@ -164,7 +164,7 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionF
 		[FeedbackId.TransitionRate]: {
 			type: 'boolean',
 			name: createFeedbackName('Transition rate'),
-			description: 'If the specified transition rate is active, change style of the bank',
+			description: 'If the specified transition rate is active, change style of the button',
 			options: [
 				{
 					type: 'dropdown',

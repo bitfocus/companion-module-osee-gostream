@@ -12,7 +12,7 @@ export function create(model: GoStreamModel, state: DownstreamKeyerStateT): Comp
 		[FeedbackId.DskSourceFillKey]: {
 			type: 'boolean',
 			name: createFeedbackName('fill or key source'),
-			description: 'Change style of bank depending on DSK fill or key source',
+			description: 'Change style of button depending on DSK fill or key source',
 			options: [
 				{
 					type: 'dropdown',
@@ -56,7 +56,7 @@ export function create(model: GoStreamModel, state: DownstreamKeyerStateT): Comp
 		[FeedbackId.DskMaskEnable]: {
 			type: 'boolean',
 			name: createFeedbackName('mask enabled'),
-			description: 'Change style of bank depending on status of mask',
+			description: 'Change style of button depending on status of mask',
 			options: [
 				{
 					type: 'dropdown',
@@ -87,7 +87,7 @@ export function create(model: GoStreamModel, state: DownstreamKeyerStateT): Comp
 		[FeedbackId.DskMaskHStart]: {
 			type: 'boolean',
 			name: createFeedbackName('mask horizontal start'),
-			description: 'Change style of bank depending on horizontal start value of mask',
+			description: 'Change style of button depending on horizontal start value of mask',
 			options: [
 				{
 					type: 'number',
@@ -116,7 +116,7 @@ export function create(model: GoStreamModel, state: DownstreamKeyerStateT): Comp
 		[FeedbackId.DskMaskVStart]: {
 			type: 'boolean',
 			name: createFeedbackName('mask vertical start'),
-			description: 'Change style of bank depending on vertical start value of mask',
+			description: 'Change style of button depending on vertical start value of mask',
 			options: [
 				{
 					type: 'number',
@@ -145,7 +145,7 @@ export function create(model: GoStreamModel, state: DownstreamKeyerStateT): Comp
 		[FeedbackId.DskMaskHEnd]: {
 			type: 'boolean',
 			name: createFeedbackName('mask horizontal end'),
-			description: 'Change style of bank depending on horizontal end value of mask',
+			description: 'Change style of button depending on horizontal end value of mask',
 			options: [
 				{
 					type: 'number',
@@ -174,7 +174,7 @@ export function create(model: GoStreamModel, state: DownstreamKeyerStateT): Comp
 		[FeedbackId.DskMaskVEnd]: {
 			type: 'boolean',
 			name: createFeedbackName('mask vertical end'),
-			description: 'Change style of bank depending on vertical end value of mask',
+			description: 'Change style of button depending on vertical end value of mask',
 			options: [
 				{
 					type: 'number',
@@ -203,7 +203,7 @@ export function create(model: GoStreamModel, state: DownstreamKeyerStateT): Comp
 		[FeedbackId.DskControlShapedKey]: {
 			type: 'boolean',
 			name: createFeedbackName('shaped key enabled'),
-			description: 'Change style of bank depending on status of shaped key',
+			description: 'Change style of button depending on status of shaped key',
 			options: [
 				{
 					type: 'dropdown',
@@ -234,7 +234,7 @@ export function create(model: GoStreamModel, state: DownstreamKeyerStateT): Comp
 		[FeedbackId.DskControlInvert]: {
 			type: 'boolean',
 			name: createFeedbackName('shaped key invert'),
-			description: 'Change style of bank depending on status of shaped key invert',
+			description: 'Change style of button depending on status of shaped key invert',
 			options: [
 				{
 					type: 'dropdown',
@@ -265,7 +265,7 @@ export function create(model: GoStreamModel, state: DownstreamKeyerStateT): Comp
 		[FeedbackId.DskControlClip]: {
 			type: 'boolean',
 			name: createFeedbackName('shaped key clip'),
-			description: 'Change style of bank depending on clip value of shaped key',
+			description: 'Change style of button depending on clip value of shaped key',
 			options: [
 				{
 					type: 'number',
@@ -294,7 +294,7 @@ export function create(model: GoStreamModel, state: DownstreamKeyerStateT): Comp
 		[FeedbackId.DskControlGain]: {
 			type: 'boolean',
 			name: createFeedbackName('shaped key gain'),
-			description: 'Change style of bank depending on gain value of shaped key',
+			description: 'Change style of button depending on gain value of shaped key',
 			options: [
 				{
 					type: 'number',
@@ -323,7 +323,7 @@ export function create(model: GoStreamModel, state: DownstreamKeyerStateT): Comp
 		[FeedbackId.DskRate]: {
 			type: 'boolean',
 			name: createFeedbackName('rate'),
-			description: 'Change style of bank depending on rate value',
+			description: 'Change style of button depending on rate value',
 			options: [
 				{
 					type: 'number',

@@ -409,7 +409,7 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionA
 		[ActionId.OnAirButtons]: {
 			name: createActionName('Set "On Air" Button (KEY or DSK)'),
 			description:
-				'Set an "On Air" button. On/Off/Toggle is the "normal" behavior, showing/hiding in PGM and flipping the visibility in PVW. The last three options ensure that the action affects PGM only (althought PVW may flicker)',
+				'Set an "On Air" button. On/Off/Toggle is the "normal" behavior, showing/hiding in PGM and flipping the visibility in PVW. The last three options ensure that the action affects PGM only (although PVW may flicker)',
 			options: [
 				{
 					type: 'dropdown',
