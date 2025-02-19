@@ -2,9 +2,9 @@ import { combineRgb, CompanionFeedbackDefinitions } from '@companion-module/base
 import { getOptNumber, getOptString } from '../../util'
 import { TransitionStyle } from '../../enums'
 import { FeedbackId } from './feedbackId'
-import { TransitionStyleChoice, SwitchChoices, KeySwitchChoices } from '../../model'
+import { TransitionStyleChoice } from '../../model'
 import { GoStreamModel } from '../../models/types'
-import { MixEffectStateT, TransitionKey } from './state'
+import { MixEffectStateT } from './state'
 
 function createFeedbackName(name: string): string {
 	return 'MixEffect: ' + name
@@ -107,80 +107,6 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionF
 					return state.nextTState.getOnAirStatus(keyName)
 				} else {
 					console.log('Feedback: Next Transition state received illegal option: ' + keystate)
-				}
-			},
-		},
-		[FeedbackId.KeyOnAir]: {
-			type: 'boolean',
-			name: 'Deprecated use: \'"Next Transition" / "On Air" state\' (KEY "On Air" state)',
-			description: 'Change button style based on KEY (USK) OnAir state',
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Key OnAir',
-					id: 'KeyOnAir',
-					choices: [
-						{ id: 0, label: 'Off' },
-						{ id: 1, label: 'On' },
-					],
-					default: 1,
-				},
-			],
-			defaultStyle: {
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(255, 255, 0),
-			},
-			callback: (feedback) => {
-				return feedback.options.KeyOnAir === 1 ? state.nextTState.keyOnAir : !state.nextTState.keyOnAir
-			},
-		},
-		[FeedbackId.DskOnAir]: {
-			type: 'boolean',
-			name: 'Deprecated use: \'"Next Transition" / "On Air" state\' (DSK "On Air" state)',
-			description: 'Change button style based on DSK OnAir state',
-			options: [
-				{
-					type: 'dropdown',
-					label: 'DSK OnAir',
-					id: 'DSKOnAir',
-					choices: [
-						{ id: 0, label: 'Off' },
-						{ id: 1, label: 'On' },
-					],
-					default: 1,
-				},
-			],
-			defaultStyle: {
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(255, 255, 0),
-			},
-			callback: (feedback) => {
-				return feedback.options.DSKOnAir === 1 ? state.nextTState.dskOnAir : !state.nextTState.dskOnAir
-			},
-		},
-		[FeedbackId.KeyOnPvw]: {
-			// note state.pvwOnAir is never updated so this feedback never returns true
-			type: 'boolean',
-			name: 'Deprecated and broken use: \'"Next Transition" / "On Air" state\' (KEY (USK) visible in preview (PVW))',
-			description: 'Indicates if USK on on air on the preview bus',
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Key OnAir',
-					id: 'KeyOnAir',
-					choices: SwitchChoices,
-					default: 1,
-				},
-			],
-			defaultStyle: {
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(0, 255, 0),
-			},
-			callback: (feedback) => {
-				if (state.pvwOnAir && feedback.options.KeyOnAir === 1) {
-					return true
-				} else {
-					return false
 				}
 			},
 		},
@@ -307,110 +233,6 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionF
 				} else {
 					return undefined
 				}
-			},
-		},
-		[FeedbackId.TransitionSelection]: {
-			// The only thing this feedback adds is a combined Key && BKGD status,
-			//    which can be done using the internal "Logic: AND"
-			// Also it doesn't include DSK.
-			type: 'boolean',
-			name: 'Deprecated use: \'"Next Transition" / "On Air" state\' (and "Logic: AND" if needed) (Transition selection)',
-			description: 'If the specified transition selection is active, change style of the button',
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Match method',
-					id: 'MatchState',
-					choices: [
-						{ id: 0, label: 'Exact' },
-						{ id: 1, label: 'Contains' },
-					],
-					default: 2,
-				},
-				{
-					type: 'checkbox',
-					label: 'Background',
-					id: 'Background',
-					default: false,
-				},
-				{
-					type: 'checkbox',
-					label: 'Key',
-					id: 'Key',
-					default: false,
-				},
-			],
-			defaultStyle: {
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(255, 255, 0),
-			},
-			callback: (feedback) => {
-				const seleOptions = feedback.options.MatchState
-				const BG = feedback.options.Background
-				const Key = feedback.options.Key
-				const BKGDArmed = (state.transitionKeys & TransitionKey.BKGD) > 0
-				const USKArmed = (state.transitionKeys & TransitionKey.USK) > 0
-				switch (seleOptions) {
-					case 0:
-						if ((BG && BKGDArmed) || (Key && USKArmed)) {
-							return true
-						} else if (BG && Key) {
-							return BKGDArmed && USKArmed
-						} else {
-							return false
-						}
-					case 1:
-						if (BG && Key) {
-							return BKGDArmed || USKArmed
-						} else {
-							if (BG) {
-								return BKGDArmed
-							} else if (Key) {
-								return USKArmed
-							} else {
-								return false
-							}
-						}
-					default:
-						return false
-				}
-			},
-		},
-		[FeedbackId.TransitionKeySwitch]: {
-			// note that this doesn't work as coded, since the callback code expects a multidropdown type,
-			//  but the options specifies 'dropdown.
-			// The add value of the logic also seems questionable (return true if any of the selected options are on)
-			type: 'boolean',
-			name: 'Deprecated and broken use: \'"Next Transition" / "On Air" state\' (Transition key switch)',
-			description: 'Set the special effect Transition key switch',
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Switch',
-					id: 'KeySwitch',
-					choices: KeySwitchChoices,
-					default: 2,
-				},
-			],
-			defaultStyle: {
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(255, 255, 0),
-			},
-			callback: (feedback) => {
-				const seleOptions = feedback.options.KeySwitch
-				if (seleOptions && Array.isArray(seleOptions)) {
-					const arratOptions = Array.from(seleOptions)
-					if (arratOptions.includes(0) && state.transitionKeys & TransitionKey.USK) {
-						return true
-					}
-					if (arratOptions.includes(1) && state.transitionKeys & TransitionKey.DSK) {
-						return true
-					}
-					if (arratOptions.includes(2) && state.transitionKeys & TransitionKey.BKGD) {
-						return true
-					}
-					return false
-				} else return false
 			},
 		},
 	}

@@ -5,7 +5,7 @@ import { sendCommand, sendCommands } from '../../connection'
 import type { CompanionActionDefinitions } from '@companion-module/base'
 import { TransitionStyleChoice, WipeDirectionChoices, SwitchChoices } from '../../model'
 import { GoStreamModel } from '../../models/types'
-import { MixEffectStateT, TransitionKey } from './state'
+import { MixEffectStateT } from './state'
 
 function createActionName(name: string): string {
 	return 'MixEffect: ' + name
@@ -330,123 +330,6 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionA
 		//---------------------------------------------------------------------------------------
 		//  Next Transition block of buttons: On Air (USK), On Air (DSK), KEY (USK), DSK, BKGD
 		//----------------->>>>>>
-		[ActionId.TransitionSourceBG]: {
-			// this incorrectly resets KEY and DSK and also does other than what the name says.
-			name: 'Deprecated & broken, use \'Set "Next Transition" Button\' (Change transition selection)',
-			options: [
-				{
-					type: 'checkbox',
-					label: 'Background',
-					id: 'Background',
-					default: false,
-				},
-			],
-			callback: async (action) => {
-				let num = 0
-				const bg = action.options.Background
-				if (bg === true) {
-					num += 1 << 2
-				}
-				await sendCommand(ActionId.NextTransitionButtons, ReqType.Set, [num])
-			},
-		},
-		[ActionId.KeyOnAir]: {
-			name: 'Deprecated, use \'Set "On Air" Button\' (Set USK OnAir)',
-			options: [
-				{
-					type: 'dropdown',
-					label: 'USK OnAir',
-					id: 'KeyOnAir',
-					choices: [
-						{ id: 0, label: 'Off' },
-						{ id: 1, label: 'On Air' },
-						{ id: 2, label: 'Toggle' },
-					],
-					default: 2,
-				},
-			],
-			callback: async (action) => {
-				const opt = getOptNumber(action, 'KeyOnAir')
-				let paramOpt = opt
-				if (opt === 2) {
-					if (state.nextTState.keyOnAir === true) {
-						paramOpt = 0
-					} else {
-						paramOpt = 1
-					}
-				}
-				await sendCommand(ActionId.KeyOnAir, ReqType.Set, [paramOpt])
-			},
-		},
-		[ActionId.DskOnAir]: {
-			name: 'Deprecated, use \'Set "On Air" Button\' (Set DSK OnAir)',
-			options: [
-				{
-					type: 'dropdown',
-					label: 'DSK OnAir',
-					id: 'DSKOnAir',
-					choices: [
-						{ id: 0, label: 'Off' },
-						{ id: 1, label: 'On Air' },
-						{ id: 2, label: 'Toggle' },
-					],
-					default: 0,
-				},
-			],
-			callback: async (action) => {
-				const opt = getOptNumber(action, 'DSKOnAir')
-				let paramOpt = opt
-				if (opt === 2) {
-					if (state.nextTState.dskOnAir === true) {
-						paramOpt = 0
-					} else {
-						paramOpt = 1
-					}
-				}
-				await sendCommand(ActionId.DskOnAir, ReqType.Set, [paramOpt])
-			},
-		},
-		[ActionId.USKOnPreview]: {
-			name: 'Deprecated & broken, use \'Set "Next Transition" Button\' (Set USK on preview bus)',
-			// this always turns off DSK! Also this was rewritten from 1.3.1  by JF with different 'id' values so it breaks any existing instances as well.
-			options: [
-				{
-					type: 'dropdown',
-					label: 'State',
-					id: 'USKPvwState',
-					choices: [
-						{ id: 0, label: 'Off' },
-						{ id: 1, label: 'On' },
-						{ id: 2, label: 'Toggle' },
-					],
-					default: 0,
-				},
-			],
-			callback: async (action) => {
-				let nextState = action.options.USKPvwState
-
-				if (nextState === 2) {
-					// Figure out if it is visible in pvw or not
-					if (state.tied && !(state.transitionKeys & TransitionKey.USK))
-						// it is currently visible, so should be hidden
-						nextState = 4
-					else if (!state.tied && state.transitionKeys & TransitionKey.USK)
-						// it is currently visible, so should be hidden. As it is on air we do this by tie:ing
-						nextState = 5
-					else if (state.tied && state.transitionKeys & TransitionKey.USK)
-						// it is currently hidden, so should be visible. As it is on air we do this by untie:ing
-						nextState = 4
-					else if (!state.tied && !(state.transitionKeys & TransitionKey.USK))
-						// it is currently hidden, so should be visible
-						nextState = 5
-				} else if (state.transitionKeys & TransitionKey.USK) {
-					// Invert next state if On Air is true
-					nextState = nextState === 5 ? 4 : 5
-				}
-
-				await sendCommand(ActionId.NextTransitionButtons, ReqType.Set, [nextState])
-			},
-		},
 		[ActionId.NextTransitionButtons]: {
 			name: createActionName('Set "Next Transition" Button (KEY, DSK, or BKGD)'),
 			description:

@@ -81,13 +81,6 @@ export class nextTransitionState {
 	}
 }
 
-/* @deprecated */
-export enum TransitionKey {
-	USK = 1 << 0,
-	DSK = 1 << 1,
-	BKGD = 1 << 2,
-}
-
 export type MixEffectStateT = {
 	PvwSrc: number
 	PgmSrc: number
@@ -110,7 +103,6 @@ export type MixEffectStateT = {
 	}
 	pvwOnAir: boolean
 	tied: boolean
-	transitionKeys: number // @deprecated
 	nextTState: nextTransitionState
 }
 
@@ -137,7 +129,6 @@ export function create(_model: GoStreamModel): MixEffectStateT {
 		},
 		pvwOnAir: false,
 		tied: false,
-		transitionKeys: TransitionKey.BKGD,
 		nextTState: new nextTransitionState(),
 	}
 }
@@ -226,7 +217,6 @@ export function update(state: MixEffectStateT, data: GoStreamCmd): boolean {
 		}
 		case ActionId.NextTransitionButtons:
 			// Next Transition group (KEY, DSK, BKGD)
-			state.transitionKeys = data.value[0] // @deprecated
 			state.nextTState.unpackNTState(data.value[0])
 			break
 	}
