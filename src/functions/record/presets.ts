@@ -67,7 +67,7 @@ export function create(_model: GoStreamModel): CompanionPresetDefinitions {
 					},
 					{
 						actionId: ActionId.Record,
-						delay: 10, // trick to make sure the two actions occur in sequence.
+						delay: 100, // trick to make sure the two actions occur in sequence.
 						options: {
 							Record: 2,
 						},
