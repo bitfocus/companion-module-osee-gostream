@@ -25,6 +25,7 @@ export function create(_model: GoStreamModel, state: RecordStateT): CompanionAct
 			],
 			callback: async (action) => {
 				let newState = getOptNumber(action, 'Record')
+
 				if (newState === 2) {
 					// newState is dyanamic: toggle the current state
 					newState = state.isRecording === true ? 0 : 1
