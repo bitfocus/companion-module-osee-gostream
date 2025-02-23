@@ -39,18 +39,16 @@ enum CommandType:
   Set: 'set'
   Push: 'pus'
 ```
-
-A get command will request the specified parameter in the value array, the reply will be a get measage.
-A set command will change a parameter with the value in the value array, the response will be a push command.
-A push command is send by the switcher when something has changed, e.g. after a set command or if user pushes a hardware button on device.
+A pus command is send by the switcher when something has changed, e.g. after a set command or if user pushes a hardware button on device.
+A get command will request the specified parameter in the value array, the reply will be a get message.
+A set command will change a parameter with the value in the value array, the response will be a pus command.
 
 ```
 struct GoStreamCommand:
   id: string
   type: CommandType
-  value: (number|string)[]
+  value?: (number|string|any)[]
 ```
-
 each command is embedded in a packet with a header and a CRC 16 modbus sum
 
 ```
@@ -66,12 +64,15 @@ The GoStream device might send several GoStreamPackets in the same Ethernet fram
 
 ## Notes on module development
 
-The Osee GoStream module follows normal companion release numbering
-using major.minor.fix format. Major numbers are increased with big
-changes and non backwards compatible changes . Minor numbering is
-increased with feature growth whether internal or external , fix
-increases with bugfixes of issues on the release . So v 1.1.0 would
-be v1.1.1 when a release fixing one or more bugs is released.
+The Osee GoStream module follows as long as possible the [semvar major.minor.fix format](https://semver.org/) . 
+* MAJOR version increases with incompatible API changes or big refactoring works 
+* MINOR version increases with added functionality in a backward compatible manner
+* PATCH version increases when a release has regressed from the prior release. 
+  
+As Companion supports upgrade scripts not all non backwards compatible changes will require a major number increase. If upgrade is possible then 
+just a minor number increase is needed. 
+A PATCH release should be made only on regression of the sw, i.e. when something that previously worked stopped working. There are probably several unknown
+bugs in the current sw, as these are discovered they do not warrant a patch release but should be planned in a future minor release.
 
 Development will always take place on a branch named after
 the coming release , so all v1.3.0 development happens on the
