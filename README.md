@@ -64,7 +64,7 @@ The GoStream device might send several GoStreamPackets in the same Ethernet fram
 
 ## Notes on module development
 
-The Osee GoStream module follows as long as possible the [semvar major.minor.fix format](https://semver.org/) . 
+The Osee GoStream module follows as long as possible the [semver major.minor.patch format](https://semver.org/) . 
 * MAJOR version increases with incompatible API changes or big refactoring works 
 * MINOR version increases with added functionality in a backward compatible manner
 * PATCH version increases when a release has regressed from the prior release. 
