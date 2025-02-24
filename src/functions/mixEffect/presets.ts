@@ -39,7 +39,7 @@ export function create(model: GoStreamModel): CompanionPresetDefinitions {
 			],
 			feedbacks: [
 				{
-					FeedbackId: FeedbackId.PreviewBG,
+					feedbackId: FeedbackId.PreviewBG,
 					options: {
 						Source: src.id,
 					},
@@ -77,7 +77,7 @@ export function create(model: GoStreamModel): CompanionPresetDefinitions {
 			],
 			feedbacks: [
 				{
-					FeedbackId: FeedbackId.ProgramBG,
+					feedbackId: FeedbackId.ProgramBG,
 					options: {
 						Source: src.id,
 					},
@@ -101,7 +101,7 @@ export function create(model: GoStreamModel): CompanionPresetDefinitions {
 		},
 		feedbacks: [
 			{
-				FeedbackId: FeedbackId.Cut,
+				feedbackId: FeedbackId.Cut,
 				options: {},
 				style: {
 					bgcolor: combineRgb(255, 0, 0),
@@ -133,7 +133,7 @@ export function create(model: GoStreamModel): CompanionPresetDefinitions {
 		},
 		feedbacks: [
 			{
-				FeedbackId: FeedbackId.InTransition,
+				feedbackId: FeedbackId.InTransition,
 				options: {},
 				style: {
 					bgcolor: combineRgb(255, 0, 0),
@@ -167,7 +167,7 @@ export function create(model: GoStreamModel): CompanionPresetDefinitions {
 			},
 			feedbacks: [
 				{
-					FeedbackId: FeedbackId.TransitionStyle,
+					feedbackId: FeedbackId.TransitionStyle,
 					options: {
 						TransitionStyle: opt.id,
 					},
@@ -204,7 +204,7 @@ export function create(model: GoStreamModel): CompanionPresetDefinitions {
 				},
 				feedbacks: [
 					{
-						FeedbackId: FeedbackId.TransitionRate,
+						feedbackId: FeedbackId.TransitionRate,
 						options: {
 							TransitionStyle: opt.id,
 							TransitionRate: rate,
@@ -244,7 +244,7 @@ export function create(model: GoStreamModel): CompanionPresetDefinitions {
 		},
 		feedbacks: [
 			{
-				FeedbackId: FeedbackId.Prev,
+				feedbackId: FeedbackId.Prev,
 				options: {},
 				style: {
 					bgcolor: combineRgb(255, 0, 0),
@@ -276,7 +276,7 @@ export function create(model: GoStreamModel): CompanionPresetDefinitions {
 		},
 		feedbacks: [
 			{
-				FeedbackId: FeedbackId.TransitionSelection,
+				feedbackId: FeedbackId.TransitionSelection,
 				options: { MatchState: 1, Background: true, Key: false },
 				style: {
 					bgcolor: combineRgb(255, 0, 0),
@@ -308,7 +308,7 @@ export function create(model: GoStreamModel): CompanionPresetDefinitions {
 		},
 		feedbacks: [
 			{
-				FeedbackId: FeedbackId.TransitionSelection,
+				feedbackId: FeedbackId.TransitionSelection,
 				options: { MatchState: 1, Background: false, Key: true },
 				style: {
 					bgcolor: combineRgb(255, 0, 0),
@@ -340,7 +340,7 @@ export function create(model: GoStreamModel): CompanionPresetDefinitions {
 		},
 		feedbacks: [
 			{
-				FeedbackId: FeedbackId.TransitionSelection,
+				feedbackId: FeedbackId.TransitionSelection,
 				options: { MatchState: 1, Background: true, Key: true },
 				style: {
 					bgcolor: combineRgb(255, 0, 0),
@@ -372,7 +372,7 @@ export function create(model: GoStreamModel): CompanionPresetDefinitions {
 		},
 		feedbacks: [
 			{
-				FeedbackId: FeedbackId.FTBAFV,
+				feedbackId: FeedbackId.FTBAFV,
 				options: {
 					state: 1,
 				},
@@ -382,7 +382,7 @@ export function create(model: GoStreamModel): CompanionPresetDefinitions {
 				},
 			},
 			{
-				FeedbackId: FeedbackId.FTBAFV,
+				feedbackId: FeedbackId.FTBAFV,
 				options: {
 					state: 0,
 				},
@@ -416,7 +416,7 @@ export function create(model: GoStreamModel): CompanionPresetDefinitions {
 		},
 		feedbacks: [
 			{
-				FeedbackId: FeedbackId.FadeToBlackIsBlack,
+				feedbackId: FeedbackId.FadeToBlackIsBlack,
 				options: {
 					state: 'off',
 				},
@@ -426,7 +426,7 @@ export function create(model: GoStreamModel): CompanionPresetDefinitions {
 				},
 			},
 			{
-				FeedbackId: FeedbackId.FadeToBlackIsBlack,
+				feedbackId: FeedbackId.FadeToBlackIsBlack,
 				options: {
 					state: 'on',
 				},
@@ -436,7 +436,7 @@ export function create(model: GoStreamModel): CompanionPresetDefinitions {
 				},
 			},
 			{
-				FeedbackId: FeedbackId.FadeToBlackIsBlack,
+				feedbackId: FeedbackId.FadeToBlackIsBlack,
 				options: {
 					state: 'fading',
 				},
@@ -471,7 +471,7 @@ export function create(model: GoStreamModel): CompanionPresetDefinitions {
 			},
 			feedbacks: [
 				{
-					FeedbackId: FeedbackId.FadeToBlackRate,
+					feedbackId: FeedbackId.FadeToBlackRate,
 					options: {
 						FtbRate: rate,
 					},
@@ -496,5 +496,6 @@ export function create(model: GoStreamModel): CompanionPresetDefinitions {
 			],
 		}
 	}
+
 	return presets
 }
