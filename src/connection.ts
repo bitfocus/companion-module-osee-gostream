@@ -31,7 +31,7 @@ const PORT_NUMBER = 19010
 export type GoStreamCmd = {
 	id: string
 	type: ReqType
-	value?: string | number | any[]
+	value?: (string | number)[]
 }
 
 export function valueAsBoolean(val: string | number | any[]): boolean {

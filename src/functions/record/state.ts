@@ -23,10 +23,10 @@ export async function sync(_model: GoStreamModel): Promise<boolean> {
 export function update(state: RecordStateT, data: GoStreamCmd): boolean {
 	switch (data.id as ActionId) {
 		case ActionId.Record:
-			state.isRecording = data.value![0] === 1 ? true : false
+			state.isRecording = Boolean(data.value![0])
 			break
 		case ActionId.RecordTime:
-			state.recordTime = data.value![0].toString()
+			state.recordTime = String(data.value![0])
 			break
 	}
 	return false
