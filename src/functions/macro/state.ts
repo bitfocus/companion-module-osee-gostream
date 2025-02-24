@@ -28,13 +28,12 @@ export async function sync(_model: GoStreamModel): Promise<boolean> {
 }
 
 export function update(state: MacroStateT, data: GoStreamCmd): boolean {
-	if (!data.value) return false
 	switch (data.id as ActionId) {
 		case ActionId.MacroInfo: {
 			const obj = {
-				index: Number(data.value[0]),
-				name: data.value[1],
-				description: data.value[2],
+				index: Number(data.value![0]),
+				name: String(data.value![1]),
+				description: String(data.value![2]),
 				used: true,
 				waiting: false,
 				recording: false,
@@ -45,8 +44,8 @@ export function update(state: MacroStateT, data: GoStreamCmd): boolean {
 			return true
 		}
 		case ActionId.MacroRun: {
-			const macroIndex = Number(data.value[1])
-			const macrostate = data.value[0]
+			const macroIndex = Number(data.value![1])
+			const macrostate = Number(data.value![0])
 			const macro = state.macros.find((s) => s?.index === macroIndex)
 			if (macro !== undefined) {
 				macro.running = macrostate === 1 ? true : false
@@ -54,11 +53,11 @@ export function update(state: MacroStateT, data: GoStreamCmd): boolean {
 			break
 		}
 		case ActionId.MacroRecord: {
-			const r_index = Number(data.value[1])
-			const r_state = data.value[0]
+			const r_index = Number(data.value![1])
+			const r_state = Boolean(data.value![0])
 			const r_macro = state.macros.find((s) => s?.index === r_index)
 			if (r_macro !== undefined) {
-				r_macro.recording = r_state === 1 ? true : false
+				r_macro.recording = r_state
 			} else {
 				state.macros.push({
 					name: '',

@@ -67,67 +67,67 @@ export async function sync(_model: GoStreamModel): Promise<boolean> {
 export function update(state: UpstreamKeyerStateT, data: GoStreamCmd): boolean {
 	switch (data.id as ActionId) {
 		case ActionId.UpStreamKeyType:
-			state.UpStreamKeyType = data.value && data.value[0]
+			state.UpStreamKeyType = Number(data.value![0])
 			break
 		case ActionId.LumaKeySourceFill:
-			state.keyInfo[USKKeyTypes.Luma].sources[USKKeySourceType.Fill] = data.value && data.value[0]
+			state.keyInfo[USKKeyTypes.Luma].sources[USKKeySourceType.Fill] = Number(data.value![0])
 			break
 		case ActionId.LumaKeySourceKey:
-			state.keyInfo[USKKeyTypes.Luma].sources[USKKeySourceType.Key] = data.value && data.value[0]
+			state.keyInfo[USKKeyTypes.Luma].sources[USKKeySourceType.Key] = Number(data.value![0])
 			break
 		case ActionId.LumaKeyResizeEnable:
-			state.keyInfo[USKKeyTypes.Luma].enabled = data.value && data.value[0]
+			state.keyInfo[USKKeyTypes.Luma].enabled = Boolean(data.value![0])
 			break
 		case ActionId.LumaKeyResizeSize:
-			state.keyInfo[USKKeyTypes.Luma].size = data.value && data.value[0]
+			state.keyInfo[USKKeyTypes.Luma].size = Number(data.value![0])
 			break
 		case ActionId.LumaKeyResizeXPosition:
-			state.keyInfo[USKKeyTypes.Luma].xPosition = data.value && data.value[0]
+			state.keyInfo[USKKeyTypes.Luma].xPosition = Number(data.value![0])
 			break
 		case ActionId.LumaKeyResizeYPosition:
-			state.keyInfo[USKKeyTypes.Luma].yPosition = data.value && data.value[0]
+			state.keyInfo[USKKeyTypes.Luma].yPosition = Number(data.value![0])
 			break
 		case ActionId.ChromaKeyFill:
-			state.keyInfo[USKKeyTypes.Chroma].sources[USKKeySourceType.Fill] = data.value && data.value[0]
+			state.keyInfo[USKKeyTypes.Chroma].sources[USKKeySourceType.Fill] = Number(data.value![0])
 			break
 		case ActionId.ChromaKeyResizeEnable:
-			state.keyInfo[USKKeyTypes.Chroma].enabled = data.value && data.value[0]
+			state.keyInfo[USKKeyTypes.Chroma].enabled = Boolean(data.value![0])
 			break
 		case ActionId.ChromaKeyResizeSize:
-			state.keyInfo[USKKeyTypes.Chroma].size = data.value && data.value[0]
+			state.keyInfo[USKKeyTypes.Chroma].size = Number(data.value![0])
 			break
 		case ActionId.ChromaKeyResizeXPosition:
-			state.keyInfo[USKKeyTypes.Chroma].xPosition = data.value && data.value[0]
+			state.keyInfo[USKKeyTypes.Chroma].xPosition = Number(data.value![0])
 			break
 		case ActionId.ChromaKeyResizeYPosition:
-			state.keyInfo[USKKeyTypes.Chroma].yPosition = data.value && data.value[0]
+			state.keyInfo[USKKeyTypes.Chroma].yPosition = Number(data.value![0])
 			break
 		case ActionId.KeyPatternSourceFill:
-			state.keyInfo[USKKeyTypes.KeyPattern].sources[USKKeySourceType.Fill] = data.value && data.value[0]
+			state.keyInfo[USKKeyTypes.KeyPattern].sources[USKKeySourceType.Fill] = Number(data.value![0])
 			break
 		case ActionId.KeyPatternResizeEnable:
-			state.keyInfo[USKKeyTypes.KeyPattern].enabled = data.value && data.value[0]
+			state.keyInfo[USKKeyTypes.KeyPattern].enabled = Boolean(data.value![0])
 			break
 		case ActionId.KeyPatternResizeSize:
-			state.keyInfo[USKKeyTypes.KeyPattern].size = data.value && data.value[0]
+			state.keyInfo[USKKeyTypes.KeyPattern].size = Number(data.value![0])
 			break
 		case ActionId.KeyPatternResizeXPosition:
-			state.keyInfo[USKKeyTypes.KeyPattern].xPosition = data.value && data.value[0]
+			state.keyInfo[USKKeyTypes.KeyPattern].xPosition = Number(data.value![0])
 			break
 		case ActionId.KeyPatternResizeYPosition:
-			state.keyInfo[USKKeyTypes.KeyPattern].yPosition = data.value && data.value[0]
+			state.keyInfo[USKKeyTypes.KeyPattern].yPosition = Number(data.value![0])
 			break
 		case ActionId.PipSource:
-			state.keyInfo[USKKeyTypes.Pip].sources[USKKeySourceType.Fill] = data.value && data.value[0]
+			state.keyInfo[USKKeyTypes.Pip].sources[USKKeySourceType.Fill] = Number(data.value![0])
 			break
 		case ActionId.PipSize:
-			state.keyInfo[USKKeyTypes.Pip].size = data.value && data.value[0]
+			state.keyInfo[USKKeyTypes.Pip].size = Number(data.value![0])
 			break
 		case ActionId.PipXPosition:
-			state.keyInfo[USKKeyTypes.Pip].xPosition = data.value && data.value[0]
+			state.keyInfo[USKKeyTypes.Pip].xPosition = Number(data.value![0])
 			break
 		case ActionId.PipYPosition:
-			state.keyInfo[USKKeyTypes.Pip].yPosition = data.value && data.value[0]
+			state.keyInfo[USKKeyTypes.Pip].yPosition = Number(data.value![0])
 			break
 	}
 	return false

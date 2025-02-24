@@ -68,45 +68,44 @@ export async function sync(_model: GoStreamModel): Promise<boolean> {
 	return await sendCommands(cmds)
 }
 export function update(state: DownstreamKeyerStateT, data: GoStreamCmd): boolean {
-	if (!data.value) return false
 	switch (data.id as ActionId) {
 		case ActionId.DskSourceFill: {
-			state.source.fill = data.value[0]
+			state.source.fill = Number(data.value![0])
 			break
 		}
 		case ActionId.DskSourceKey: {
-			state.source.key = data.value[0]
+			state.source.key = Number(data.value![0])
 			break
 		}
 		case ActionId.DskControlInvert:
-			state.control.invert = data.value[0] === 1 ? true : false
+			state.control.invert = Boolean(data.value![0])
 			break
 		case ActionId.DskControlClip:
-			state.control.clip = data.value[0]
+			state.control.clip = Number(data.value![0])
 			break
 		case ActionId.DskControlGain:
-			state.control.gain = data.value[0]
+			state.control.gain = Number(data.value![0])
 			break
 		case ActionId.DskMaskEnable:
-			state.mask.enabled = data.value[0] === 1 ? true : false
+			state.mask.enabled = Boolean(data.value![0])
 			break
 		case ActionId.DskControlShapedKey:
-			state.control.shapedKey = data.value[0] === 1 ? true : false
+			state.control.shapedKey = Boolean(data.value![0])
 			break
 		case ActionId.DskMaskHEnd:
-			state.mask.hEnd = data.value[0]
+			state.mask.hEnd = Number(data.value![0])
 			break
 		case ActionId.DskMaskVEnd:
-			state.mask.vEnd = data.value[0]
+			state.mask.vEnd = Number(data.value![0])
 			break
 		case ActionId.DskMaskHStart:
-			state.mask.hStart = data.value[0]
+			state.mask.hStart = Number(data.value![0])
 			break
 		case ActionId.DskMaskVStart:
-			state.mask.vStart = data.value[0]
+			state.mask.vStart = Number(data.value![0])
 			break
 		case ActionId.DskRate:
-			state.rate.rate = data.value[0]
+			state.rate.rate = Number(data.value![0])
 			break
 	}
 	return false

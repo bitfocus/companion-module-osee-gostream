@@ -57,18 +57,17 @@ export async function sync(_model: GoStreamModel): Promise<boolean> {
 }
 
 export function update(state: StreamingStateT, data: GoStreamCmd): boolean {
-	if (!data.value) return false
 	switch (data.id as ActionId) {
 		case ActionId.StreamOutput: {
-			state.streamInfo[Number(data.value[0])].enabled = data.value[1] === 1 ? true : false
+			state.streamInfo[Number(data.value![0])].enabled = Boolean(data.value![1])
 			break
 		}
 		case ActionId.Live: {
-			state.status = data.value[0]
+			state.status = Number(data.value![0])
 			break
 		}
 		case ActionId.LiveInfo: {
-			state.streamInfo[Number(data.value[0])].status = data.value[1]
+			state.streamInfo[Number(data.value![0])].status = Number(data.value![1])
 			break
 		}
 		case ActionId.StreamProfile: {
@@ -80,7 +79,7 @@ export function update(state: StreamingStateT, data: GoStreamCmd): boolean {
 			return true
 		}
 		case ActionId.StreamPlatform: {
-			state.streamInfo[Number(data.value[0])].platform = data.value[1]
+			state.streamInfo[Number(data.value![0])].platform = String(data.value![1])
 			return true
 		}
 	}

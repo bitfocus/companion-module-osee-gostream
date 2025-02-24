@@ -51,7 +51,7 @@ export function update(state: AudioMixerStateT, data: GoStreamCmd): boolean {
 			break
 		}
 		case ActionId.AudioMonitorSource: {
-			state.monitorSource = data.value[0]
+			state.monitorSource = Number(data.value[0])
 			break
 		}
 	}

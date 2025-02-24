@@ -155,57 +155,52 @@ export async function sync(model: GoStreamModel): Promise<boolean> {
 }
 
 export function update(state: MixEffectStateT, data: GoStreamCmd): boolean {
-	if (!data.value) return false
 	switch (data.id as ActionId) {
-		case ActionId.PvwIndex: {
-			if (data.value[0] !== undefined) {
-				state.PvwSrc = data.value[0]
-			}
+		case ActionId.PvwIndex:
+			state.PvwSrc = Number(data.value![0])
 			break
-		}
-		case ActionId.PgmIndex: {
-			if (data.value[0] !== undefined) {
-				state.PgmSrc = data.value[0]
-			}
+		case ActionId.PgmIndex:
+			state.PgmSrc = Number(data.value![0])
 			break
-		}
 		case ActionId.KeyOnAir:
-			state.nextTState.keyOnAir = data.value && data.value[0] === 1 ? true : false
+			state.nextTState.keyOnAir = Boolean(data.value![0])
 			break
 		case ActionId.DskOnAir:
-			state.nextTState.dskOnAir = data.value[0] === 1 ? true : false
+			state.nextTState.dskOnAir = Boolean(data.value![0])
 			break
 		case ActionId.AutoTransition:
-			state.transitionPosition.inTransition = data.value[0] === 1 ? true : false
+			state.transitionPosition.inTransition = Boolean(data.value![0])
 			break
-		case ActionId.FTB:
-			if (data.value[0] === 0) {
+		case ActionId.FTB: {
+			const value = Number(data.value![0])
+			if (value === 0) {
 				state.fadeToBlack.isFullyBlack = false
 				state.fadeToBlack.inTransition = false
-			} else if (data.value[0] === 1) {
+			} else if (value === 1) {
 				state.fadeToBlack.inTransition = false
 				state.fadeToBlack.isFullyBlack = true
-			} else if (data.value[0] === 2) {
+			} else if (value === 2) {
 				state.fadeToBlack.inTransition = true
 			}
 			break
+		}
 		case ActionId.FtbAudioAFV:
-			state.fadeToBlack.AFV = data.value[0] === 1 ? true : false
+			state.fadeToBlack.AFV = Boolean(data.value![0])
 			break
 		case ActionId.FtbRate:
-			state.fadeToBlack.rate = data.value[0]
+			state.fadeToBlack.rate = Number(data.value![0])
 			break
 		case ActionId.Prev:
-			state.selectTransitionStyle.PrevState = Boolean(data.value[0])
+			state.selectTransitionStyle.PrevState = Boolean(data.value![0])
 			break
 		case ActionId.TransitionIndex: {
-			const selectValue = Number(data.value[0])
+			const selectValue = Number(data.value![0])
 			state.selectTransitionStyle.style = selectValue
 			break
 		}
 		case ActionId.TransitionRate: {
-			const type = data.value[0]
-			const typeValue = data.value[1]
+			const type = Number(data.value![0])
+			const typeValue = Number(data.value![1])
 			if (type === 0) {
 				state.selectTransitionStyle.mixrate = typeValue
 			} else if (type === 1) {
@@ -217,7 +212,7 @@ export function update(state: MixEffectStateT, data: GoStreamCmd): boolean {
 		}
 		case ActionId.NextTransitionButtons:
 			// Next Transition group (KEY, DSK, BKGD)
-			state.nextTState.unpackNTState(data.value[0])
+			state.nextTState.unpackNTState(Number(data.value![0]))
 			break
 	}
 	return false
