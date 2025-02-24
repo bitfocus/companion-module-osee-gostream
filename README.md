@@ -13,19 +13,19 @@ This module is created for use with GoStream Devices.
 Follow the [developing module guidelines](https://github.com/bitfocus/companion-module-base/wiki) to setup the environment.
 Install all the dependencies using
 
-'yarn'
+`yarn`
 
 The GoStream module is written in TypeScript and need to be compiled before changes takes place. This is done using
 
-'yarn build'
+`yarn build`
 
 When done with a change make sure you lint it, there should be no warnings
 
-'yarn eslint'
+`yarn eslint`
 
 and also format the code
 
-'yarn format'
+`yarn format`
 
 ## Notes on OSEE GoStream protocol
 
@@ -39,8 +39,10 @@ enum CommandType:
   Set: 'set'
   Push: 'pus'
 ```
-A pus command is send by the switcher when something has changed, e.g. after a set command or if user pushes a hardware button on device.
+A pus command is sent by the switcher when something has changed, e.g. after a set command or if user pushes a hardware button on device.
+
 A get command will request the specified parameter in the value array, the reply will be a get message.
+
 A set command will change a parameter with the value in the value array, the response will be a pus command.
 
 ```
@@ -77,7 +79,7 @@ bugs in the current sw, as these are discovered they do not warrant a patch rele
 Development will always take place on a branch named after
 the coming release , so all v1.3.0 development happens on the
 branch v1.3.0 . When planned content is delivered to the branch
-a pre-release for testing is done on that branch . If all seem
+a pre-release for testing is done on that branch. If all seems
 well a PR to master is done and the release is tagged .
 
 ## Help
