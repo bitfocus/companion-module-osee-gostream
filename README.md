@@ -47,7 +47,7 @@ A set command will change a parameter with the value in the value array, the res
 struct GoStreamCommand:
   id: string
   type: CommandType
-  value?: (number|string|any)[]
+  value?: (number|string)[]
 ```
 each command is embedded in a packet with a header and a CRC 16 modbus sum
 
