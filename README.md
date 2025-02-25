@@ -74,11 +74,17 @@ just a minor number increase is needed.
 A PATCH release should be made only on regression of the sw, i.e. when something that previously worked stopped working. There are probably several unknown
 bugs in the current sw, as these are discovered they do not warrant a patch release but should be planned in a future minor release.
 
-Development will always take place on a branch named after
-the coming release , so all v1.3.0 development happens on the
-branch v1.3.0 . When planned content is delivered to the branch
-a pre-release for testing is done on that branch . If all seem
-well a PR to master is done and the release is tagged .
+Three "active" branches exists at any given time; stable, current , a future branch . 
+* FUTURE branch is for developing the major releases.
+* CURRENT branch is where normal developing goes.
+* STABLE branch is only open for fixes.
+
+Branches are named v{major}.{minor} and are based from main . Labeling for companion releases occurs on each branch not on main . 
+There is no need to branch out from a release branch for patches , these can just continue the normal commit flow .
+
+When a release is made an uplift to main occurs, then uplift to all other branches (if needed) takes place from main
+
+![Branches example](https://github.com/user-attachments/assets/ee9e2a80-e66e-4d52-99f5-4e50a61daa7e)
 
 ## Help
 
