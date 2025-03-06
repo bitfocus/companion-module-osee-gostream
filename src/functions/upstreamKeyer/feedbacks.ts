@@ -79,8 +79,8 @@ export function create(model: GoStreamModel, state: UpstreamKeyerStateT): Compan
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: (feedback) => {
-				const typeid = Number(feedback.options.pipXPosId)
-				return state.keyInfo[USKKeyTypes.Pip].xPosition === typeid
+				const pipXPos = Number(feedback.options.pipXPosId)
+				return state.keyInfo[USKKeyTypes.Pip].xPosition === pipXPos
 			},
 		},
 		[FeedbackId.PipYPosition]: {
@@ -104,8 +104,8 @@ export function create(model: GoStreamModel, state: UpstreamKeyerStateT): Compan
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: (feedback) => {
-				const typeid = Number(feedback.options.pipYPosId)
-				return state.keyInfo[USKKeyTypes.Pip].yPosition === typeid
+				const pipYPos = Number(feedback.options.pipYPosId)
+				return state.keyInfo[USKKeyTypes.Pip].yPosition === pipYPos
 			},
 		},
 		[FeedbackId.KeyPatternResizeXPosition]: {
@@ -129,8 +129,8 @@ export function create(model: GoStreamModel, state: UpstreamKeyerStateT): Compan
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: (feedback) => {
-				const typeid = Number(feedback.options.keyPatternResizeXId)
-				return state.keyInfo[USKKeyTypes.KeyPattern].xPosition === typeid
+				const keyPatternResizeX = Number(feedback.options.keyPatternResizeXId)
+				return state.keyInfo[USKKeyTypes.KeyPattern].xPosition === keyPatternResizeX
 			},
 		},
 		[FeedbackId.KeyPatternResizeYPosition]: {
@@ -154,8 +154,8 @@ export function create(model: GoStreamModel, state: UpstreamKeyerStateT): Compan
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: (feedback) => {
-				const typeid = Number(feedback.options.keyPatternResizeYId)
-				return state.keyInfo[USKKeyTypes.KeyPattern].yPosition === typeid
+				const keyPatternResizeY = Number(feedback.options.keyPatternResizeYId)
+				return state.keyInfo[USKKeyTypes.KeyPattern].yPosition === keyPatternResizeY
 			},
 		},
 		[FeedbackId.KeyPatternResizeSize]: {
@@ -176,8 +176,8 @@ export function create(model: GoStreamModel, state: UpstreamKeyerStateT): Compan
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: (feedback) => {
-				const typeid = Number(feedback.options.keyPatternResizeSizeId)
-				return state.keyInfo[USKKeyTypes.KeyPattern].size === typeid
+				const keyPatternResizeSize = Number(feedback.options.keyPatternResizeSizeId)
+				return state.keyInfo[USKKeyTypes.KeyPattern].size === keyPatternResizeSize
 			},
 		},
 	}
