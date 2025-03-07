@@ -1,5 +1,5 @@
 import { ActionId } from './../actionId'
-import { getOptNumber, getOptString } from './../../../util'
+import { getOptNumber, getOptString, makeChoices } from './../../../util'
 import { SwitchChoices, KeyResizeSizeChoices } from './../../../model'
 import { ReqType, ActionType } from './../../../enums'
 import { sendCommand } from './../../../connection'
@@ -40,17 +40,21 @@ export function createPIPActions(model: GoStreamModel, state: UpstreamKeyerState
 					type: 'dropdown',
 					label: 'Size',
 					id: 'PipSize',
-					choices: KeyResizeSizeChoices,
-					default: 0,
+					...makeChoices(state.keyScalingSizes()),
 				},
 			],
 			callback: async (action) => {
-				let value = 0
-				const info = KeyResizeSizeChoices.find((s) => s.id === action.options.PipSize)
-				if (info !== null && info !== undefined) {
-					value = Number(info.id)
+				const choice = getOptNumber(action, 'PipSize')
+				if (Number.isInteger(choice)) {
+					// backward compatibility: choice is 0, 1, 2...
+					const info = KeyResizeSizeChoices.find((s) => s.id === action.options.PipSize)
+					if (info !== null && info !== undefined) {
+						const value = Number(info.id)
+						await sendCommand(ActionId.PipSize, ReqType.Set, [value])
+					}
+				} else {
+					await sendCommand(ActionId.PipSize, ReqType.Set, [state.encodeKeyScalingSize(choice)])
 				}
-				await sendCommand(ActionId.PipSize, ReqType.Set, [value])
 			},
 		},
 		[ActionId.PipXPosition]: {

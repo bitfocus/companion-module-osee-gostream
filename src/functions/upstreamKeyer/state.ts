@@ -22,20 +22,34 @@ export type KeyInfoT = {
 	yPosition: number
 }
 
-export type UpstreamKeyerStateT = {
+export class UpstreamKeyerStateT {
+	model: GoStreamModel
 	UpStreamKeyType: number
 	keyInfo: KeyInfoT[]
-}
 
-export function create(_model: GoStreamModel): UpstreamKeyerStateT {
-	return {
-		UpStreamKeyType: 0,
-		keyInfo: [
+	constructor(model: GoStreamModel) {
+		this.model = model
+		this.UpStreamKeyType = 0
+		this.keyInfo = [
 			{ enabled: false, sources: [0, 0], size: 0, xPosition: 0, yPosition: 0 },
 			{ enabled: false, sources: [0, 0], size: 0, xPosition: 0, yPosition: 0 },
 			{ enabled: false, sources: [0, 0], size: 0, xPosition: 0, yPosition: 0 },
 			{ enabled: false, sources: [0, 0], size: 0, xPosition: 0, yPosition: 0 },
-		],
+		]
+	}
+
+	keyScalingSizes(): number[] {
+		return [0.25, 0.33, 0.5]
+	}
+
+	encodeKeyScalingSize(val: number): number {
+		return this.keyScalingSizes().indexOf(val)
+	}
+
+	getKeyScalingSize(idx: number): number {
+		// could add something for 100% if resize is disabled? (keys other than PiP)
+		const sizesPct = [0.25, 0.33, 0.5]
+		return sizesPct[idx]
 	}
 }
 
@@ -121,7 +135,7 @@ export function update(state: UpstreamKeyerStateT, data: GoStreamCmd): boolean {
 			state.keyInfo[USKKeyTypes.Pip].sources[USKKeySourceType.Fill] = Number(data.value![0])
 			break
 		case ActionId.PipSize:
-			state.keyInfo[USKKeyTypes.Pip].size = Number(data.value![0])
+			state.keyInfo[USKKeyTypes.Pip].size = state.getKeyScalingSize(Number(data.value![0]))
 			break
 		case ActionId.PipXPosition:
 			state.keyInfo[USKKeyTypes.Pip].xPosition = Number(data.value![0])

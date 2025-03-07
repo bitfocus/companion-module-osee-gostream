@@ -44,7 +44,7 @@ export function create(model: GoStreamModel): GoStreamState {
 		DownstreamKeyer: DownstreamKeyerState.create(model),
 		Settings: SettingsState.create(model),
 		Macro: MacroState.create(model),
-		UpstreamKeyer: UpstreamKeyerState.create(model),
+		UpstreamKeyer: new UpstreamKeyerState.UpstreamKeyerStateT(model),
 		ColorBack: ColorBackState.create(model),
 		infos: {
 			protocolVersion: '1.0',
