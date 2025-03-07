@@ -38,17 +38,19 @@ export class UpstreamKeyerStateT {
 		]
 	}
 
-	keyScalingSizes(): number[] {
+	keyScalingSizes(_protocolOrder = false): number[] {
+		// setting protocolOrder to true guarantees it will correspond to the
+		//  Osee communication protocol's index numbers. In this case it's a noop
 		return [0.25, 0.33, 0.5]
 	}
 
 	encodeKeyScalingSize(val: number): number {
-		return this.keyScalingSizes().indexOf(val)
+		return this.keyScalingSizes(true).indexOf(val)
 	}
 
-	getKeyScalingSize(idx: number): number {
+	decodeKeyScalingSize(idx: number): number {
 		// could add something for 100% if resize is disabled? (keys other than PiP)
-		const sizesPct = [0.25, 0.33, 0.5]
+		const sizesPct = this.keyScalingSizes(true)
 		return sizesPct[idx]
 	}
 }
@@ -135,7 +137,7 @@ export function update(state: UpstreamKeyerStateT, data: GoStreamCmd): boolean {
 			state.keyInfo[USKKeyTypes.Pip].sources[USKKeySourceType.Fill] = Number(data.value![0])
 			break
 		case ActionId.PipSize:
-			state.keyInfo[USKKeyTypes.Pip].size = state.getKeyScalingSize(Number(data.value![0]))
+			state.keyInfo[USKKeyTypes.Pip].size = state.decodeKeyScalingSize(Number(data.value![0]))
 			break
 		case ActionId.PipXPosition:
 			state.keyInfo[USKKeyTypes.Pip].xPosition = Number(data.value![0])
