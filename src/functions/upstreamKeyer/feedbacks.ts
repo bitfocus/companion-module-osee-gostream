@@ -5,6 +5,8 @@ import { UpStreamKeyTypeChoices, KeyResizeSizeChoices } from './../../model'
 import { USKKeySourceType, USKKeyTypes } from './state'
 import { UpstreamKeyerStateT } from './state'
 import { GoStreamModel } from '../../models/types'
+import { getOptNumber, makeChoices } from '../../util'
+
 export function create(model: GoStreamModel, state: UpstreamKeyerStateT): CompanionFeedbackDefinitions {
 	return {
 		[FeedbackId.KeySourceFill]: {
@@ -56,6 +58,34 @@ export function create(model: GoStreamModel, state: UpstreamKeyerStateT): Compan
 			callback: (feedback) => {
 				const typeid = Number(feedback.options.USKType)
 				return state.UpStreamKeyType === typeid
+			},
+		},
+		[FeedbackId.PipSize]: {
+			type: 'boolean',
+			name: 'USK: PIP Size',
+			description: 'Change style of button based on pip size',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Size',
+					id: 'pipSizeId',
+					...makeChoices(state.keyScalingSizes()),
+				},
+			],
+			defaultStyle: {
+				color: combineRgb(0, 0, 0),
+				bgcolor: combineRgb(255, 255, 0),
+			},
+			callback: (feedback) => {
+				const pipSizeChoice = getOptNumber(feedback, 'pipSizeId')
+				const curSize = state.keyInfo[USKKeyTypes.Pip].size
+				return curSize === pipSizeChoice
+			},
+			learn: (feedback) => {
+				return {
+					...feedback.options,
+					pipSizeId: state.keyInfo[USKKeyTypes.Pip].size,
+				}
 			},
 		},
 		[FeedbackId.PipXPosition]: {

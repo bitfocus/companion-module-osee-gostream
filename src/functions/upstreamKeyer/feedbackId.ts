@@ -3,6 +3,7 @@ export enum FeedbackId {
 	KeySourceFill = 'keySourceFill',
 	KeyPatternSourceFill = 'keyPatternSourceFill',
 	PipSource = 'pipSource',
+	PipSize = 'pipSize',
 	PipXPosition = 'pipXPosition',
 	PipYPosition = 'pipYPosition',
 	KeyPatternResizeSize = 'keyPatternResizeSize',
