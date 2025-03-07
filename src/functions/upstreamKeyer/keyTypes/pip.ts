@@ -1,12 +1,22 @@
 import { ActionId } from './../actionId'
-import { getOptNumber } from './../../../util'
+import { getOptNumber, getOptString } from './../../../util'
 import { SwitchChoices, KeyResizeSizeChoices } from './../../../model'
 import { ReqType, ActionType } from './../../../enums'
 import { sendCommand } from './../../../connection'
 import type { CompanionActionDefinitions } from '@companion-module/base'
-import { UpstreamKeyerStateT } from '../state'
+import { UpstreamKeyerStateT, USKKeyTypes } from '../state'
 import { GoStreamModel } from '../../../models/types'
-export function createPIPActions(model: GoStreamModel, _state: UpstreamKeyerStateT): CompanionActionDefinitions {
+
+// #TODO: these constants should probably be embedded in the model
+// Osee[X/Y]Radius: Osee's units for positioning: -9..+9 vertically, -16 - 16 horizontally
+const OseeHalfWidth = 16.0
+const OseeHalfHeight = 9.0
+const imagePixelHeight = 1080
+const pixel = (2 * OseeHalfHeight) / imagePixelHeight // convert pixels to Osee's -9..+9 units (this is the same whether calculated for x or y)
+// #TODO: make edgeBuffer settable?
+const edgeBuffer = pixel * 5 // when using left/right/up/down, stay this far away from the edge.
+
+export function createPIPActions(model: GoStreamModel, state: UpstreamKeyerStateT): CompanionActionDefinitions {
 	return {
 		[ActionId.PipSource]: {
 			name: 'UpStream Key:Set Pip Source',
@@ -47,36 +57,154 @@ export function createPIPActions(model: GoStreamModel, _state: UpstreamKeyerStat
 			name: 'UpStream Key:Set PIP X Position',
 			options: [
 				{
+					type: 'dropdown',
+					label: 'Type',
+					id: 'operation',
+					choices: [
+						{ id: 0, label: 'Absolute' },
+						{ id: 1, label: 'Relative' },
+						{ id: 2, label: 'Snap to Left Edge' },
+						{ id: 3, label: 'Snap to Right Edge' },
+					],
+					default: 0,
+				},
+				{
 					type: 'number',
 					label: 'X Position',
 					id: 'PipXPosition',
-					min: -16,
-					max: 16,
+					min: -OseeHalfWidth,
+					max: OseeHalfWidth,
 					step: 0.2,
 					default: 0,
 					range: true,
+					isVisible: (options) => !Object.keys(options).includes('operation') || options.operation === 0,
+				},
+				{
+					type: 'textinput',
+					label: 'X Position',
+					id: 'PipXPositionRel',
+					useVariables: true,
+					isVisible: (options) => options.operation === 1,
 				},
 			],
-			callback: async (action) => {
-				await sendCommand(ActionId.PipXPosition, ReqType.Set, [getOptNumber(action, 'PipXPosition')])
+			callback: async (action, context) => {
+				let newpos = 0
+				let operation = 0
+				// a little extra work for backwards compatibility (so can be used before or w/o upgrade script)
+				if (Object.keys(action.options).includes('operation')) {
+					operation = getOptNumber(action, 'operation')
+				}
+				if (operation == 0) {
+					//absolute
+					newpos = getOptNumber(action, 'PipXPosition')
+				} else {
+					let valueStr = await context.parseVariablesInString(getOptString(action, 'PipXPositionRel'))
+					const curPos = state.keyInfo[USKKeyTypes.Pip].xPosition
+					const pipSizePct = state.keyInfo[USKKeyTypes.Pip].size
+					if (operation === 2) {
+						valueStr = 'LEFT'
+					} else if (operation === 3) {
+						valueStr = 'RIGHT'
+					}
+					let value = 0
+					switch (valueStr.toUpperCase()) {
+						case 'LEFT':
+							// place the center of the window such that the left edge is edgeBuffer pixels from the left.
+							newpos = -OseeHalfWidth * (1 - pipSizePct) + edgeBuffer
+							break
+						case 'RIGHT':
+							newpos = OseeHalfWidth * (1 - pipSizePct) - edgeBuffer
+							break
+						default:
+							value = Number(valueStr)
+							newpos = Math.min(OseeHalfWidth, Math.max(-OseeHalfWidth, value + curPos))
+					}
+				}
+				await sendCommand(ActionId.PipXPosition, ReqType.Set, [newpos])
+			},
+			learn: (action) => {
+				return {
+					...action.options,
+					operation: 0,
+					PipXPosition: state.keyInfo[USKKeyTypes.Pip].xPosition,
+				}
 			},
 		},
 		[ActionId.PipYPosition]: {
 			name: 'UpStream Key:Set PIP Y Position',
 			options: [
 				{
+					type: 'dropdown',
+					label: 'Type',
+					id: 'operation',
+					choices: [
+						{ id: 0, label: 'Absolute' },
+						{ id: 1, label: 'Relative' },
+						{ id: 2, label: 'Snap to Top Edge' },
+						{ id: 3, label: 'Snap to Bottom Edge' },
+					],
+					default: 0,
+				},
+				{
 					type: 'number',
 					label: 'Y Position',
 					id: 'PipYPosition',
-					min: -9.0,
-					max: 9.0,
+					min: -OseeHalfHeight,
+					max: OseeHalfHeight,
 					step: 0.2,
 					default: 0,
 					range: true,
+					isVisible: (options) => !Object.keys(options).includes('operation') || options.operation === 0,
+				},
+				{
+					type: 'textinput',
+					label: 'Y Position',
+					id: 'PipYPositionRel',
+					useVariables: true,
+					isVisible: (options) => options.operation === 1,
 				},
 			],
-			callback: async (action) => {
-				await sendCommand(ActionId.PipYPosition, ReqType.Set, [getOptNumber(action, 'PipYPosition')])
+			callback: async (action, context) => {
+				let newpos = 0
+				let operation = 0
+				// a little extra work for backwards compatibility (so can be used before or w/o upgrade script)
+				if (Object.keys(action.options).includes('operation')) {
+					operation = getOptNumber(action, 'operation')
+				}
+				if (operation === 0) {
+					//absolute
+					newpos = getOptNumber(action, 'PipYPosition')
+				} else {
+					let valueStr = await context.parseVariablesInString(getOptString(action, 'PipYPositionRel'))
+					const curPos = state.keyInfo[USKKeyTypes.Pip].yPosition
+					const pipSizePct = state.keyInfo[USKKeyTypes.Pip].size
+					let value = 0
+					if (operation === 2) {
+						valueStr = 'TOP'
+					} else if (operation === 3) {
+						valueStr = 'BOTTOM'
+					}
+					switch (valueStr.toUpperCase()) {
+						case 'TOP':
+							// place the center of the window such that the top edge is edgeBuffer pixels from the top.
+							newpos = -OseeHalfHeight * (1 - pipSizePct) + edgeBuffer
+							break
+						case 'BOTTOM':
+							newpos = OseeHalfHeight * (1 - pipSizePct) - edgeBuffer
+							break
+						default:
+							value = Number(valueStr)
+							newpos = Math.min(9, Math.max(-9, value + curPos))
+					}
+				}
+				await sendCommand(ActionId.PipYPosition, ReqType.Set, [newpos])
+			},
+			learn: (action) => {
+				return {
+					...action.options,
+					operation: 0,
+					PipYPosition: state.keyInfo[USKKeyTypes.Pip].yPosition,
+				}
 			},
 		},
 		[ActionId.PipMaskEnable]: {
