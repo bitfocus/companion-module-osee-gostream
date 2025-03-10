@@ -1,5 +1,5 @@
 import { ActionId } from './actionId'
-import { getOptNumber, getOptString } from '../../util'
+import { getOptNumber, getOptString, makeChoices } from '../../util'
 import { ReqType } from '../../enums'
 import { sendCommand } from '../../connection'
 import type { CompanionActionDefinitions } from '@companion-module/base'
@@ -33,7 +33,7 @@ export function create(_model: GoStreamModel, state: RecordStateT): CompanionAct
 			},
 		},
 		[ActionId.RecordFileName]: {
-			name: 'Set Record FileName',
+			name: 'Record:Set FileName',
 			options: [
 				{
 					type: 'textinput',
@@ -59,6 +59,20 @@ export function create(_model: GoStreamModel, state: RecordStateT): CompanionAct
 				const newName = await context.parseVariablesInString(rawString)
 				// allow but replace ":" and other invalid chars, so user can specify system time in the variable
 				await sendCommand(ActionId.RecordFileName, ReqType.Set, [newName.replaceAll(/[\\/:*?"<>|]/g, '_')])
+			},
+		},
+		[ActionId.Quality]: {
+			name: 'Record:Set Quality',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Quality',
+					id: 'Quality',
+					...makeChoices(state.qualityValues()),
+				},
+			],
+			callback: async (action) => {
+				await sendCommand('quality', ReqType.Set, state.encodeRecordingQuality(getOptString(action, 'Quality')))
 			},
 		},
 	}
