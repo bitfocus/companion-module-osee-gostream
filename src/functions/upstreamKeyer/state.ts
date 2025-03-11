@@ -31,20 +31,36 @@ export type KeyInfoT = {
 	mask: MaskInfoT
 }
 
-export type UpstreamKeyerStateT = {
+export class UpstreamKeyerStateT {
+	model: GoStreamModel
 	UpStreamKeyType: number
 	keyInfo: KeyInfoT[]
-}
 
-export function create(_model: GoStreamModel): UpstreamKeyerStateT {
-	return {
-		UpStreamKeyType: 0,
-		keyInfo: [
-			{ enabled: false, sources: [0, 0], size: 0, xPosition: 0, yPosition: 0, mask: { enabled: false, hStart: 0, hEnd: 100, vStart: 0, vEnd: 100 } },
-			{ enabled: false, sources: [0, 0], size: 0, xPosition: 0, yPosition: 0, mask: { enabled: false, hStart: 0, hEnd: 100, vStart: 0, vEnd: 100 } },
-			{ enabled: false, sources: [0, 0], size: 0, xPosition: 0, yPosition: 0, mask: { enabled: false, hStart: 0, hEnd: 100, vStart: 0, vEnd: 100 } },
-			{ enabled: false, sources: [0, 0], size: 0, xPosition: 0, yPosition: 0, mask: { enabled: false, hStart: 0, hEnd: 100, vStart: 0, vEnd: 100 } },
-		],
+	constructor(model: GoStreamModel) {
+		this.model = model
+		this.UpStreamKeyType = 0
+		this.keyInfo = [
+			{ enabled: false, sources: [0, 0], size: 0, xPosition: 0, yPosition: 0 },
+			{ enabled: false, sources: [0, 0], size: 0, xPosition: 0, yPosition: 0 },
+			{ enabled: false, sources: [0, 0], size: 0, xPosition: 0, yPosition: 0 },
+			{ enabled: false, sources: [0, 0], size: 0, xPosition: 0, yPosition: 0 },
+		]
+	}
+
+	keyScalingSizes(_protocolOrder = false): number[] {
+		// setting protocolOrder to true guarantees it will correspond to the
+		//  Osee communication protocol's index numbers. In this case it's a noop
+		return [0.25, 0.33, 0.5]
+	}
+
+	encodeKeyScalingSize(val: number): number {
+		return this.keyScalingSizes(true).indexOf(val)
+	}
+
+	decodeKeyScalingSize(idx: number): number {
+		// could add something for 100% if resize is disabled? (keys other than PiP)
+		const sizesPct = this.keyScalingSizes(true)
+		return sizesPct[idx]
 	}
 }
 
@@ -195,7 +211,7 @@ export function update(state: UpstreamKeyerStateT, data: GoStreamCmd): boolean {
 			state.keyInfo[USKKeyTypes.Pip].sources[USKKeySourceType.Fill] = Number(data.value![0])
 			break
 		case ActionId.PipSize:
-			state.keyInfo[USKKeyTypes.Pip].size = Number(data.value![0])
+			state.keyInfo[USKKeyTypes.Pip].size = state.decodeKeyScalingSize(Number(data.value![0]))
 			break
 		case ActionId.PipXPosition:
 			state.keyInfo[USKKeyTypes.Pip].xPosition = Number(data.value![0])

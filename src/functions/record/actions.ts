@@ -41,6 +41,7 @@ export function create(_model: GoStreamModel, state: RecordStateT): CompanionAct
 					id: 'RecordFileName',
 					required: true,
 					default: '',
+					useVariables: true,
 				},
 				{
 					type: 'checkbox',

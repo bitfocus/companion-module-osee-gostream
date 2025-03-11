@@ -5,6 +5,8 @@ import { UpStreamKeyTypeChoices, KeyResizeSizeChoices } from './../../model'
 import { USKKeySourceType, USKKeyTypes } from './state'
 import { UpstreamKeyerStateT } from './state'
 import { GoStreamModel } from '../../models/types'
+import { getOptNumber, makeChoices } from '../../util'
+
 export function create(model: GoStreamModel, state: UpstreamKeyerStateT): CompanionFeedbackDefinitions {
 	return {
 		[FeedbackId.KeySourceFill]: {
@@ -58,6 +60,34 @@ export function create(model: GoStreamModel, state: UpstreamKeyerStateT): Compan
 				return state.UpStreamKeyType === typeid
 			},
 		},
+		[FeedbackId.PipSize]: {
+			type: 'boolean',
+			name: 'USK: PIP Size',
+			description: 'Change style of button based on pip size',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Size',
+					id: 'pipSizeId',
+					...makeChoices(state.keyScalingSizes()),
+				},
+			],
+			defaultStyle: {
+				color: combineRgb(0, 0, 0),
+				bgcolor: combineRgb(255, 255, 0),
+			},
+			callback: (feedback) => {
+				const pipSizeChoice = getOptNumber(feedback, 'pipSizeId')
+				const curSize = state.keyInfo[USKKeyTypes.Pip].size
+				return curSize === pipSizeChoice
+			},
+			learn: (feedback) => {
+				return {
+					...feedback.options,
+					pipSizeId: state.keyInfo[USKKeyTypes.Pip].size,
+				}
+			},
+		},
 		[FeedbackId.PipXPosition]: {
 			type: 'boolean',
 			name: 'USK: PIP X position',
@@ -79,8 +109,8 @@ export function create(model: GoStreamModel, state: UpstreamKeyerStateT): Compan
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: (feedback) => {
-				const typeid = Number(feedback.options.pipXPosId)
-				return state.keyInfo[USKKeyTypes.Pip].xPosition === typeid
+				const pipXPos = Number(feedback.options.pipXPosId)
+				return state.keyInfo[USKKeyTypes.Pip].xPosition === pipXPos
 			},
 		},
 		[FeedbackId.PipYPosition]: {
@@ -104,8 +134,8 @@ export function create(model: GoStreamModel, state: UpstreamKeyerStateT): Compan
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: (feedback) => {
-				const typeid = Number(feedback.options.pipYPosId)
-				return state.keyInfo[USKKeyTypes.Pip].yPosition === typeid
+				const pipYPos = Number(feedback.options.pipYPosId)
+				return state.keyInfo[USKKeyTypes.Pip].yPosition === pipYPos
 			},
 		},
 		[FeedbackId.KeyPatternResizeXPosition]: {
@@ -129,8 +159,8 @@ export function create(model: GoStreamModel, state: UpstreamKeyerStateT): Compan
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: (feedback) => {
-				const typeid = Number(feedback.options.keyPatternResizeXId)
-				return state.keyInfo[USKKeyTypes.KeyPattern].xPosition === typeid
+				const keyPatternResizeX = Number(feedback.options.keyPatternResizeXId)
+				return state.keyInfo[USKKeyTypes.KeyPattern].xPosition === keyPatternResizeX
 			},
 		},
 		[FeedbackId.KeyPatternResizeYPosition]: {
@@ -154,8 +184,8 @@ export function create(model: GoStreamModel, state: UpstreamKeyerStateT): Compan
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: (feedback) => {
-				const typeid = Number(feedback.options.keyPatternResizeYId)
-				return state.keyInfo[USKKeyTypes.KeyPattern].yPosition === typeid
+				const keyPatternResizeY = Number(feedback.options.keyPatternResizeYId)
+				return state.keyInfo[USKKeyTypes.KeyPattern].yPosition === keyPatternResizeY
 			},
 		},
 		[FeedbackId.KeyPatternResizeSize]: {
@@ -176,8 +206,8 @@ export function create(model: GoStreamModel, state: UpstreamKeyerStateT): Compan
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: (feedback) => {
-				const typeid = Number(feedback.options.keyPatternResizeSizeId)
-				return state.keyInfo[USKKeyTypes.KeyPattern].size === typeid
+				const keyPatternResizeSize = Number(feedback.options.keyPatternResizeSizeId)
+				return state.keyInfo[USKKeyTypes.KeyPattern].size === keyPatternResizeSize
 			},
 		},
 	}
