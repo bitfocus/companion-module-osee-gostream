@@ -58,10 +58,4 @@ export function getScripts(
 	return result
 }
 
-const actionIdsToUpgrade = [
-	'pipMaskEnable',
-	'pipMaskHStart',
-	'pipMaskVStart',
-	'pipMaskHEnd',
-	'pipMaskVEnd',
-]
+const actionIdsToUpgrade = ['pipMaskEnable', 'pipMaskHStart', 'pipMaskVStart', 'pipMaskHEnd', 'pipMaskVEnd']

@@ -47,7 +47,7 @@ export function ModuleUpgrader(
 // Note: the number of items in this list must grow monotonically, and new items must be added to the end for this to work properly
 // (In some cases very old upgraders can be replaced by EmptyUpgradeScript)
 export const UpgradeScriptList: CompanionStaticUpgradeScript<Config>[] = [
-	UpgradeToV15.getScripts, 
+	UpgradeToV15.getScripts,
 	UpgradeToConsolidatedSSRCMaskAction.getScripts,
 	ModuleUpgrader(tryUpdateNTAction, tryUpdateNTFeedback),
 ]

@@ -39,6 +39,7 @@ enum CommandType:
   Set: 'set'
   Push: 'pus'
 ```
+
 A pus command is sent by the switcher when something has changed, e.g. after a set command or if user pushes a hardware button on device.
 
 A get command will request the specified parameter in the value array, the reply will be a get message.
@@ -51,6 +52,7 @@ struct GoStreamCommand:
   type: CommandType
   value?: (number|string|any)[]
 ```
+
 each command is embedded in a packet with a header and a CRC 16 modbus sum
 
 ```
@@ -66,13 +68,14 @@ The GoStream device might send several GoStreamPackets in the same Ethernet fram
 
 ## Notes on module development
 
-The Osee GoStream module follows as long as possible the [semver major.minor.patch format](https://semver.org/) . 
-* MAJOR version increases with incompatible API changes or big refactoring works 
-* MINOR version increases with added functionality in a backward compatible manner
-* PATCH version increases when a release has regressed from the prior release. 
-  
-As Companion supports upgrade scripts not all non backwards compatible changes will require a major number increase. If upgrade is possible then 
-just a minor number increase is needed. 
+The Osee GoStream module follows as long as possible the [semver major.minor.patch format](https://semver.org/) .
+
+- MAJOR version increases with incompatible API changes or big refactoring works
+- MINOR version increases with added functionality in a backward compatible manner
+- PATCH version increases when a release has regressed from the prior release.
+
+As Companion supports upgrade scripts not all non backwards compatible changes will require a major number increase. If upgrade is possible then
+just a minor number increase is needed.
 A PATCH release should be made only on regression of the sw, i.e. when something that previously worked stopped working. There are probably several unknown
 bugs in the current sw, as these are discovered they do not warrant a patch release but should be planned in a future minor release.
 
