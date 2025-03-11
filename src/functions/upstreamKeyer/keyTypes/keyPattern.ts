@@ -2,11 +2,11 @@ import { ActionId } from '../actionId'
 import { getOptNumber } from './../../../util'
 import { SwitchChoices, KeyResizeSizeChoices } from './../../../model'
 import { ReqType, ActionType } from './../../../enums'
-import { sendCommand } from './../../../connection'
+import { sendCommand, sendCommands, GoStreamCmd } from './../../../connection'
 import type { CompanionActionDefinitions } from '@companion-module/base'
-import { UpstreamKeyerStateT } from '../state'
+import { UpstreamKeyerStateT, USKKeyTypes } from '../state'
 import { GoStreamModel } from '../../../models/types'
-export function createKeyPatternActions(model: GoStreamModel, _state: UpstreamKeyerStateT): CompanionActionDefinitions {
+export function createKeyPatternActions(model: GoStreamModel, state: UpstreamKeyerStateT): CompanionActionDefinitions {
 	return {
 		[ActionId.KeyPatternSourceFill]: {
 			name: 'UpStream Key:Set Key Pattern Source Fill',
@@ -133,83 +133,110 @@ export function createKeyPatternActions(model: GoStreamModel, _state: UpstreamKe
 				])
 			},
 		},
-		[ActionId.KeyPatternMaskEnable]: {
-			name: 'UpStream Key:Set KeyPattern Mask Enable',
+		[ActionId.KeyPatternSetMaskProperties]: {
+			name: 'UpStream Key: Set keypattern mask properties',
 			options: [
+				{
+					id: 'props',
+					type: 'multidropdown',
+					label: 'Select properties',
+					choices: [
+						{ id: 'enable', label: 'enable' },
+						{ id: 'hMaskStart', label: 'hMaskStart' },
+						{ id: 'hMaskEnd', label: 'hMaskEnd' },
+						{ id: 'vMaskStart', label: 'vMaskStart' },
+						{ id: 'vMaskEnd', label: 'vMaskEnd' },
+					],
+					minSelection: 1,
+					default: ['enable', 'hMaskStart', 'hMaskEnd', 'vMaskStart', 'vMaskEnd'],
+				},
 				{
 					type: 'dropdown',
 					label: 'Mask Enable',
-					id: 'KeyPatternMaskEnable',
+					id: 'maskEnable',
 					choices: SwitchChoices,
 					default: 0,
+					isVisible: (options) => (<string[]>options.props!).includes('enable'),
 				},
-			],
-			callback: async (action) => {
-				await sendCommand(ActionId.KeyPatternMaskEnable, ReqType.Set, [getOptNumber(action, 'KeyPatternMaskEnable')])
-			},
-		},
-		[ActionId.KeyPatternMaskHStart]: {
-			name: 'UpStream Key:Set Key Pattern Mask H Start',
-			options: [
 				{
 					type: 'number',
 					label: 'H Start',
-					id: 'KeyPatternMaskHStart',
+					id: 'maskHStart',
 					min: 0,
 					max: 100,
 					default: 0,
+					isVisible: (options) => (<string[]>options.props!).includes('hMaskStart'),
 				},
-			],
-			callback: async (action) => {
-				await sendCommand(ActionId.KeyPatternMaskHStart, ReqType.Set, [getOptNumber(action, 'KeyPatternMaskHStart')])
-			},
-		},
-		[ActionId.KeyPatternMaskVStart]: {
-			name: 'UpStream Key:Set Key Pattern Mask V Start',
-			options: [
-				{
-					type: 'number',
-					label: 'V Start',
-					id: 'KeyPatternMaskVStart',
-					min: 0,
-					max: 100,
-					default: 0,
-				},
-			],
-			callback: async (action) => {
-				await sendCommand(ActionId.KeyPatternMaskVStart, ReqType.Set, [getOptNumber(action, 'KeyPatternMaskVStart')])
-			},
-		},
-		[ActionId.KeyPatternMaskHEnd]: {
-			name: 'UpStream Key:Set Key Pattern Mask H End',
-			options: [
 				{
 					type: 'number',
 					label: 'H End',
-					id: 'KeyPatternMaskHEnd',
+					id: 'maskHEnd',
+					min: 0,
+					max: 100,
+					default: 100,
+					isVisible: (options) => (<string[]>options.props!).includes('hMaskEnd'),
+				},
+				{
+					type: 'number',
+					label: 'V Start',
+					id: 'maskVStart',
 					min: 0,
 					max: 100,
 					default: 0,
+					isVisible: (options) => (<string[]>options.props!).includes('vMaskStart'),
 				},
-			],
-			callback: async (action) => {
-				await sendCommand(ActionId.KeyPatternMaskHEnd, ReqType.Set, [getOptNumber(action, 'KeyPatternMaskHEnd')])
-			},
-		},
-		[ActionId.KeyPatternMaskVEnd]: {
-			name: 'UpStream Key:Set Key Pattern Mask V End',
-			options: [
 				{
 					type: 'number',
 					label: 'V End',
-					id: 'KeyPatternMaskVEnd',
+					id: 'maskVEnd',
 					min: 0,
 					max: 100,
-					default: 0,
+					default: 100,
+					isVisible: (options) => (<string[]>options.props!).includes('vMaskEnd'),
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.KeyPatternMaskVEnd, ReqType.Set, [getOptNumber(action, 'KeyPatternMaskVEnd')])
+				const props = <string[]>action.options.props
+				const commands: GoStreamCmd[] = []
+				if (props.includes('enable')) {
+					let paramOpt = getOptNumber(action, 'maskEnable')
+					if (paramOpt === 2) paramOpt = state.keyInfo[USKKeyTypes.KeyPattern].mask.enabled ? 0 : 1
+					commands.push({
+						id: ActionId.KeyPatternMaskEnable,
+						type: ReqType.Set,
+						value: [paramOpt],
+					})
+				}
+				if (props.includes('hMaskStart')) {
+					commands.push({
+						id: ActionId.KeyPatternMaskHStart,
+						type: ReqType.Set,
+						value: [getOptNumber(action, 'maskHStart')],
+					})
+				}
+				if (props.includes('hMaskEnd')) {
+					commands.push({
+						id: ActionId.KeyPatternMaskHEnd,
+						type: ReqType.Set,
+						value: [getOptNumber(action, 'maskHEnd')],
+					})
+				}
+				if (props.includes('vMaskStart')) {
+					commands.push({
+						id: ActionId.KeyPatternMaskVStart,
+						type: ReqType.Set,
+						value: [getOptNumber(action, 'maskVStart')],
+					})
+				}
+				if (props.includes('vMaskEnd')) {
+					commands.push({
+						id: ActionId.KeyPatternMaskVEnd,
+						type: ReqType.Set,
+						value: [getOptNumber(action, 'maskVEnd')],
+					})
+				}
+
+				if (commands.length > 0) await sendCommands(commands)
 			},
 		},
 		[ActionId.KeyPatternResizeEnable]: {

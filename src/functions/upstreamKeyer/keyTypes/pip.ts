@@ -231,7 +231,7 @@ export function createPIPActions(model: GoStreamModel, state: UpstreamKeyerState
 				{
 					type: 'dropdown',
 					label: 'Mask Enable',
-					id: 'pipMaskEnable',
+					id: 'maskEnable',
 					choices: SwitchChoices,
 					default: 0,
 					isVisible: (options) => (<string[]>options.props!).includes('enable'),
@@ -239,7 +239,7 @@ export function createPIPActions(model: GoStreamModel, state: UpstreamKeyerState
 				{
 					type: 'number',
 					label: 'H Start',
-					id: 'pipMaskHStart',
+					id: 'maskHStart',
 					min: 0,
 					max: 100,
 					default: 0,
@@ -248,7 +248,7 @@ export function createPIPActions(model: GoStreamModel, state: UpstreamKeyerState
 				{
 					type: 'number',
 					label: 'H End',
-					id: 'pipMaskHEnd',
+					id: 'maskHEnd',
 					min: 0,
 					max: 100,
 					default: 100,
@@ -257,7 +257,7 @@ export function createPIPActions(model: GoStreamModel, state: UpstreamKeyerState
 				{
 					type: 'number',
 					label: 'V Start',
-					id: 'pipMaskVStart',
+					id: 'maskVStart',
 					min: 0,
 					max: 100,
 					default: 0,
@@ -266,7 +266,7 @@ export function createPIPActions(model: GoStreamModel, state: UpstreamKeyerState
 				{
 					type: 'number',
 					label: 'V End',
-					id: 'pipMaskVEnd',
+					id: 'maskVEnd',
 					min: 0,
 					max: 100,
 					default: 100,
@@ -277,7 +277,7 @@ export function createPIPActions(model: GoStreamModel, state: UpstreamKeyerState
 				const props = <string[]>action.options.props
 				const commands: GoStreamCmd[] = []
 				if (props.includes('enable')) {
-					let paramOpt = getOptNumber(action, 'pipMaskEnable')
+					let paramOpt = getOptNumber(action, 'maskEnable')
 					if (paramOpt === 2) paramOpt = state.keyInfo[USKKeyTypes.Pip].mask.enabled ? 0 : 1
 					commands.push({
 						id: ActionId.PipMaskEnable,
@@ -289,28 +289,28 @@ export function createPIPActions(model: GoStreamModel, state: UpstreamKeyerState
 					commands.push({
 						id: ActionId.PipMaskHStart,
 						type: ReqType.Set,
-						value: [getOptNumber(action, 'pipMaskHStart')],
+						value: [getOptNumber(action, 'maskHStart')],
 					})
 				}
 				if (props.includes('hMaskEnd')) {
 					commands.push({
 						id: ActionId.PipMaskHEnd,
 						type: ReqType.Set,
-						value: [getOptNumber(action, 'pipMaskHEnd')],
+						value: [getOptNumber(action, 'maskHEnd')],
 					})
 				}
 				if (props.includes('vMaskStart')) {
 					commands.push({
 						id: ActionId.PipMaskVStart,
 						type: ReqType.Set,
-						value: [getOptNumber(action, 'pipMaskVStart')],
+						value: [getOptNumber(action, 'maskVStart')],
 					})
 				}
 				if (props.includes('vMaskEnd')) {
 					commands.push({
 						id: ActionId.PipMaskVEnd,
 						type: ReqType.Set,
-						value: [getOptNumber(action, 'pipMaskVEnd')],
+						value: [getOptNumber(action, 'maskVEnd')],
 					})
 				}
 

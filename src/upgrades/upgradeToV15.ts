@@ -20,6 +20,7 @@ export function getScripts(
 	const actions: CompanionMigrationAction[] = props.actions
 
 	for (const action of actions) {
+		// Handle mask consolidation
 		if (actionIdsToUpgrade.includes(action.actionId)) {
 			const oldActionId = action.actionId
 
@@ -27,27 +28,30 @@ export function getScripts(
 				props: [],
 			}
 			const newProps: string[] = []
-			if (oldActionId === 'pipMaskEnable') {
+
+			// Just so happens that the old options was named as the action
+			if (oldActionId.endsWith('MaskEnable')) {
 				newProps.push('enable')
-				newOpts['pipMaskEnable'] = action.options.SuperSourceMaskEnable
+				newOpts['maskEnable'] = action.options[oldActionId]
 			}
-			if (oldActionId === 'pipMaskHStart') {
+			if (oldActionId.endsWith('MaskHStart')) {
 				newProps.push('hMaskStart')
-				newOpts['pipMaskHStart'] = action.options.SuperSourceMaskHStart
+				newOpts['maskHStart'] = action.options[oldActionId]
 			}
-			if (oldActionId === 'pipMaskHEnd') {
+			if (oldActionId.endsWith('MaskHEnd')) {
 				newProps.push('hMaskEnd')
-				newOpts['pipMaskHEnd'] = action.options.SuperSourceMaskHEnd
+				newOpts['maskHEnd'] = action.options[oldActionId]
 			}
-			if (oldActionId === 'pipMaskVStart') {
+			if (oldActionId.endsWith('MaskVStart')) {
 				newProps.push('vMaskStart')
-				newOpts['pipMaskVStart'] = action.options.SuperSourceMaskVStart
+				newOpts['maskVStart'] = action.options[oldActionId]
 			}
-			if (oldActionId === 'pipMaskVEnd') {
+			if (oldActionId.endsWith('MaskVEnd')) {
 				newProps.push('vMaskEnd')
-				newOpts['pipMaskVEnd'] = action.options.SuperSourceMaskVEnd
+				newOpts['maskVEnd'] = action.options[oldActionId]
 			}
-			action.actionId = 'pipSetMaskProperties'
+			const keyType = oldActionId.substring(0, oldActionId.indexOf('Mask'))
+			action.actionId = keyType + 'SetMaskProperties'
 
 			action.options = newOpts
 			action.options['props'] = newProps
@@ -58,4 +62,25 @@ export function getScripts(
 	return result
 }
 
-const actionIdsToUpgrade = ['pipMaskEnable', 'pipMaskHStart', 'pipMaskVStart', 'pipMaskHEnd', 'pipMaskVEnd']
+const actionIdsToUpgrade = [
+	'pipMaskEnable',
+	'pipMaskHStart',
+	'pipMaskVStart',
+	'pipMaskHEnd',
+	'pipMaskVEnd',
+	'chromaMaskEnable',
+	'chromaMaskHStart',
+	'chromaMaskVStart',
+	'chromaMaskHEnd',
+	'chromaMaskVEnd',
+	'lumaMaskEnable',
+	'lumaMaskHStart',
+	'lumaMaskVStart',
+	'lumaMaskHEnd',
+	'lumaMaskVEnd',
+	'keyPatternMaskEnable',
+	'keyPatternMaskHStart',
+	'keyPatternMaskVStart',
+	'keyPatternMaskHEnd',
+	'keyPatternMaskVEnd',
+]
