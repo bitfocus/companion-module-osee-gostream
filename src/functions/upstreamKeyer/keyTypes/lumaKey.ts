@@ -238,7 +238,7 @@ export function createLumaKeyActions(model: GoStreamModel, state: UpstreamKeyerS
 				let value = 0.25
 				const info = KeyResizeSizeChoices.find((s) => s.id === action.options.LumaKeyResizeSize)
 				if (info !== null && info !== undefined) {
-					value = Number(info.label)
+					value = Number(info.id)
 				}
 				await sendCommand(ActionId.LumaKeyResizeSize, ReqType.Set, [value])
 			},

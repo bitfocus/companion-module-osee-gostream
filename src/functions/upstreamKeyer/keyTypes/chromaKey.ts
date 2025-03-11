@@ -159,7 +159,7 @@ export function createChromaKeyActions(model: GoStreamModel, state: UpstreamKeye
 				let value = 0.25
 				const info = KeyResizeSizeChoices.find((s) => s.id === action.options.ChromaKeyResizeSize)
 				if (info !== null && info !== undefined) {
-					value = Number(info.label)
+					value = Number(info.id)
 				}
 				await sendCommand(ActionId.ChromaKeyResizeSize, ReqType.Set, [value])
 			},
