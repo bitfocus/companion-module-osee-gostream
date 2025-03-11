@@ -40,10 +40,10 @@ export class UpstreamKeyerStateT {
 		this.model = model
 		this.UpStreamKeyType = 0
 		this.keyInfo = [
-			{ enabled: false, sources: [0, 0], size: 0, xPosition: 0, yPosition: 0 },
-			{ enabled: false, sources: [0, 0], size: 0, xPosition: 0, yPosition: 0 },
-			{ enabled: false, sources: [0, 0], size: 0, xPosition: 0, yPosition: 0 },
-			{ enabled: false, sources: [0, 0], size: 0, xPosition: 0, yPosition: 0 },
+			{ enabled: false, sources: [0, 0], size: 0, xPosition: 0, yPosition: 0, mask: { enabled: false, hStart: 0, hEnd: 100, vStart: 100, vEnd: 100 } },
+			{ enabled: false, sources: [0, 0], size: 0, xPosition: 0, yPosition: 0, mask: { enabled: false, hStart: 0, hEnd: 100, vStart: 100, vEnd: 100 } },
+			{ enabled: false, sources: [0, 0], size: 0, xPosition: 0, yPosition: 0, mask: { enabled: false, hStart: 0, hEnd: 100, vStart: 100, vEnd: 100 } },
+			{ enabled: false, sources: [0, 0], size: 0, xPosition: 0, yPosition: 0, mask: { enabled: false, hStart: 0, hEnd: 100, vStart: 100, vEnd: 100 } },
 		]
 	}
 
