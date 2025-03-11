@@ -2,11 +2,11 @@ import { ActionId } from './../actionId'
 import { getOptNumber } from './../../../util'
 import { SwitchChoices, KeyResizeSizeChoices } from './../../../model'
 import { ReqType, ActionType } from './../../../enums'
-import { sendCommand } from './../../../connection'
+import { sendCommand, sendCommands, GoStreamCmd } from './../../../connection'
 import type { CompanionActionDefinitions } from '@companion-module/base'
-import { UpstreamKeyerStateT } from '../state'
+import { UpstreamKeyerStateT, USKKeyTypes } from '../state'
 import { GoStreamModel } from '../../../models/types'
-export function createPIPActions(model: GoStreamModel, _state: UpstreamKeyerStateT): CompanionActionDefinitions {
+export function createPIPActions(model: GoStreamModel, state: UpstreamKeyerStateT): CompanionActionDefinitions {
 	return {
 		[ActionId.PipSource]: {
 			name: 'UpStream Key:Set Pip Source',
@@ -79,6 +79,113 @@ export function createPIPActions(model: GoStreamModel, _state: UpstreamKeyerStat
 				await sendCommand(ActionId.PipYPosition, ReqType.Set, [getOptNumber(action, 'PipYPosition')])
 			},
 		},
+		[ActionId.PipSetMaskProperties]: {
+			name: 'UpStream Key: Set PIP mask properties',
+			options: [
+				{
+					id: 'props',
+					type: 'multidropdown',
+					label: 'Select properties',
+					choices: [
+						{ id: 'enable', label: 'enable' },
+						{ id: 'hMaskStart', label: 'hMaskStart' },
+						{ id: 'hMaskEnd', label: 'hMaskEnd' },
+						{ id: 'vMaskStart', label: 'vMaskStart' },
+						{ id: 'vMaskEnd', label: 'vMaskEnd' },
+					],
+					minSelection: 1,
+					default: ['enable', 'hMaskStart', 'hMaskEnd', 'vMaskStart', 'vMaskEnd'],
+				},
+				{
+					type: 'dropdown',
+					label: 'Mask Enable',
+					id: 'MaskEnable',
+					choices: SwitchChoices,
+					default: 0,
+					isVisible: (options) => (<string[]>options.props!).includes('enable'),
+				},
+				{
+					type: 'number',
+					label: 'H Start',
+					id: 'MaskHStart',
+					min: 0,
+					max: 100,
+					default: 0,
+					isVisible: (options) => (<string[]>options.props!).includes('hMaskStart'),
+				},
+				{
+					type: 'number',
+					label: 'H End',
+					id: 'MaskHEnd',
+					min: 0,
+					max: 100,
+					default: 100,
+					isVisible: (options) => (<string[]>options.props!).includes('hMaskEnd'),
+				},
+				{
+					type: 'number',
+					label: 'V Start',
+					id: 'MaskVStart',
+					min: 0,
+					max: 100,
+					default: 0,
+					isVisible: (options) => (<string[]>options.props!).includes('vMaskStart'),
+				},
+				{
+					type: 'number',
+					label: 'V End',
+					id: 'MaskVEnd',
+					min: 0,
+					max: 100,
+					default: 100,
+					isVisible: (options) => (<string[]>options.props!).includes('vMaskEnd'),
+				},
+			],
+			callback: async (action) => {
+				const props = <string[]>action.options.props
+				const commands: GoStreamCmd[] = []
+				if (props.includes('enable')) {
+					let paramOpt = getOptNumber(action, 'MaskEnable')
+					if (paramOpt === 2) paramOpt = state.keyInfo[USKKeyTypes.Pip].mask.enabled ? 0 : 1
+					commands.push({
+						id: ActionId.PipMaskEnable,
+						type: ReqType.Set,
+						value: [paramOpt],
+					})
+				}
+				if (props.includes('hMaskStart')) {
+					commands.push({
+						id: ActionId.PipMaskHStart,
+						type: ReqType.Set,
+						value: [getOptNumber(action, 'MaskHStart')],
+					})
+				}
+				if (props.includes('hMaskEnd')) {
+					commands.push({
+						id: ActionId.PipMaskHEnd,
+						type: ReqType.Set,
+						value: [getOptNumber(action, 'MaskHEnd')],
+					})
+				}
+				if (props.includes('vMaskStart')) {
+					commands.push({
+						id: ActionId.PipMaskVStart,
+						type: ReqType.Set,
+						value: [getOptNumber(action, 'MaskVStart')],
+					})
+				}
+				if (props.includes('vMaskEnd')) {
+					commands.push({
+						id: ActionId.PipMaskVEnd,
+						type: ReqType.Set,
+						value: [getOptNumber(action, 'MaskVEnd')],
+					})
+				}
+
+				if (commands.length > 0) await sendCommands(commands)
+			},
+		},
+		/*
 		[ActionId.PipMaskEnable]: {
 			name: 'UpStream Key:Set PIP Mask Enable',
 			options: [
@@ -158,6 +265,7 @@ export function createPIPActions(model: GoStreamModel, _state: UpstreamKeyerStat
 				await sendCommand(ActionId.PipMaskVEnd, ReqType.Set, [getOptNumber(action, 'PipMaskVEnd')])
 			},
 		},
+		*/
 		[ActionId.PipBorderEnable]: {
 			name: 'UpStream Key:Set Pip Border Enable',
 			options: [

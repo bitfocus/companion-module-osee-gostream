@@ -14,12 +14,21 @@ export enum USKKeySourceType {
 	Fill = 1,
 }
 
+export type MaskInfoT = {
+	enabled: boolean
+	hStart: number
+	hEnd: number
+	vStart: number
+	vEnd: number
+}
+
 export type KeyInfoT = {
 	enabled: boolean
 	sources: number[]
 	size: number
 	xPosition: number
 	yPosition: number
+	mask: MaskInfoT
 }
 
 export type UpstreamKeyerStateT = {
@@ -31,10 +40,10 @@ export function create(_model: GoStreamModel): UpstreamKeyerStateT {
 	return {
 		UpStreamKeyType: 0,
 		keyInfo: [
-			{ enabled: false, sources: [0, 0], size: 0, xPosition: 0, yPosition: 0 },
-			{ enabled: false, sources: [0, 0], size: 0, xPosition: 0, yPosition: 0 },
-			{ enabled: false, sources: [0, 0], size: 0, xPosition: 0, yPosition: 0 },
-			{ enabled: false, sources: [0, 0], size: 0, xPosition: 0, yPosition: 0 },
+			{ enabled: false, sources: [0, 0], size: 0, xPosition: 0, yPosition: 0, mask: { enabled: false, hStart: 0, hEnd: 100, vStart: 0, vEnd: 100 } },
+			{ enabled: false, sources: [0, 0], size: 0, xPosition: 0, yPosition: 0, mask: { enabled: false, hStart: 0, hEnd: 100, vStart: 0, vEnd: 100 } },
+			{ enabled: false, sources: [0, 0], size: 0, xPosition: 0, yPosition: 0, mask: { enabled: false, hStart: 0, hEnd: 100, vStart: 0, vEnd: 100 } },
+			{ enabled: false, sources: [0, 0], size: 0, xPosition: 0, yPosition: 0, mask: { enabled: false, hStart: 0, hEnd: 100, vStart: 0, vEnd: 100 } },
 		],
 	}
 }
@@ -47,20 +56,40 @@ export async function sync(_model: GoStreamModel): Promise<boolean> {
 		{ id: ActionId.LumaKeyResizeSize, type: ReqType.Get },
 		{ id: ActionId.LumaKeyResizeXPosition, type: ReqType.Get },
 		{ id: ActionId.LumaKeyResizeYPosition, type: ReqType.Get },
+		{ id: ActionId.LumaKeyMaskEnable, type: ReqType.Get },
+		{ id: ActionId.LumaKeyMaskHStart, type: ReqType.Get },
+		{ id: ActionId.LumaKeyMaskHEnd, type: ReqType.Get },
+		{ id: ActionId.LumaKeyMaskVStart, type: ReqType.Get },
+		{ id: ActionId.LumaKeyMaskVEnd, type: ReqType.Get },
 		{ id: ActionId.ChromaKeyFill, type: ReqType.Get },
 		{ id: ActionId.ChromaKeyResizeEnable, type: ReqType.Get },
 		{ id: ActionId.ChromaKeyResizeSize, type: ReqType.Get },
 		{ id: ActionId.ChromaKeyResizeXPosition, type: ReqType.Get },
 		{ id: ActionId.ChromaKeyResizeYPosition, type: ReqType.Get },
+		{ id: ActionId.ChromaKeyMaskEnable, type: ReqType.Get },
+		{ id: ActionId.ChromaKeyMaskHStart, type: ReqType.Get },
+		{ id: ActionId.ChromaKeyMaskHEnd, type: ReqType.Get },
+		{ id: ActionId.ChromaKeyMaskVStart, type: ReqType.Get },
+		{ id: ActionId.ChromaKeyMaskVEnd, type: ReqType.Get },
 		{ id: ActionId.KeyPatternSourceFill, type: ReqType.Get },
 		{ id: ActionId.KeyPatternResizeEnable, type: ReqType.Get },
 		{ id: ActionId.KeyPatternResizeSize, type: ReqType.Get },
 		{ id: ActionId.KeyPatternResizeXPosition, type: ReqType.Get },
 		{ id: ActionId.KeyPatternResizeYPosition, type: ReqType.Get },
+		{ id: ActionId.KeyPatternMaskEnable, type: ReqType.Get },
+		{ id: ActionId.KeyPatternMaskHStart, type: ReqType.Get },
+		{ id: ActionId.KeyPatternMaskHEnd, type: ReqType.Get },
+		{ id: ActionId.KeyPatternMaskVStart, type: ReqType.Get },
+		{ id: ActionId.KeyPatternMaskVEnd, type: ReqType.Get },
 		{ id: ActionId.PipSource, type: ReqType.Get },
 		{ id: ActionId.PipSize, type: ReqType.Get },
 		{ id: ActionId.PipXPosition, type: ReqType.Get },
 		{ id: ActionId.PipYPosition, type: ReqType.Get },
+		{ id: ActionId.PipMaskEnable, type: ReqType.Get },
+		{ id: ActionId.PipMaskHStart, type: ReqType.Get },
+		{ id: ActionId.PipMaskHEnd, type: ReqType.Get },
+		{ id: ActionId.PipMaskVStart, type: ReqType.Get },
+		{ id: ActionId.PipMaskVEnd, type: ReqType.Get },
 	]
 	return sendCommands(cmds)
 }
@@ -87,6 +116,21 @@ export function update(state: UpstreamKeyerStateT, data: GoStreamCmd): boolean {
 		case ActionId.LumaKeyResizeYPosition:
 			state.keyInfo[USKKeyTypes.Luma].yPosition = Number(data.value![0])
 			break
+		case ActionId.LumaKeyMaskEnable:
+			state.keyInfo[USKKeyTypes.Luma].mask.enabled = Boolean(data.value![0])
+			break
+		case ActionId.LumaKeyMaskHStart:
+			state.keyInfo[USKKeyTypes.Luma].mask.hStart = Number(data.value![0])
+			break
+		case ActionId.LumaKeyMaskHEnd:
+			state.keyInfo[USKKeyTypes.Luma].mask.hEnd = Number(data.value![0])
+			break
+		case ActionId.LumaKeyMaskVStart:
+			state.keyInfo[USKKeyTypes.Luma].mask.vStart = Number(data.value![0])
+			break
+		case ActionId.LumaKeyMaskVEnd:
+			state.keyInfo[USKKeyTypes.Luma].mask.vEnd = Number(data.value![0])
+			break
 		case ActionId.ChromaKeyFill:
 			state.keyInfo[USKKeyTypes.Chroma].sources[USKKeySourceType.Fill] = Number(data.value![0])
 			break
@@ -101,6 +145,21 @@ export function update(state: UpstreamKeyerStateT, data: GoStreamCmd): boolean {
 			break
 		case ActionId.ChromaKeyResizeYPosition:
 			state.keyInfo[USKKeyTypes.Chroma].yPosition = Number(data.value![0])
+			break
+		case ActionId.ChromaKeyMaskEnable:
+			state.keyInfo[USKKeyTypes.Chroma].mask.enabled = Boolean(data.value![0])
+			break
+		case ActionId.ChromaKeyMaskHStart:
+			state.keyInfo[USKKeyTypes.Chroma].mask.hStart = Number(data.value![0])
+			break
+		case ActionId.ChromaKeyMaskHEnd:
+			state.keyInfo[USKKeyTypes.Chroma].mask.hEnd = Number(data.value![0])
+			break
+		case ActionId.ChromaKeyMaskVStart:
+			state.keyInfo[USKKeyTypes.Chroma].mask.vStart = Number(data.value![0])
+			break
+		case ActionId.ChromaKeyMaskVEnd:
+			state.keyInfo[USKKeyTypes.Chroma].mask.vEnd = Number(data.value![0])
 			break
 		case ActionId.KeyPatternSourceFill:
 			state.keyInfo[USKKeyTypes.KeyPattern].sources[USKKeySourceType.Fill] = Number(data.value![0])
@@ -117,6 +176,21 @@ export function update(state: UpstreamKeyerStateT, data: GoStreamCmd): boolean {
 		case ActionId.KeyPatternResizeYPosition:
 			state.keyInfo[USKKeyTypes.KeyPattern].yPosition = Number(data.value![0])
 			break
+		case ActionId.KeyPatternMaskEnable:
+			state.keyInfo[USKKeyTypes.KeyPattern].mask.enabled = Boolean(data.value![0])
+			break
+		case ActionId.KeyPatternMaskHStart:
+			state.keyInfo[USKKeyTypes.KeyPattern].mask.hStart = Number(data.value![0])
+			break
+		case ActionId.KeyPatternMaskHEnd:
+			state.keyInfo[USKKeyTypes.KeyPattern].mask.hEnd = Number(data.value![0])
+			break
+		case ActionId.KeyPatternMaskVStart:
+			state.keyInfo[USKKeyTypes.KeyPattern].mask.vStart = Number(data.value![0])
+			break
+		case ActionId.KeyPatternMaskVEnd:
+			state.keyInfo[USKKeyTypes.KeyPattern].mask.vEnd = Number(data.value![0])
+			break
 		case ActionId.PipSource:
 			state.keyInfo[USKKeyTypes.Pip].sources[USKKeySourceType.Fill] = Number(data.value![0])
 			break
@@ -128,6 +202,21 @@ export function update(state: UpstreamKeyerStateT, data: GoStreamCmd): boolean {
 			break
 		case ActionId.PipYPosition:
 			state.keyInfo[USKKeyTypes.Pip].yPosition = Number(data.value![0])
+			break
+		case ActionId.PipMaskEnable:
+			state.keyInfo[USKKeyTypes.Pip].mask.enabled = Boolean(data.value![0])
+			break
+		case ActionId.PipMaskHStart:
+			state.keyInfo[USKKeyTypes.Pip].mask.hStart = Number(data.value![0])
+			break
+		case ActionId.PipMaskHEnd:
+			state.keyInfo[USKKeyTypes.Pip].mask.hEnd = Number(data.value![0])
+			break
+		case ActionId.PipMaskVStart:
+			state.keyInfo[USKKeyTypes.Pip].mask.vStart = Number(data.value![0])
+			break
+		case ActionId.PipMaskVEnd:
+			state.keyInfo[USKKeyTypes.Pip].mask.vEnd = Number(data.value![0])
 			break
 	}
 	return false

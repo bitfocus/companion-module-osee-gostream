@@ -53,6 +53,7 @@ export enum ActionId {
 	PipSize = 'pipSize',
 	PipXPosition = 'pipXPosition',
 	PipYPosition = 'pipYPosition',
+	PipSetMaskProperties = 'pipSetMaskProperties',
 	PipMaskEnable = 'pipMaskEnable',
 	PipMaskHStart = 'pipMaskHStart',
 	PipMaskVStart = 'pipMaskVStart',
