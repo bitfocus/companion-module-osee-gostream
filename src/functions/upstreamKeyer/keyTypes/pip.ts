@@ -102,13 +102,16 @@ export function createPIPActions(model: GoStreamModel, state: UpstreamKeyerState
 					//absolute
 					newpos = getOptNumber(action, 'PipXPosition')
 				} else {
-					let valueStr = await context.parseVariablesInString(getOptString(action, 'PipXPositionRel'))
+					let valueStr: string
 					const curPos = state.keyInfo[USKKeyTypes.Pip].xPosition
 					const pipSizePct = state.keyInfo[USKKeyTypes.Pip].size
 					if (operation === 2) {
 						valueStr = 'LEFT'
 					} else if (operation === 3) {
 						valueStr = 'RIGHT'
+					} else {
+						// operation === 1
+						valueStr = await context.parseVariablesInString(getOptString(action, 'PipXPositionRel'))
 					}
 					let value = 0
 					switch (valueStr.toUpperCase()) {
@@ -179,7 +182,7 @@ export function createPIPActions(model: GoStreamModel, state: UpstreamKeyerState
 					//absolute
 					newpos = getOptNumber(action, 'PipYPosition')
 				} else {
-					let valueStr = await context.parseVariablesInString(getOptString(action, 'PipYPositionRel'))
+					let valueStr: string
 					const curPos = state.keyInfo[USKKeyTypes.Pip].yPosition
 					const pipSizePct = state.keyInfo[USKKeyTypes.Pip].size
 					let value = 0
@@ -187,6 +190,9 @@ export function createPIPActions(model: GoStreamModel, state: UpstreamKeyerState
 						valueStr = 'TOP'
 					} else if (operation === 3) {
 						valueStr = 'BOTTOM'
+					} else {
+						// operation === 1
+						valueStr = await context.parseVariablesInString(getOptString(action, 'PipYPositionRel'))
 					}
 					switch (valueStr.toUpperCase()) {
 						case 'TOP':
