@@ -4,6 +4,7 @@ import { ReqType, PortType, PortCaps } from './../../enums'
 import { sendCommand } from './../../connection'
 import { SettingsStateT } from './state'
 import { GoStreamModel } from '../../models/types'
+import { GoStreamInstance } from '../../index'
 import type { CompanionActionDefinitions } from '@companion-module/base'
 import {
 	SettingsAuxSourceChoices,
@@ -20,7 +21,8 @@ import {
 } from './../../model'
 import { getInputs } from './../../models'
 
-export function create(model: GoStreamModel, state: SettingsStateT): CompanionActionDefinitions {
+export function create(instance: GoStreamInstance, state: SettingsStateT): CompanionActionDefinitions {
+	const model: GoStreamModel = instance?.model
 	return {
 		[ActionId.SrcName]: {
 			name: 'Settings:Set SrcName',
@@ -212,7 +214,14 @@ export function create(model: GoStreamModel, state: SettingsStateT): CompanionAc
 				},
 			],
 			callback: async (action) => {
+				state.outputFormat = -1 // mark it as invalid while GSD reboots.
+				instance?.checkFeedbacks()
 				await sendCommand(ActionId.OutFormat, ReqType.Set, [getOptNumber(action, 'OutFormat')])
+				setTimeout(() => {
+					// this will make Companion realize that the connection was broken.
+					// a shorter delay may work as well...
+					void sendCommand(ActionId.OutFormat, ReqType.Get)
+				}, 2000)
 			},
 		},
 		[ActionId.OutputColorSpace]: {

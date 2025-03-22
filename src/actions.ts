@@ -25,7 +25,7 @@ export function GetActionsList(instance: GoStreamInstance): CompanionActionDefin
 		...AudioMixerActions.create(instance.model, instance.states.AudioMixer),
 		...ColorBackActions.create(instance.model, instance.states.ColorBack),
 		...DownstreamKeyerActions.create(instance.model, instance.states.DownstreamKeyer),
-		...SettingsActions.create(instance.model, instance.states.Settings),
+		...SettingsActions.create(instance, instance.states.Settings),
 		...MacroActions.create(instance.model, instance.states.Macros),
 		...UpstreamKeyerActions.create(instance.model, instance.states.UpstreamKeyer),
 	}
