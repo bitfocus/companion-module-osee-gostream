@@ -212,7 +212,14 @@ export function create(model: GoStreamModel, state: SettingsStateT): CompanionAc
 				},
 			],
 			callback: async (action) => {
+				state.outputFormat = -1 // mark it as invalid while GSD reboots. (this probably won't have an immediate effect)
 				await sendCommand(ActionId.OutFormat, ReqType.Set, [getOptNumber(action, 'OutFormat')])
+				setTimeout(() => {
+					// this will make Companion realize that the connection was broken.
+					// a shorter delay may work as well, but regardless,
+					// neither Companion nor Osee's control software detect the error in less than 10s
+					void sendCommand(ActionId.OutFormat, ReqType.Get)
+				}, 2000)
 			},
 		},
 		[ActionId.OutputColorSpace]: {
