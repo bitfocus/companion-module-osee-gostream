@@ -15,6 +15,13 @@ import type { GoStreamInstance } from './index'
 import type { CompanionActionDefinitions } from '@companion-module/base'
 
 export function GetActionsList(instance: GoStreamInstance): CompanionActionDefinitions {
+	var settingsActions : SettingsActions = new SettingsActions();
+
+	settingsActions.on("stateUpdated", () => {
+		instance.log("info", "Settings Actions state updated")
+		instance.checkFeedbacks();
+	});
+
 	return {
 		...MixEffectActions.create(instance.model, instance.states.MixEffect),
 		...SuperSourceActions.create(instance.model, instance.states.SuperSource),
@@ -25,7 +32,7 @@ export function GetActionsList(instance: GoStreamInstance): CompanionActionDefin
 		...AudioMixerActions.create(instance.model, instance.states.AudioMixer),
 		...ColorBackActions.create(instance.model, instance.states.ColorBack),
 		...DownstreamKeyerActions.create(instance.model, instance.states.DownstreamKeyer),
-		...SettingsActions.create(instance, instance.states.Settings),
+		...settingsActions.create(instance.model, instance.states.Settings),
 		...MacroActions.create(instance.model, instance.states.Macros),
 		...UpstreamKeyerActions.create(instance.model, instance.states.UpstreamKeyer),
 	}

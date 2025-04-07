@@ -41,7 +41,7 @@ export function create(model: GoStreamModel): SettingsStateT {
 		mvMeter: Array(audioCapableInputs),
 		outSource: Array(model.outputs.length),
 		outputColorSpace: Array(colorSpaceCapableOutputs),
-		outputFormat: 0,
+		outputFormat: -1,
 		micInput: Array(micInputs),
 		mvLayout: 0,
 		sourceSelection: Array(srcSelectable),
