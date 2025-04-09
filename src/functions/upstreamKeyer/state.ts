@@ -93,10 +93,14 @@ export class UpstreamKeyerStateT {
 	}
 
 	// Key Type methods
-	keyTypes(_protocolOrder = false): string[] {
+	keyTypes(_protocolOrder = false, shortname = false): string[] {
 		// setting protocolOrder to true guarantees it will correspond to the
 		//  Osee communication protocol's index numbers. In this case it's a noop
-		return ['Luma Key', 'Chroma Key', 'Key Pattern', 'PIP']
+		if (!shortname) {
+			return ['Luma Key', 'Chroma Key', 'Key Pattern', 'PIP']
+		} else {
+			return ['Luma', 'Chrom', 'Pattn', 'PiP']
+		}
 	}
 
 	encodeKeyType(val: string = this.UpStreamKeyType): number {
