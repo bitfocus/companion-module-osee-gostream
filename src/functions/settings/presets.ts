@@ -54,8 +54,8 @@ export function create(model: GoStreamModel): CompanionPresetDefinitions {
 				name: 'Settings ' + port.name + ' OutSource ' + source.name,
 				type: 'button',
 				style: {
-					text: source.name,
-					size: ptzSize,
+					text: 'Send ' + source.name + ' to ' + port.name,
+					size: '14',
 					color: combineRgb(255, 255, 255),
 					bgcolor: combineRgb(0, 0, 0),
 				},
