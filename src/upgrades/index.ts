@@ -5,6 +5,7 @@ import {
 	CompanionMigrationAction,
 	CompanionStaticUpgradeScript,
 	CompanionMigrationFeedback,
+	EmptyUpgradeScript,
 } from '@companion-module/base'
 
 import * as UpgradeToConsolidatedSSRCMaskAction from './upgradeToConsolidatedSSRCMaskAction'
@@ -47,7 +48,9 @@ export function ModuleUpgrader(
 // Note: the number of items in this list must grow monotonically, and new items must be added to the end for this to work properly
 // (In some cases very old upgraders can be replaced by EmptyUpgradeScript)
 export const UpgradeScriptList: CompanionStaticUpgradeScript<Config>[] = [
+	EmptyUpgradeScript,
 	UpgradeToV15.getScripts,
 	UpgradeToConsolidatedSSRCMaskAction.getScripts,
 	ModuleUpgrader(tryUpdateNTAction, tryUpdateNTFeedback),
+	UpgradeToV15.getScripts,
 ]
