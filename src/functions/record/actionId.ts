@@ -3,4 +3,5 @@ export enum ActionId {
 	RecordStatus = 'recordStatus',
 	RecordTime = 'recordTime',
 	RecordFileName = 'recordFileName',
+	RecordQuality = 'recordQuality',
 }

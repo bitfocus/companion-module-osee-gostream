@@ -6,7 +6,7 @@ import type { CompanionActionDefinitions } from '@companion-module/base'
 import { RecordStateT } from './state'
 import { GoStreamModel } from '../../models/types'
 
-export function create(_model: GoStreamModel, state: RecordStateT): CompanionActionDefinitions {
+export function create(model: GoStreamModel, state: RecordStateT): CompanionActionDefinitions {
 	return {
 		[ActionId.Record]: {
 			name: 'Record:Set Start or Stop Record',
@@ -59,6 +59,21 @@ export function create(_model: GoStreamModel, state: RecordStateT): CompanionAct
 				const newName = await context.parseVariablesInString(rawString)
 				// allow but replace ":" and other invalid chars, so user can specify system time in the variable
 				await sendCommand(ActionId.RecordFileName, ReqType.Set, [newName.replaceAll(/[\\/:*?"<>|]/g, '_')])
+			},
+		},
+		[ActionId.RecordQuality]: {
+			name: 'Set quality of the recording',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Quality',
+					id: 'Quality',
+					choices: model.RecordQualityChoices(),
+					default: 0,
+				},
+			],
+			callback: async (action) => {
+				await sendCommand('quality', ReqType.Set, [0, getOptNumber(action, 'Quality')])
 			},
 		},
 	}

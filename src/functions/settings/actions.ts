@@ -276,7 +276,7 @@ export function create(model: GoStreamModel, state: SettingsStateT): CompanionAc
 				])
 			},
 		},
-		[ActionId.Quality]: {
+		/*[ActionId.Quality]: {
 			name: 'Settings:Quality',
 			options: [
 				{
@@ -307,7 +307,8 @@ export function create(model: GoStreamModel, state: SettingsStateT): CompanionAc
 					getOptNumber(action, 'Quality'),
 				])
 			},
-		},
+		},*/
+
 		[ActionId.NDIConnect]: {
 			name: 'Settings: Select NDI source',
 			options: [
