@@ -5,6 +5,7 @@ import {
 	CompanionStaticUpgradeProps,
 	CompanionMigrationAction,
 	CompanionOptionValues,
+	CompanionMigrationFeedback,
 } from '@companion-module/base'
 
 export function getScripts(
@@ -57,6 +58,17 @@ export function getScripts(
 			action.options['props'] = newProps
 			result.updatedActions.push(action)
 		}
+	}
+
+	const feedbacks: CompanionMigrationFeedback[] = props.feedbacks
+	for (const feedback of feedbacks) {
+		if (feedback.feedbackId === 'dskMaskEnable') {
+			if (!feedback.options['maskEnabled']) feedback.isInverted = true
+		} else if (feedback.feedbackId === 'dskControlShapedKey') {
+			if (!feedback.options['skeyEnabled']) feedback.isInverted = true
+		}
+
+		result.updatedFeedbacks.push(feedback)
 	}
 
 	return result

@@ -56,32 +56,14 @@ export function create(model: GoStreamModel, state: DownstreamKeyerStateT): Comp
 		[FeedbackId.DskMaskEnable]: {
 			type: 'boolean',
 			name: createFeedbackName('mask enabled'),
-			description: 'Change style of button depending on status of mask',
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Mask status',
-					id: 'maskEnabled',
-					choices: [
-						{ id: 0, label: 'disabled' },
-						{ id: 1, label: 'enabled' },
-					],
-					default: 0,
-				},
-			],
+			description: 'Change style of button when mask is enabled',
+			options: [],
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),
 				bgcolor: combineRgb(255, 255, 0),
 			},
-			callback: (feedback) => {
-				const maskEnabledChoice = Boolean(feedback.options.maskEnabled)
-				return state.mask.enabled === maskEnabledChoice
-			},
-			learn: (feedback) => {
-				return {
-					...feedback.options,
-					maskEnabled: state.mask.enabled,
-				}
+			callback: () => {
+				return state.mask.enabled
 			},
 		},
 		[FeedbackId.DskMaskHStart]: {
@@ -203,32 +185,14 @@ export function create(model: GoStreamModel, state: DownstreamKeyerStateT): Comp
 		[FeedbackId.DskControlShapedKey]: {
 			type: 'boolean',
 			name: createFeedbackName('shaped key enabled'),
-			description: 'Change style of button depending on status of shaped key',
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Shaped key status',
-					id: 'skeyEnabled',
-					choices: [
-						{ id: 0, label: 'disabled' },
-						{ id: 1, label: 'enabled' },
-					],
-					default: 0,
-				},
-			],
+			description: 'Change style of button if shaped key is enabled',
+			options: [],
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),
 				bgcolor: combineRgb(255, 255, 0),
 			},
-			callback: (feedback) => {
-				const skeyEnabledChoice = Boolean(feedback.options.skeyEnabled)
-				return state.control.shapedKey === skeyEnabledChoice
-			},
-			learn: (feedback) => {
-				return {
-					...feedback.options,
-					skeyEnabled: state.control.shapedKey,
-				}
+			callback: () => {
+				return state.control.shapedKey
 			},
 		},
 		[FeedbackId.DskControlInvert]: {
