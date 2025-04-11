@@ -29,7 +29,6 @@ export function getScripts(
 				props: [],
 			}
 			const newProps: string[] = []
-
 			// Just so happens that the old options was named as the action
 			if (oldActionId.endsWith('MaskEnable')) {
 				newProps.push('enable')
@@ -95,4 +94,9 @@ const actionIdsToUpgrade = [
 	'keyPatternMaskVStart',
 	'keyPatternMaskHEnd',
 	'keyPatternMaskVEnd',
+	'dskMaskEnable',
+	'dskMaskHStart',
+	'dskMaskVStart',
+	'dskMaskHEnd',
+	'dskMaskVEnd',
 ]

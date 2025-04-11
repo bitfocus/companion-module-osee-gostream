@@ -7,6 +7,7 @@ export enum ActionId {
 	DskMaskVStart = 'dskMaskVStart',
 	DskMaskHEnd = 'dskMaskHEnd',
 	DskMaskVEnd = 'dskMaskVEnd',
+	DskSetMaskProperties = 'dskSetMaskProperties',
 	DskControlShapedKey = 'dskControlShapedKey',
 	DskControlClip = 'dskControlClip',
 	DskControlGain = 'dskControlGain',

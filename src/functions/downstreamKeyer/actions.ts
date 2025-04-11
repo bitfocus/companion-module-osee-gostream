@@ -2,7 +2,7 @@ import { ActionId } from './actionId'
 import { getOptNumber } from './../../util'
 import { SwitchChoices } from './../../model'
 import { ReqType } from './../../enums'
-import { sendCommand } from './../../connection'
+import { sendCommand, sendCommands, GoStreamCmd } from './../../connection'
 import { GoStreamModel } from '../../models/types'
 import type { CompanionActionDefinitions } from '@companion-module/base'
 import { DownstreamKeyerStateT } from './state'
@@ -67,94 +67,123 @@ export function create(model: GoStreamModel, state: DownstreamKeyerStateT): Comp
 				await sendCommand(ActionId.DskSourceKey, ReqType.Set, [getOptNumber(action, 'DSKKey')])
 			},
 		},
-		[ActionId.DskMaskEnable]: {
-			name: createActionName('Set mask enable'),
+		[ActionId.DskSetMaskProperties]: {
+			name: createActionName('Set mask properties'),
 			options: [
 				{
-					type: 'dropdown',
-					label: 'Dsk Mask Enable',
-					id: 'DskMaskEnable',
-					default: 2,
-					choices: SwitchChoices,
+					id: 'props',
+					type: 'multidropdown',
+					label: 'Select properties',
+					choices: [
+						{ id: 'enable', label: 'enable' },
+						{ id: 'hMaskStart', label: 'hMaskStart' },
+						{ id: 'hMaskEnd', label: 'hMaskEnd' },
+						{ id: 'vMaskStart', label: 'vMaskStart' },
+						{ id: 'vMaskEnd', label: 'vMaskEnd' },
+					],
+					minSelection: 1,
+					default: ['enable', 'hMaskStart', 'hMaskEnd', 'vMaskStart', 'vMaskEnd'],
 				},
-			],
-			callback: async (action) => {
-				const opt = getOptNumber(action, 'DskMaskEnable')
-				let paramOpt = 0
-				if (opt === 2) {
-					if (state.mask.enabled === true) {
-						paramOpt = 0
-					} else {
-						paramOpt = 1
-					}
-					await sendCommand(ActionId.DskMaskEnable, ReqType.Set, [paramOpt])
-				} else {
-					await sendCommand(ActionId.DskMaskEnable, ReqType.Set, [opt])
-				}
-			},
-		},
-		[ActionId.DskMaskHStart]: {
-			name: createActionName('Set mask h start'),
-			options: [
+				{
+					type: 'dropdown',
+					label: 'Mask Enable',
+					id: 'DskMaskEnable',
+					choices: SwitchChoices,
+					default: 0,
+					isVisible: (options) => (<string[]>options.props!).includes('enable'),
+				},
 				{
 					type: 'number',
 					label: 'H Start',
-					id: 'HStart',
-					default: 0,
+					id: 'DskMaskHStart',
 					min: 0,
 					max: 100,
-				},
-			],
-			callback: async (action) => {
-				await sendCommand(ActionId.DskMaskHStart, ReqType.Set, [getOptNumber(action, 'HStart')])
-			},
-		},
-		[ActionId.DskMaskVStart]: {
-			name: createActionName('Set mask v start'),
-			options: [
-				{
-					type: 'number',
-					label: 'V Start',
-					id: 'VStart',
 					default: 0,
-					min: 0,
-					max: 100,
+					isVisible: (options) => (<string[]>options.props!).includes('hMaskStart'),
 				},
-			],
-			callback: async (action) => {
-				await sendCommand(ActionId.DskMaskVStart, ReqType.Set, [getOptNumber(action, 'VStart')])
-			},
-		},
-		[ActionId.DskMaskHEnd]: {
-			name: createActionName('Set mask h end'),
-			options: [
 				{
 					type: 'number',
 					label: 'H End',
-					id: 'HEnd',
-					default: 100,
-					min: 1,
+					id: 'DskMaskHEnd',
+					min: 0,
 					max: 100,
+					default: 100,
+					isVisible: (options) => (<string[]>options.props!).includes('hMaskEnd'),
 				},
-			],
-			callback: async (action) => {
-				await sendCommand(ActionId.DskMaskHEnd, ReqType.Set, [getOptNumber(action, 'HEnd')])
-			},
-		},
-		[ActionId.DskMaskVEnd]: {
-			name: createActionName('Set mask v end'),
-			options: [
+				{
+					type: 'number',
+					label: 'V Start',
+					id: 'DskMaskVStart',
+					min: 0,
+					max: 100,
+					default: 0,
+					isVisible: (options) => (<string[]>options.props!).includes('vMaskStart'),
+				},
 				{
 					type: 'number',
 					label: 'V End',
-					id: 'VEnd',
-					default: 100,
-					min: 1,
+					id: 'DskMaskVEnd',
+					min: 0,
 					max: 100,
+					default: 100,
+					isVisible: (options) => (<string[]>options.props!).includes('vMaskEnd'),
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.DskMaskVEnd, ReqType.Set, [getOptNumber(action, 'VEnd')])
+				const props = <string[]>action.options.props
+				const commands: GoStreamCmd[] = []
+				if (props.includes('enable')) {
+					const opt = getOptNumber(action, 'DskMaskEnable')
+					let paramOpt = 0
+					if (opt === 2) {
+						if (state.mask.enabled === true) {
+							paramOpt = 0
+						} else {
+							paramOpt = 1
+						}
+						commands.push({
+							id: ActionId.DskMaskEnable,
+							type: ReqType.Set,
+							value: [paramOpt],
+						})
+					} else {
+						commands.push({
+							id: ActionId.DskMaskEnable,
+							type: ReqType.Set,
+							value: [opt],
+						})
+					}
+				}
+				if (props.includes('hMaskStart')) {
+					commands.push({
+						id: ActionId.DskMaskHStart,
+						type: ReqType.Set,
+						value: [getOptNumber(action, 'DskMaskHStart')],
+					})
+				}
+				if (props.includes('hMaskEnd')) {
+					commands.push({
+						id: ActionId.DskMaskHEnd,
+						type: ReqType.Set,
+						value: [getOptNumber(action, 'DskMaskHEnd')],
+					})
+				}
+				if (props.includes('vMaskStart')) {
+					commands.push({
+						id: ActionId.DskMaskVStart,
+						type: ReqType.Set,
+						value: [getOptNumber(action, 'DskMaskVStart')],
+					})
+				}
+				if (props.includes('vMaskEnd')) {
+					commands.push({
+						id: ActionId.DskMaskVEnd,
+						type: ReqType.Set,
+						value: [getOptNumber(action, 'DskMaskVEnd')],
+					})
+				}
+
+				if (commands.length > 0) await sendCommands(commands)
 			},
 		},
 		[ActionId.DskControlShapedKey]: {
