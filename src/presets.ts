@@ -10,6 +10,7 @@ import { PlaybackPresets } from './functions/playback'
 import { RecordPresets } from './functions/record'
 import { UpstreamKeyerPresets } from './functions/upstreamKeyer'
 import { SettingsPresets } from './functions/settings'
+import { StillGeneratorPresets } from './functions/stillGenerator'
 
 export function presets(instance: GoStreamInstance): CompanionPresetDefinitions {
 	return {
@@ -23,5 +24,6 @@ export function presets(instance: GoStreamInstance): CompanionPresetDefinitions 
 		...RecordPresets.create(instance.model),
 		...UpstreamKeyerPresets.create(instance.model),
 		...SettingsPresets.create(instance.model),
+		...StillGeneratorPresets.create(instance.model),
 	}
 }

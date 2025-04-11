@@ -13,7 +13,7 @@ export function create(model: GoStreamModel, _state: StillGeneratorStateT): Comp
 				{
 					type: 'dropdown',
 					label: 'Still',
-					id: 'Stillindex',
+					id: 'StillIndex',
 					choices: [
 						{ id: 0, label: 'Still1' },
 						{ id: 1, label: 'Still2' },
@@ -30,7 +30,7 @@ export function create(model: GoStreamModel, _state: StillGeneratorStateT): Comp
 			],
 			callback: async (action) => {
 				await sendCommand(ActionId.StillSelection, ReqType.Set, [
-					getOptNumber(action, 'Stillindex'),
+					getOptNumber(action, 'StillIndex'),
 					getOptNumber(action, 'PicIndex'),
 				])
 			},
