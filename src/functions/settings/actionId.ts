@@ -16,7 +16,6 @@ export enum ActionId {
 	NetworkGateway = 'networkGateway',
 	NetworkPrimaryDNS = 'networkPrimaryDNS',
 	NetworkSecondaryDNS = 'networkSecondaryDNS',
-	Quality = 'quality',
 	Panel = 'panel',
 	SdFormat = 'sdFormat',
 	SystemReset = 'systemReset',

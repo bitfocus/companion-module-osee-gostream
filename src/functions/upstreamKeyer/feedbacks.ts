@@ -5,7 +5,7 @@ import { UpStreamKeyTypeChoices, KeyResizeSizeChoices } from './../../model'
 import { USKKeySourceType, USKKeyTypes } from './state'
 import { UpstreamKeyerStateT } from './state'
 import { GoStreamModel } from '../../models/types'
-import { getOptNumber, makeChoices } from '../../util'
+import { getOptNumber, getOptString, makeChoices } from '../../util'
 
 export function create(model: GoStreamModel, state: UpstreamKeyerStateT): CompanionFeedbackDefinitions {
 	return {
@@ -41,14 +41,13 @@ export function create(model: GoStreamModel, state: UpstreamKeyerStateT): Compan
 		[FeedbackId.UpStreamKeyType]: {
 			type: 'boolean',
 			name: 'USK: Set type',
-			description: 'If you Select UpStream Key, change style of the button',
+			description: 'Change style of the button if selected keyType is currently active',
 			options: [
 				{
 					type: 'dropdown',
 					label: 'Type',
 					id: 'USKType',
-					choices: UpStreamKeyTypeChoices,
-					default: 0,
+					...makeChoices(state.keyTypes()),
 				},
 			],
 			defaultStyle: {
@@ -56,8 +55,14 @@ export function create(model: GoStreamModel, state: UpstreamKeyerStateT): Compan
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: (feedback) => {
-				const typeid = Number(feedback.options.USKType)
-				return state.UpStreamKeyType === typeid
+				let keyType = getOptString(feedback, 'USKType')
+				// --> the following is for backwards compatibility before upgrade scripts are written
+				const encoded = Number(keyType)
+				if (!isNaN(encoded)) {
+					keyType = state.decodeKeyType(encoded)
+				}
+				//<--
+				return state.UpStreamKeyType === keyType
 			},
 		},
 		[FeedbackId.PipSize]: {

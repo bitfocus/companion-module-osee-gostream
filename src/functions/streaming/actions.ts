@@ -29,7 +29,7 @@ function getPlatformOptions(platforms: StreamPlatform[]): SomeCompanionActionInp
 	})
 }
 
-export function create(_model: GoStreamModel, state: StreamingStateT): CompanionActionDefinitions {
+export function create(model: GoStreamModel, state: StreamingStateT): CompanionActionDefinitions {
 	return {
 		[ActionId.StreamOutput]: {
 			name: 'Streaming: Enable stream',
@@ -138,6 +138,21 @@ export function create(_model: GoStreamModel, state: StreamingStateT): Companion
 				} else {
 					await sendCommand(ActionId.Live, ReqType.Set, [opt])
 				}
+			},
+		},
+		[ActionId.StreamQuality]: {
+			name: 'Set quality of the stream',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Quality',
+					id: 'Quality',
+					choices: model.StreamQualityChoices(),
+					default: 0,
+				},
+			],
+			callback: async (action) => {
+				await sendCommand('quality', ReqType.Set, [1, getOptNumber(action, 'Quality')])
 			},
 		},
 	}

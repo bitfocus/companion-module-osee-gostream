@@ -27,7 +27,7 @@ export function getOptString(
 	const rawVal = action.options[key]
 	if (defVal !== undefined && rawVal === undefined) return defVal
 	const val = String(rawVal)
-	if (typeof rawVal !== 'string') {
+	if (typeof val !== 'string') {
 		throw new Error(`Invalid option '${key}'`)
 	}
 	return val

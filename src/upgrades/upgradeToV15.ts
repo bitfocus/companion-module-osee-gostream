@@ -21,8 +21,18 @@ export function getScripts(
 	const actions: CompanionMigrationAction[] = props.actions
 
 	for (const action of actions) {
-		// Handle mask consolidation
-		if (actionIdsToUpgrade.includes(action.actionId)) {
+		if (action.actionId === 'quality') {
+			const newAction: CompanionMigrationAction = {
+				id: action.id,
+				controlId: action.controlId,
+				actionId: action.options['TypeID'] === 0 ? 'recordQuality' : 'streamQuality',
+				options: {
+					Quality: action.options['Quality'],
+				},
+			}
+			result.updatedActions.push(newAction)
+		} else if (actionIdsToUpgrade.includes(action.actionId)) {
+			// Handle mask consolidation
 			const oldActionId = action.actionId
 
 			const newOpts: CompanionOptionValues = {

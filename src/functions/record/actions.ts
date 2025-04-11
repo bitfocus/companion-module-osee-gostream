@@ -61,7 +61,7 @@ export function create(_model: GoStreamModel, state: RecordStateT): CompanionAct
 				await sendCommand(ActionId.RecordFileName, ReqType.Set, [newName.replaceAll(/[\\/:*?"<>|]/g, '_')])
 			},
 		},
-		[ActionId.Quality]: {
+		[ActionId.RecordQuality]: {
 			name: 'Record:Set Quality',
 			options: [
 				{

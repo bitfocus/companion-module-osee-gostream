@@ -276,38 +276,6 @@ export function create(model: GoStreamModel, state: SettingsStateT): CompanionAc
 				])
 			},
 		},
-		[ActionId.Quality]: {
-			name: 'Settings:Quality',
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Type',
-					id: 'TypeID',
-					choices: [
-						{ id: '0', label: 'recording' },
-						{ id: '1', label: 'streaming' },
-					],
-					default: 0,
-				},
-				{
-					type: 'dropdown',
-					label: 'Quality',
-					id: 'Quality',
-					choices: [
-						{ id: '0', label: 'high' },
-						{ id: '1', label: 'medium' },
-						{ id: '2', label: 'low' },
-					],
-					default: 0,
-				},
-			],
-			callback: async (action) => {
-				await sendCommand(ActionId.Quality, ReqType.Set, [
-					getOptNumber(action, 'TypeID'),
-					getOptNumber(action, 'Quality'),
-				])
-			},
-		},
 		[ActionId.NDIConnect]: {
 			name: 'Settings: Select NDI source',
 			options: [
