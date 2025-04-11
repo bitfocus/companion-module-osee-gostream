@@ -33,12 +33,12 @@ export type KeyInfoT = {
 
 export class UpstreamKeyerStateT {
 	model: GoStreamModel
-	UpStreamKeyType: number
+	UpStreamKeyType: string
 	keyInfo: KeyInfoT[]
 
 	constructor(model: GoStreamModel) {
 		this.model = model
-		this.UpStreamKeyType = 0
+		this.UpStreamKeyType = this.keyTypes()[0]
 		this.keyInfo = [
 			{
 				enabled: false,
@@ -75,6 +75,7 @@ export class UpstreamKeyerStateT {
 		]
 	}
 
+	// Key Scaling methods
 	keyScalingSizes(_protocolOrder = false): number[] {
 		// setting protocolOrder to true guarantees it will correspond to the
 		//  Osee communication protocol's index numbers. In this case it's a noop
@@ -89,6 +90,27 @@ export class UpstreamKeyerStateT {
 		// could add something for 100% if resize is disabled? (keys other than PiP)
 		const sizesPct = this.keyScalingSizes(true)
 		return sizesPct[idx]
+	}
+
+	// Key Type methods
+	keyTypes(_protocolOrder = false, shortname = false): string[] {
+		// setting protocolOrder to true guarantees it will correspond to the
+		//  Osee communication protocol's index numbers. In this case it's a noop
+		if (!shortname) {
+			return ['Luma Key', 'Chroma Key', 'Key Pattern', 'PIP']
+		} else {
+			return ['Luma', 'Chrom', 'Pattn', 'PiP']
+		}
+	}
+
+	encodeKeyType(val: string = this.UpStreamKeyType): number {
+		return this.keyTypes(true).indexOf(val)
+	}
+
+	decodeKeyType(idx: number): string {
+		// convert Osee number to internal string format
+		const keyTypes = this.keyTypes(true)
+		return keyTypes[idx]
 	}
 }
 
@@ -140,7 +162,7 @@ export async function sync(_model: GoStreamModel): Promise<boolean> {
 export function update(state: UpstreamKeyerStateT, data: GoStreamCmd): boolean {
 	switch (data.id as ActionId) {
 		case ActionId.UpStreamKeyType:
-			state.UpStreamKeyType = Number(data.value![0])
+			state.UpStreamKeyType = state.decodeKeyType(Number(data.value![0]))
 			break
 		case ActionId.LumaKeySourceFill:
 			state.keyInfo[USKKeyTypes.Luma].sources[USKKeySourceType.Fill] = Number(data.value![0])
