@@ -4,7 +4,7 @@ import { StreamingChoices } from '../../model'
 import { StreamingStateT } from './state'
 import { GoStreamModel } from '../../models/types'
 
-export function create(_model: GoStreamModel, state: StreamingStateT): CompanionFeedbackDefinitions {
+export function create(model: GoStreamModel, state: StreamingStateT): CompanionFeedbackDefinitions {
 	return {
 		[FeedbackId.StreamOutput]: {
 			type: 'boolean',
@@ -50,6 +50,28 @@ export function create(_model: GoStreamModel, state: StreamingStateT): Companion
 			},
 			callback: (feedback) => {
 				return state.status === feedback.options.statesId
+			},
+		},
+		[FeedbackId.StreamQuality]: {
+			type: 'boolean',
+			name: 'Streaming: quality',
+			description: 'change style of the button if streaming quality matches feedback',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Quality',
+					id: 'Quality',
+					choices: model.StreamQualityChoices(),
+					default: 0,
+				},
+			],
+			defaultStyle: {
+				color: combineRgb(0, 0, 0),
+				bgcolor: combineRgb(255, 255, 0),
+			},
+			callback: (feedback) => {
+				const qualityIndex = Number(feedback.options.Quality)
+				return state.quality === Number(model.RecordQualityChoices()[qualityIndex].id)
 			},
 		},
 	}

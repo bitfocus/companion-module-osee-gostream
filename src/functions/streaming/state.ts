@@ -18,6 +18,7 @@ export type StreamingStateT = {
 	status: LiveStatus
 	streamInfo: StreamInfo[]
 	platforms: StreamPlatform[]
+	quality: number
 }
 
 export function create(_model: GoStreamModel): StreamingStateT {
@@ -29,6 +30,7 @@ export function create(_model: GoStreamModel): StreamingStateT {
 			{ enabled: false, status: LiveStatus.Off, platform: '' },
 		],
 		platforms: [{ name: 'Loading', servers: ['Loading'] }],
+		quality: 0,
 	}
 }
 
@@ -52,6 +54,7 @@ export async function sync(_model: GoStreamModel): Promise<boolean> {
 		{ id: ActionId.LiveInfo, type: ReqType.Get, value: [2] },
 		{ id: ActionId.Live, type: ReqType.Get },
 		{ id: ActionId.StreamProfileAll, type: ReqType.Get },
+		{ id: 'quality', type: ReqType.Get, value: [1] },
 	]
 	return await sendCommands(cmds)
 }
@@ -81,6 +84,13 @@ export function update(state: StreamingStateT, data: GoStreamCmd): boolean {
 		case ActionId.StreamPlatform: {
 			state.streamInfo[Number(data.value![0])].platform = String(data.value![1])
 			return true
+		}
+		case 'quality' as ActionId: {
+			// 1 indicates stream
+			if (data.value![0] == 1) {
+				state.quality = Number(data.value![1])
+			}
+			break
 		}
 	}
 	return false
