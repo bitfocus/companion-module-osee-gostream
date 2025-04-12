@@ -8,8 +8,8 @@ export function create(_model: GoStreamModel, state: RecordStateT): CompanionFee
 	return {
 		[FeedbackId.Record]: {
 			type: 'boolean',
-			name: 'Record: Set Record Start or Stop',
-			description: 'If you turn on Record Start, change style of the button',
+			name: 'Record:Recording status',
+			description: 'If GoStream is recording, change style of the button',
 			options: [],
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),

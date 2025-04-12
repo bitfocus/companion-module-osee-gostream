@@ -1,17 +1,20 @@
 export enum ActionId {
 	Record = 'record',
-	RecordStatus = 'recordStatus',
 	RecordTime = 'recordTime',
 	RecordFileName = 'recordFileName',
-	// problem: it needs to be 'quality' for the protocol but you can't have two ID's with the same name
-	RecordQuality = 'quality.record',
+	// problem: it needs to be 'quality' for the communication protocol but you can't have two ID's with the same name
+	RecordQuality = 'recordQuality',
 }
 
-export enum CommId {
+export enum CommunicationId {
 	Record = 'record',
-	RecordStatus = 'recordStatus',
 	RecordTime = 'recordTime',
 	RecordFileName = 'recordFileName',
-	// problem: it needs to be 'quality' for the protocol but you can't have two ID's with the same name
-	Quality = 'quality',
+	// It needs to be 'quality' for the communication protocol
+	RecordQuality = 'quality',
+	RecordFreeSpace = 'sdFreeSpace',
+	RecordFreeTime = 'sdFreeTime',
+	RecordFree = 'sdFree',
+	RecordMediaPresent = 'sdCardStatus',
+	BuildInfo = 'buildInfo',
 }

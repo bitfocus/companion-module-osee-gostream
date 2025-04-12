@@ -1,4 +1,4 @@
-import { ActionId } from './actionId'
+import { ActionId, CommunicationId } from './actionId'
 import { getOptNumber, getOptString, makeChoices } from '../../util'
 import { ReqType } from '../../enums'
 import { sendCommand } from '../../connection'
@@ -9,7 +9,7 @@ import { GoStreamModel } from '../../models/types'
 export function create(_model: GoStreamModel, state: RecordStateT): CompanionActionDefinitions {
 	return {
 		[ActionId.Record]: {
-			name: 'Record:Set Start or Stop Record',
+			name: 'Record:Start or Stop Recording',
 			options: [
 				{
 					type: 'dropdown',
@@ -72,7 +72,11 @@ export function create(_model: GoStreamModel, state: RecordStateT): CompanionAct
 				},
 			],
 			callback: async (action) => {
-				await sendCommand('quality', ReqType.Set, state.encodeRecordingQuality(getOptString(action, 'Quality')))
+				await sendCommand(
+					CommunicationId.RecordQuality,
+					ReqType.Set,
+					state.encodeRecordingQuality(getOptString(action, 'Quality')),
+				)
 			},
 		},
 	}

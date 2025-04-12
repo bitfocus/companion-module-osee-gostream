@@ -1,4 +1,4 @@
-import { CommId } from './actionId'
+import { CommunicationId } from './actionId'
 import { sendCommands } from '../../connection'
 import { ReqType } from '../../enums'
 import type { GoStreamModel } from '../../models/types'
@@ -8,7 +8,12 @@ export class RecordStateT {
 	model: GoStreamModel
 	isRecording = false
 	recordTime = ''
+	fwVersion: number | undefined // this is a temporary fix for determining quality
 	quality: string | undefined
+	freeSpace: string | undefined
+	freeTime: string | undefined
+	freeSpaceTime: string | undefined
+	mediaPresent = false
 	constructor(model: GoStreamModel) {
 		this.model = model
 	}
@@ -16,7 +21,11 @@ export class RecordStateT {
 	qualityValues(_protocolOrder = false): string[] {
 		// setting protocolOrder to true guarantees it will correspond to the
 		//  Osee communication protocol's index numbers. In this case it's a noop
-		return ['high', 'good', 'medium', 'low']
+		if (this.fwVersion && this.fwVersion <= 0x0b663530) {
+			return ['high', 'medium', 'low']
+		} else {
+			return ['high', 'good', 'medium', 'low']
+		}
 	}
 
 	encodeRecordingQuality(val: string): number[] {
@@ -37,22 +46,52 @@ export class RecordStateT {
 
 export async function sync(_model: GoStreamModel): Promise<boolean> {
 	const cmds: GoStreamCmd[] = [
-		{ id: CommId.Record, type: ReqType.Get },
-		{ id: CommId.Quality, type: ReqType.Get, value: [0] },
+		{ id: CommunicationId.Record, type: ReqType.Get },
+		{ id: CommunicationId.RecordQuality, type: ReqType.Get, value: [0] },
+		{ id: CommunicationId.RecordFreeSpace, type: ReqType.Get, value: [0] },
+		{ id: CommunicationId.RecordFreeTime, type: ReqType.Get, value: [0] },
+		{ id: CommunicationId.RecordFree, type: ReqType.Get, value: [0] },
+		{ id: CommunicationId.RecordMediaPresent, type: ReqType.Get, value: [0] },
 	]
 	return sendCommands(cmds)
 }
 
 export function update(state: RecordStateT, data: GoStreamCmd): boolean {
-	switch (data.id as CommId) {
-		case CommId.Record:
+	let version
+	let quality
+	switch (data.id as CommunicationId) {
+		case CommunicationId.Record:
 			state.isRecording = Boolean(data.value![0])
 			break
-		case CommId.RecordTime:
+		case CommunicationId.RecordTime:
 			state.recordTime = String(data.value![0])
 			break
-		case CommId.Quality:
-			state.quality = state.decodeRecordingQuality(<number[]>data.value)
+		case CommunicationId.BuildInfo: // note 'version' is not as reliable, since 2.2 betas were given 1.0 version numbers
+			version = state.fwVersion
+			state.fwVersion = parseInt('0x' + String(data.value![0]))
+			if (version != state.fwVersion) {
+				// solve problems arising from the fact that state.fwVersion is initially undefined...
+				void sync(state.model) // this forces state and variables to update.
+				return true // rebuild actions, if buildInfo changed
+			}
+			break
+		case CommunicationId.RecordQuality:
+			quality = state.decodeRecordingQuality(<number[]>data.value)
+			if (quality != undefined) {
+				state.quality = quality
+			}
+			break
+		case CommunicationId.RecordFreeSpace:
+			state.freeSpace = String(data.value![0])
+			break
+		case CommunicationId.RecordFreeTime:
+			state.freeTime = String(data.value![0])
+			break
+		case CommunicationId.RecordFree:
+			state.freeSpaceTime = String(data.value![0])
+			break
+		case CommunicationId.RecordMediaPresent:
+			state.mediaPresent = Boolean(data.value![0])
 			break
 	}
 	return false
