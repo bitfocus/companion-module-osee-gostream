@@ -57,6 +57,7 @@ export class GoStreamModel {
 	transitionTypes: number
 	stillSlots: number
 	outputPorts: PortT[]
+	version: string
 
 	constructor() {
 		this.id = Model.Unknown
@@ -71,6 +72,11 @@ export class GoStreamModel {
 			{ id: 1, name: 'HDMI 2' },
 			{ id: 2, name: 'UVC' },
 		]
+		this.version = ''
+	}
+
+	setProtoVersion(version: string): void {
+		this.version = version
 	}
 
 	// TODO: re-write all these getters below
@@ -214,18 +220,28 @@ export class GoStreamModel {
 
 	StreamQualityChoices(): DropdownChoice[] {
 		return [
-			{ id: '0', label: 'high' },
-			{ id: '1', label: 'medium' },
-			{ id: '2', label: 'low' },
+			{ id: '0', label: 'High' },
+			{ id: '1', label: 'Medium' },
+			{ id: '2', label: 'Low' },
 		]
 	}
 
 	RecordQualityChoices(): DropdownChoice[] {
-		return [
-			{ id: '0', label: 'high' },
-			{ id: '1', label: 'medium' },
-			{ id: '2', label: 'low' },
-		]
+		const [major, minor] = this.version.split('.')
+		if (Number(major) >= 2 && Number(minor) >= 2) {
+			return [
+				{ id: '0', label: 'High' },
+				{ id: '1', label: 'Good' },
+				{ id: '2', label: 'Medium' },
+				{ id: '3', label: 'Low' },
+			]
+		} else {
+			return [
+				{ id: '0', label: 'High' },
+				{ id: '1', label: 'Medium' },
+				{ id: '2', label: 'Low' },
+			]
+		}
 	}
 }
 
