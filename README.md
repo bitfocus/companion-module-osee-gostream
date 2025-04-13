@@ -8,6 +8,14 @@ This module is created for use with GoStream Devices.
 - [Read the docs](./How%20to%20connect%20to%20computer%20software%20and%20companion.pdf)
 - [Follow on github](https://github.com/bitfocus/companion-module-osee-gostream)
 
+## Notes on some oddities
+
+Due to the client/server asyncrounous approach of communicating with the Osee device there will be some delay
+(~a few tens of milliseconds) before Companions internal state matches the requested state from an action. This
+can is some cases put restrictions on which actions can be used in sequence, if e.g. one action updates an internal
+state that the second action will access, chances are that the second action will use the old value of the variable. E.g. 'gostream: UpStream Key:Set inputs' can not be used right after 'gostream: UpStream Key:Set Key Type' as the action will most liklely affect the old key.
+The solution to this is to add a short delay (200mS) between the actions .
+
 ## On developing the module
 
 Follow the [developing module guidelines](https://github.com/bitfocus/companion-module-base/wiki) to setup the environment.
