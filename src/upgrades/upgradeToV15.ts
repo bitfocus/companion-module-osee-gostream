@@ -21,7 +21,30 @@ export function getScripts(
 	const actions: CompanionMigrationAction[] = props.actions
 
 	for (const action of actions) {
-		if (action.actionId === 'quality') {
+		if (action.actionId === 'keyPatternWipeXPosition') {
+			console.log('UPDATE KeyPatternWipeXPosition ')
+			const newAction: CompanionMigrationAction = {
+				id: action.id,
+				controlId: action.controlId,
+				actionId: action.actionId,
+				options: {
+					operation: 0,
+					KeyPatternWipeXPosition: action.options['KeyPatternWipeXPosition'],
+				},
+			}
+			result.updatedActions.push(newAction)
+		} else if (action.actionId === 'keyPatternWipeYPosition') {
+			const newAction: CompanionMigrationAction = {
+				id: action.id,
+				controlId: action.controlId,
+				actionId: action.actionId,
+				options: {
+					operation: 0,
+					KeyPatternWipeYPosition: action.options['KeyPatternWipeYPosition'],
+				},
+			}
+			result.updatedActions.push(newAction)
+		} else if (action.actionId === 'quality') {
 			const newAction: CompanionMigrationAction = {
 				id: action.id,
 				controlId: action.controlId,

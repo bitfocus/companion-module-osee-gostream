@@ -243,6 +243,14 @@ export class GoStreamModel {
 			]
 		}
 	}
+
+	OutputDimensions(): [number, number] {
+		return [32, 18]
+	}
+
+	PixelResolution(): number {
+		return 1080
+	}
 }
 
 export function generatePorts(

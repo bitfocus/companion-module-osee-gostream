@@ -1,12 +1,21 @@
 import { ActionId } from '../actionId'
-import { getOptNumber } from './../../../util'
+import { getOptNumber, getOptString } from './../../../util'
 import { SwitchChoices, KeyResizeSizeChoices } from './../../../model'
 import { ReqType, ActionType } from './../../../enums'
 import { sendCommand, sendCommands, GoStreamCmd } from './../../../connection'
 import type { CompanionActionDefinitions } from '@companion-module/base'
 import { UpstreamKeyerStateT, USKKeyTypes } from '../state'
 import { GoStreamModel } from '../../../models/types'
+
 export function createKeyPatternActions(model: GoStreamModel, state: UpstreamKeyerStateT): CompanionActionDefinitions {
+	// Osee[X/Y]Radius: Osee's units for positioning: -9..+9 vertically, -16 - 16 horizontally
+	const [OseeWidth, OseeHeight] = model.OutputDimensions()
+	const OseeHalfWidth = Number(OseeWidth) / 2
+	const OseeHalfHeight = Number(OseeHeight) / 2
+	const imagePixelHeight = model.PixelResolution()
+	const pixel = Number(OseeHeight) / Number(imagePixelHeight) // convert pixels to Osee's -9..+9 units (this is the same whether calculated for x or y)
+	const edgeBuffer = pixel * 5 // when using left/right/up/down, stay this far away from the edge.
+
 	return {
 		[ActionId.KeyPatternSourceFill]: {
 			name: 'UpStream Key:Set Key Pattern Source Fill',
@@ -61,40 +70,160 @@ export function createKeyPatternActions(model: GoStreamModel, state: UpstreamKey
 			name: 'UpStream Key:Set Key Pattern wipe X Position',
 			options: [
 				{
+					type: 'dropdown',
+					label: 'Type',
+					id: 'operation',
+					choices: [
+						{ id: 0, label: 'Absolute' },
+						{ id: 1, label: 'Relative' },
+						{ id: 2, label: 'Snap to Left Edge' },
+						{ id: 3, label: 'Snap to Right Edge' },
+					],
+					default: 0,
+				},
+				{
 					type: 'number',
 					label: 'X Position',
 					id: 'KeyPatternWipeXPosition',
-					min: -16.0,
-					max: 16.0,
+					min: -OseeHalfWidth,
+					max: OseeHalfWidth,
 					step: 0.2,
-					range: true,
 					default: 0,
+					range: true,
+					isVisible: (options) => !Object.keys(options).includes('operation') || options.operation === 0,
+				},
+				{
+					type: 'textinput',
+					label: 'X Position',
+					id: 'KeyPatternWipeXPositionRel',
+					useVariables: true,
+					isVisible: (options) => options.operation === 1,
 				},
 			],
-			callback: async (action) => {
-				await sendCommand(ActionId.KeyPatternWipeXPosition, ReqType.Set, [
-					getOptNumber(action, 'KeyPatternWipeXPosition'),
-				])
+			callback: async (action, context) => {
+				let newpos = 0
+				let operation = 0
+				// a little extra work for backwards compatibility (so can be used before or w/o upgrade script)
+				if (Object.keys(action.options).includes('operation')) {
+					operation = getOptNumber(action, 'operation')
+				}
+				if (operation == 0) {
+					//absolute
+					newpos = getOptNumber(action, 'KeyPatternWipeXPosition')
+				} else {
+					let valueStr: string
+					const curPos = state.keyInfo[USKKeyTypes.KeyPattern].xPosition
+					const sizePct = state.keyInfo[USKKeyTypes.KeyPattern].size
+					if (operation === 2) {
+						valueStr = 'LEFT'
+					} else if (operation === 3) {
+						valueStr = 'RIGHT'
+					} else {
+						// operation === 1
+						valueStr = await context.parseVariablesInString(getOptString(action, 'KeyPatternWipeXPositionRel'))
+					}
+					let value = 0
+					switch (valueStr.toUpperCase()) {
+						case 'LEFT':
+							// place the center of the window such that the left edge is edgeBuffer pixels from the left.
+							newpos = -OseeHalfWidth * (1 - sizePct) + edgeBuffer
+							break
+						case 'RIGHT':
+							newpos = OseeHalfWidth * (1 - sizePct) - edgeBuffer
+							break
+						default:
+							value = Number(valueStr)
+							newpos = Math.min(OseeHalfWidth, Math.max(-OseeHalfWidth, value + curPos))
+					}
+				}
+				await sendCommand(ActionId.KeyPatternWipeXPosition, ReqType.Set, [newpos])
+			},
+			learn: (action) => {
+				return {
+					...action.options,
+					operation: 0,
+					KeyPatternWipeXPosition: state.keyInfo[USKKeyTypes.KeyPattern].xPosition,
+				}
 			},
 		},
 		[ActionId.KeyPatternWipeYPosition]: {
 			name: 'UpStream Key:Set Key Pattern wipe Y Position',
 			options: [
 				{
+					type: 'dropdown',
+					label: 'Type',
+					id: 'operation',
+					choices: [
+						{ id: 0, label: 'Absolute' },
+						{ id: 1, label: 'Relative' },
+						{ id: 2, label: 'Snap to Top Edge' },
+						{ id: 3, label: 'Snap to Bottom Edge' },
+					],
+					default: 0,
+				},
+				{
 					type: 'number',
 					label: 'Y Position',
 					id: 'KeyPatternWipeYPosition',
-					min: -9.0,
-					max: 9.0,
+					min: -OseeHalfHeight,
+					max: OseeHalfHeight,
 					step: 0.2,
-					range: true,
 					default: 0,
+					range: true,
+					isVisible: (options) => !Object.keys(options).includes('operation') || options.operation === 0,
+				},
+				{
+					type: 'textinput',
+					label: 'Y Position',
+					id: 'KeyPatternWipeYPositionRel',
+					useVariables: true,
+					isVisible: (options) => options.operation === 1,
 				},
 			],
-			callback: async (action) => {
-				await sendCommand(ActionId.KeyPatternWipeYPosition, ReqType.Set, [
-					getOptNumber(action, 'KeyPatternWipeYPosition'),
-				])
+			callback: async (action, context) => {
+				let newpos = 0
+				let operation = 0
+				// a little extra work for backwards compatibility (so can be used before or w/o upgrade script)
+				if (Object.keys(action.options).includes('operation')) {
+					operation = getOptNumber(action, 'operation')
+				}
+				if (operation === 0) {
+					//absolute
+					newpos = getOptNumber(action, 'KeyPatternWipeYPosition')
+				} else {
+					let valueStr: string
+					const curPos = state.keyInfo[USKKeyTypes.KeyPattern].yPosition
+					const sizePct = state.keyInfo[USKKeyTypes.KeyPattern].size
+					let value = 0
+					if (operation === 2) {
+						valueStr = 'TOP'
+					} else if (operation === 3) {
+						valueStr = 'BOTTOM'
+					} else {
+						// operation === 1
+						valueStr = await context.parseVariablesInString(getOptString(action, 'KeyPatternWipeYPositionRel'))
+					}
+					switch (valueStr.toUpperCase()) {
+						case 'TOP':
+							// place the center of the window such that the top edge is edgeBuffer pixels from the top.
+							newpos = -OseeHalfHeight * (1 - sizePct) + edgeBuffer
+							break
+						case 'BOTTOM':
+							newpos = OseeHalfHeight * (1 - sizePct) - edgeBuffer
+							break
+						default:
+							value = Number(valueStr)
+							newpos = Math.min(9, Math.max(-9, value + curPos))
+					}
+				}
+				await sendCommand(ActionId.KeyPatternWipeYPosition, ReqType.Set, [newpos])
+			},
+			learn: (action) => {
+				return {
+					...action.options,
+					operation: 0,
+					KeyPatternWipeYPosition: state.keyInfo[USKKeyTypes.KeyPattern].yPosition,
+				}
 			},
 		},
 		[ActionId.KeyPatternWipeSymmetry]: {
