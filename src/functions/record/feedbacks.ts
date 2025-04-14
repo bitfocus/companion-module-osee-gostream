@@ -50,7 +50,7 @@ export function create(_model: GoStreamModel, state: RecordStateT): CompanionFee
 				bgcolor: combineRgb(72, 72, 72),
 			},
 			callback: () => {
-				return !state.mediaPresent
+				return !state.storageMediaPresent
 			},
 		},
 	}

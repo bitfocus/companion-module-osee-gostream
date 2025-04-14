@@ -1,7 +1,5 @@
-import { ActionId, CommunicationId } from './actionId'
+import { ActionId } from './actionId'
 import { getOptNumber, getOptString, makeChoices } from '../../util'
-import { ReqType } from '../../enums'
-import { sendCommand } from '../../connection'
 import type { CompanionActionDefinitions } from '@companion-module/base'
 import { RecordStateT } from './state'
 import { GoStreamModel } from '../../models/types'
@@ -29,7 +27,7 @@ export function create(_model: GoStreamModel, state: RecordStateT): CompanionAct
 					// newState is dyanamic: toggle the current state
 					newState = state.isRecording === true ? 0 : 1
 				}
-				await sendCommand(ActionId.Record, ReqType.Set, [newState])
+				await state.setRecordState(Boolean(newState))
 			},
 		},
 		[ActionId.RecordFileName]: {
@@ -57,8 +55,7 @@ export function create(_model: GoStreamModel, state: RecordStateT): CompanionAct
 
 				const rawString = getOptString(action, 'RecordFileName')
 				const newName = await context.parseVariablesInString(rawString)
-				// allow but replace ":" and other invalid chars, so user can specify system time in the variable
-				await sendCommand(ActionId.RecordFileName, ReqType.Set, [newName.replaceAll(/[\\/:*?"<>|]/g, '_')])
+				await state.setRecordFilename(newName)
 			},
 		},
 		[ActionId.RecordQuality]: {
@@ -72,11 +69,7 @@ export function create(_model: GoStreamModel, state: RecordStateT): CompanionAct
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(
-					CommunicationId.RecordQuality,
-					ReqType.Set,
-					state.encodeRecordingQuality(getOptString(action, 'Quality')),
-				)
+				await state.setRecordingQuality(getOptString(action, 'Quality'))
 			},
 		},
 	}

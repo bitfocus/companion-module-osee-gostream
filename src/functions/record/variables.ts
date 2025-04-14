@@ -39,6 +39,6 @@ export function getValues(state: RecordStateT): CompanionVariableValues {
 	newValues[VariableId.RecordFreeSpace] = state.freeSpace
 	newValues[VariableId.RecordFreeTime] = state.freeTime
 	newValues[VariableId.RecordFree] = state.freeSpaceTime
-	newValues[VariableId.RecordMediaPresent] = state.mediaPresent
+	newValues[VariableId.RecordMediaPresent] = state.storageMediaPresent
 	return newValues
 }

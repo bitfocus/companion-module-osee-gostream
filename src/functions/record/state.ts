@@ -1,9 +1,22 @@
-import { CommunicationId } from './actionId'
-import { sendCommands } from '../../connection'
+import { sendCommand, sendCommands } from '../../connection'
 import { ReqType } from '../../enums'
 import type { GoStreamModel } from '../../models/types'
 import { GoStreamCmd } from '../../connection'
 
+// note: this is intentionally NOT exported: CommunicationID should not be accessible to the action/feedback definitions
+// whether it ultimately remains here in state.ts or is bumped down to a lower level.
+enum CommunicationId {
+	Record = 'record',
+	RecordTime = 'recordTime',
+	RecordFileName = 'recordFileName',
+	// It needs to be 'quality' for the communication protocol
+	RecordQuality = 'quality',
+	RecordFreeSpace = 'sdFreeSpace',
+	RecordFreeTime = 'sdFreeTime',
+	RecordFree = 'sdFree',
+	RecordMediaPresent = 'sdCardStatus',
+	BuildInfo = 'buildInfo',
+}
 export class RecordStateT {
 	model: GoStreamModel
 	isRecording = false
@@ -13,11 +26,22 @@ export class RecordStateT {
 	freeSpace: string | undefined
 	freeTime: string | undefined
 	freeSpaceTime: string | undefined
-	mediaPresent = false
+	storageMediaPresent = false
 	constructor(model: GoStreamModel) {
 		this.model = model
 	}
 
+	// Start/Stop recording
+	async setRecordState(recording: boolean): Promise<boolean> {
+		return sendCommand(CommunicationId.Record, ReqType.Set, [recording ? 1 : 0])
+	}
+	// Recording-file name
+	async setRecordFilename(newName: string): Promise<boolean> {
+		// allow but replace ":" and other invalid chars, so user can specify system time in the variable
+		return sendCommand(CommunicationId.RecordFileName, ReqType.Set, [newName.replaceAll(/[\\/:*?"<>|]/g, '_')])
+	}
+
+	// Recording Quality
 	qualityValues(_protocolOrder = false): string[] {
 		// setting protocolOrder to true guarantees it will correspond to the
 		//  Osee communication protocol's index numbers. In this case it's a noop
@@ -28,9 +52,9 @@ export class RecordStateT {
 		}
 	}
 
-	encodeRecordingQuality(val: string): number[] {
+	async setRecordingQuality(quality: string): Promise<boolean> {
 		// the first value is 0 = recording, 1 = streaming
-		return [0, this.qualityValues(true).indexOf(val)]
+		return sendCommand(CommunicationId.RecordQuality, ReqType.Set, [0, this.qualityValues(true).indexOf(quality)])
 	}
 
 	decodeRecordingQuality(vals: number[]): string | undefined {
@@ -91,7 +115,7 @@ export function update(state: RecordStateT, data: GoStreamCmd): boolean {
 			state.freeSpaceTime = String(data.value![0])
 			break
 		case CommunicationId.RecordMediaPresent:
-			state.mediaPresent = Boolean(data.value![0])
+			state.storageMediaPresent = Boolean(data.value![0])
 			break
 	}
 	return false
