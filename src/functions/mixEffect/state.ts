@@ -169,7 +169,10 @@ export function update(state: MixEffectStateT, data: GoStreamCmd): boolean {
 			state.nextTState.dskOnAir = Boolean(data.value![0])
 			break
 		case ActionId.AutoTransition:
-			state.transitionPosition.inTransition = Boolean(data.value![0])
+			// note that AutoTransition has three states: 0 = normal, 1 = active, 2 = PVW and PGM busses are the same
+			//   (in state 2 the lights on the GSD CUT & AUTO buttons go off. The implementation as of 2.2 ignores
+			//    the differences in KEY and DSK, so it's not very useful.)
+			state.transitionPosition.inTransition = data.value![0] === 1 ? true : false
 			break
 		case ActionId.FTB: {
 			const value = Number(data.value![0])
