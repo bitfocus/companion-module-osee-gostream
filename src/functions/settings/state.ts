@@ -137,7 +137,7 @@ export function update(state: SettingsStateT, data: GoStreamCmd): boolean {
 			return true
 		case ActionId.Version:
 			state.version = String(data.value![0])
-			return true
+			break
 		case ActionId.BuildInfo:
 			state.buildInfo = String(data.value![0])
 			break

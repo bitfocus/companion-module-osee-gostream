@@ -188,7 +188,6 @@ function handleCommands(instance: GoStreamInstance, data: GoStreamCmd[]): void {
 		if (UpstreamKeyerState.update(instance.states.UpstreamKeyer, json)) needReinit = true
 	})
 	if (needReinit) {
-		instance.model.setProtoVersion(instance.states.Settings.version)
 		instance.init_actions()
 		instance.init_feedbacks()
 	}
