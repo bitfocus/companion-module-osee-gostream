@@ -57,7 +57,7 @@ export function update(state: PlaybackStateT, data: GoStreamCmd): boolean {
 				// list is empty
 				state.FileList = []
 			} else {
-				state.FileList = state.FileList = <string[]>data.value
+				state.FileList = <string[]>data.value
 			}
 			return true
 	}
