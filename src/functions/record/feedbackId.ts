@@ -1,4 +1,5 @@
 export enum FeedbackId {
 	Record = 'record',
-	RecordQuality = 'recordQuality',
+	Quality = 'recordQuality',
+	mediaAbsent = 'recordMediaPresent',
 }

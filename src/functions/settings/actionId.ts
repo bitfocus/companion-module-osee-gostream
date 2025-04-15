@@ -19,8 +19,6 @@ export enum ActionId {
 	Panel = 'panel',
 	SdFormat = 'sdFormat',
 	SystemReset = 'systemReset',
-	SdCardStatus = 'sdCardStatus',
-	SdFree = 'sdFree',
 	LiveStatus = 'liveStatus',
 	LiveInfo = 'liveInfo',
 	GetSrcSelectionList = 'getSrcSelectionList',
