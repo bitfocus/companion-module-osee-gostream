@@ -46,7 +46,7 @@ export function create(_model: GoStreamModel, state: RecordStateT): CompanionFee
 			description: 'If storage media are absent (SD or SSD), change style of the button',
 			options: [],
 			defaultStyle: {
-				color: combineRgb(128, 128, 128),
+				color: combineRgb(110, 110, 110),
 				bgcolor: combineRgb(72, 72, 72),
 			},
 			callback: () => {
