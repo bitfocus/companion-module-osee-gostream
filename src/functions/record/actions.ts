@@ -1,15 +1,13 @@
 import { ActionId } from './actionId'
-import { getOptNumber, getOptString } from '../../util'
-import { ReqType } from '../../enums'
-import { sendCommand } from '../../connection'
+import { getOptNumber, getOptString, makeChoices } from '../../util'
 import type { CompanionActionDefinitions } from '@companion-module/base'
 import { RecordStateT } from './state'
 import { GoStreamModel } from '../../models/types'
 
-export function create(model: GoStreamModel, state: RecordStateT): CompanionActionDefinitions {
+export function create(_model: GoStreamModel, state: RecordStateT): CompanionActionDefinitions {
 	return {
 		[ActionId.Record]: {
-			name: 'Record:Set Start or Stop Record',
+			name: 'Record:Start or Stop Recording',
 			options: [
 				{
 					type: 'dropdown',
@@ -29,11 +27,11 @@ export function create(model: GoStreamModel, state: RecordStateT): CompanionActi
 					// newState is dyanamic: toggle the current state
 					newState = state.isRecording === true ? 0 : 1
 				}
-				await sendCommand(ActionId.Record, ReqType.Set, [newState])
+				await state.setRecordState(Boolean(newState))
 			},
 		},
 		[ActionId.RecordFileName]: {
-			name: 'Set Record FileName',
+			name: 'Record:Set FileName',
 			options: [
 				{
 					type: 'textinput',
@@ -57,23 +55,21 @@ export function create(model: GoStreamModel, state: RecordStateT): CompanionActi
 
 				const rawString = getOptString(action, 'RecordFileName')
 				const newName = await context.parseVariablesInString(rawString)
-				// allow but replace ":" and other invalid chars, so user can specify system time in the variable
-				await sendCommand(ActionId.RecordFileName, ReqType.Set, [newName.replaceAll(/[\\/:*?"<>|]/g, '_')])
+				await state.setRecordFilename(newName)
 			},
 		},
 		[ActionId.RecordQuality]: {
-			name: 'Set quality of the recording',
+			name: 'Record:Set Quality',
 			options: [
 				{
 					type: 'dropdown',
 					label: 'Quality',
 					id: 'Quality',
-					choices: model.RecordQualityChoices(),
-					default: 0,
+					...makeChoices(state.qualityValues()),
 				},
 			],
 			callback: async (action) => {
-				await sendCommand('quality', ReqType.Set, [0, getOptNumber(action, 'Quality')])
+				await state.setRecordingQuality(getOptString(action, 'Quality'))
 			},
 		},
 	}

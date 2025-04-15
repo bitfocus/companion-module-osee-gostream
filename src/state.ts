@@ -38,7 +38,7 @@ export function create(model: GoStreamModel): GoStreamState {
 		Streaming: StreamingState.create(model),
 		StillGenerator: StillGeneratorState.create(model),
 		Playback: PlaybackState.create(model),
-		Record: RecordState.create(model),
+		Record: new RecordState.RecordStateT(model),
 		SuperSource: SuperSourceState.create(model),
 		AudioMixer: AudioMixerState.create(model),
 		DownstreamKeyer: DownstreamKeyerState.create(model),

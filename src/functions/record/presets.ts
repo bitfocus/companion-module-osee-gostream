@@ -42,6 +42,15 @@ export function create(_model: GoStreamModel): CompanionPresetDefinitions {
 					png64: pngRecordingIcon_B64,
 				},
 			},
+			{
+				feedbackId: FeedbackId.mediaAbsent,
+				options: {},
+				style: {
+					bgcolor: combineRgb(110, 110, 110),
+					color: combineRgb(255, 255, 64),
+					text: `Insert SD/SSD`,
+				},
+			},
 		],
 	}
 	presets[`Record_1`] = {
@@ -85,6 +94,15 @@ export function create(_model: GoStreamModel): CompanionPresetDefinitions {
 					color: combineRgb(255, 255, 255),
 					text: `$(gostreamdeck:record_duration_hm)`,
 					png64: pngRecordingIcon_B64,
+				},
+			},
+			{
+				feedbackId: FeedbackId.mediaAbsent,
+				options: {},
+				style: {
+					bgcolor: combineRgb(110, 110, 110),
+					color: combineRgb(255, 255, 64),
+					text: `Insert SD/SSD`,
 				},
 			},
 		],
