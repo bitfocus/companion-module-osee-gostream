@@ -53,7 +53,12 @@ export function update(state: PlaybackStateT, data: GoStreamCmd): boolean {
 			state.File = state.FileList.indexOf(String(data.value![0]))
 			break
 		case ActionId.PlaybackList:
-			state.FileList = state.FileList.concat(<any[]>data.value!)
+			if (!('value' in data)) {
+				// list is empty
+				state.FileList = []
+			} else {
+				state.FileList = <string[]>data.value
+			}
 			return true
 	}
 	return false
