@@ -3,6 +3,7 @@ import { PlaybackVariables } from './functions/playback'
 import { RecordVariables } from './functions/record'
 import { StreamingVariables } from './functions/streaming'
 import { SettingsVariables } from './functions/settings'
+import { SuperSourceVariables } from './functions/superSource'
 import { UpstreamKeyerVariables } from './functions/upstreamKeyer'
 import type { GoStreamInstance } from './index'
 import { CompanionVariableDefinition, CompanionVariableValues } from '@companion-module/base'
@@ -14,6 +15,7 @@ export function variables(instance: GoStreamInstance): CompanionVariableDefiniti
 		...RecordVariables.create(instance.model),
 		...StreamingVariables.create(instance.model),
 		...SettingsVariables.create(instance.model),
+		...SuperSourceVariables.create(instance.model),
 		...UpstreamKeyerVariables.create(instance.model),
 	]
 
@@ -32,6 +34,7 @@ export function updateVariables(instance: GoStreamInstance): void {
 		...RecordVariables.getValues(instance.states.Record),
 		...StreamingVariables.getValues(instance.states.Streaming),
 		...SettingsVariables.getValues(instance.states.Settings),
+		...SuperSourceVariables.getValues(instance.states.SuperSource),
 		...UpstreamKeyerVariables.getValues(instance.states.UpstreamKeyer),
 	}
 

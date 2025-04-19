@@ -4,6 +4,7 @@ import { ReqType } from '../../enums'
 import type { GoStreamModel } from '../../models/types'
 
 export type SuperSourceStateT = {
+	model: GoStreamModel
 	enable: boolean
 	source1: number
 	source2: number
@@ -13,8 +14,9 @@ export type SuperSourceStateT = {
 	maskEnable: boolean[]
 }
 
-export function create(_model: GoStreamModel): SuperSourceStateT {
+export function create(model: GoStreamModel): SuperSourceStateT {
 	return {
+		model: model,
 		enable: false,
 		source1: 0,
 		source2: 0,
