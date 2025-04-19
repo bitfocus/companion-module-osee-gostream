@@ -82,6 +82,7 @@ export class nextTransitionState {
 }
 
 export type MixEffectStateT = {
+	model: GoStreamModel
 	PvwSrc: number
 	PgmSrc: number
 	transitionPosition: {
@@ -106,8 +107,9 @@ export type MixEffectStateT = {
 	nextTState: nextTransitionState
 }
 
-export function create(_model: GoStreamModel): MixEffectStateT {
+export function create(model: GoStreamModel): MixEffectStateT {
 	return {
+		model: model,
 		PvwSrc: 0,
 		PgmSrc: 0,
 		transitionPosition: {
