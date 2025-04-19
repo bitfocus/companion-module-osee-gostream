@@ -1,3 +1,4 @@
+import { AudioMixerVariables } from './functions/audioMixer'
 import { MixEffectVariables } from './functions/mixEffect'
 import { PlaybackVariables } from './functions/playback'
 import { RecordVariables } from './functions/record'
@@ -10,6 +11,7 @@ import { CompanionVariableDefinition, CompanionVariableValues } from '@companion
 
 export function variables(instance: GoStreamInstance): CompanionVariableDefinition[] {
 	const vars: CompanionVariableDefinition[] = [
+		...AudioMixerVariables.create(instance.model),
 		...MixEffectVariables.create(instance.model),
 		...PlaybackVariables.create(instance.model),
 		...RecordVariables.create(instance.model),
@@ -29,6 +31,7 @@ export function variables(instance: GoStreamInstance): CompanionVariableDefiniti
 
 export function updateVariables(instance: GoStreamInstance): void {
 	const newValues: CompanionVariableValues = {
+		...AudioMixerVariables.getValues(instance.states.AudioMixer),
 		...MixEffectVariables.getValues(instance.states.MixEffect),
 		...PlaybackVariables.getValues(instance.states.Playback),
 		...RecordVariables.getValues(instance.states.Record),
