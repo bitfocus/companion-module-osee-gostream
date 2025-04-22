@@ -8,7 +8,7 @@ import { GoStreamModel } from '../../models/types'
 
 const NTState = new nextTransitionState()
 
-const rateOptions = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0]
+const rateOptions = [0.5, 1.0, 1.5, 2.0, 2.5, 3.0]
 const ptzSize = '18'
 export function create(model: GoStreamModel): CompanionPresetDefinitions {
 	const presets = {}
@@ -163,14 +163,14 @@ export function create(model: GoStreamModel): CompanionPresetDefinitions {
 			name: `Transition: Change Transition style to ${opt.label}`,
 			type: 'button',
 			style: {
-				text: opt.label,
-				size: ptzSize,
+				text: `Transition\n style to \n${opt.label}`,
+				size: '14',
 				color: combineRgb(255, 255, 255),
 				bgcolor: combineRgb(0, 0, 0),
 			},
 			feedbacks: [
 				{
-					FeedbackId: FeedbackId.TransitionStyle,
+					feedbackId: FeedbackId.TransitionStyle,
 					options: {
 						TransitionStyle: opt.id,
 					},
@@ -200,14 +200,14 @@ export function create(model: GoStreamModel): CompanionPresetDefinitions {
 				name: `Transition: ${opt.label} rate ${rate}`,
 				type: 'button',
 				style: {
-					text: `${opt.label} ${rate}`,
-					size: ptzSize,
+					text: `${opt.label}\n rate to \n${rate}s`,
+					size: '14',
 					color: combineRgb(255, 255, 255),
 					bgcolor: combineRgb(0, 0, 0),
 				},
 				feedbacks: [
 					{
-						FeedbackId: FeedbackId.TransitionRate,
+						feedbackId: FeedbackId.TransitionRate,
 						options: {
 							TransitionStyle: opt.id,
 							TransitionRate: rate,
