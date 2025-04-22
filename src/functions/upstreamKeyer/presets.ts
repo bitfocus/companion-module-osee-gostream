@@ -81,7 +81,7 @@ export function create(model: GoStreamModel): CompanionPresetDefinitions {
 							actionId: ActionId.UpStreamKeyType,
 							headline: 'First change upstream key type to Chroma',
 							options: {
-								USKType: 1,
+								USKType: 'Chroma Key',
 							},
 						},
 						{
@@ -129,7 +129,7 @@ export function create(model: GoStreamModel): CompanionPresetDefinitions {
 							actionId: ActionId.UpStreamKeyType,
 							headline: 'First change upstream key type to keypattern',
 							options: {
-								USKType: 2,
+								USKType: 'Key Pattern',
 							},
 						},
 						{
@@ -177,7 +177,7 @@ export function create(model: GoStreamModel): CompanionPresetDefinitions {
 							actionId: ActionId.UpStreamKeyType,
 							headline: 'First change upstream key type to pip',
 							options: {
-								USKType: 3,
+								USKType: 'PIP',
 							},
 						},
 						{
@@ -213,24 +213,26 @@ export function create(model: GoStreamModel): CompanionPresetDefinitions {
 					{
 						actionId: ActionId.UpStreamKeyType,
 						options: {
-							USKType: 3,
+							USKType: 'PIP',
 						},
 					},
 					{
 						actionId: ActionId.PipSize,
 						options: {
-							PipSize: 0,
+							PipSize: 0.25,
 						},
 					},
 					{
 						actionId: ActionId.PipXPosition,
 						options: {
+							operation: 0, 
 							PipXPosition: -11.8,
 						},
 					},
 					{
 						actionId: ActionId.PipYPosition,
 						options: {
+							operation: 0, 
 							PipYPosition: -6.6,
 						},
 					},
@@ -263,24 +265,26 @@ export function create(model: GoStreamModel): CompanionPresetDefinitions {
 					{
 						actionId: ActionId.UpStreamKeyType,
 						options: {
-							USKType: 3,
+							USKType: 'PIP',
 						},
 					},
 					{
 						actionId: ActionId.PipSize,
 						options: {
-							PipSize: 0,
+							PipSize: 0.25,
 						},
 					},
 					{
 						actionId: ActionId.PipXPosition,
 						options: {
+							operation: 0, 
 							PipXPosition: 11.8,
 						},
 					},
 					{
 						actionId: ActionId.PipYPosition,
 						options: {
+							operation: 0, 
 							PipYPosition: -6.6,
 						},
 					},
@@ -312,24 +316,26 @@ export function create(model: GoStreamModel): CompanionPresetDefinitions {
 					{
 						actionId: ActionId.UpStreamKeyType,
 						options: {
-							USKType: 3,
+							USKType: 'PIP',
 						},
 					},
 					{
 						actionId: ActionId.PipSize,
 						options: {
-							PipSize: 0,
+							PipSize: 0.25,
 						},
 					},
 					{
 						actionId: ActionId.PipXPosition,
 						options: {
+							operation: 0, 
 							PipXPosition: -11.8,
 						},
 					},
 					{
 						actionId: ActionId.PipYPosition,
 						options: {
+							operation: 0, 
 							PipYPosition: 6.6,
 						},
 					},
@@ -361,24 +367,26 @@ export function create(model: GoStreamModel): CompanionPresetDefinitions {
 					{
 						actionId: ActionId.UpStreamKeyType,
 						options: {
-							USKType: 3,
+							USKType: 'PIP',
 						},
 					},
 					{
 						actionId: ActionId.PipSize,
 						options: {
-							PipSize: 0,
+							PipSize: 0.25,
 						},
 					},
 					{
 						actionId: ActionId.PipXPosition,
 						options: {
+							operation: 0, 
 							PipXPosition: 11.8,
 						},
 					},
 					{
 						actionId: ActionId.PipYPosition,
 						options: {
+							operation: 0, 
 							PipYPosition: 6.6,
 						},
 					},

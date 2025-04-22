@@ -11,6 +11,10 @@ import {
 import * as UpgradeToConsolidatedSSRCMaskAction from './upgradeToConsolidatedSSRCMaskAction'
 import * as UpgradeToV15 from './upgradeToV15'
 import { tryUpdateNTAction, tryUpdateNTFeedback } from './upgradeNextTransitiontov1-4'
+import {
+	upgradeActionToV1_5 as upgradeActionToV1_5,
+	upgradeFeedbackToV1_5 as upgradeFeedbackToV1_5,
+} from './upgradeAKworkTo_v15'
 
 // The following functions are modified from:
 // https://github.com/bitfocus/companion-module-allenheath-sq/blob/main/src/upgrades.ts
@@ -52,5 +56,6 @@ export const UpgradeScriptList: CompanionStaticUpgradeScript<Config>[] = [
 	UpgradeToV15.getScripts,
 	UpgradeToConsolidatedSSRCMaskAction.getScripts,
 	ModuleUpgrader(tryUpdateNTAction, tryUpdateNTFeedback),
-	UpgradeToV15.getScripts,
+	UpgradeToV15.getScripts, // Johan upgrades
+	ModuleUpgrader(upgradeActionToV1_5, upgradeFeedbackToV1_5), // Ari upgrades
 ]
