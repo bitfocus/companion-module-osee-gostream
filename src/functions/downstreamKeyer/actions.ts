@@ -87,7 +87,7 @@ export function create(model: GoStreamModel, state: DownstreamKeyerStateT): Comp
 				{
 					type: 'dropdown',
 					label: 'Mask Enable',
-					id: 'DskMaskEnable',
+					id: 'maskEnable',
 					choices: SwitchChoices,
 					default: 0,
 					isVisible: (options) => (<string[]>options.props!).includes('enable'),
@@ -95,7 +95,7 @@ export function create(model: GoStreamModel, state: DownstreamKeyerStateT): Comp
 				{
 					type: 'number',
 					label: 'H Start',
-					id: 'DskMaskHStart',
+					id: 'maskHStart',
 					min: 0,
 					max: 100,
 					default: 0,
@@ -104,7 +104,7 @@ export function create(model: GoStreamModel, state: DownstreamKeyerStateT): Comp
 				{
 					type: 'number',
 					label: 'H End',
-					id: 'DskMaskHEnd',
+					id: 'maskHEnd',
 					min: 0,
 					max: 100,
 					default: 100,
@@ -113,7 +113,7 @@ export function create(model: GoStreamModel, state: DownstreamKeyerStateT): Comp
 				{
 					type: 'number',
 					label: 'V Start',
-					id: 'DskMaskVStart',
+					id: 'maskVStart',
 					min: 0,
 					max: 100,
 					default: 0,
@@ -122,7 +122,7 @@ export function create(model: GoStreamModel, state: DownstreamKeyerStateT): Comp
 				{
 					type: 'number',
 					label: 'V End',
-					id: 'DskMaskVEnd',
+					id: 'maskVEnd',
 					min: 0,
 					max: 100,
 					default: 100,
@@ -133,7 +133,7 @@ export function create(model: GoStreamModel, state: DownstreamKeyerStateT): Comp
 				const props = <string[]>action.options.props
 				const commands: GoStreamCmd[] = []
 				if (props.includes('enable')) {
-					const opt = getOptNumber(action, 'DskMaskEnable')
+					const opt = getOptNumber(action, 'maskEnable')
 					let paramOpt = 0
 					if (opt === 2) {
 						if (state.mask.enabled === true) {
@@ -158,28 +158,28 @@ export function create(model: GoStreamModel, state: DownstreamKeyerStateT): Comp
 					commands.push({
 						id: ActionId.DskMaskHStart,
 						type: ReqType.Set,
-						value: [getOptNumber(action, 'DskMaskHStart')],
+						value: [getOptNumber(action, 'maskHStart')],
 					})
 				}
 				if (props.includes('hMaskEnd')) {
 					commands.push({
 						id: ActionId.DskMaskHEnd,
 						type: ReqType.Set,
-						value: [getOptNumber(action, 'DskMaskHEnd')],
+						value: [getOptNumber(action, 'maskHEnd')],
 					})
 				}
 				if (props.includes('vMaskStart')) {
 					commands.push({
 						id: ActionId.DskMaskVStart,
 						type: ReqType.Set,
-						value: [getOptNumber(action, 'DskMaskVStart')],
+						value: [getOptNumber(action, 'maskVStart')],
 					})
 				}
 				if (props.includes('vMaskEnd')) {
 					commands.push({
 						id: ActionId.DskMaskVEnd,
 						type: ReqType.Set,
-						value: [getOptNumber(action, 'DskMaskVEnd')],
+						value: [getOptNumber(action, 'maskVEnd')],
 					})
 				}
 

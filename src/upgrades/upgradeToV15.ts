@@ -22,7 +22,6 @@ export function getScripts(
 
 	for (const action of actions) {
 		if (action.actionId === 'keyPatternWipeXPosition') {
-			console.log('UPDATE KeyPatternWipeXPosition ')
 			const newAction: CompanionMigrationAction = {
 				id: action.id,
 				controlId: action.controlId,
@@ -56,34 +55,46 @@ export function getScripts(
 			result.updatedActions.push(newAction)
 		} else if (actionIdsToUpgrade.includes(action.actionId)) {
 			// Handle mask consolidation
-			const oldActionId = action.actionId
-
+			// Capitalize first letter in actionId to get the optionname
+			const optionName = String(action.actionId[0]).toUpperCase() + String(action.actionId).slice(1)
 			const newOpts: CompanionOptionValues = {
 				props: [],
 			}
 			const newProps: string[] = []
-			// Just so happens that the old options was named as the action
-			if (oldActionId.endsWith('MaskEnable')) {
+
+			if (optionName.endsWith('MaskEnable')) {
 				newProps.push('enable')
-				newOpts['maskEnable'] = action.options[oldActionId]
+				newOpts['maskEnable'] = action.options[optionName]
 			}
-			if (oldActionId.endsWith('MaskHStart')) {
+			if (optionName.endsWith('MaskHStart')) {
 				newProps.push('hMaskStart')
-				newOpts['maskHStart'] = action.options[oldActionId]
+				let hStart = action.options[optionName]
+				// "Special(crap)" naming for DSK mask
+				if (optionName == 'DskMaskHStart') hStart = action.options['HStart']
+				newOpts['maskHStart'] = hStart
 			}
-			if (oldActionId.endsWith('MaskHEnd')) {
+			if (optionName.endsWith('MaskHEnd')) {
 				newProps.push('hMaskEnd')
-				newOpts['maskHEnd'] = action.options[oldActionId]
+				let hEnd = action.options[optionName]
+				// "Special(crap)" naming for DSK mask
+				if (optionName == 'DskMaskHEnd') hEnd = action.options['HEnd']
+				newOpts['maskHEnd'] = hEnd
 			}
-			if (oldActionId.endsWith('MaskVStart')) {
+			if (optionName.endsWith('MaskVStart')) {
 				newProps.push('vMaskStart')
-				newOpts['maskVStart'] = action.options[oldActionId]
+				let vStart = action.options[optionName]
+				// "Special(crap)" naming for DSK mask
+				if (optionName == 'DskMaskVStart') vStart = action.options['VStart']
+				newOpts['maskVStart'] = vStart
 			}
-			if (oldActionId.endsWith('MaskVEnd')) {
+			if (optionName.endsWith('MaskVEnd')) {
 				newProps.push('vMaskEnd')
-				newOpts['maskVEnd'] = action.options[oldActionId]
+				let vEnd = action.options[optionName]
+				// "Special(crap)" naming for DSK mask
+				if (optionName == 'DskMaskVEnd') vEnd = action.options['VEnd']
+				newOpts['maskVEnd'] = vEnd
 			}
-			const keyType = oldActionId.substring(0, oldActionId.indexOf('Mask'))
+			const keyType = action.actionId.substring(0, action.actionId.indexOf('Mask'))
 			action.actionId = keyType + 'SetMaskProperties'
 
 			action.options = newOpts
@@ -112,16 +123,16 @@ const actionIdsToUpgrade = [
 	'pipMaskVStart',
 	'pipMaskHEnd',
 	'pipMaskVEnd',
-	'chromaMaskEnable',
-	'chromaMaskHStart',
-	'chromaMaskVStart',
-	'chromaMaskHEnd',
-	'chromaMaskVEnd',
-	'lumaMaskEnable',
-	'lumaMaskHStart',
-	'lumaMaskVStart',
-	'lumaMaskHEnd',
-	'lumaMaskVEnd',
+	'chromaKeyMaskEnable',
+	'chromaKeyMaskHStart',
+	'chromaKeyMaskVStart',
+	'chromaKeyMaskHEnd',
+	'chromaKeyMaskVEnd',
+	'lumaKeyMaskEnable',
+	'lumaKeyMaskHStart',
+	'lumaKeyMaskVStart',
+	'lumaKeyMaskHEnd',
+	'lumaKeyMaskVEnd',
 	'keyPatternMaskEnable',
 	'keyPatternMaskHStart',
 	'keyPatternMaskVStart',
