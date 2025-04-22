@@ -102,16 +102,7 @@ export function create(model: GoStreamModel): CompanionPresetDefinitions {
 			color: combineRgb(255, 255, 255),
 			bgcolor: combineRgb(0, 0, 0),
 		},
-		feedbacks: [
-			{
-				FeedbackId: FeedbackId.Cut,
-				options: {},
-				style: {
-					bgcolor: combineRgb(255, 0, 0),
-					color: combineRgb(255, 255, 255),
-				},
-			},
-		],
+		feedbacks: [],
 		steps: [
 			{
 				down: [
@@ -136,7 +127,7 @@ export function create(model: GoStreamModel): CompanionPresetDefinitions {
 		},
 		feedbacks: [
 			{
-				FeedbackId: FeedbackId.InTransition,
+				feedbackId: FeedbackId.InTransition,
 				options: {},
 				style: {
 					bgcolor: combineRgb(255, 0, 0),
@@ -247,7 +238,7 @@ export function create(model: GoStreamModel): CompanionPresetDefinitions {
 		},
 		feedbacks: [
 			{
-				FeedbackId: FeedbackId.Prev,
+				feedbackId: FeedbackId.Prev,
 				options: {},
 				style: {
 					bgcolor: combineRgb(255, 0, 0),
@@ -277,28 +268,7 @@ export function create(model: GoStreamModel): CompanionPresetDefinitions {
 			color: combineRgb(255, 255, 255),
 			bgcolor: combineRgb(0, 0, 0),
 		},
-		feedbacks: [
-			{
-				FeedbackId: FeedbackId.FTBAFV,
-				options: {
-					state: 1,
-				},
-				style: {
-					bgcolor: combineRgb(255, 0, 0),
-					color: combineRgb(255, 255, 255),
-				},
-			},
-			{
-				FeedbackId: FeedbackId.FTBAFV,
-				options: {
-					state: 0,
-				},
-				style: {
-					bgcolor: combineRgb(255, 255, 0),
-					color: combineRgb(0, 0, 0),
-				},
-			},
-		],
+		feedbacks: [],
 		steps: [
 			{
 				down: [
@@ -321,38 +291,7 @@ export function create(model: GoStreamModel): CompanionPresetDefinitions {
 			color: combineRgb(255, 255, 255),
 			bgcolor: combineRgb(0, 0, 0),
 		},
-		feedbacks: [
-			{
-				FeedbackId: FeedbackId.FadeToBlackIsBlack,
-				options: {
-					state: 'off',
-				},
-				style: {
-					bgcolor: combineRgb(0, 0, 0),
-					color: combineRgb(255, 255, 255),
-				},
-			},
-			{
-				FeedbackId: FeedbackId.FadeToBlackIsBlack,
-				options: {
-					state: 'on',
-				},
-				style: {
-					bgcolor: combineRgb(255, 0, 0),
-					color: combineRgb(255, 255, 255),
-				},
-			},
-			{
-				FeedbackId: FeedbackId.FadeToBlackIsBlack,
-				options: {
-					state: 'fading',
-				},
-				style: {
-					bgcolor: combineRgb(255, 255, 0),
-					color: combineRgb(0, 0, 0),
-				},
-			},
-		],
+		feedbacks: [],
 		steps: [
 			{
 				down: [
@@ -376,18 +315,7 @@ export function create(model: GoStreamModel): CompanionPresetDefinitions {
 				color: combineRgb(255, 255, 255),
 				bgcolor: combineRgb(0, 0, 0),
 			},
-			feedbacks: [
-				{
-					FeedbackId: FeedbackId.FadeToBlackRate,
-					options: {
-						FtbRate: rate,
-					},
-					style: {
-						bgcolor: combineRgb(255, 255, 0),
-						color: combineRgb(0, 0, 0),
-					},
-				},
-			],
+			feedbacks: [],
 			steps: [
 				{
 					down: [
