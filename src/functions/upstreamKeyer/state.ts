@@ -15,7 +15,24 @@ export enum USKKeySourceType {
 }
 
 export enum WipePattern {
-	'one',
+	Horizontal_LeftToRight,
+	Vertical_UpToDown,
+	Horizontal_RightToLeft,
+	Vertical_DownToUp,
+	Surround,
+	Rectangle,
+	Diamond,
+	Circle,
+	Rectangle_FromTopLeft,
+	Rectangle_FromTopRight,
+	Rectangle_FromBottomRight,
+	Rectangle_FromBottomLeft,
+	Rectangle_FromTopCenter,
+	Rectangle_FromRightCenter,
+	Rectangle_FromBottomCenter,
+	Rectangle_FromLeftCenter,
+	Diagonal_LeftToRight,
+	Diagonal_RightToLeft,
 }
 
 export type MaskInfoT = {
@@ -81,7 +98,13 @@ export class UpstreamKeyerStateT {
 				xPosition: 0,
 				yPosition: 0,
 				mask: { enabled: false, hStart: 0, hEnd: 100, vStart: 100, vEnd: 100 },
-				wipe: { pattern: WipePattern.one, size: 100, pos: { x: 0, y: 0 }, symmetry: 100, softness: 0 },
+				wipe: {
+					pattern: WipePattern.Horizontal_LeftToRight,
+					size: 100,
+					pos: { x: 0, y: 0 },
+					symmetry: 100,
+					softness: 0,
+				},
 			},
 			{
 				enabled: false,
@@ -277,7 +300,7 @@ export function update(state: UpstreamKeyerStateT, data: GoStreamCmd): boolean {
 			state.keyInfo[USKKeyTypes.KeyPattern].wipe!.size = Number(data.value![0])
 			break
 		case ActionId.KeyPatternWipePattern:
-			state.keyInfo[USKKeyTypes.KeyPattern].wipe!.pattern = Number(data.value![0])
+			state.keyInfo[USKKeyTypes.KeyPattern].wipe!.pattern = Number(data.value![0]) as WipePattern
 			break
 		case ActionId.KeyPatternWipeSymmetry:
 			state.keyInfo[USKKeyTypes.KeyPattern].wipe!.symmetry = Number(data.value![0])
