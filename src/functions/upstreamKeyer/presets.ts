@@ -216,6 +216,7 @@ export function create(model: GoStreamModel): CompanionPresetDefinitions {
 		style: {
 			color: combineRgb(255, 255, 255),
 			bgcolor: combineRgb(0, 0, 0),
+			show_topbar: false,
 			png64:
 				'iVBORw0KGgoAAAANSUhEUgAAAEgAAABICAYAAABV7bNHAAAACXBIWXMAAAsTAAALEwEAmpwYAAAA00lEQVR4nO3aQQqDMAAAQS3+/8vppaW2KAv2oMjMRfQUlkSIcR5jTOx7nD2AqxMoCBQECgIFgYJAQaAgUBAoCBQECgIFgYJAYXldfRTaNi/rm9OGcU1jmj4z6OvhQbcM7B0UBAoCBYGCQEGgIFAQKAgUBAq/W41bbhf+YQYFgYJAQaAgUBAoCBQECgIFgYJAQaAgUBAoCBQECgIFgYJAQaAgUBAoCBQECgKF9cmqX4E3vAM5ct5hiQWBgkBBoCBQECgIFAQKAgWBgkBBoCBQECgIFJ6smgeakSiJdAAAAABJRU5ErkJggg==',
 		},
@@ -268,6 +269,7 @@ export function create(model: GoStreamModel): CompanionPresetDefinitions {
 		style: {
 			color: combineRgb(255, 255, 255),
 			bgcolor: combineRgb(0, 0, 0),
+			show_topbar: false,
 			png64:
 				'iVBORw0KGgoAAAANSUhEUgAAAEgAAABICAYAAABV7bNHAAAACXBIWXMAAAsTAAALEwEAmpwYAAAA00lEQVR4nO3auwqDMABA0Vj8/19Olz4clDu0oMg5i7iFSxKIZplzDo49zh7A1QkUBAoCBYGCQEGgIFAQKAgUBAoCBYGCQEGgsL6ePgrtW9bty2nDuKY5xncG3dEvq+IzWexBQaAgUBAoCBQECgIFgYJAQaBw56PGX86WZlAQKAgUBAoCBYGCQEGgIFAQKAgUBAoCBYGCQEGgIFAQKAgUBAoCBYGCQEGgIFDY/ll1FXjHO5ArwAcssSBQECgIFAQKAgWBgkBBoCBQECgIFAQKAgWBwhPfvweaF9Ol9gAAAABJRU5ErkJggg==',
 		},
@@ -319,6 +321,7 @@ export function create(model: GoStreamModel): CompanionPresetDefinitions {
 		style: {
 			color: combineRgb(255, 255, 255),
 			bgcolor: combineRgb(0, 0, 0),
+			show_topbar: false,
 			png64:
 				'iVBORw0KGgoAAAANSUhEUgAAAEgAAABICAYAAABV7bNHAAAACXBIWXMAAAsTAAALEwEAmpwYAAAA0klEQVR4nO3aMQqEMAAAwXj4/y/nmjsQUbawUGSmkXRhiYEYlznn4Nzn7gk8nUBBoCBQECgIFAQKAgWBgkBBoCBQECgIFAQK6+/po9CxZd0ObpvGM80xvGJJoCBQECgIFAQKAgWBgkBBoCBQECgIFAQKAgWBgkBBoCBQECgIFAQKAgWBgkBh3Y2vXEG/8mbWCgoCBYGCQEGgIFAQKAgUBAoChf1R45XHhSu2gfwKfOAfyMo5YQ8KAgWBgkBBoCBQECgIFAQKAgWBgkBBoCBQECh8AeTKB5pOGd6uAAAAAElFTkSuQmCC',
 		},
@@ -370,6 +373,7 @@ export function create(model: GoStreamModel): CompanionPresetDefinitions {
 		style: {
 			color: combineRgb(255, 255, 255),
 			bgcolor: combineRgb(0, 0, 0),
+			show_topbar: false,
 			png64:
 				'iVBORw0KGgoAAAANSUhEUgAAAEgAAABICAYAAABV7bNHAAAACXBIWXMAAAsTAAALEwEAmpwYAAAA1ElEQVR4nO3aMQqDQBRAQQ17/ytvmhgslFckoAkzjQgWy0MF3b/OORfOPa5ewN0JFAQKAgWBgkBBoCBQECgIFAQKAgWBgkBBoDBeRz+Fjq1jf3LZMu5pLotHLAkUBAoCBYGCQEGgIFAQKAgUBAoCBYGCQEGgIFAQKAgUBAoCBYGCQEGgIFAQKIy+5Gd9sp3+3mV2BwWBgkBBoCBQECgIFAQKAgWBwj9/anxlKHUfyCjwgS2QEeAT3kFBoCBQECgIFAQKAgWBgkBBoCBQECgIFAQKAoUnF/4HmoKO4UMAAAAASUVORK5CYII=',
 		},
@@ -475,6 +479,7 @@ export function create(model: GoStreamModel): CompanionPresetDefinitions {
 				text: arSpec.text,
 				color: combineRgb(255, 255, 255),
 				bgcolor: combineRgb(0, 0, 0),
+				show_topbar: false,
 			},
 			steps: [
 				{
@@ -529,6 +534,7 @@ export function create(model: GoStreamModel): CompanionPresetDefinitions {
 				text: arSpec.text,
 				color: combineRgb(255, 255, 255),
 				bgcolor: combineRgb(0, 0, 0),
+				show_topbar: false,
 			},
 			steps: [
 				{
@@ -550,6 +556,27 @@ export function create(model: GoStreamModel): CompanionPresetDefinitions {
 							},
 						},
 					],
+					500: {
+						options: { runWhileHeld: true },
+						actions: [
+							{
+								actionId: ActionId.KeyPatternWipeXPosition,
+								options: {
+									operation: hsnap_op,
+									KeyPatternWipeXPosition: 0, // note this is ignored if h & v != 0
+									KeyPatternWipeXPositionRel: 0, // note this is ignored if h != 0
+								},
+							},
+							{
+								actionId: ActionId.KeyPatternWipeYPosition,
+								options: {
+									operation: vsnap_op,
+									KeyPatternWipeYPosition: 0, // note this is ignored if h & v != 0
+									KeyPatternWipeYPositionRel: 0, // note this is ignored if h & v != 0
+								},
+							},
+						],
+					},
 				},
 			],
 			feedbacks: [],

@@ -112,8 +112,8 @@ export function createKeyPatternActions(model: GoStreamModel, state: UpstreamKey
 					newpos = getOptNumber(action, 'KeyPatternWipeXPosition')
 				} else {
 					let valueStr: string
-					const curPos = state.keyInfo[USKKeyTypes.KeyPattern].xPosition
-					const sizePct = state.keyInfo[USKKeyTypes.KeyPattern].size
+					const curPos = state.keyInfo[USKKeyTypes.KeyPattern].wipe!.pos.x
+					const sizePct = state.keyInfo[USKKeyTypes.KeyPattern].wipe!.size
 					if (operation === 2) {
 						valueStr = 'LEFT'
 					} else if (operation === 3) {
@@ -126,10 +126,10 @@ export function createKeyPatternActions(model: GoStreamModel, state: UpstreamKey
 					switch (valueStr.toUpperCase()) {
 						case 'LEFT':
 							// place the center of the window such that the left edge is edgeBuffer pixels from the left.
-							newpos = -OseeHalfWidth * (1 - sizePct) + edgeBuffer
+							newpos = OseeHalfWidth * (1 - sizePct) + edgeBuffer
 							break
 						case 'RIGHT':
-							newpos = OseeHalfWidth * (1 - sizePct) - edgeBuffer
+							newpos = -OseeHalfWidth * (1 - sizePct) - edgeBuffer
 							break
 						default:
 							value = Number(valueStr)
@@ -142,7 +142,7 @@ export function createKeyPatternActions(model: GoStreamModel, state: UpstreamKey
 				return {
 					...action.options,
 					operation: 0,
-					KeyPatternWipeXPosition: state.keyInfo[USKKeyTypes.KeyPattern].xPosition,
+					KeyPatternWipeXPosition: state.keyInfo[USKKeyTypes.KeyPattern].wipe!.pos.x,
 				}
 			},
 		},
@@ -192,8 +192,8 @@ export function createKeyPatternActions(model: GoStreamModel, state: UpstreamKey
 					newpos = getOptNumber(action, 'KeyPatternWipeYPosition')
 				} else {
 					let valueStr: string
-					const curPos = state.keyInfo[USKKeyTypes.KeyPattern].yPosition
-					const sizePct = state.keyInfo[USKKeyTypes.KeyPattern].size
+					const curPos = state.keyInfo[USKKeyTypes.KeyPattern].wipe!.pos.y
+					const sizePct = state.keyInfo[USKKeyTypes.KeyPattern].wipe!.size
 					let value = 0
 					if (operation === 2) {
 						valueStr = 'TOP'
@@ -206,10 +206,10 @@ export function createKeyPatternActions(model: GoStreamModel, state: UpstreamKey
 					switch (valueStr.toUpperCase()) {
 						case 'TOP':
 							// place the center of the window such that the top edge is edgeBuffer pixels from the top.
-							newpos = -OseeHalfHeight * (1 - sizePct) + edgeBuffer
+							newpos = +OseeHalfHeight * (1 - sizePct) + edgeBuffer
 							break
 						case 'BOTTOM':
-							newpos = OseeHalfHeight * (1 - sizePct) - edgeBuffer
+							newpos = -OseeHalfHeight * (1 - sizePct) - edgeBuffer
 							break
 						default:
 							value = Number(valueStr)
@@ -222,7 +222,7 @@ export function createKeyPatternActions(model: GoStreamModel, state: UpstreamKey
 				return {
 					...action.options,
 					operation: 0,
-					KeyPatternWipeYPosition: state.keyInfo[USKKeyTypes.KeyPattern].yPosition,
+					KeyPatternWipeYPosition: state.keyInfo[USKKeyTypes.KeyPattern].wipe!.pos.y,
 				}
 			},
 		},

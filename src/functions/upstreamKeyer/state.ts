@@ -14,12 +14,29 @@ export enum USKKeySourceType {
 	Fill = 1,
 }
 
+export enum WipePattern {
+	'one',
+}
+
 export type MaskInfoT = {
 	enabled: boolean
 	hStart: number
 	hEnd: number
 	vStart: number
 	vEnd: number
+}
+
+export type Position = {
+	x: number
+	y: number
+}
+
+export type WipeInfoT = {
+	pattern: WipePattern
+	size: number
+	pos: Position
+	symmetry: number
+	softness: number
 }
 
 export type KeyInfoT = {
@@ -29,6 +46,7 @@ export type KeyInfoT = {
 	xPosition: number
 	yPosition: number
 	mask: MaskInfoT
+	wipe?: WipeInfoT
 }
 
 export class UpstreamKeyerStateT {
@@ -63,6 +81,7 @@ export class UpstreamKeyerStateT {
 				xPosition: 0,
 				yPosition: 0,
 				mask: { enabled: false, hStart: 0, hEnd: 100, vStart: 100, vEnd: 100 },
+				wipe: { pattern: WipePattern.one, size: 100, pos: { x: 0, y: 0 }, symmetry: 100, softness: 0 },
 			},
 			{
 				enabled: false,
@@ -142,6 +161,12 @@ export async function sync(_model: GoStreamModel): Promise<boolean> {
 		{ id: ActionId.KeyPatternResizeSize, type: ReqType.Get },
 		{ id: ActionId.KeyPatternResizeXPosition, type: ReqType.Get },
 		{ id: ActionId.KeyPatternResizeYPosition, type: ReqType.Get },
+		{ id: ActionId.KeyPatternWipeXPosition, type: ReqType.Get },
+		{ id: ActionId.KeyPatternWipeYPosition, type: ReqType.Get },
+		{ id: ActionId.KeyPatternWipeSize, type: ReqType.Get },
+		{ id: ActionId.KeyPatternWipePattern, type: ReqType.Get },
+		{ id: ActionId.KeyPatternWipeSymmetry, type: ReqType.Get },
+		{ id: ActionId.KeyPatternWipeSoftness, type: ReqType.Get },
 		{ id: ActionId.KeyPatternMaskEnable, type: ReqType.Get },
 		{ id: ActionId.KeyPatternMaskHStart, type: ReqType.Get },
 		{ id: ActionId.KeyPatternMaskHEnd, type: ReqType.Get },
@@ -241,6 +266,24 @@ export function update(state: UpstreamKeyerStateT, data: GoStreamCmd): boolean {
 			break
 		case ActionId.KeyPatternResizeYPosition:
 			state.keyInfo[USKKeyTypes.KeyPattern].yPosition = Number(data.value![0])
+			break
+		case ActionId.KeyPatternWipeXPosition:
+			state.keyInfo[USKKeyTypes.KeyPattern].wipe!.pos.x = Number(data.value![0])
+			break
+		case ActionId.KeyPatternWipeYPosition:
+			state.keyInfo[USKKeyTypes.KeyPattern].wipe!.pos.y = Number(data.value![0])
+			break
+		case ActionId.KeyPatternWipeSize:
+			state.keyInfo[USKKeyTypes.KeyPattern].wipe!.size = Number(data.value![0])
+			break
+		case ActionId.KeyPatternWipePattern:
+			state.keyInfo[USKKeyTypes.KeyPattern].wipe!.pattern = Number(data.value![0])
+			break
+		case ActionId.KeyPatternWipeSymmetry:
+			state.keyInfo[USKKeyTypes.KeyPattern].wipe!.symmetry = Number(data.value![0])
+			break
+		case ActionId.KeyPatternWipeSoftness:
+			state.keyInfo[USKKeyTypes.KeyPattern].wipe!.softness = Number(data.value![0])
 			break
 		case ActionId.KeyPatternMaskEnable:
 			state.keyInfo[USKKeyTypes.KeyPattern].mask.enabled = Boolean(data.value![0])
