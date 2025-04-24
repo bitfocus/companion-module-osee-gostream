@@ -2,6 +2,7 @@ import { combineRgb } from '@companion-module/base'
 import { CompanionPresetDefinitions } from '@companion-module/base'
 import { ActionId } from './actionId'
 import { FeedbackId } from './feedbackId'
+import { VariableId } from './variableId'
 import { GoStreamModel } from '../../models/types'
 
 const ptSize = '14'
@@ -128,6 +129,63 @@ export function create(_model: GoStreamModel): CompanionPresetDefinitions {
 						},
 					},
 				],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	}
+	// Record quality. (TODO: retrieve from "official" function, rather than constants here)
+	for (const qual of ['high', 'good', 'medium', 'low']) {
+		presets[`Record_Quality_${qual}`] = {
+			type: 'button',
+			category: 'Record',
+			name: `Set recording quality to ${qual}`,
+			style: {
+				text: `Rec Quality ${qual}`,
+				size: 'auto',
+				color: combineRgb(255, 255, 255),
+				bgcolor: combineRgb(0, 0, 0),
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: ActionId.RecordQuality,
+							options: {
+								Quality: qual,
+							},
+						},
+					],
+					up: [],
+				},
+			],
+			feedbacks: [
+				{
+					feedbackId: FeedbackId.Quality,
+					options: {
+						Quality: qual,
+					},
+					style: {
+						bgcolor: combineRgb(255, 255, 0),
+						color: combineRgb(0, 0, 0),
+					},
+				},
+			],
+		}
+	}
+	presets[`Record_Quality_Status`] = {
+		type: 'button',
+		category: 'Record',
+		name: 'Rec Quality: Show Status',
+		style: {
+			text: `Rec Quality is: $(gostreamdeck:${VariableId.RecordQuality})`,
+			size: 'auto',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [],
 				up: [],
 			},
 		],
