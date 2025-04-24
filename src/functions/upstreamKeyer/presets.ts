@@ -6,6 +6,18 @@ import { CompanionPresetDefinitions } from '@companion-module/base'
 import { ActionType } from './../../enums'
 import { GoStreamModel } from '../../models/types'
 
+const arrows = [
+	{ text: '⬉', h: -0.2, v: -0.2 },
+	{ text: '⬆', h: 0, v: -0.2 },
+	{ text: '⬈', h: 0.2, v: -0.2 },
+	{ text: '⬅', h: -0.2, v: 0 },
+	{ text: '⦾', h: 0, v: 0 },
+	{ text: '➡', h: 0.2, v: 0 },
+	{ text: '⬋', h: -0.2, v: 0.2 },
+	{ text: '⬇', h: 0, v: 0.2 },
+	{ text: '⬊', h: 0.2, v: 0.2 },
+]
+
 export function create(model: GoStreamModel): CompanionPresetDefinitions {
 	const presets = {}
 	const sources = model.getChoices(ActionType.LumaKeySourceKey)
@@ -225,14 +237,14 @@ export function create(model: GoStreamModel): CompanionPresetDefinitions {
 					{
 						actionId: ActionId.PipXPosition,
 						options: {
-							operation: 0, 
+							operation: 0,
 							PipXPosition: -11.8,
 						},
 					},
 					{
 						actionId: ActionId.PipYPosition,
 						options: {
-							operation: 0, 
+							operation: 0,
 							PipYPosition: -6.6,
 						},
 					},
@@ -277,14 +289,14 @@ export function create(model: GoStreamModel): CompanionPresetDefinitions {
 					{
 						actionId: ActionId.PipXPosition,
 						options: {
-							operation: 0, 
+							operation: 0,
 							PipXPosition: 11.8,
 						},
 					},
 					{
 						actionId: ActionId.PipYPosition,
 						options: {
-							operation: 0, 
+							operation: 0,
 							PipYPosition: -6.6,
 						},
 					},
@@ -328,14 +340,14 @@ export function create(model: GoStreamModel): CompanionPresetDefinitions {
 					{
 						actionId: ActionId.PipXPosition,
 						options: {
-							operation: 0, 
+							operation: 0,
 							PipXPosition: -11.8,
 						},
 					},
 					{
 						actionId: ActionId.PipYPosition,
 						options: {
-							operation: 0, 
+							operation: 0,
 							PipYPosition: 6.6,
 						},
 					},
@@ -379,14 +391,14 @@ export function create(model: GoStreamModel): CompanionPresetDefinitions {
 					{
 						actionId: ActionId.PipXPosition,
 						options: {
-							operation: 0, 
+							operation: 0,
 							PipXPosition: 11.8,
 						},
 					},
 					{
 						actionId: ActionId.PipYPosition,
 						options: {
-							operation: 0, 
+							operation: 0,
 							PipYPosition: 6.6,
 						},
 					},
@@ -401,6 +413,147 @@ export function create(model: GoStreamModel): CompanionPresetDefinitions {
 				up: [],
 			},
 		],
+	}
+	for (const size of [0.25, 0.33, 0.5]) {
+		const size_pct = size * 100
+		presets[`PIP_${size}`] = {
+			category: `USK: PIP`,
+			name: `Set PIP size to ${size_pct}%`,
+			type: 'button',
+			style: {
+				text: `PIP ${size_pct}%`,
+				color: combineRgb(255, 255, 255),
+				bgcolor: combineRgb(0, 0, 0),
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: ActionId.UpStreamKeyType,
+							options: {
+								USKType: 'PIP',
+							},
+						},
+						{
+							actionId: ActionId.PipSize,
+							options: {
+								PipSize: size,
+							},
+						},
+					],
+					up: [],
+				},
+			],
+			feedbacks: [
+				{
+					feedbackId: FeedbackId.PipSize,
+					options: {
+						pipSizeId: size,
+					},
+					style: {
+						bgcolor: combineRgb(255, 255, 0),
+						color: combineRgb(0, 0, 0),
+					},
+				},
+			],
+		}
+	}
+	for (const arSpec of arrows) {
+		// snap operation: 2 = left or top; 3 = right or bottom. (0 = absolute, for snap-to-center)
+		let hsnap_op = arSpec.h < 0 ? 2 : arSpec.h > 0 ? 3 : 0
+		let vsnap_op = arSpec.v < 0 ? 2 : arSpec.v > 0 ? 3 : 0
+		if (arSpec.h != arSpec.v) {
+			// if only one of h, v is zero, treat that part of the snap operation as a relative move (i.e. noop)
+			if (arSpec.h === 0) hsnap_op = 1
+			if (arSpec.v === 0) vsnap_op = 1
+		}
+		presets[`PIP_Rel_${arSpec.text}`] = {
+			category: `USK: PIP`,
+			name: `Move PIP window in direction of arrow; long press to snap to edge(s)`,
+			type: 'button',
+			style: {
+				text: arSpec.text,
+				color: combineRgb(255, 255, 255),
+				bgcolor: combineRgb(0, 0, 0),
+			},
+			steps: [
+				{
+					down: [],
+					up: [
+						// using up ensures that these are NOT run on a long press
+						{
+							actionId: ActionId.PipXPosition,
+							options: {
+								operation: 1, // relative
+								PipXPositionRel: arSpec.h,
+							},
+						},
+						{
+							actionId: ActionId.PipYPosition,
+							options: {
+								operation: 1,
+								PipYPositionRel: arSpec.v,
+							},
+						},
+					],
+					500: {
+						options: { runWhileHeld: true },
+						actions: [
+							{
+								actionId: ActionId.PipXPosition,
+								options: {
+									operation: hsnap_op,
+									PipXPosition: 0, // note this is ignored if h & v != 0
+									PipXPositionRel: 0, // note this is ignored if h != 0
+								},
+							},
+							{
+								actionId: ActionId.PipYPosition,
+								options: {
+									operation: vsnap_op,
+									PipYPosition: 0, // note this is ignored if h & v != 0
+									PipYPositionRel: 0, // note this is ignored if h & v != 0
+								},
+							},
+						],
+					},
+				},
+			],
+			feedbacks: [],
+		}
+		presets[`Pattern_Rel_${arSpec.text}`] = {
+			category: `USK: keypattern`,
+			name: `Move Key Pattern "wipe position" in direction of arrow`,
+			type: 'button',
+			style: {
+				text: arSpec.text,
+				color: combineRgb(255, 255, 255),
+				bgcolor: combineRgb(0, 0, 0),
+			},
+			steps: [
+				{
+					down: [],
+					up: [
+						// using up ensures that these are NOT run on a long press
+						{
+							actionId: ActionId.KeyPatternWipeXPosition,
+							options: {
+								operation: 1, // relative
+								KeyPatternWipeXPositionRel: arSpec.h,
+							},
+						},
+						{
+							actionId: ActionId.KeyPatternWipeYPosition,
+							options: {
+								operation: 1,
+								KeyPatternWipeYPositionRel: arSpec.v,
+							},
+						},
+					],
+				},
+			],
+			feedbacks: [],
+		}
 	}
 	return presets
 }
