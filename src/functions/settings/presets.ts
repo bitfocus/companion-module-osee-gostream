@@ -49,12 +49,12 @@ export function create(model: GoStreamModel): CompanionPresetDefinitions {
 
 	for (const port of model.outputPorts) {
 		for (const source of model.OutputSources()) {
-			presets['outSource_' + port.name + '_source_' + source.name] = {
+			presets['outSource_' + port.label + '_source_' + source.label] = {
 				category: 'Settings',
-				name: 'Settings ' + port.name + ' OutSource ' + source.name,
+				name: 'Settings ' + port.label + ' OutSource ' + source.label,
 				type: 'button',
 				style: {
-					text: 'Send ' + source.name + ' to ' + port.name,
+					text: 'Send ' + source.label + ' to ' + port.label,
 					size: '14',
 					color: combineRgb(255, 255, 255),
 					bgcolor: combineRgb(0, 0, 0),
