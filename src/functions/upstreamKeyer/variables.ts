@@ -1,6 +1,6 @@
 import { CompanionVariableDefinition, CompanionVariableValues } from '@companion-module/base'
 import { VariableId } from './variableId'
-import { SourceModels, OtherSourceModels } from '../../model'
+import { SourceModels, OtherDSKSourceModels } from '../../model'
 import { GoStreamModel } from '../../models/types'
 import { UpstreamKeyerStateT, USKKeyTypes, USKKeySourceType } from './state'
 
@@ -21,7 +21,7 @@ export function create(_model: GoStreamModel): CompanionVariableDefinition[] {
 export function getValues(state: UpstreamKeyerStateT): CompanionVariableValues {
 	const newValues: CompanionVariableValues = {}
 	// need to go to the constants rather than getChoices() in order to access shortName
-	const sourceNames = SourceModels.concat(OtherSourceModels).map((item) => item.shortName.toLowerCase())
+	const sourceNames = SourceModels.concat(OtherDSKSourceModels).map((item) => item.shortName.toLowerCase())
 	const fillSource = (ktype: USKKeyTypes) => state.keyInfo[ktype].sources[USKKeySourceType.Fill]
 
 	newValues[VariableId.KeyTypeVar] = state.UpStreamKeyType
