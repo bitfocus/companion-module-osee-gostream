@@ -35,7 +35,7 @@ export function getValues(state: SuperSourceStateT): CompanionVariableValues {
 	const SuperSourceStyle = SuperSourceStyleChoices.map((item) => item.label)
 	newValues[VariableId.SuperSourceSrc1] = inputSources[state.source1]
 	newValues[VariableId.SuperSourceSrc2] = inputSources[state.source2]
-	newValues[VariableId.SuperSourceBG] = inputSources[state.source2]
+	newValues[VariableId.SuperSourceBG] = inputSources[state.background]
 	newValues[VariableId.SuperSourceSourceStyle] = SuperSourceStyle[state.controlStyle]
 
 	return newValues
