@@ -30,12 +30,12 @@ export type IPortSpec = {
 	caps: PortCaps
 }
 
-export type PortT = {
+export type PortChoice = {
 	id: number
 	label: string
 }
 
-export type SourceT = {
+export type SourceChoice = {
 	id: number
 	label: string
 }
@@ -56,7 +56,7 @@ export class GoStreamModel {
 	streams: number
 	transitionTypes: number
 	stillSlots: number
-	outputPorts: PortT[]
+	outputPorts: PortChoice[]
 
 	constructor() {
 		this.id = Model.Unknown
@@ -168,7 +168,7 @@ export class GoStreamModel {
 		}))
 	}
 
-	InputSources(): SourceT[] {
+	InputSources(): SourceChoice[] {
 		return [
 			{ id: 0, label: 'In 1' },
 			{ id: 1, label: 'In 2' },
@@ -181,7 +181,7 @@ export class GoStreamModel {
 		]
 	}
 
-	OutputSources(): SourceT[] {
+	OutputSources(): SourceChoice[] {
 		return [
 			{ id: 0, label: 'In 1' },
 			{ id: 1, label: 'In 2' },
@@ -194,7 +194,7 @@ export class GoStreamModel {
 		]
 	}
 
-	FillKeySources(): SourceT[] {
+	FillKeySources(): SourceChoice[] {
 		return [
 			{ id: 0, label: 'In 1' },
 			{ id: 1, label: 'In 2' },
