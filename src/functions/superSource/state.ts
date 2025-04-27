@@ -1,9 +1,10 @@
 import { ActionId } from './actionId'
-import { sendCommands, GoStreamCmd, valueAsBoolean } from '../../connection'
+import { sendCommands, GoStreamCmd } from '../../connection'
 import { ReqType } from '../../enums'
 import type { GoStreamModel } from '../../models/types'
 
 export type SuperSourceStateT = {
+	model: GoStreamModel
 	enable: boolean
 	source1: number
 	source2: number
@@ -13,8 +14,9 @@ export type SuperSourceStateT = {
 	maskEnable: boolean[]
 }
 
-export function create(_model: GoStreamModel): SuperSourceStateT {
+export function create(model: GoStreamModel): SuperSourceStateT {
 	return {
+		model: model,
 		enable: false,
 		source1: 0,
 		source2: 0,
@@ -60,19 +62,19 @@ export function update(state: SuperSourceStateT, data: GoStreamCmd): boolean {
 			break
 		}
 		case ActionId.SuperSourceControlStyle: {
-			if (data.value !== undefined) state.controlStyle = data.value[0]
+			state.controlStyle = Number(data.value![0])
 			break
 		}
 		case ActionId.SuperSourceControlYPosition: {
-			if (data.value !== undefined) state.controlYPosition = data.value[0]
+			state.controlYPosition = Number(data.value![0])
 			break
 		}
 		case ActionId.SuperSourceEnable: {
-			state.enable = data.value && data.value[0] == 1 ? true : false
+			state.enable = Boolean(data.value![0])
 			break
 		}
 		case ActionId.SuperSourceMaskEnable: {
-			if (data.value !== undefined) state.maskEnable[data.value[0]] = valueAsBoolean(data.value[1])
+			state.maskEnable[data.value![0]] = Boolean(data.value![1])
 			break
 		}
 		case ActionId.SuperSourceMaskHEnd: {
@@ -88,15 +90,15 @@ export function update(state: SuperSourceStateT, data: GoStreamCmd): boolean {
 			break
 		}
 		case ActionId.SuperSourceSource1: {
-			if (data.value !== undefined) state.source1 = data.value[0]
+			state.source1 = Number(data.value![0])
 			break
 		}
 		case ActionId.SuperSourceSource2: {
-			if (data.value !== undefined) state.source2 = data.value[0]
+			state.source2 = Number(data.value![0])
 			break
 		}
 		case ActionId.SuperSourceBackground: {
-			if (data.value !== undefined) state.background = data.value[0]
+			state.background = Number(data.value![0])
 			break
 		}
 	}

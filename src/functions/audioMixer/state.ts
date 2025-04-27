@@ -12,6 +12,7 @@ export enum AudioState {
 }
 
 export type AudioMixerStateT = {
+	model: GoStreamModel
 	transitionEnabled: boolean
 	state: AudioState[]
 	monitorSource: number
@@ -21,6 +22,7 @@ export function create(model: GoStreamModel): AudioMixerStateT {
 	const audioCapableInputs = model.inputs.filter((inp) => inp.caps & PortCaps.Audio).length
 
 	return {
+		model: model,
 		transitionEnabled: false,
 		state: Array(audioCapableInputs),
 		monitorSource: 0,
@@ -51,7 +53,7 @@ export function update(state: AudioMixerStateT, data: GoStreamCmd): boolean {
 			break
 		}
 		case ActionId.AudioMonitorSource: {
-			state.monitorSource = data.value[0]
+			state.monitorSource = Number(data.value[0])
 			break
 		}
 	}

@@ -1,6 +1,5 @@
 import { ActionId } from './actionId'
-import { getOptNumber } from './../../util'
-import { UpStreamKeyTypeChoices } from './../../model'
+import { getOptNumber, getOptString, makeChoices } from './../../util'
 import { ReqType, ActionType } from './../../enums'
 import { sendCommand } from './../../connection'
 import { createLumaKeyActions } from './keyTypes/lumaKey'
@@ -33,7 +32,7 @@ export function create(model: GoStreamModel, state: UpstreamKeyerStateT): Compan
 			],
 			callback: async (action) => {
 				await sendCommand(ActionId.UpStreamKeyFillKeyType, ReqType.Set, [
-					state.UpStreamKeyType,
+					state.encodeKeyType(),
 					getOptNumber(action, 'FillSource'),
 					getOptNumber(action, 'KeySource'),
 				])
@@ -46,12 +45,19 @@ export function create(model: GoStreamModel, state: UpstreamKeyerStateT): Compan
 					type: 'dropdown',
 					label: 'Key Type:',
 					id: 'USKType',
-					choices: UpStreamKeyTypeChoices,
-					default: 0,
+					...makeChoices(state.keyTypes()),
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.UpStreamKeyType, ReqType.Set, [getOptNumber(action, 'USKType')])
+				const keyType = getOptString(action, 'USKType')
+				// --> the following is for backwards compatibility before upgrade scripts are written
+				let encoded = Number(keyType)
+				if (isNaN(encoded)) {
+					encoded = state.encodeKeyType(keyType)
+				}
+				//<--
+
+				await sendCommand(ActionId.UpStreamKeyType, ReqType.Set, [encoded])
 			},
 		},
 		...createLumaKeyActions(model, state),

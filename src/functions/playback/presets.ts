@@ -12,7 +12,7 @@ export function create(_model: GoStreamModel): CompanionPresetDefinitions {
 		category: 'Playback',
 		name: 'Set Playback mode',
 		style: {
-			text: `play in one group`,
+			text: `Play in one group`,
 			size: ptzSize,
 			color: combineRgb(255, 255, 255),
 			bgcolor: combineRgb(0, 0, 0),
@@ -48,7 +48,7 @@ export function create(_model: GoStreamModel): CompanionPresetDefinitions {
 		category: 'Playback',
 		name: 'Set Playback mode',
 		style: {
-			text: `play cross group`,
+			text: `Play cross group`,
 			size: ptzSize,
 			color: combineRgb(255, 255, 255),
 			bgcolor: combineRgb(0, 0, 0),
@@ -114,12 +114,12 @@ export function create(_model: GoStreamModel): CompanionPresetDefinitions {
 		],
 	}
 
-	presets[`PlayMode_Pause_1`] = {
+	presets[`PlayMode_Play_Pause_Toggle`] = {
 		type: 'button',
 		category: 'Playback',
-		name: 'Set Playback Pause',
+		name: 'Play/Pause video',
 		style: {
-			text: `Pause`,
+			text: `Play`,
 			size: ptzSize,
 			color: combineRgb(255, 255, 255),
 			bgcolor: combineRgb(0, 0, 0),
@@ -142,8 +142,19 @@ export function create(_model: GoStreamModel): CompanionPresetDefinitions {
 				feedbackId: FeedbackId.PlaybackPause,
 				options: {},
 				style: {
-					bgcolor: combineRgb(255, 255, 0),
-					color: combineRgb(0, 0, 0),
+					bgcolor: combineRgb(255, 0, 0),
+					color: combineRgb(255, 255, 255),
+					text: 'Pause',
+				},
+			},
+			{
+				feedbackId: FeedbackId.PlaybackPause,
+				options: {},
+				isInverted: true,
+				style: {
+					bgcolor: combineRgb(0, 0, 0),
+					color: combineRgb(255, 255, 255),
+					text: 'Play',
 				},
 			},
 		],
@@ -187,9 +198,9 @@ export function create(_model: GoStreamModel): CompanionPresetDefinitions {
 	presets[`PlayModeRepeatPause_0`] = {
 		type: 'button',
 		category: 'Playback',
-		name: 'Set Playback Info',
+		name: 'Play/pause repeat',
 		style: {
-			text: `$(gostreamdeck:PlayState)`,
+			text: `Play repeat`,
 			size: ptzSize,
 			color: combineRgb(255, 255, 255),
 			bgcolor: combineRgb(0, 0, 0),
@@ -216,6 +227,17 @@ export function create(_model: GoStreamModel): CompanionPresetDefinitions {
 				style: {
 					bgcolor: combineRgb(255, 0, 0),
 					color: combineRgb(255, 255, 255),
+					text: 'Pause',
+				},
+			},
+			{
+				feedbackId: FeedbackId.PlaybackPause,
+				options: {},
+				isInverted: true,
+				style: {
+					bgcolor: combineRgb(0, 0, 0),
+					color: combineRgb(255, 255, 255),
+					text: 'Play repeat',
 				},
 			},
 		],

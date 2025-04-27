@@ -23,9 +23,7 @@ export async function sync(model: GoStreamModel): Promise<boolean> {
 export function update(state: StillGeneratorStateT, data: GoStreamCmd): boolean {
 	switch (data.id as ActionId) {
 		case ActionId.StillSelection: {
-			const stype = data.value && data.value[0]
-			const stypeValue = data.value && data.value[1]
-			state.slots[stype] = stypeValue
+			state.slots[Number(data.value![0])] = Number(data.value![1])
 			return true
 		}
 	}

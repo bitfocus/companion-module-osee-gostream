@@ -211,6 +211,30 @@ export class GoStreamModel {
 			{ id: 12, name: 'Black' },
 		]
 	}
+
+	StreamQualityChoices(): DropdownChoice[] {
+		return [
+			{ id: '0', label: 'high' },
+			{ id: '1', label: 'medium' },
+			{ id: '2', label: 'low' },
+		]
+	}
+
+	RecordQualityChoices(): DropdownChoice[] {
+		return [
+			{ id: '0', label: 'high' },
+			{ id: '1', label: 'medium' },
+			{ id: '2', label: 'low' },
+		]
+	}
+
+	OutputDimensions(): [number, number] {
+		return [32, 18]
+	}
+
+	PixelResolution(): number {
+		return 1080
+	}
 }
 
 export function generatePorts(

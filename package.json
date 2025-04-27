@@ -1,6 +1,6 @@
 {
 	"name": "companion-module-osee-gostreamdeck",
-	"version": "1.4.0",
+	"version": "1.5.1",
 	"main": "./dist/index.js",
 	"license": "MIT",
 	"prettier": "@companion-module/tools/.prettierrc.json",
@@ -28,7 +28,7 @@
 		"yarn": "^1.22.22"
 	},
 	"devDependencies": {
-		"@companion-module/tools": "^2.1.0",
+		"@companion-module/tools": "^2.3.0",
 		"@types/jest": "^29.5.14",
 		"eslint": "9.14.0",
 		"husky": "^9.1.6",

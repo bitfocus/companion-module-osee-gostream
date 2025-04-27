@@ -2,11 +2,11 @@ import { ActionId } from '../actionId'
 import { getOptNumber } from './../../../util'
 import { SwitchChoices, KeyResizeSizeChoices } from './../../../model'
 import { ReqType, ActionType } from './../../../enums'
-import { sendCommand } from './../../../connection'
+import { sendCommand, sendCommands, GoStreamCmd } from './../../../connection'
 import type { CompanionActionDefinitions } from '@companion-module/base'
-import { UpstreamKeyerStateT } from '../state'
+import { UpstreamKeyerStateT, USKKeyTypes } from '../state'
 import { GoStreamModel } from '../../../models/types'
-export function createChromaKeyActions(model: GoStreamModel, _state: UpstreamKeyerStateT): CompanionActionDefinitions {
+export function createChromaKeyActions(model: GoStreamModel, state: UpstreamKeyerStateT): CompanionActionDefinitions {
 	return {
 		[ActionId.ChromaKeyFill]: {
 			name: 'UpStream Key:Set Chroma Key Source Fill',
@@ -23,83 +23,110 @@ export function createChromaKeyActions(model: GoStreamModel, _state: UpstreamKey
 				await sendCommand(ActionId.ChromaKeyFill, ReqType.Set, [getOptNumber(action, 'KeyFill')])
 			},
 		},
-		[ActionId.ChromaKeyMaskEnable]: {
-			name: 'UpStream Key:Set Chroma Key Mask Enable',
+		[ActionId.ChromaKeySetMaskProperties]: {
+			name: 'UpStream Key: Set chroma mask properties',
 			options: [
+				{
+					id: 'props',
+					type: 'multidropdown',
+					label: 'Select properties',
+					choices: [
+						{ id: 'enable', label: 'enable' },
+						{ id: 'hMaskStart', label: 'hMaskStart' },
+						{ id: 'hMaskEnd', label: 'hMaskEnd' },
+						{ id: 'vMaskStart', label: 'vMaskStart' },
+						{ id: 'vMaskEnd', label: 'vMaskEnd' },
+					],
+					minSelection: 1,
+					default: ['enable', 'hMaskStart', 'hMaskEnd', 'vMaskStart', 'vMaskEnd'],
+				},
 				{
 					type: 'dropdown',
 					label: 'Mask Enable',
-					id: 'ChromaKeyMaskEnable',
+					id: 'maskEnable',
 					choices: SwitchChoices,
 					default: 0,
+					isVisible: (options) => (<string[]>options.props!).includes('enable'),
 				},
-			],
-			callback: async (action) => {
-				await sendCommand(ActionId.ChromaKeyMaskEnable, ReqType.Set, [getOptNumber(action, 'ChromaKeyMaskEnable')])
-			},
-		},
-		[ActionId.ChromaKeyMaskHStart]: {
-			name: 'UpStream Key:Set Chroma Key Mask H Start',
-			options: [
 				{
 					type: 'number',
 					label: 'H Start',
-					id: 'ChromaKeyMaskHStart',
+					id: 'maskHStart',
 					min: 0,
 					max: 100,
 					default: 0,
+					isVisible: (options) => (<string[]>options.props!).includes('hMaskStart'),
 				},
-			],
-			callback: async (action) => {
-				await sendCommand(ActionId.ChromaKeyMaskHStart, ReqType.Set, [getOptNumber(action, 'ChromaKeyMaskHStart')])
-			},
-		},
-		[ActionId.ChromaKeyMaskVStart]: {
-			name: 'UpStream Key:Set Chroma Key Mask V Start',
-			options: [
-				{
-					type: 'number',
-					label: 'V Start',
-					id: 'ChromaKeyMaskVStart',
-					min: 0,
-					max: 100,
-					default: 0,
-				},
-			],
-			callback: async (action) => {
-				await sendCommand(ActionId.ChromaKeyMaskVStart, ReqType.Set, [getOptNumber(action, 'ChromaKeyMaskVStart')])
-			},
-		},
-		[ActionId.ChromaKeyMaskHEnd]: {
-			name: 'UpStream Key:Set Chroma Key Mask H End',
-			options: [
 				{
 					type: 'number',
 					label: 'H End',
-					id: 'ChromaKeyMaskHEnd',
+					id: 'maskHEnd',
+					min: 0,
+					max: 100,
+					default: 100,
+					isVisible: (options) => (<string[]>options.props!).includes('hMaskEnd'),
+				},
+				{
+					type: 'number',
+					label: 'V Start',
+					id: 'maskVStart',
 					min: 0,
 					max: 100,
 					default: 0,
+					isVisible: (options) => (<string[]>options.props!).includes('vMaskStart'),
 				},
-			],
-			callback: async (action) => {
-				await sendCommand(ActionId.ChromaKeyMaskHEnd, ReqType.Set, [getOptNumber(action, 'ChromaKeyMaskHEnd')])
-			},
-		},
-		[ActionId.ChromaKeyMaskVEnd]: {
-			name: 'UpStream Key:Set Chroma Key Mask V End',
-			options: [
 				{
 					type: 'number',
 					label: 'V End',
-					id: 'ChromaKeyMaskVEnd',
+					id: 'maskVEnd',
 					min: 0,
 					max: 100,
-					default: 0,
+					default: 100,
+					isVisible: (options) => (<string[]>options.props!).includes('vMaskEnd'),
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.ChromaKeyMaskVEnd, ReqType.Set, [getOptNumber(action, 'ChromaKeyMaskVEnd')])
+				const props = <string[]>action.options.props
+				const commands: GoStreamCmd[] = []
+				if (props.includes('enable')) {
+					let paramOpt = getOptNumber(action, 'maskEnable')
+					if (paramOpt === 2) paramOpt = state.keyInfo[USKKeyTypes.Chroma].mask.enabled ? 0 : 1
+					commands.push({
+						id: ActionId.ChromaKeyMaskEnable,
+						type: ReqType.Set,
+						value: [paramOpt],
+					})
+				}
+				if (props.includes('hMaskStart')) {
+					commands.push({
+						id: ActionId.ChromaKeyMaskHStart,
+						type: ReqType.Set,
+						value: [getOptNumber(action, 'maskHStart')],
+					})
+				}
+				if (props.includes('hMaskEnd')) {
+					commands.push({
+						id: ActionId.ChromaKeyMaskHEnd,
+						type: ReqType.Set,
+						value: [getOptNumber(action, 'maskHEnd')],
+					})
+				}
+				if (props.includes('vMaskStart')) {
+					commands.push({
+						id: ActionId.ChromaKeyMaskVStart,
+						type: ReqType.Set,
+						value: [getOptNumber(action, 'maskVStart')],
+					})
+				}
+				if (props.includes('vMaskEnd')) {
+					commands.push({
+						id: ActionId.ChromaKeyMaskVEnd,
+						type: ReqType.Set,
+						value: [getOptNumber(action, 'maskVEnd')],
+					})
+				}
+
+				if (commands.length > 0) await sendCommands(commands)
 			},
 		},
 		[ActionId.ChromaKeyResizeEnable]: {
@@ -132,7 +159,7 @@ export function createChromaKeyActions(model: GoStreamModel, _state: UpstreamKey
 				let value = 0.25
 				const info = KeyResizeSizeChoices.find((s) => s.id === action.options.ChromaKeyResizeSize)
 				if (info !== null && info !== undefined) {
-					value = Number(info.label)
+					value = Number(info.id)
 				}
 				await sendCommand(ActionId.ChromaKeyResizeSize, ReqType.Set, [value])
 			},

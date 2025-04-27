@@ -2,11 +2,11 @@ import { ActionId } from '../actionId'
 import { getOptNumber } from './../../../util'
 import { SwitchChoices, KeyResizeSizeChoices } from './../../../model'
 import { ReqType, ActionType } from './../../../enums'
-import { sendCommand } from './../../../connection'
+import { sendCommand, sendCommands, GoStreamCmd } from './../../../connection'
 import type { CompanionActionDefinitions } from '@companion-module/base'
-import { UpstreamKeyerStateT } from '../state'
+import { UpstreamKeyerStateT, USKKeyTypes } from '../state'
 import { GoStreamModel } from '../../../models/types'
-export function createLumaKeyActions(model: GoStreamModel, _state: UpstreamKeyerStateT): CompanionActionDefinitions {
+export function createLumaKeyActions(model: GoStreamModel, state: UpstreamKeyerStateT): CompanionActionDefinitions {
 	return {
 		[ActionId.LumaKeySourceFill]: {
 			name: 'UpStream Key:Set Luma Key Source Fill',
@@ -38,83 +38,110 @@ export function createLumaKeyActions(model: GoStreamModel, _state: UpstreamKeyer
 				await sendCommand(ActionId.LumaKeySourceKey, ReqType.Set, [getOptNumber(action, 'LumaKeySourceKey')])
 			},
 		},
-		[ActionId.LumaKeyMaskEnable]: {
-			name: 'UpStream Key:Set Luma Key Mask Enable',
+		[ActionId.LumaKeySetMaskProperties]: {
+			name: 'UpStream Key: Set luma mask properties',
 			options: [
+				{
+					id: 'props',
+					type: 'multidropdown',
+					label: 'Select properties',
+					choices: [
+						{ id: 'enable', label: 'enable' },
+						{ id: 'hMaskStart', label: 'hMaskStart' },
+						{ id: 'hMaskEnd', label: 'hMaskEnd' },
+						{ id: 'vMaskStart', label: 'vMaskStart' },
+						{ id: 'vMaskEnd', label: 'vMaskEnd' },
+					],
+					minSelection: 1,
+					default: ['enable', 'hMaskStart', 'hMaskEnd', 'vMaskStart', 'vMaskEnd'],
+				},
 				{
 					type: 'dropdown',
 					label: 'Mask Enable',
-					id: 'LumaKeyMaskEnable',
+					id: 'maskEnable',
 					choices: SwitchChoices,
 					default: 0,
+					isVisible: (options) => (<string[]>options.props!).includes('enable'),
 				},
-			],
-			callback: async (action) => {
-				await sendCommand(ActionId.LumaKeyMaskEnable, ReqType.Set, [getOptNumber(action, 'LumaKeyMaskEnable')])
-			},
-		},
-		[ActionId.LumaKeyMaskHStart]: {
-			name: 'UpStream Key:Set Luma Key Mask H Start',
-			options: [
 				{
 					type: 'number',
 					label: 'H Start',
-					id: 'LumaKeyMaskHStart',
+					id: 'maskHStart',
 					min: 0,
 					max: 100,
 					default: 0,
+					isVisible: (options) => (<string[]>options.props!).includes('hMaskStart'),
 				},
-			],
-			callback: async (action) => {
-				await sendCommand(ActionId.LumaKeyMaskHStart, ReqType.Set, [getOptNumber(action, 'LumaKeyMaskHStart')])
-			},
-		},
-		[ActionId.LumaKeyMaskVStart]: {
-			name: 'UpStream Key:Set Luma Key Mask V Start',
-			options: [
-				{
-					type: 'number',
-					label: 'V Start',
-					id: 'LumaKeyMaskVStart',
-					min: 0,
-					max: 100,
-					default: 0,
-				},
-			],
-			callback: async (action) => {
-				await sendCommand(ActionId.LumaKeyMaskVStart, ReqType.Set, [getOptNumber(action, 'LumaKeyMaskVStart')])
-			},
-		},
-		[ActionId.LumaKeyMaskHEnd]: {
-			name: 'UpStream Key:Set Luma Key Mask H End',
-			options: [
 				{
 					type: 'number',
 					label: 'H End',
-					id: 'LumaKeyMaskHEnd',
+					id: 'maskHEnd',
+					min: 0,
+					max: 100,
+					default: 100,
+					isVisible: (options) => (<string[]>options.props!).includes('hMaskEnd'),
+				},
+				{
+					type: 'number',
+					label: 'V Start',
+					id: 'maskVStart',
 					min: 0,
 					max: 100,
 					default: 0,
+					isVisible: (options) => (<string[]>options.props!).includes('vMaskStart'),
 				},
-			],
-			callback: async (action) => {
-				await sendCommand(ActionId.LumaKeyMaskHEnd, ReqType.Set, [getOptNumber(action, 'LumaKeyMaskHEnd')])
-			},
-		},
-		[ActionId.LumaKeyMaskVEnd]: {
-			name: 'UpStream Key:Set Luma Key Mask V End',
-			options: [
 				{
 					type: 'number',
 					label: 'V End',
-					id: 'LumaKeyMaskVEnd',
+					id: 'maskVEnd',
 					min: 0,
 					max: 100,
-					default: 0,
+					default: 100,
+					isVisible: (options) => (<string[]>options.props!).includes('vMaskEnd'),
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.LumaKeyMaskVEnd, ReqType.Set, [getOptNumber(action, 'LumaKeyMaskVEnd')])
+				const props = <string[]>action.options.props
+				const commands: GoStreamCmd[] = []
+				if (props.includes('enable')) {
+					let paramOpt = getOptNumber(action, 'maskEnable')
+					if (paramOpt === 2) paramOpt = state.keyInfo[USKKeyTypes.Luma].mask.enabled ? 0 : 1
+					commands.push({
+						id: ActionId.LumaKeyMaskEnable,
+						type: ReqType.Set,
+						value: [paramOpt],
+					})
+				}
+				if (props.includes('hMaskStart')) {
+					commands.push({
+						id: ActionId.LumaKeyMaskHStart,
+						type: ReqType.Set,
+						value: [getOptNumber(action, 'maskHStart')],
+					})
+				}
+				if (props.includes('hMaskEnd')) {
+					commands.push({
+						id: ActionId.LumaKeyMaskHEnd,
+						type: ReqType.Set,
+						value: [getOptNumber(action, 'maskHEnd')],
+					})
+				}
+				if (props.includes('vMaskStart')) {
+					commands.push({
+						id: ActionId.LumaKeyMaskVStart,
+						type: ReqType.Set,
+						value: [getOptNumber(action, 'maskVStart')],
+					})
+				}
+				if (props.includes('vMaskEnd')) {
+					commands.push({
+						id: ActionId.LumaKeyMaskVEnd,
+						type: ReqType.Set,
+						value: [getOptNumber(action, 'maskVEnd')],
+					})
+				}
+
+				if (commands.length > 0) await sendCommands(commands)
 			},
 		},
 		[ActionId.LumaKeyControlShapedKey]: {
@@ -211,7 +238,7 @@ export function createLumaKeyActions(model: GoStreamModel, _state: UpstreamKeyer
 				let value = 0.25
 				const info = KeyResizeSizeChoices.find((s) => s.id === action.options.LumaKeyResizeSize)
 				if (info !== null && info !== undefined) {
-					value = Number(info.label)
+					value = Number(info.id)
 				}
 				await sendCommand(ActionId.LumaKeyResizeSize, ReqType.Set, [value])
 			},

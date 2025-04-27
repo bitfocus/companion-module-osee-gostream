@@ -1,12 +1,22 @@
 import { ActionId } from './../actionId'
-import { getOptNumber } from './../../../util'
+import { getOptNumber, getOptString, makeChoices } from './../../../util'
 import { SwitchChoices, KeyResizeSizeChoices } from './../../../model'
 import { ReqType, ActionType } from './../../../enums'
-import { sendCommand } from './../../../connection'
+import { sendCommand, sendCommands, GoStreamCmd } from './../../../connection'
 import type { CompanionActionDefinitions } from '@companion-module/base'
-import { UpstreamKeyerStateT } from '../state'
+import { UpstreamKeyerStateT, USKKeyTypes } from '../state'
 import { GoStreamModel } from '../../../models/types'
-export function createPIPActions(model: GoStreamModel, _state: UpstreamKeyerStateT): CompanionActionDefinitions {
+
+// #TODO: these constants should probably be embedded in the model
+// Osee[X/Y]Radius: Osee's units for positioning: -9..+9 vertically, -16 - 16 horizontally
+const OseeHalfWidth = 16.0
+const OseeHalfHeight = 9.0
+const imagePixelHeight = 1080
+const pixel = (2 * OseeHalfHeight) / imagePixelHeight // convert pixels to Osee's -9..+9 units (this is the same whether calculated for x or y)
+// #TODO: make edgeBuffer settable?
+const edgeBuffer = pixel * 5 // when using left/right/up/down, stay this far away from the edge.
+
+export function createPIPActions(model: GoStreamModel, state: UpstreamKeyerStateT): CompanionActionDefinitions {
 	return {
 		[ActionId.PipSource]: {
 			name: 'UpStream Key:Set Pip Source',
@@ -30,132 +40,287 @@ export function createPIPActions(model: GoStreamModel, _state: UpstreamKeyerStat
 					type: 'dropdown',
 					label: 'Size',
 					id: 'PipSize',
-					choices: KeyResizeSizeChoices,
-					default: 0,
+					...makeChoices(state.keyScalingSizes()),
 				},
 			],
 			callback: async (action) => {
-				let value = 0
-				const info = KeyResizeSizeChoices.find((s) => s.id === action.options.PipSize)
-				if (info !== null && info !== undefined) {
-					value = Number(info.id)
+				const choice = getOptNumber(action, 'PipSize')
+				if (Number.isInteger(choice)) {
+					// backward compatibility: choice is 0, 1, 2...
+					const info = KeyResizeSizeChoices.find((s) => s.id === action.options.PipSize)
+					if (info !== null && info !== undefined) {
+						const value = Number(info.id)
+						await sendCommand(ActionId.PipSize, ReqType.Set, [value])
+					}
+				} else {
+					await sendCommand(ActionId.PipSize, ReqType.Set, [state.encodeKeyScalingSize(choice)])
 				}
-				await sendCommand(ActionId.PipSize, ReqType.Set, [value])
 			},
 		},
 		[ActionId.PipXPosition]: {
 			name: 'UpStream Key:Set PIP X Position',
 			options: [
 				{
+					type: 'dropdown',
+					label: 'Type',
+					id: 'operation',
+					choices: [
+						{ id: 0, label: 'Absolute' },
+						{ id: 1, label: 'Relative' },
+						{ id: 2, label: 'Snap to Left Edge' },
+						{ id: 3, label: 'Snap to Right Edge' },
+					],
+					default: 0,
+				},
+				{
 					type: 'number',
 					label: 'X Position',
 					id: 'PipXPosition',
-					min: -16,
-					max: 16,
+					min: -OseeHalfWidth,
+					max: OseeHalfWidth,
 					step: 0.2,
 					default: 0,
 					range: true,
+					isVisible: (options) => !Object.keys(options).includes('operation') || options.operation === 0,
+				},
+				{
+					type: 'textinput',
+					label: 'X Position',
+					id: 'PipXPositionRel',
+					useVariables: true,
+					isVisible: (options) => options.operation === 1,
 				},
 			],
-			callback: async (action) => {
-				await sendCommand(ActionId.PipXPosition, ReqType.Set, [getOptNumber(action, 'PipXPosition')])
+			callback: async (action, context) => {
+				let newpos = 0
+				let operation = 0
+				// a little extra work for backwards compatibility (so can be used before or w/o upgrade script)
+				if (Object.keys(action.options).includes('operation')) {
+					operation = getOptNumber(action, 'operation')
+				}
+				if (operation == 0) {
+					//absolute
+					newpos = getOptNumber(action, 'PipXPosition')
+				} else {
+					let valueStr: string
+					const curPos = state.keyInfo[USKKeyTypes.Pip].xPosition
+					const pipSizePct = state.keyInfo[USKKeyTypes.Pip].size
+					if (operation === 2) {
+						valueStr = 'LEFT'
+					} else if (operation === 3) {
+						valueStr = 'RIGHT'
+					} else {
+						// operation === 1
+						valueStr = await context.parseVariablesInString(getOptString(action, 'PipXPositionRel'))
+					}
+					let value = 0
+					switch (valueStr.toUpperCase()) {
+						case 'LEFT':
+							// place the center of the window such that the left edge is edgeBuffer pixels from the left.
+							newpos = -OseeHalfWidth * (1 - pipSizePct) + edgeBuffer
+							break
+						case 'RIGHT':
+							newpos = OseeHalfWidth * (1 - pipSizePct) - edgeBuffer
+							break
+						default:
+							value = Number(valueStr)
+							newpos = Math.min(OseeHalfWidth, Math.max(-OseeHalfWidth, value + curPos))
+					}
+				}
+				await sendCommand(ActionId.PipXPosition, ReqType.Set, [newpos])
+			},
+			learn: (action) => {
+				return {
+					...action.options,
+					operation: 0,
+					PipXPosition: state.keyInfo[USKKeyTypes.Pip].xPosition,
+				}
 			},
 		},
 		[ActionId.PipYPosition]: {
 			name: 'UpStream Key:Set PIP Y Position',
 			options: [
 				{
+					type: 'dropdown',
+					label: 'Type',
+					id: 'operation',
+					choices: [
+						{ id: 0, label: 'Absolute' },
+						{ id: 1, label: 'Relative' },
+						{ id: 2, label: 'Snap to Top Edge' },
+						{ id: 3, label: 'Snap to Bottom Edge' },
+					],
+					default: 0,
+				},
+				{
 					type: 'number',
 					label: 'Y Position',
 					id: 'PipYPosition',
-					min: -9.0,
-					max: 9.0,
+					min: -OseeHalfHeight,
+					max: OseeHalfHeight,
 					step: 0.2,
 					default: 0,
 					range: true,
+					isVisible: (options) => !Object.keys(options).includes('operation') || options.operation === 0,
+				},
+				{
+					type: 'textinput',
+					label: 'Y Position',
+					id: 'PipYPositionRel',
+					useVariables: true,
+					isVisible: (options) => options.operation === 1,
 				},
 			],
-			callback: async (action) => {
-				await sendCommand(ActionId.PipYPosition, ReqType.Set, [getOptNumber(action, 'PipYPosition')])
+			callback: async (action, context) => {
+				let newpos = 0
+				let operation = 0
+				// a little extra work for backwards compatibility (so can be used before or w/o upgrade script)
+				if (Object.keys(action.options).includes('operation')) {
+					operation = getOptNumber(action, 'operation')
+				}
+				if (operation === 0) {
+					//absolute
+					newpos = getOptNumber(action, 'PipYPosition')
+				} else {
+					let valueStr: string
+					const curPos = state.keyInfo[USKKeyTypes.Pip].yPosition
+					const pipSizePct = state.keyInfo[USKKeyTypes.Pip].size
+					let value = 0
+					if (operation === 2) {
+						valueStr = 'TOP'
+					} else if (operation === 3) {
+						valueStr = 'BOTTOM'
+					} else {
+						// operation === 1
+						valueStr = await context.parseVariablesInString(getOptString(action, 'PipYPositionRel'))
+					}
+					switch (valueStr.toUpperCase()) {
+						case 'TOP':
+							// place the center of the window such that the top edge is edgeBuffer pixels from the top.
+							newpos = -OseeHalfHeight * (1 - pipSizePct) + edgeBuffer
+							break
+						case 'BOTTOM':
+							newpos = OseeHalfHeight * (1 - pipSizePct) - edgeBuffer
+							break
+						default:
+							value = Number(valueStr)
+							newpos = Math.min(9, Math.max(-9, value + curPos))
+					}
+				}
+				await sendCommand(ActionId.PipYPosition, ReqType.Set, [newpos])
+			},
+			learn: (action) => {
+				return {
+					...action.options,
+					operation: 0,
+					PipYPosition: state.keyInfo[USKKeyTypes.Pip].yPosition,
+				}
 			},
 		},
-		[ActionId.PipMaskEnable]: {
-			name: 'UpStream Key:Set PIP Mask Enable',
+		[ActionId.PipSetMaskProperties]: {
+			name: 'UpStream Key: Set PIP mask properties',
 			options: [
+				{
+					id: 'props',
+					type: 'multidropdown',
+					label: 'Select properties',
+					choices: [
+						{ id: 'enable', label: 'enable' },
+						{ id: 'hMaskStart', label: 'hMaskStart' },
+						{ id: 'hMaskEnd', label: 'hMaskEnd' },
+						{ id: 'vMaskStart', label: 'vMaskStart' },
+						{ id: 'vMaskEnd', label: 'vMaskEnd' },
+					],
+					minSelection: 1,
+					default: ['enable', 'hMaskStart', 'hMaskEnd', 'vMaskStart', 'vMaskEnd'],
+				},
 				{
 					type: 'dropdown',
 					label: 'Mask Enable',
-					id: 'PipMaskEnable',
+					id: 'maskEnable',
 					choices: SwitchChoices,
 					default: 0,
+					isVisible: (options) => (<string[]>options.props!).includes('enable'),
 				},
-			],
-			callback: async (action) => {
-				await sendCommand(ActionId.PipMaskEnable, ReqType.Set, [getOptNumber(action, 'PipMaskEnable')])
-			},
-		},
-		[ActionId.PipMaskHStart]: {
-			name: 'UpStream Key:Set PIP Mask H Start',
-			options: [
 				{
 					type: 'number',
 					label: 'H Start',
-					id: 'PipMaskHStart',
+					id: 'maskHStart',
 					min: 0,
 					max: 100,
 					default: 0,
+					isVisible: (options) => (<string[]>options.props!).includes('hMaskStart'),
 				},
-			],
-			callback: async (action) => {
-				await sendCommand(ActionId.PipMaskHStart, ReqType.Set, [getOptNumber(action, 'PipMaskHStart')])
-			},
-		},
-		[ActionId.PipMaskVStart]: {
-			name: 'UpStream Key:Set Pip Mask V Start',
-			options: [
-				{
-					type: 'number',
-					label: 'V Start',
-					id: 'PipMaskVStart',
-					min: 0,
-					max: 100,
-					default: 0,
-				},
-			],
-			callback: async (action) => {
-				await sendCommand(ActionId.PipMaskVStart, ReqType.Set, [getOptNumber(action, 'PipMaskVStart')])
-			},
-		},
-		[ActionId.PipMaskHEnd]: {
-			name: 'UpStream Key:Set Pip Mask H End',
-			options: [
 				{
 					type: 'number',
 					label: 'H End',
-					id: 'PipMaskHEnd',
+					id: 'maskHEnd',
+					min: 0,
+					max: 100,
+					default: 100,
+					isVisible: (options) => (<string[]>options.props!).includes('hMaskEnd'),
+				},
+				{
+					type: 'number',
+					label: 'V Start',
+					id: 'maskVStart',
 					min: 0,
 					max: 100,
 					default: 0,
+					isVisible: (options) => (<string[]>options.props!).includes('vMaskStart'),
 				},
-			],
-			callback: async (action) => {
-				await sendCommand(ActionId.PipMaskHEnd, ReqType.Set, [getOptNumber(action, 'PipMaskHEnd')])
-			},
-		},
-		[ActionId.PipMaskVEnd]: {
-			name: 'UpStream Key:Set Pip Mask V End',
-			options: [
 				{
 					type: 'number',
 					label: 'V End',
-					id: 'PipMaskVEnd',
+					id: 'maskVEnd',
 					min: 0,
 					max: 100,
-					default: 0,
+					default: 100,
+					isVisible: (options) => (<string[]>options.props!).includes('vMaskEnd'),
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.PipMaskVEnd, ReqType.Set, [getOptNumber(action, 'PipMaskVEnd')])
+				const props = <string[]>action.options.props
+				const commands: GoStreamCmd[] = []
+				if (props.includes('enable')) {
+					let paramOpt = getOptNumber(action, 'maskEnable')
+					if (paramOpt === 2) paramOpt = state.keyInfo[USKKeyTypes.Pip].mask.enabled ? 0 : 1
+					commands.push({
+						id: ActionId.PipMaskEnable,
+						type: ReqType.Set,
+						value: [paramOpt],
+					})
+				}
+				if (props.includes('hMaskStart')) {
+					commands.push({
+						id: ActionId.PipMaskHStart,
+						type: ReqType.Set,
+						value: [getOptNumber(action, 'maskHStart')],
+					})
+				}
+				if (props.includes('hMaskEnd')) {
+					commands.push({
+						id: ActionId.PipMaskHEnd,
+						type: ReqType.Set,
+						value: [getOptNumber(action, 'maskHEnd')],
+					})
+				}
+				if (props.includes('vMaskStart')) {
+					commands.push({
+						id: ActionId.PipMaskVStart,
+						type: ReqType.Set,
+						value: [getOptNumber(action, 'maskVStart')],
+					})
+				}
+				if (props.includes('vMaskEnd')) {
+					commands.push({
+						id: ActionId.PipMaskVEnd,
+						type: ReqType.Set,
+						value: [getOptNumber(action, 'maskVEnd')],
+					})
+				}
+
+				if (commands.length > 0) await sendCommands(commands)
 			},
 		},
 		[ActionId.PipBorderEnable]: {

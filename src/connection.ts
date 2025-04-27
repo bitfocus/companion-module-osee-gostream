@@ -31,7 +31,7 @@ const PORT_NUMBER = 19010
 export type GoStreamCmd = {
 	id: string
 	type: ReqType
-	value?: string | number | any[]
+	value?: (string | number)[]
 }
 
 export function valueAsBoolean(val: string | number | any[]): boolean {
@@ -69,7 +69,7 @@ export function connect(instance: GoStreamInstance): void {
 	tcp = new TCPHelper(host, PORT_NUMBER)
 	tcp.on('status_change', (state, message) => {
 		instance.updateStatus(state, message)
-		instance.log('debug', 'Socket reconnected')
+		instance.log('debug', 'Status Changed to ' + state + (message != undefined ? ': ' + message : ''))
 	})
 	tcp.on('connect', () => {
 		instance.updateStatus(InstanceStatus.Ok)
@@ -90,9 +90,12 @@ export function connect(instance: GoStreamInstance): void {
 				// Do nothing
 			})
 	})
-	tcp.on('error', () => {
+	tcp.on('error', (err) => {
 		instance.updateStatus(InstanceStatus.ConnectionFailure, 'Connection error')
-		instance.log('debug', 'Socket connect error')
+		instance.log('debug', 'Socket connect error: ' + err)
+	})
+	tcp.on('drain', () => {
+		instance.log('debug', 'Socket drain')
 	})
 	tcp.on('end', () => {
 		instance.updateStatus(InstanceStatus.Disconnected, 'Disconnecting')

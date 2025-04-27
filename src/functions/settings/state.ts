@@ -89,7 +89,7 @@ const ndiListTimeout = 5000
 export function update(state: SettingsStateT, data: GoStreamCmd): boolean {
 	switch (data.id as ActionId) {
 		case ActionId.AuxSource: {
-			if (data.value) state.auxSource = data.value[0]
+			state.auxSource = Number(data.value![0])
 			if (state.auxSource == 2) {
 				interval = setInterval(() => {
 					sendCommand(ActionId.NDIList, ReqType.Get)
@@ -105,59 +105,50 @@ export function update(state: SettingsStateT, data: GoStreamCmd): boolean {
 			break
 		}
 		case ActionId.InputWindowLayout:
-			if (data.value) state.inputWindowLayout = data.value[0]
+			state.inputWindowLayout = Number(data.value![0])
 			break
 		case ActionId.MvMeter:
-			if (data.value) state.mvMeter[data.value[0]] = data.value[1]
+			state.mvMeter[Number(data.value![0])] = Number(data.value![1])
 			break
 		case ActionId.OutSource: {
-			const outType = data.value && data.value[0]
-			const outValue = data.value && data.value[1]
-			state.outSource[outType] = outValue
+			state.outSource[Number(data.value![0])] = Number(data.value![1])
 			break
 		}
 		case ActionId.OutputColorSpace:
-			if (data.value) state.outputColorSpace[data.value[0]] = data.value[1]
+			state.outputColorSpace[Number(data.value![0])] = Number(data.value![1])
 			break
 		case ActionId.OutFormat:
-			state.outputFormat = data.value && data.value[0]
+			state.outputFormat = Number(data.value![0])
 			break
 		case ActionId.MicInput:
-			if (data.value) state.micInput[data.value[0]] = data.value[1]
+			state.micInput[Number(data.value![0])] = Number(data.value![1])
 			break
 		case ActionId.MvLayout:
-			state.mvLayout = data.value && data.value[0]
+			state.mvLayout = Number(data.value![0])
 			break
 		case ActionId.SrcSelection:
-			if (data.value) state.sourceSelection[data.value[0]] = data.value[1]
+			state.sourceSelection[Number(data.value![0])] = Number(data.value![1])
 			break
 		case ActionId.SrcName:
-			if (!data.value) return true
-			state.sourceName[data.value[0]] = data.value[1]
+			state.sourceName[Number(data.value![0])] = String(data.value![1])
 			break
 		case ActionId.GetSrcSelectionList:
-			if (!data.value) return true
-			state.sourceSelectionList = <string[]>data.value
+			state.sourceSelectionList = <string[]>data.value!
 			return true
 		case ActionId.Version:
-			if (!data.value) return true
-			state.version = data.value[0]
+			state.version = String(data.value![0])
 			break
 		case ActionId.BuildInfo:
-			if (!data.value) return true
-			state.buildInfo = data.value[0]
+			state.buildInfo = String(data.value![0])
 			break
 		case ActionId.DeviceId:
-			if (!data.value) return true
-			state.deviceId = data.value[0]
+			state.deviceId = String(data.value![0])
 			break
 		case ActionId.DeviceName:
-			if (!data.value) return true
-			state.deviceName = data.value[0]
+			state.deviceName = String(data.value![0])
 			break
 		case ActionId.NDIConnect:
-			if (!data.value) return false
-			state.connectedNdiSource = { name: data.value[0], address: data.value[1] }
+			state.connectedNdiSource = { name: String(data.value![0]), address: String(data.value![1]) }
 			break
 		case ActionId.NDIList: {
 			if (!data.value) {

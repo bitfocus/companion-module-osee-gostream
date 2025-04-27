@@ -1,5 +1,5 @@
 import { ActionId } from './actionId'
-import { sendCommands, GoStreamCmd, valueAsBoolean } from '../../connection'
+import { sendCommands, GoStreamCmd } from '../../connection'
 import { ReqType } from '../../enums'
 import type { GoStreamModel } from '../../models/types'
 
@@ -38,22 +38,27 @@ export async function sync(_model: GoStreamModel): Promise<boolean> {
 export function update(state: PlaybackStateT, data: GoStreamCmd): boolean {
 	switch (data.id as ActionId) {
 		case ActionId.PlaybackMode:
-			state.Mode = data.value![0]
+			state.Mode = Number(data.value![0])
 			break
 		case ActionId.PlaybackRepeat:
-			state.Repeat = valueAsBoolean(data.value![0])
+			state.Repeat = Boolean(data.value![0])
 			break
 		case ActionId.PlaybackPause:
-			state.Pause = data.value![0] === 1 ? true : false
+			state.Pause = Boolean(data.value![0])
 			break
 		case ActionId.PlaybackBar:
-			state.Bar = data.value![0] === 1 ? true : false
+			state.Bar = Boolean(data.value![0])
 			break
 		case ActionId.PlayFile:
-			state.File = state.FileList.indexOf(data.value![0])
+			state.File = state.FileList.indexOf(String(data.value![0]))
 			break
 		case ActionId.PlaybackList:
-			state.FileList = state.FileList.concat(<any[]>data.value!)
+			if (!('value' in data)) {
+				// list is empty
+				state.FileList = []
+			} else {
+				state.FileList = <string[]>data.value
+			}
 			return true
 	}
 	return false

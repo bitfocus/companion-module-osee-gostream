@@ -7,4 +7,5 @@ export enum ActionId {
 	Live = 'live',
 	LiveInfo = 'liveInfo',
 	StreamProfileAll = 'getStreamProfileAll',
+	StreamQuality = 'streamQuality',
 }

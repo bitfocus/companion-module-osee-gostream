@@ -5,10 +5,16 @@ import {
 	CompanionMigrationAction,
 	CompanionStaticUpgradeScript,
 	CompanionMigrationFeedback,
+	EmptyUpgradeScript,
 } from '@companion-module/base'
 
 import * as UpgradeToConsolidatedSSRCMaskAction from './upgradeToConsolidatedSSRCMaskAction'
+import * as UpgradeToV15 from './upgradeToV15'
 import { tryUpdateNTAction, tryUpdateNTFeedback } from './upgradeNextTransitiontov1-4'
+import {
+	upgradeActionToV1_5 as upgradeActionToV1_5,
+	upgradeFeedbackToV1_5 as upgradeFeedbackToV1_5,
+} from './upgradeAKworkTo_v15'
 
 // The following functions are modified from:
 // https://github.com/bitfocus/companion-module-allenheath-sq/blob/main/src/upgrades.ts
@@ -46,6 +52,10 @@ export function ModuleUpgrader(
 // Note: the number of items in this list must grow monotonically, and new items must be added to the end for this to work properly
 // (In some cases very old upgraders can be replaced by EmptyUpgradeScript)
 export const UpgradeScriptList: CompanionStaticUpgradeScript<Config>[] = [
+	EmptyUpgradeScript,
+	UpgradeToV15.getScripts,
 	UpgradeToConsolidatedSSRCMaskAction.getScripts,
 	ModuleUpgrader(tryUpdateNTAction, tryUpdateNTFeedback),
+	UpgradeToV15.getScripts, // Johan upgrades
+	ModuleUpgrader(upgradeActionToV1_5, upgradeFeedbackToV1_5), // Ari upgrades
 ]
