@@ -26,7 +26,7 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionF
 					label: 'Source',
 					id: 'Source',
 					default: 0,
-					choices: model.InputSources().map((item) => ({ id: item.id, label: item.name })),
+					choices: model.InputSources(),
 				},
 			],
 			callback: (feedback) => {
@@ -51,7 +51,7 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionF
 					label: 'Source',
 					id: 'Source',
 					default: 0,
-					choices: model.InputSources().map((item) => ({ id: item.id, label: item.name })),
+					choices: model.InputSources(),
 				},
 			],
 			callback: (feedback) => {

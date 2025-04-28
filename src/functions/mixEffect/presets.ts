@@ -13,7 +13,7 @@ const ptzSize = '18'
 export function create(model: GoStreamModel): CompanionPresetDefinitions {
 	const presets = {}
 
-	const InputSources = model.InputSources().map((item) => ({ id: item.id, label: item.name }))
+	const InputSources = model.InputSources()
 	for (const src of InputSources) {
 		presets[`Preview_${src.id}`] = {
 			type: 'button',
