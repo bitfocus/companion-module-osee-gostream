@@ -1,6 +1,8 @@
 export enum ActionId {
 	PgmIndex = 'pgmIndex',
+	PgmIndexSequence = 'pgmIndexSequence',
 	PvwIndex = 'pvwIndex',
+	PvwIndexSequence = 'pvwIndexSequence',
 	CutTransition = 'cutTransition',
 	AutoTransition = 'autoTransition',
 	FTB = 'ftb',
