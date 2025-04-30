@@ -1,5 +1,6 @@
 export enum ActionId {
 	UpStreamKeyFillKeyType = 'upStreamKeyFillKeyType',
+	UpStreamKeyFillKeySequence = 'upStreamKeyFillKeyTypeSequence',
 	UpStreamKeyType = 'upStreamKeyType',
 	LumaKeySourceFill = 'lumaKeySourceFill',
 	LumaKeySourceKey = 'lumaKeySourceKey',
@@ -36,6 +37,7 @@ export enum ActionId {
 	ChromaKeyControlBackground = 'chromaKeyControlBackground',
 	ChromaKeyControlKeyEdge = 'chromaKeyControlKeyEdge',
 	KeyPatternSourceFill = 'keyPatternSourceFill',
+	PatternSourceFillSequence = 'keyPatternSourceFillSequence',
 	KeyPatternWipePattern = 'keyPatternWipePattern',
 	KeyPatternWipeSize = 'keyPatternWipeSize',
 	KeyPatternWipeXPosition = 'keyPatternWipeXPosition',
@@ -53,6 +55,7 @@ export enum ActionId {
 	KeyPatternResizeXPosition = 'keyPatternResizeXPosition',
 	KeyPatternResizeYPosition = 'keyPatternResizeYPosition',
 	PipSource = 'pipSource',
+	PipSourceSequence = 'pipSourceSequence',
 	PipSize = 'pipSize',
 	PipXPosition = 'pipXPosition',
 	PipYPosition = 'pipYPosition',
