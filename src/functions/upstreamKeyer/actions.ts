@@ -1,14 +1,29 @@
 import { ActionId } from './actionId'
-import { getOptNumber, getOptString, makeChoices } from './../../util'
+import { getOptNumber, getOptString, makeChoices, sequenceOrderDropdown, nextInSequence } from './../../util'
 import { ReqType, ActionType } from './../../enums'
 import { sendCommand } from './../../connection'
 import { createLumaKeyActions } from './keyTypes/lumaKey'
 import { createChromaKeyActions } from './keyTypes/chromaKey'
 import { createKeyPatternActions } from './keyTypes/keyPattern'
 import { createPIPActions } from './keyTypes/pip'
-import type { CompanionActionDefinitions } from '@companion-module/base'
-import { UpstreamKeyerStateT } from './state'
+import type { CompanionActionDefinitions, SomeCompanionActionInputField } from '@companion-module/base'
+import { UpstreamKeyerStateT, USKKeySourceType } from './state'
 import { GoStreamModel } from '../../models/types'
+
+// for selecting input sequences...
+export function setUSKSourceSeqOptions(model: GoStreamModel): SomeCompanionActionInputField[] {
+	return [
+		{
+			id: 'Sources',
+			type: 'multidropdown',
+			label: 'Sources',
+			choices: model.getChoices(ActionType.PipSource),
+			// default sequence is all sources:
+			default: model.getChoices(ActionType.PipSource).map((val) => val.id),
+		},
+		sequenceOrderDropdown,
+	]
+}
 
 export function create(model: GoStreamModel, state: UpstreamKeyerStateT): CompanionActionDefinitions {
 	return {
@@ -36,6 +51,19 @@ export function create(model: GoStreamModel, state: UpstreamKeyerStateT): Compan
 					getOptNumber(action, 'FillSource'),
 					getOptNumber(action, 'KeySource'),
 				])
+			},
+		},
+		[ActionId.UpStreamKeyFillKeySequence]: {
+			name: 'UpStream Key:Set a Source Sequence for the current upstream key (USK)',
+			description:
+				'Choose a set of input sources to cycle through, either sequentially or randomly. Each button press will advance to the next source. "Random sets" will cycle through the whole set before repeating; "Random selection" allows repeats any time.',
+			options: setUSKSourceSeqOptions(model),
+			callback: async (action) => {
+				const srcSequence = action.options.Sources as number[]
+				const curSource = state.keyInfo[state.encodeKeyType()].sources[USKKeySourceType.Fill]
+				const newSource = nextInSequence(srcSequence, curSource, action)
+
+				await sendCommand(ActionId.UpStreamKeyFillKeyType, ReqType.Set, [state.encodeKeyType(), newSource, newSource])
 			},
 		},
 		[ActionId.UpStreamKeyType]: {
