@@ -198,7 +198,7 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionA
 					// Toggle: cycle through all available choices sequentially:
 					const sizes = action.options.TransitionStyleSequence as number[]
 					const curStyle = state.selectTransitionStyle.style
-					choice = nextInSequence(sizes, curStyle) // default order is sequential.
+					choice = nextInSequence(sizes, curStyle) as number // default order is sequential.
 				}
 				await sendCommand(ActionId.TransitionIndex, ReqType.Set, [choice])
 			},

@@ -81,18 +81,18 @@ export const sequenceOrderDropdown: SomeCompanionActionInputField = {
 }
 
 // a static dict to store remaining selection when drawing randomly without replacement.
-nextInSequence.remaining = new Map<string, number[]>()
+nextInSequence.remaining = new Map<string, DropdownChoiceId[]>()
 
 // Pick the next item in a set either sequentially or randomly.
 export function nextInSequence(
-	optSequence: number[], // the full ordered set
-	currentOpt: number, // the currently selected item, from state (may not be in srcSequence)
+	optSequence: DropdownChoiceId[], // the full ordered set
+	currentOpt: DropdownChoiceId, // the currently selected item, from state (may not be in srcSequence)
 	action: CompanionActionEvent | sequenceOp = sequenceOp.Sequential, // traversal order
 	uniqueID = '', //  if picking without replacement, but not providing the CompanionActionEvent, then provide a unique ID to associate with the current status
-): number {
+): DropdownChoiceId {
 	let currentOptPos = optSequence.indexOf(currentOpt) // the position or -1
 	let newIdx = currentOptPos
-	let newOption: number
+	let newOption: DropdownChoiceId
 	let order: sequenceOp
 
 	// Parse the third argument

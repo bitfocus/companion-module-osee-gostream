@@ -73,19 +73,27 @@ export function create(model: GoStreamModel, state: UpstreamKeyerStateT): Compan
 					type: 'dropdown',
 					label: 'Key Type:',
 					id: 'USKType',
+					...makeChoices(state.keyTypes(), [{ id: 'Toggle', label: 'Toggle' }]),
+				},
+				{
+					type: 'multidropdown',
+					label: 'Sequence',
+					id: 'KeyTypeSequence',
 					...makeChoices(state.keyTypes()),
+					default: state.keyTypes(),
+					isVisible: (options) => options.USKType === 'Toggle',
 				},
 			],
 			callback: async (action) => {
-				const keyType = getOptString(action, 'USKType')
-				// --> the following is for backwards compatibility before upgrade scripts are written
-				let encoded = Number(keyType)
-				if (isNaN(encoded)) {
-					encoded = state.encodeKeyType(keyType)
+				let keyType = getOptString(action, 'USKType')
+				if (keyType === 'Toggle') {
+					// Toggle: cycle through all available choices sequentially:
+					const keyTypes = action.options.KeyTypeSequence as string[]
+					const curChoice = state.UpStreamKeyType
+					keyType = nextInSequence(keyTypes, curChoice) as string // default order is sequential.
 				}
-				//<--
 
-				await sendCommand(ActionId.UpStreamKeyType, ReqType.Set, [encoded])
+				await sendCommand(ActionId.UpStreamKeyType, ReqType.Set, [state.encodeKeyType(keyType)])
 			},
 		},
 		...createLumaKeyActions(model, state),
