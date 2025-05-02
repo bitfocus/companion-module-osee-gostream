@@ -1,6 +1,7 @@
 export enum ActionId {
 	SuperSourceEnable = 'superSourceEnable',
 	SuperSourceSource = 'superSourceSource', // Not a signal
+	SuperSourceSourceSequence = 'superSourceSourceSequence', // Not a signal
 	SuperSourceSource1 = 'superSourceSource1',
 	SuperSourceSource2 = 'superSourceSource2',
 	SuperSourceBackground = 'superSourceBackground',

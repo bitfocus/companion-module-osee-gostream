@@ -62,7 +62,7 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionA
 		[ActionId.PgmIndexSequence]: {
 			name: createActionName('Set a PGM Source Sequence'),
 			description:
-				'Choose a set of input sources to cycle through, either sequentially or randomly. Each button press will advance to the next source. "Random sets" will cycle through the whole set before repeating; "Fully random" allows repeats any time.',
+				'Choose a set of input sources to cycle through, either sequentially or randomly. Each button press will advance to the next source. "Random sets" will cycle through the whole set before repeating; "Fully random" allows repeats any time. To automate a sequence add this action to a "Time Interval" Trigger.',
 			options: setSourceSeqOptions(model),
 			callback: async (action) => {
 				const srcSequence = action.options.Sources as number[]
@@ -74,7 +74,7 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionA
 		[ActionId.PvwIndexSequence]: {
 			name: createActionName('Set a PVW Source Sequence'),
 			description:
-				'Choose a set of input sources to cycle through, either sequentially or randomly. Each button press will advance to the next source. "Random sets" will cycle through the whole set before repeating; "Fully random" allows repeats any time.',
+				'Choose a set of input sources to cycle through, either sequentially or randomly. Each button press will advance to the next source. "Random sets" will cycle through the whole set before repeating; "Fully random" allows repeats any time. To automate a sequence add this action to a "Time Interval" Trigger.',
 			options: setSourceSeqOptions(model),
 			callback: async (action) => {
 				const srcSequence = action.options.Sources as number[]

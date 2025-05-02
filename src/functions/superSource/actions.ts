@@ -1,5 +1,5 @@
 import { ActionId } from './actionId'
-import { getOptNumber } from '../../util'
+import { getOptNumber, sequenceOrderDropdown, nextInSequence } from '../../util'
 import {
 	SwitchChoices,
 	SuperSourceBorderChoices,
@@ -71,6 +71,48 @@ export function create(model: GoStreamModel, state: SuperSourceStateT): Companio
 				}
 			},
 		},
+		[ActionId.SuperSourceSourceSequence]: {
+			name: 'Super Source: Set SuperSource Source Sequence',
+			description:
+				'Choose a set of input sources to cycle through, either sequentially or randomly. Each button press will advance to the next source. "Random sets" will cycle through the whole set before repeating; "Random selection" allows repeats any time. To automate a sequence add this action to a "Time Interval" Trigger.',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Super Source',
+					id: 'typeid',
+					choices: SuperSourceChoices, // 0, 1, 2: source1, source2, background
+					default: 0,
+				},
+				{
+					id: 'Sources',
+					type: 'multidropdown',
+					label: 'Sources',
+					choices: model.getChoices(ActionType.SuperSourceSource),
+					// default sequence is all sources:
+					default: model.getChoices(ActionType.SuperSourceSource).map((val) => val.id),
+				},
+				sequenceOrderDropdown,
+			],
+			callback: async (action) => {
+				const window = Number(action.options.typeid)
+				const srcSequence = action.options.Sources as number[]
+				let curSource = state.source1
+				if (window === 1) {
+					curSource = state.source2
+				} else if (window === 2) {
+					curSource = state.background
+				}
+				const sourceID = nextInSequence(srcSequence, curSource, action)
+
+				if (window === 0) {
+					await sendCommand(ActionId.SuperSourceSource1, ReqType.Set, [sourceID])
+				} else if (window === 1) {
+					await sendCommand(ActionId.SuperSourceSource2, ReqType.Set, [sourceID])
+				} else if (window === 2) {
+					await sendCommand(ActionId.SuperSourceBackground, ReqType.Set, [sourceID])
+				}
+			},
+		},
 		[ActionId.SuperSourceControlStyle]: {
 			name: 'Super Source:Super Source Style',
 			options: [
@@ -78,12 +120,27 @@ export function create(model: GoStreamModel, state: SuperSourceStateT): Companio
 					type: 'dropdown',
 					label: 'SuperSource Style:',
 					id: 'SuperSourceStyle',
-					choices: SuperSourceStyleChoices,
+					choices: SuperSourceStyleChoices.concat([{ id: -1, label: 'Toggle' }]),
 					default: 0,
+				},
+				{
+					type: 'multidropdown',
+					label: 'Sequence',
+					id: 'StyleSequence',
+					choices: SuperSourceStyleChoices,
+					default: SuperSourceStyleChoices.map((item) => item.id),
+					isVisible: (options) => options.SuperSourceStyle === -1,
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.SuperSourceControlStyle, ReqType.Set, [getOptNumber(action, 'SuperSourceStyle')])
+				let choice = getOptNumber(action, 'SuperSourceStyle')
+				if (choice === -1) {
+					// Toggle: cycle through all available choices sequentially:
+					const sizes = action.options.StyleSequence as number[]
+					const curStyle = state.controlStyle
+					choice = nextInSequence(sizes, curStyle) as number
+				}
+				await sendCommand(ActionId.SuperSourceControlStyle, ReqType.Set, [choice])
 			},
 		},
 		[ActionId.SuperSourceControlYPosition]: {

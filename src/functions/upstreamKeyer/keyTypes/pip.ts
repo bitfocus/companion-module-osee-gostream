@@ -37,7 +37,7 @@ export function createPIPActions(model: GoStreamModel, state: UpstreamKeyerState
 		[ActionId.PipSourceSequence]: {
 			name: 'UpStream Key:Set a Pip Source Sequence',
 			description:
-				'Choose a set of input sources to cycle through, either sequentially or randomly. Each button press will advance to the next source. "Random sets" will cycle through the whole set before repeating; "Random selection" allows repeats any time.',
+				'Choose a set of input sources to cycle through, either sequentially or randomly. Each button press will advance to the next source. "Random sets" will cycle through the whole set before repeating; "Random selection" allows repeats any time. To automate a sequence add this action to a "Time Interval" Trigger.',
 			options: setUSKSourceSeqOptions(model),
 			callback: async (action) => {
 				const srcSequence = action.options.Sources as number[]
