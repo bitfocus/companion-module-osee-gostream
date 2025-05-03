@@ -1,5 +1,5 @@
 import { ActionId } from './actionId'
-import { getOptNumber } from '../../util'
+import { getOptNumber, nextInSequence } from '../../util'
 import { ReqType, ActionType } from '../../enums'
 import { sendCommand } from '../../connection'
 import { AudioMixerStateT, AudioState } from './state'
@@ -279,18 +279,33 @@ export function create(model: GoStreamModel, state: AudioMixerStateT): Companion
 			},
 		},
 		[ActionId.AudioMonitorSource]: {
-			name: 'Audio Mixer:Set Monitor Source',
+			name: 'Audio Mixer:Set Headphone (aka Monitor) Source',
 			options: [
 				{
 					type: 'dropdown',
 					label: 'Source',
 					id: 'AudioSource',
-					choices: model.getChoices(ActionType.AudioMonitorSource),
+					choices: model.getChoices(ActionType.AudioMonitorSource).concat([{ id: -1, label: 'Toggle' }]),
 					default: 0,
+				},
+				{
+					type: 'multidropdown',
+					label: 'Sequence',
+					id: 'MonitorSequence',
+					choices: model.getChoices(ActionType.AudioMonitorSource),
+					default: model.getChoices(ActionType.AudioMonitorSource).map((item) => item.id),
+					isVisible: (options) => options.AudioSource === -1,
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.AudioMonitorSource, ReqType.Set, [getOptNumber(action, 'AudioSource')])
+				let choice = getOptNumber(action, 'AudioSource')
+				if (choice === -1) {
+					// Toggle: cycle through all selected choices sequentially:
+					const sources = action.options.MonitorSequence as number[]
+					const curSource = state.monitorSource
+					choice = nextInSequence(sources, curSource) as number // default order is sequential.
+				}
+				await sendCommand(ActionId.AudioMonitorSource, ReqType.Set, [choice])
 			},
 		},
 	}

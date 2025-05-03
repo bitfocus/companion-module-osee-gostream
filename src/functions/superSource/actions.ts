@@ -135,7 +135,7 @@ export function create(model: GoStreamModel, state: SuperSourceStateT): Companio
 			callback: async (action) => {
 				let choice = getOptNumber(action, 'SuperSourceStyle')
 				if (choice === -1) {
-					// Toggle: cycle through all available choices sequentially:
+					// Toggle: cycle through all selected choices sequentially:
 					const sizes = action.options.StyleSequence as number[]
 					const curStyle = state.controlStyle
 					choice = nextInSequence(sizes, curStyle) as number

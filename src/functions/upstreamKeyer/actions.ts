@@ -87,7 +87,7 @@ export function create(model: GoStreamModel, state: UpstreamKeyerStateT): Compan
 			callback: async (action) => {
 				let keyType = getOptString(action, 'USKType')
 				if (keyType === 'Toggle') {
-					// Toggle: cycle through all available choices sequentially:
+					// Toggle: cycle through all selected choices sequentially:
 					const keyTypes = action.options.KeyTypeSequence as string[]
 					const curChoice = state.UpStreamKeyType
 					keyType = nextInSequence(keyTypes, curChoice) as string // default order is sequential.
