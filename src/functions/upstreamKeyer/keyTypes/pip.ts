@@ -68,7 +68,7 @@ export function createPIPActions(model: GoStreamModel, state: UpstreamKeyerState
 			callback: async (action) => {
 				let choice = getOptNumber(action, 'PipSize')
 				if (choice === -1) {
-					// Toggle: cycle through all available choices sequentially:
+					// Toggle: cycle through all selected choices sequentially:
 					const sizes = action.options.PipSizeSet as number[]
 					const curSize = state.keyInfo[USKKeyTypes.Pip].size
 					choice = nextInSequence(sizes, curSize) as number
