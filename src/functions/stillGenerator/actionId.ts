@@ -3,4 +3,6 @@ export enum ActionId {
 	StillRemove = 'stillRemove',
 	StillLoadIndex = 'stillLoadIndex',
 	StillLoadImage = 'stillLoadImage',
+	StillXPosition = 'stillXPosition',
+	StillYPosition = 'stillYPosition',
 }

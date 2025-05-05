@@ -25,7 +25,7 @@ export function getValues(state: MixEffectStateT): CompanionVariableValues {
 	const newValues = {}
 	// map "In #" to "in #" to improve readability because the capital "I" is too much like a 1.. (and map the rest for consistency)
 	// lowercase is also more compact, so it fits better on the buttons.
-	const inputSources = state.model.InputSources().map((item) => item.name.toLowerCase())
+	const inputSources = state.model.InputSources().map((item) => item.label.toLowerCase())
 	const transitionStyle = TransitionStyleChoice.map((item) => item.label)
 	newValues[VariableId.PVW_Source] = inputSources[state.PvwSrc]
 	newValues[VariableId.PGM_Source] = inputSources[state.PgmSrc]

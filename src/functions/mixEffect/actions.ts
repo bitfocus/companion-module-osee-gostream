@@ -1,8 +1,8 @@
 import { ActionId } from './actionId'
-import { getOptNumber, getOptString } from '../../util'
+import { getOptNumber, getOptString, nextInSequence, sequenceOrderDropdown } from '../../util'
 import { ReqType, ActionType, TransitionStyle } from '../../enums'
 import { sendCommand, sendCommands } from '../../connection'
-import type { CompanionActionDefinitions } from '@companion-module/base'
+import type { CompanionActionDefinitions, SomeCompanionActionInputField } from '@companion-module/base'
 import { TransitionStyleChoice, WipeDirectionChoices, SwitchChoices } from '../../model'
 import { GoStreamModel } from '../../models/types'
 import { MixEffectStateT } from './state'
@@ -10,6 +10,21 @@ import { MixEffectStateT } from './state'
 function createActionName(name: string): string {
 	return 'MixEffect: ' + name
 }
+
+function setSourceSeqOptions(model: GoStreamModel): SomeCompanionActionInputField[] {
+	return [
+		{
+			id: 'Sources',
+			type: 'multidropdown',
+			label: 'Sources',
+			choices: model.InputSources(),
+			// default sequence is all sources:
+			default: model.InputSources().map((val) => val.id),
+		},
+		sequenceOrderDropdown,
+	]
+}
+
 export function create(model: GoStreamModel, state: MixEffectStateT): CompanionActionDefinitions {
 	return {
 		[ActionId.PgmIndex]: {
@@ -20,7 +35,7 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionA
 					label: 'Source',
 					id: 'Source',
 					default: 0,
-					choices: model.InputSources().map((item) => ({ id: item.id, label: item.name })),
+					choices: model.InputSources(),
 				},
 			],
 			callback: async (action) => {
@@ -36,12 +51,36 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionA
 					label: 'Source',
 					id: 'Source',
 					default: 0,
-					choices: model.InputSources().map((item) => ({ id: item.id, label: item.name })),
+					choices: model.InputSources(),
 				},
 			],
 			callback: async (action) => {
 				const id = getOptNumber(action, 'Source')
 				await sendCommand(ActionId.PvwIndex, ReqType.Set, [id])
+			},
+		},
+		[ActionId.PgmIndexSequence]: {
+			name: createActionName('Set a PGM Source Sequence'),
+			description:
+				'Choose a set of input sources to cycle through, either sequentially or randomly. Each button press will advance to the next source. "Random sets" will cycle through the whole set before repeating; "Fully random" allows repeats any time. To automate a sequence add this action to a "Time Interval" Trigger.',
+			options: setSourceSeqOptions(model),
+			callback: async (action) => {
+				const srcSequence = action.options.Sources as number[]
+				const newSource = nextInSequence(srcSequence, state.PgmSrc, action)
+
+				await sendCommand(ActionId.PgmIndex, ReqType.Set, [newSource])
+			},
+		},
+		[ActionId.PvwIndexSequence]: {
+			name: createActionName('Set a PVW Source Sequence'),
+			description:
+				'Choose a set of input sources to cycle through, either sequentially or randomly. Each button press will advance to the next source. "Random sets" will cycle through the whole set before repeating; "Fully random" allows repeats any time. To automate a sequence add this action to a "Time Interval" Trigger.',
+			options: setSourceSeqOptions(model),
+			callback: async (action) => {
+				const srcSequence = action.options.Sources as number[]
+				const newSource = nextInSequence(srcSequence, state.PvwSrc, action)
+
+				await sendCommand(ActionId.PvwIndex, ReqType.Set, [newSource])
 			},
 		},
 		[ActionId.CutTransition]: {
@@ -141,12 +180,27 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionA
 					type: 'dropdown',
 					label: 'Transition Style',
 					id: 'TransitionStyle',
+					choices: TransitionStyleChoice.concat([{ id: -1, label: 'Toggle' }]),
 					default: TransitionStyle.MIX,
+				},
+				{
+					type: 'multidropdown',
+					label: 'Sequence',
+					id: 'TransitionStyleSequence',
 					choices: TransitionStyleChoice,
+					default: TransitionStyleChoice.map((item) => item.id),
+					isVisible: (options) => options.TransitionStyle === -1,
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.TransitionIndex, ReqType.Set, [getOptNumber(action, 'TransitionStyle')])
+				let choice = getOptNumber(action, 'TransitionStyle')
+				if (choice === -1) {
+					// Toggle: cycle through all selected choices sequentially:
+					const sizes = action.options.TransitionStyleSequence as number[]
+					const curStyle = state.selectTransitionStyle.style
+					choice = nextInSequence(sizes, curStyle) as number // default order is sequential.
+				}
+				await sendCommand(ActionId.TransitionIndex, ReqType.Set, [choice])
 			},
 		},
 		[ActionId.TransitionRate]: {

@@ -1,10 +1,11 @@
 import { ActionId } from '../actionId'
-import { getOptNumber, getOptString } from './../../../util'
+import { setUSKSourceSeqOptions } from './../actions'
+import { getOptNumber, getOptString, nextInSequence } from './../../../util'
 import { SwitchChoices, KeyResizeSizeChoices } from './../../../model'
 import { ReqType, ActionType } from './../../../enums'
 import { sendCommand, sendCommands, GoStreamCmd } from './../../../connection'
 import type { CompanionActionDefinitions } from '@companion-module/base'
-import { UpstreamKeyerStateT, USKKeyTypes } from '../state'
+import { UpstreamKeyerStateT, USKKeyTypes, USKKeySourceType } from '../state'
 import { GoStreamModel } from '../../../models/types'
 
 export function createKeyPatternActions(model: GoStreamModel, state: UpstreamKeyerStateT): CompanionActionDefinitions {
@@ -30,6 +31,19 @@ export function createKeyPatternActions(model: GoStreamModel, state: UpstreamKey
 			],
 			callback: async (action) => {
 				await sendCommand(ActionId.KeyPatternSourceFill, ReqType.Set, [getOptNumber(action, 'KeyFill')])
+			},
+		},
+		[ActionId.PatternSourceFillSequence]: {
+			name: 'UpStream Key:Set a Pattern Source Sequence',
+			description:
+				'Choose a set of input sources to cycle through, either sequentially or randomly. Each button press will advance to the next source. "Random sets" will cycle through the whole set before repeating; "Random selection" allows repeats any time. To automate a sequence add this action to a "Time Interval" Trigger.',
+			options: setUSKSourceSeqOptions(model),
+			callback: async (action) => {
+				const srcSequence = action.options.Sources as number[]
+				const curSource = state.keyInfo[USKKeyTypes.KeyPattern].sources[USKKeySourceType.Fill]
+				const newSource = nextInSequence(srcSequence, curSource, action)
+
+				await sendCommand(ActionId.KeyPatternSourceFill, ReqType.Set, [newSource])
 			},
 		},
 		[ActionId.KeyPatternWipePattern]: {

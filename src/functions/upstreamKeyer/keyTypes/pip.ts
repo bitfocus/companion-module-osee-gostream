@@ -1,10 +1,11 @@
 import { ActionId } from './../actionId'
-import { getOptNumber, getOptString, makeChoices } from './../../../util'
-import { SwitchChoices, KeyResizeSizeChoices } from './../../../model'
+import { setUSKSourceSeqOptions } from './../actions'
+import { getOptNumber, getOptString, makeChoices, nextInSequence } from './../../../util'
+import { SwitchChoices } from './../../../model'
 import { ReqType, ActionType } from './../../../enums'
 import { sendCommand, sendCommands, GoStreamCmd } from './../../../connection'
 import type { CompanionActionDefinitions } from '@companion-module/base'
-import { UpstreamKeyerStateT, USKKeyTypes } from '../state'
+import { UpstreamKeyerStateT, USKKeyTypes, USKKeySourceType } from '../state'
 import { GoStreamModel } from '../../../models/types'
 
 // #TODO: these constants should probably be embedded in the model
@@ -33,6 +34,19 @@ export function createPIPActions(model: GoStreamModel, state: UpstreamKeyerState
 				await sendCommand(ActionId.PipSource, ReqType.Set, [getOptNumber(action, 'KeyFill')])
 			},
 		},
+		[ActionId.PipSourceSequence]: {
+			name: 'UpStream Key:Set a Pip Source Sequence',
+			description:
+				'Choose a set of input sources to cycle through, either sequentially or randomly. Each button press will advance to the next source. "Random sets" will cycle through the whole set before repeating; "Random selection" allows repeats any time. To automate a sequence add this action to a "Time Interval" Trigger.',
+			options: setUSKSourceSeqOptions(model),
+			callback: async (action) => {
+				const srcSequence = action.options.Sources as number[]
+				const curSource = state.keyInfo[USKKeyTypes.Pip].sources[USKKeySourceType.Fill]
+				const newSource = nextInSequence(srcSequence, curSource, action)
+
+				await sendCommand(ActionId.PipSource, ReqType.Set, [newSource])
+			},
+		},
 		[ActionId.PipSize]: {
 			name: 'UpStream Key:Set PIP Size',
 			options: [
@@ -40,21 +54,26 @@ export function createPIPActions(model: GoStreamModel, state: UpstreamKeyerState
 					type: 'dropdown',
 					label: 'Size',
 					id: 'PipSize',
+					...makeChoices(state.keyScalingSizes(), [{ id: -1, label: 'Toggle' }]),
+				},
+				{
+					type: 'multidropdown',
+					label: 'Sequence',
+					id: 'PipSizeSet',
 					...makeChoices(state.keyScalingSizes()),
+					default: state.keyScalingSizes(), // replace the non-multidropdown default provided by makeChoices
+					isVisible: (options) => options.PipSize === -1,
 				},
 			],
 			callback: async (action) => {
-				const choice = getOptNumber(action, 'PipSize')
-				if (Number.isInteger(choice)) {
-					// backward compatibility: choice is 0, 1, 2...
-					const info = KeyResizeSizeChoices.find((s) => s.id === action.options.PipSize)
-					if (info !== null && info !== undefined) {
-						const value = Number(info.id)
-						await sendCommand(ActionId.PipSize, ReqType.Set, [value])
-					}
-				} else {
-					await sendCommand(ActionId.PipSize, ReqType.Set, [state.encodeKeyScalingSize(choice)])
+				let choice = getOptNumber(action, 'PipSize')
+				if (choice === -1) {
+					// Toggle: cycle through all selected choices sequentially:
+					const sizes = action.options.PipSizeSet as number[]
+					const curSize = state.keyInfo[USKKeyTypes.Pip].size
+					choice = nextInSequence(sizes, curSize) as number
 				}
+				await sendCommand(ActionId.PipSize, ReqType.Set, [state.encodeKeyScalingSize(choice)])
 			},
 		},
 		[ActionId.PipXPosition]: {

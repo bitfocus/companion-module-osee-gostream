@@ -30,15 +30,6 @@ export type IPortSpec = {
 	caps: PortCaps
 }
 
-export type PortT = {
-	id: number
-	name: string
-}
-
-export type SourceT = {
-	id: number
-	name: string
-}
 export function SourcesToChoices(
 	sources: { inputId: number; longName: string; shortName: string }[],
 ): DropdownChoice[] {
@@ -56,7 +47,7 @@ export class GoStreamModel {
 	streams: number
 	transitionTypes: number
 	stillSlots: number
-	outputPorts: PortT[]
+	outputPorts: DropdownChoice[]
 
 	constructor() {
 		this.id = Model.Unknown
@@ -67,9 +58,9 @@ export class GoStreamModel {
 		this.transitionTypes = 0
 		this.stillSlots = 0
 		this.outputPorts = [
-			{ id: 0, name: 'HDMI 1' },
-			{ id: 1, name: 'HDMI 2' },
-			{ id: 2, name: 'UVC' },
+			{ id: 0, label: 'HDMI 1' },
+			{ id: 1, label: 'HDMI 2' },
+			{ id: 2, label: 'UVC' },
 		]
 	}
 
@@ -168,47 +159,47 @@ export class GoStreamModel {
 		}))
 	}
 
-	InputSources(): SourceT[] {
+	InputSources(): DropdownChoice[] {
 		return [
-			{ id: 0, name: 'In 1' },
-			{ id: 1, name: 'In 2' },
-			{ id: 2, name: 'In 3' },
-			{ id: 3, name: 'In 4' },
-			{ id: 4, name: 'Aux' },
-			{ id: 5, name: 'S/SRC' },
-			{ id: 6, name: 'Still 1' },
-			{ id: 7, name: 'Still 2' },
+			{ id: 0, label: 'In 1' },
+			{ id: 1, label: 'In 2' },
+			{ id: 2, label: 'In 3' },
+			{ id: 3, label: 'In 4' },
+			{ id: 4, label: 'Aux' },
+			{ id: 5, label: 'S/SRC' },
+			{ id: 6, label: 'Still 1' },
+			{ id: 7, label: 'Still 2' },
 		]
 	}
 
-	OutputSources(): SourceT[] {
+	OutputSources(): DropdownChoice[] {
 		return [
-			{ id: 0, name: 'In 1' },
-			{ id: 1, name: 'In 2' },
-			{ id: 2, name: 'In 3' },
-			{ id: 3, name: 'In 4' },
-			{ id: 4, name: 'Aux' },
-			{ id: 5, name: 'PGM' },
-			{ id: 6, name: 'PVW' },
-			{ id: 7, name: 'Multiview' },
+			{ id: 0, label: 'In 1' },
+			{ id: 1, label: 'In 2' },
+			{ id: 2, label: 'In 3' },
+			{ id: 3, label: 'In 4' },
+			{ id: 4, label: 'Aux' },
+			{ id: 5, label: 'PGM' },
+			{ id: 6, label: 'PVW' },
+			{ id: 7, label: 'Multiview' },
 		]
 	}
 
-	FillKeySources(): SourceT[] {
+	FillKeySources(): DropdownChoice[] {
 		return [
-			{ id: 0, name: 'In 1' },
-			{ id: 1, name: 'In 2' },
-			{ id: 2, name: 'In 3' },
-			{ id: 3, name: 'In 4' },
-			{ id: 4, name: 'Aux' },
-			{ id: 5, name: 'Still 1' },
-			{ id: 6, name: 'Still 1 Key' },
-			{ id: 7, name: 'Still 2' },
-			{ id: 8, name: 'Still 2 Key' },
-			{ id: 9, name: 'Color 1' },
-			{ id: 10, name: 'Color 2' },
-			{ id: 11, name: 'Color Bar' },
-			{ id: 12, name: 'Black' },
+			{ id: 0, label: 'In 1' },
+			{ id: 1, label: 'In 2' },
+			{ id: 2, label: 'In 3' },
+			{ id: 3, label: 'In 4' },
+			{ id: 4, label: 'Aux' },
+			{ id: 5, label: 'Still 1' },
+			{ id: 6, label: 'Still 1 Key' },
+			{ id: 7, label: 'Still 2' },
+			{ id: 8, label: 'Still 2 Key' },
+			{ id: 9, label: 'Color 1' },
+			{ id: 10, label: 'Color 2' },
+			{ id: 11, label: 'Color Bar' },
+			{ id: 12, label: 'Black' },
 		]
 	}
 

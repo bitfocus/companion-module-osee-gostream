@@ -1,5 +1,5 @@
 import { ActionId } from './actionId'
-import { getOptNumber, getOptString, makeChoices } from '../../util'
+import { getOptNumber, getOptString, makeChoices, nextInSequence } from '../../util'
 import type { CompanionActionDefinitions } from '@companion-module/base'
 import { RecordStateT } from './state'
 import { GoStreamModel } from '../../models/types'
@@ -65,11 +65,27 @@ export function create(_model: GoStreamModel, state: RecordStateT): CompanionAct
 					type: 'dropdown',
 					label: 'Quality',
 					id: 'Quality',
+					...makeChoices(state.qualityValues(), [{ id: 'Toggle', label: 'Toggle' }]),
+				},
+				{
+					type: 'multidropdown',
+					label: 'Sequence',
+					id: 'QualitySequence',
 					...makeChoices(state.qualityValues()),
+					default: state.qualityValues(),
+					isVisible: (options) => options.Quality === 'Toggle',
 				},
 			],
 			callback: async (action) => {
-				await state.setRecordingQuality(getOptString(action, 'Quality'))
+				let quality = getOptString(action, 'Quality')
+				if (quality === 'Toggle') {
+					// Toggle: cycle through all selected choices sequentially:
+					const keyTypes = action.options.QualitySequence as string[]
+					const curChoice = state.quality!
+					quality = nextInSequence(keyTypes, curChoice) as string // default order is sequential.
+				}
+
+				await state.setRecordingQuality(quality)
 			},
 		},
 	}
