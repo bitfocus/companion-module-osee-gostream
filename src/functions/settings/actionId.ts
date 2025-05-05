@@ -7,6 +7,7 @@ export enum ActionId {
 	MicInput = 'micInput',
 	SrcSelection = 'srcSelection',
 	AuxSource = 'auxSource',
+	StorageDevice = 'storageDevice',
 	OutFormat = 'outFormat',
 	OutputColorSpace = 'outputColorSpace',
 	OutSource = 'outSource',

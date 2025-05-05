@@ -1,7 +1,9 @@
 import { CompanionVariableDefinition, CompanionVariableValues } from '@companion-module/base'
 import { GoStreamModel } from '../../models/types'
 import { SettingsStateT } from './state'
-export function create(_model: GoStreamModel): CompanionVariableDefinition[] {
+import { SettingsAuxSourceChoices } from './../../model'
+
+export function create(model: GoStreamModel): CompanionVariableDefinition[] {
 	const vars: CompanionVariableDefinition[] = []
 	for (let i = 0; i < 9; i++) {
 		vars.push({
@@ -34,6 +36,23 @@ export function create(_model: GoStreamModel): CompanionVariableDefinition[] {
 		name: 'connected NDI source address',
 		variableId: 'connectedNDISource_address',
 	})
+	vars.push({
+		name: 'Aux Source',
+		variableId: 'auxSource',
+	})
+	vars.push({
+		name: 'Aux Storage Device',
+		variableId: 'auxStorageDevice',
+	})
+
+	for (const dditem of model.outputPorts) {
+		const outport = dditem.label
+		const output_sym = outport.replaceAll(' ', '_')
+		vars.push({
+			name: `${outport} Output Source`,
+			variableId: `OutputSource_${output_sym}`,
+		})
+	}
 
 	return vars
 }
@@ -50,5 +69,19 @@ export function getValues(state: SettingsStateT): CompanionVariableValues {
 
 	newValues['connectedNDISource_name'] = state.connectedNdiSource.name
 	newValues['connectedNDISource_address'] = state.connectedNdiSource.address
+
+	newValues['auxSource'] = SettingsAuxSourceChoices.find((item) => item.id === state.auxSource)?.label
+	newValues['auxStorageDevice'] = state.storageDevice
+
+	// Output Sources
+	for (const dditem of state.model.outputPorts) {
+		const outport = dditem.label
+		const output_sym = outport.replaceAll(' ', '_')
+		const idx = dditem.id
+		newValues[`OutputSource_${output_sym}`] = state.model
+			.OutputSources()
+			.find((item) => item.id === state.outSource[idx])?.label
+	}
+
 	return newValues
 }

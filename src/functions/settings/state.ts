@@ -10,7 +10,9 @@ export type NDISource = {
 }
 
 export type SettingsStateT = {
+	model: GoStreamModel
 	auxSource: number
+	storageDevice: string
 	inputWindowLayout: number
 	mvMeter: number[]
 	outSource: number[] // hdmi1, hdmi2, uvc
@@ -36,7 +38,9 @@ export function create(model: GoStreamModel): SettingsStateT {
 	const colorSpaceCapableOutputs = model.outputs.filter((out) => out.caps & PortCaps.Colorspace).length
 	const srcSelectable = model.inputs.filter((inp) => inp.type & (PortType.HDMI | PortType.SDI)).length
 	return {
+		model: model,
 		auxSource: 0,
+		storageDevice: '',
 		inputWindowLayout: 0,
 		mvMeter: Array(audioCapableInputs),
 		outSource: Array(model.outputs.length),
@@ -65,6 +69,7 @@ export async function sync(model: GoStreamModel): Promise<boolean> {
 	const srcSelectable = model.inputs.filter((inp) => inp.type & (PortType.HDMI | PortType.SDI)).length
 	const cmds: GoStreamCmd[] = [
 		{ id: ActionId.AuxSource, type: ReqType.Get },
+		{ id: ActionId.StorageDevice, type: ReqType.Get },
 		...Range(model.outputs.length).map((id) => ({ id: ActionId.OutSource, type: ReqType.Get, value: [id] })),
 		{ id: ActionId.InputWindowLayout, type: ReqType.Get },
 		...Range(audioCapableInputs).map((id) => ({ id: ActionId.MvMeter, type: ReqType.Get, value: [id] })),
@@ -104,6 +109,9 @@ export function update(state: SettingsStateT, data: GoStreamCmd): boolean {
 			}
 			break
 		}
+		case ActionId.StorageDevice:
+			state.storageDevice = String(data.value![0])
+			break
 		case ActionId.InputWindowLayout:
 			state.inputWindowLayout = Number(data.value![0])
 			break
