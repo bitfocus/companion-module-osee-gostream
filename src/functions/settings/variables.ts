@@ -44,7 +44,7 @@ export function create(model: GoStreamModel): CompanionVariableDefinition[] {
 		name: 'Aux Storage Device',
 		variableId: 'auxStorageDevice',
 	})
-	
+
 	for (const dditem of model.outputPorts) {
 		const outport = dditem.label
 		const output_sym = outport.replaceAll(' ', '_')
@@ -70,15 +70,17 @@ export function getValues(state: SettingsStateT): CompanionVariableValues {
 	newValues['connectedNDISource_name'] = state.connectedNdiSource.name
 	newValues['connectedNDISource_address'] = state.connectedNdiSource.address
 
-	newValues['auxSource'] = SettingsAuxSourceChoices.find(item=>item.id===state.auxSource)?.label
+	newValues['auxSource'] = SettingsAuxSourceChoices.find((item) => item.id === state.auxSource)?.label
 	newValues['auxStorageDevice'] = state.storageDevice
-	
+
 	// Output Sources
 	for (const dditem of state.model.outputPorts) {
 		const outport = dditem.label
 		const output_sym = outport.replaceAll(' ', '_')
 		const idx = dditem.id
-		newValues[`OutputSource_${output_sym}`] = state.model.OutputSources().find(item=>item.id===state.outSource[idx])?.label
+		newValues[`OutputSource_${output_sym}`] = state.model
+			.OutputSources()
+			.find((item) => item.id === state.outSource[idx])?.label
 	}
 
 	return newValues

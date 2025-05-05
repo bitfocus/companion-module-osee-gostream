@@ -38,7 +38,7 @@ export function create(model: GoStreamModel): SettingsStateT {
 	const colorSpaceCapableOutputs = model.outputs.filter((out) => out.caps & PortCaps.Colorspace).length
 	const srcSelectable = model.inputs.filter((inp) => inp.type & (PortType.HDMI | PortType.SDI)).length
 	return {
-		model: model, 
+		model: model,
 		auxSource: 0,
 		storageDevice: '',
 		inputWindowLayout: 0,
