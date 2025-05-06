@@ -1,5 +1,5 @@
 import { ActionId } from './actionId'
-import { getOptNumber, getOptString } from './../../util'
+import { getOptNumber, getOptString, nextInSequence } from './../../util'
 import { ReqType, PortType, PortCaps } from './../../enums'
 import { sendCommand } from './../../connection'
 import { SettingsStateT } from './state'
@@ -23,7 +23,7 @@ import { getInputs } from './../../models'
 export function create(model: GoStreamModel, state: SettingsStateT): CompanionActionDefinitions {
 	return {
 		[ActionId.SrcName]: {
-			name: 'Settings:Set SrcName',
+			name: 'Settings:Set Source name in Multiview windows',
 			options: [
 				{
 					type: 'dropdown',
@@ -49,6 +49,7 @@ export function create(model: GoStreamModel, state: SettingsStateT): CompanionAc
 		},
 		[ActionId.MvMeter]: {
 			name: 'Settings:Set Mv Meter',
+			description: 'Enable/Disable audio meter in each Multiview window',
 			options: [
 				{
 					type: 'dropdown',
@@ -77,6 +78,7 @@ export function create(model: GoStreamModel, state: SettingsStateT): CompanionAc
 		},
 		[ActionId.MvLayout]: {
 			name: 'Settings:Set Mv Layout',
+			description: 'Swap the position of the multiview program and preview views.',
 			options: [
 				{
 					type: 'dropdown',
@@ -91,7 +93,7 @@ export function create(model: GoStreamModel, state: SettingsStateT): CompanionAc
 			},
 		},
 		[ActionId.InputWindowLayout]: {
-			name: ' Settings: Set Input Window Mv Layout',
+			name: ' Settings: Set Input Window Layout in Multiview',
 			options: [
 				{
 					type: 'dropdown',
@@ -106,7 +108,9 @@ export function create(model: GoStreamModel, state: SettingsStateT): CompanionAc
 			},
 		},
 		[ActionId.Marker]: {
-			name: 'Settings: Set Marker',
+			name: 'Settings: Set Marker in Multiview PVW',
+			description:
+				'Enable/Disable the safe area marker inside the preview view. The outer marker represents the 16:9 safe area and the inner represents the 4:3 safe area.',
 			options: [
 				{
 					type: 'dropdown',
@@ -121,7 +125,7 @@ export function create(model: GoStreamModel, state: SettingsStateT): CompanionAc
 			},
 		},
 		[ActionId.MicInput]: {
-			name: 'Settings: Mic Input',
+			name: 'Settings: Mic Input Type (Line/Mic/Mic+Power)',
 			options: [
 				{
 					type: 'dropdown',
@@ -155,7 +159,8 @@ export function create(model: GoStreamModel, state: SettingsStateT): CompanionAc
 			},
 		},
 		[ActionId.SrcSelection]: {
-			name: 'Settings: Src Selection',
+			name: 'Settings: Input Source Selection',
+			description: 'Select input sources (SDI/HDMI Colorspace)',
 			options: [
 				{
 					type: 'dropdown',
@@ -186,22 +191,40 @@ export function create(model: GoStreamModel, state: SettingsStateT): CompanionAc
 			},
 		},
 		[ActionId.AuxSource]: {
-			name: 'Settings: Aux Source',
+			name: 'Settings: Aux Input Source',
+			description: 'Select the input source for Aux (Player/UVC/NDI)',
 			options: [
 				{
 					type: 'dropdown',
 					label: 'Aux Source',
 					id: 'auxSourceID',
-					choices: SettingsAuxSourceChoices,
+					choices: SettingsAuxSourceChoices.concat([{ id: -1, label: 'Toggle' }]),
 					default: 0,
+				},
+				{
+					type: 'multidropdown',
+					label: 'Sequence',
+					id: 'SourceSequence',
+					choices: SettingsAuxSourceChoices,
+					default: SettingsAuxSourceChoices.map((item) => item.id),
+					isVisible: (options) => options.auxSourceID === -1,
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.AuxSource, ReqType.Set, [getOptNumber(action, 'auxSourceID')])
+				let choice = getOptNumber(action, 'auxSourceID')
+				if (choice === -1) {
+					// Toggle: cycle through all selected choices sequentially:
+					const sources = action.options.SourceSequence as number[]
+					const curSource = state.auxSource
+					choice = nextInSequence(sources, curSource) as number // use default order: sequential.
+				}
+				// note: if you switch too quickly, the choice may not 'take'
+				await sendCommand(ActionId.AuxSource, ReqType.Set, [choice])
 			},
 		},
 		[ActionId.OutFormat]: {
-			name: 'Settings: Out Format',
+			name: 'Settings: Output Format',
+			description: 'Choose the frame rate.',
 			options: [
 				{
 					type: 'dropdown',
@@ -252,7 +275,7 @@ export function create(model: GoStreamModel, state: SettingsStateT): CompanionAc
 			},
 		},
 		[ActionId.OutSource]: {
-			name: 'Settings:Out Source',
+			name: 'Settings:Set Output (HDMI1/HDMI2/UVC) Source',
 			options: [
 				{
 					type: 'dropdown',
@@ -265,19 +288,32 @@ export function create(model: GoStreamModel, state: SettingsStateT): CompanionAc
 					type: 'dropdown',
 					label: 'OutSource',
 					id: 'OutSource',
-					choices: model.OutputSources(),
+					choices: model.OutputSources().concat([{ id: -1, label: 'Toggle' }]),
 					default: 0,
+				},
+				{
+					type: 'multidropdown',
+					label: 'Sequence',
+					id: 'SourceSequence',
+					choices: model.OutputSources(),
+					default: model.OutputSources().map((item) => item.id),
+					isVisible: (options) => options.OutSource === -1,
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.OutSource, ReqType.Set, [
-					getOptNumber(action, 'OutId'),
-					getOptNumber(action, 'OutSource'),
-				])
+				const outputPort = getOptNumber(action, 'OutId')
+				let choice = getOptNumber(action, 'OutSource')
+				if (choice === -1) {
+					// Toggle: cycle through all selected choices sequentially:
+					const sources = action.options.SourceSequence as number[]
+					const curSource = state.outSource[outputPort]
+					choice = nextInSequence(sources, curSource) as number // use default order: sequential.
+				}
+				await sendCommand(ActionId.OutSource, ReqType.Set, [outputPort, choice])
 			},
 		},
 		[ActionId.NDIConnect]: {
-			name: 'Settings: Select NDI source',
+			name: 'Settings: Select NDI input source',
 			options: [
 				{
 					type: 'dropdown',
