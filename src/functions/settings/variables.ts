@@ -45,6 +45,11 @@ export function create(model: GoStreamModel): CompanionVariableDefinition[] {
 		variableId: 'auxStorageDevice',
 	})
 
+	vars.push({
+		name: 'Button Brightness',
+		variableId: 'buttonBrightness',
+	})
+
 	for (const dditem of model.outputPorts) {
 		const outport = dditem.label
 		const output_sym = outport.replaceAll(' ', '_')
@@ -73,6 +78,8 @@ export function getValues(state: SettingsStateT): CompanionVariableValues {
 	newValues['auxSource'] = SettingsAuxSourceChoices.find((item) => item.id === state.auxSource)?.label
 	newValues['auxStorageDevice'] = state.storageDevice
 
+	newValues['buttonBrightness'] = state.buttonBrightness
+	
 	// Output Sources
 	for (const dditem of state.model.outputPorts) {
 		const outport = dditem.label

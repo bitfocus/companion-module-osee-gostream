@@ -332,5 +332,24 @@ export function create(model: GoStreamModel, state: SettingsStateT): CompanionAc
 				await sendCommand(ActionId.NDIConnect, ReqType.Set, [state.ndiSources[id].name, state.ndiSources[id].address])
 			},
 		},
+		[ActionId.Panel]: {
+			name: 'Settings: Set Button Brightness',
+			options: [
+				{
+					type: 'number',
+					label: 'Button Brightness',
+					id: 'brightness',
+					required: true,
+					range: true,
+					min: 0,
+					max: 15,
+					step: 1,
+					default: 0,
+				},
+			],
+			callback: async (action) => {
+				await sendCommand(ActionId.Panel, ReqType.Set, [getOptNumber(action, 'brightness')])
+			},
+		},
 	}
 }
