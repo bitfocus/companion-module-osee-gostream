@@ -79,7 +79,7 @@ export function getValues(state: SettingsStateT): CompanionVariableValues {
 	newValues['auxStorageDevice'] = state.storageDevice
 
 	newValues['buttonBrightness'] = state.buttonBrightness
-	
+
 	// Output Sources
 	for (const dditem of state.model.outputPorts) {
 		const outport = dditem.label

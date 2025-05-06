@@ -176,8 +176,8 @@ export function update(state: SettingsStateT, data: GoStreamCmd): boolean {
 			// Reload actions etc
 			return true
 		}
-	case ActionId.Panel:
-		state.buttonBrightness = Number(data.value![0])
+		case ActionId.Panel:
+			state.buttonBrightness = Number(data.value![0])
 	}
 	return false
 }
