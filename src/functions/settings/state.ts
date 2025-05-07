@@ -29,6 +29,7 @@ export type SettingsStateT = {
 	deviceName: string
 	ndiSources: NDISource[]
 	connectedNdiSource: NDISource
+	buttonBrightness: number
 }
 
 export function create(model: GoStreamModel): SettingsStateT {
@@ -57,6 +58,7 @@ export function create(model: GoStreamModel): SettingsStateT {
 		deviceName: '',
 		ndiSources: [],
 		connectedNdiSource: { name: '', address: '' },
+		buttonBrightness: 0,
 	}
 }
 
@@ -84,6 +86,7 @@ export async function sync(model: GoStreamModel): Promise<boolean> {
 		{ id: ActionId.BuildInfo, type: ReqType.Get },
 		{ id: ActionId.DeviceId, type: ReqType.Get },
 		{ id: ActionId.DeviceName, type: ReqType.Get },
+		{ id: ActionId.Panel, type: ReqType.Get },
 	]
 	return sendCommands(cmds)
 }
@@ -173,6 +176,8 @@ export function update(state: SettingsStateT, data: GoStreamCmd): boolean {
 			// Reload actions etc
 			return true
 		}
+		case ActionId.Panel:
+			state.buttonBrightness = Number(data.value![0])
 	}
 	return false
 }
