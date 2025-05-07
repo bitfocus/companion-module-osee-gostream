@@ -8,4 +8,5 @@ export enum FeedbackId {
 	SettingOutSource = 'settingOutSource',
 	AuxBG = 'auxBG',
 	NDIConnect = 'NDIConnect',
+	Panel = 'panel',
 }

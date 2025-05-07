@@ -288,6 +288,37 @@ export function create(model: GoStreamModel, state: SettingsStateT): CompanionFe
 				}
 			},
 		},
+		[FeedbackId.Panel]: {
+			type: 'boolean',
+			name: 'Settings: Button Brightness',
+			description: 'If the button brightness setting is as specified here, change the button style',
+			options: [
+				{
+					type: 'number',
+					label: 'Button Brightness',
+					id: 'brightness',
+					required: true,
+					range: true,
+					min: 0,
+					max: 15,
+					step: 1,
+					default: 0,
+				},
+			],
+			defaultStyle: {
+				color: combineRgb(0, 0, 0),
+				bgcolor: combineRgb(255, 255, 0),
+			},
+			callback: (feedback) => {
+				return state.buttonBrightness === feedback.options.brightness
+			},
+			learn: async (feedback) => {
+				return {
+					...feedback.options,
+					brightness: state.buttonBrightness,
+				}
+			},
+		},
 		[FeedbackId.NDIConnect]: {
 			type: 'boolean',
 			name: 'Aux: Connected NDI source',

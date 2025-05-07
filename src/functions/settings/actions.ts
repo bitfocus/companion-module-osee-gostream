@@ -350,9 +350,9 @@ export function create(model: GoStreamModel, state: SettingsStateT): CompanionAc
 			callback: async (action) => {
 				await sendCommand(ActionId.Panel, ReqType.Set, [getOptNumber(action, 'brightness')])
 			},
-			learn: async (feedback) => {
+			learn: async (action) => {
 				return {
-					...feedback.options,
+					...action.options,
 					brightness: state.buttonBrightness,
 				}
 			},
