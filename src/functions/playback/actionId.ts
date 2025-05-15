@@ -7,4 +7,6 @@ export enum ActionId {
 	PlayFile = 'playFile',
 	PlaybackList = 'playbackList',
 	PlaybackPlayhead = 'playbackSkip',
+	PlaybackNext = 'playbackNext',
+	PlaybackPrev = 'playbackLast',
 }
