@@ -43,8 +43,8 @@ export function create(_model: GoStreamModel, state: PlaybackStateT): CompanionF
 		},
 		[FeedbackId.PlaybackPause]: {
 			type: 'boolean',
-			name: 'Playback: Set Playback Pause',
-			description: 'If you turn on Playback Pause, change style of the button',
+			name: 'Playback: Playing',
+			description: 'Change style of the button if internal video is playing',
 			options: [],
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),
@@ -89,6 +89,21 @@ export function create(_model: GoStreamModel, state: PlaybackStateT): CompanionF
 			},
 			callback: (feedback) => {
 				return feedback.options.PlayFileID === state.File
+			},
+		},
+		[FeedbackId.PlaybackNoFiles]: {
+			type: 'boolean',
+			name: 'PlayFile:No files present',
+			description: 'Change button style if no video files are on the storage medium',
+			options: [],
+			defaultStyle: {
+				color: combineRgb(0, 0, 0),
+				bgcolor: combineRgb(72, 72, 72),
+				text: 'No video files to play',
+				size: '14',
+			},
+			callback: (_feedback) => {
+				return state.FileList.length === 0
 			},
 		},
 	}

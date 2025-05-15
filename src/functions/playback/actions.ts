@@ -10,7 +10,8 @@ import type { GoStreamModel } from '../../models/types'
 export function create(_model: GoStreamModel, state: PlaybackStateT): CompanionActionDefinitions {
 	return {
 		[ActionId.PlayModeRepeatPause]: {
-			name: 'Playback:Set playback Info',
+			name: 'Playback:Set playback options (play in group/repeat/play)',
+			description: 'This is a "convenionce" action combining three other actions.',
 			options: [
 				{
 					type: 'dropdown',
@@ -37,7 +38,7 @@ export function create(_model: GoStreamModel, state: PlaybackStateT): CompanionA
 					label: 'pause',
 					id: 'pauseId',
 					choices: [
-						{ id: 0, label: 'stop' },
+						{ id: 0, label: 'pause' },
 						{ id: 1, label: 'start' },
 						{ id: 2, label: 'Toggle' },
 					],
@@ -68,7 +69,7 @@ export function create(_model: GoStreamModel, state: PlaybackStateT): CompanionA
 			},
 		},
 		[ActionId.PlaybackMode]: {
-			name: 'Playback:Set playback Mode',
+			name: 'Playback:Set playback Group Mode (play within or across groups)',
 			options: [
 				{
 					type: 'dropdown',
@@ -105,7 +106,7 @@ export function create(_model: GoStreamModel, state: PlaybackStateT): CompanionA
 			},
 		},
 		[ActionId.PlaybackRepeat]: {
-			name: 'Playback:Set playback Repeat',
+			name: 'Playback:Set playback Repeat Single Video',
 			options: [
 				{
 					type: 'dropdown',
@@ -131,14 +132,14 @@ export function create(_model: GoStreamModel, state: PlaybackStateT): CompanionA
 			},
 		},
 		[ActionId.PlaybackPause]: {
-			name: 'Playback:Set playback Pause',
+			name: 'Playback:Start/Pause',
 			options: [
 				{
 					type: 'dropdown',
 					label: 'Enable',
 					id: 'EnableID',
 					choices: [
-						{ id: 0, label: 'stop' },
+						{ id: 0, label: 'pause' },
 						{ id: 1, label: 'start' },
 						{ id: 2, label: 'Toggle' },
 					],
@@ -161,7 +162,7 @@ export function create(_model: GoStreamModel, state: PlaybackStateT): CompanionA
 			},
 		},
 		[ActionId.PlaybackBar]: {
-			name: 'Playback:Set playback Bar',
+			name: 'Playback:Show Progress Bar',
 			options: [
 				{
 					type: 'dropdown',
@@ -184,6 +185,34 @@ export function create(_model: GoStreamModel, state: PlaybackStateT): CompanionA
 				} else {
 					await sendCommand(ActionId.PlaybackBar, ReqType.Set, [opt])
 				}
+			},
+		},
+		[ActionId.PlaybackPlayhead]: {
+			// note, playbackSkip does not appear to work as a "set" command, but this works
+			name: 'Playback:Rewind',
+			description: 'Reset playhead to the beginning of the video.',
+			options: [],
+			callback: async (_action) => {
+				//await sendCommand(ActionId.PlaybackPlayhead, ReqType.Set, [0]) // nothing; haven't tested in fw 2.20
+				await sendCommand(ActionId.PlayFile, ReqType.Set, [state.FileList[state.File]]) // Works!
+			},
+		},
+		[ActionId.PlaybackNext]: {
+			name: 'Playback:Next in Group',
+			description:
+				'Advance to next video in group (if play within groups is selected; otherwise next in the file list).',
+			options: [],
+			callback: async (_action) => {
+				await sendCommand('playbackNext', ReqType.Set) // -- works to advance if not last in group.
+			},
+		},
+		[ActionId.PlaybackPrev]: {
+			name: 'Playback:Previous in Group',
+			description:
+				'Advance to previous video in group (if play within groups is selected; otherwise previous in the file list).',
+			options: [],
+			callback: async (_action) => {
+				await sendCommand('playbackPrev', ReqType.Set) // -- works to go back if not last in group.
 			},
 		},
 	}

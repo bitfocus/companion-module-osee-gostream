@@ -4,4 +4,5 @@ export enum FeedbackId {
 	PlaybackPause = 'playbackPause',
 	PlaybackBar = 'playbackBar',
 	PlayFile = 'playFile',
+	PlaybackNoFiles = 'playbackNoFiles',
 }
