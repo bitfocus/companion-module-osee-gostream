@@ -1,7 +1,10 @@
 import { FeedbackId } from './feedbackId'
 import { combineRgb, CompanionFeedbackDefinitions } from '@companion-module/base'
 import { PlaybackStateT } from './state'
+import { pbGroupButtons } from './actions'
+import { getOptString } from '../../util'
 import type { GoStreamModel } from '../../models/types'
+
 export function create(_model: GoStreamModel, state: PlaybackStateT): CompanionFeedbackDefinitions {
 	return {
 		[FeedbackId.PlaybackMode]: {
@@ -104,6 +107,47 @@ export function create(_model: GoStreamModel, state: PlaybackStateT): CompanionF
 			},
 			callback: (_feedback) => {
 				return state.FileList.length === 0
+			},
+		},
+		[FeedbackId.PlaybackNoGroup]: {
+			type: 'advanced',
+			name: 'PlayFile:Group is not in groups.ini, or group is empty',
+			description: 'Change button text if group is not specified in the groups.ini file.',
+			options: [
+				{
+					id: 'GroupNameID',
+					type: 'dropdown',
+					label: 'GroupName',
+					choices: [{ id: '*AUTODETECT*', label: "SAME AS BUTTON'S ACTION" }].concat(
+						Array.from(state.Groups.keys()).map((s, _index) => ({
+							id: s,
+							label: s,
+						})),
+					),
+					allowCustom: true,
+					default: '*AUTODETECT*',
+				},
+			],
+			callback: (feedback) => {
+				let groupName = getOptString(feedback, 'GroupNameID')
+				//const opt = getOptNumber(feedback, 'positionID')
+				if (groupName === '*AUTODETECT*') {
+					const action_groupName = pbGroupButtons.get(feedback.controlId)
+					if (action_groupName === undefined) {
+						return {}
+					}
+					groupName = action_groupName
+				}
+				const group = state.Groups.get(groupName)
+				if (group === undefined) {
+					return {
+						color: combineRgb(0, 0, 0),
+						bgcolor: combineRgb(72, 72, 72),
+						text: `Group ${groupName} not found`,
+					}
+				} else {
+					return {}
+				}
 			},
 		},
 	}

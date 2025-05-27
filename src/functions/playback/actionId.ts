@@ -9,4 +9,6 @@ export enum ActionId {
 	PlaybackPlayhead = 'playbackSkip',
 	PlaybackNext = 'playbackNext',
 	PlaybackPrev = 'playbackLast',
+	PlaybackGetAllGroups = 'getPlaybackGroupAll',
+	PlaybackGroup = 'playbackGroup',
 }

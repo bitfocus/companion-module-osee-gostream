@@ -3,6 +3,8 @@ import { sendCommands, GoStreamCmd } from '../../connection'
 import { ReqType } from '../../enums'
 import type { GoStreamModel } from '../../models/types'
 
+type playbackGroupT = Map<string, string[]>
+
 export type PlaybackStateT = {
 	Mode: number
 	Repeat: boolean
@@ -14,6 +16,7 @@ export type PlaybackStateT = {
 	// Not really state variable, hold videofile list
 	// TODO: place somewhere more logical
 	FileList: string[]
+	Groups: playbackGroupT
 }
 
 export function create(_model: GoStreamModel): PlaybackStateT {
@@ -26,6 +29,7 @@ export function create(_model: GoStreamModel): PlaybackStateT {
 		Playlength: 0,
 		File: 0,
 		FileList: [],
+		Groups: new Map<string, string[]>(),
 	}
 }
 
@@ -36,6 +40,7 @@ export async function sync(_model: GoStreamModel): Promise<boolean> {
 		{ id: ActionId.PlaybackPause, type: ReqType.Get },
 		{ id: ActionId.PlaybackBar, type: ReqType.Get },
 		{ id: ActionId.PlaybackList, type: ReqType.Get },
+		{ id: ActionId.PlaybackGetAllGroups, type: ReqType.Get },
 		{ id: ActionId.PlaybackPlayhead, type: ReqType.Get },
 	]
 	return await sendCommands(cmds)
@@ -69,6 +74,14 @@ export function update(state: PlaybackStateT, data: GoStreamCmd): boolean {
 				state.FileList = <string[]>data.value
 			}
 			return true
+		case ActionId.PlaybackGroup:
+			if (!('value' in data)) {
+				state.Groups.clear()
+			} else {
+				// first item in array is the group name, rest is the list of video files
+				state.Groups.set(String(data.value![0]), <string[]>data.value!.slice(1))
+			}
+			break
 	}
 	return false
 }
