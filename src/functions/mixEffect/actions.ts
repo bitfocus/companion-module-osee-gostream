@@ -92,18 +92,9 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionA
 		},
 		[ActionId.AutoTransition]: {
 			name: createActionName('Perform AUTO transition'),
-			description:
-				'Auto transition is set by "Set Transition Style" and can be CUT or FTB in addition to the standard MIX, DIP, WIPE.',
 			options: [],
 			callback: async () => {
-				const style = state.autoTransition.style
-				if (style == TransitionStyle.CUT) {
-					await sendCommand(ActionId.CutTransition, ReqType.Set)
-				} else if (style == TransitionStyle.FTB) {
-					await sendCommand(ActionId.FTB, ReqType.Set)
-				} else {
-					await sendCommand(ActionId.AutoTransition, ReqType.Set)
-				}
+				await sendCommand(ActionId.AutoTransition, ReqType.Set)
 			},
 		},
 		[ActionId.FTB]: {
@@ -184,8 +175,6 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionA
 		},
 		[ActionId.TransitionIndex]: {
 			name: createActionName('Set transition style'),
-			description:
-				'Set to one of: MIX, DIP, WIPE, CUT, or FTB. Note that the last two are Companion-only styles: they do not affect the AUTO button on the GoStream panel.',
 			options: [
 				{
 					type: 'dropdown',
@@ -211,15 +200,7 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionA
 					const curStyle = state.autoTransition.style
 					choice = nextInSequence(sizes, curStyle) as number // default order is sequential.
 				}
-				if (choice === TransitionStyle.CUT || choice === TransitionStyle.FTB) {
-					// note, for "psuedostyles we must set state directly here
-					state.autoTransition.style = choice
-					// then request info, which will trigger updating the variable.
-					await sendCommand(ActionId.TransitionIndex, ReqType.Get)
-				} else {
-					state.autoTransition.style = -1 // reset any current state (otherwise if style was CUT or FTB it won't update)
-					await sendCommand(ActionId.TransitionIndex, ReqType.Set, [choice])
-				}
+				await sendCommand(ActionId.TransitionIndex, ReqType.Set, [choice])
 			},
 		},
 		[ActionId.TransitionRate]: {

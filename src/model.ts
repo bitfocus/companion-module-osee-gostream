@@ -36,8 +36,6 @@ export const TransitionStyleChoice = [
 	{ id: TransitionStyle.MIX, label: 'MIX' },
 	{ id: TransitionStyle.DIP, label: 'DIP' },
 	{ id: TransitionStyle.WIPE, label: 'WIPE' },
-	{ id: TransitionStyle.CUT, label: 'CUT' },
-	{ id: TransitionStyle.FTB, label: 'FTB' },
 ]
 export const SwitchChoices = [
 	{ id: 0, label: 'Off' },

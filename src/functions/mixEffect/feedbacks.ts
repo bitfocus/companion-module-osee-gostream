@@ -171,7 +171,7 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionF
 					label: 'Transition Style',
 					id: 'TransitionStyle',
 					default: TransitionStyle.MIX,
-					choices: TransitionStyleChoice.slice(0, 3), // (exclude CUT and FTB)
+					choices: TransitionStyleChoice,
 				},
 				{
 					type: 'number',

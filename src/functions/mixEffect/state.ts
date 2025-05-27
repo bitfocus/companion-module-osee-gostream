@@ -1,6 +1,6 @@
 import { ActionId } from './actionId'
 import { sendCommands, GoStreamCmd } from '../../connection'
-import { ReqType, TransitionStyle } from '../../enums'
+import { ReqType } from '../../enums'
 import type { GoStreamModel } from '../../models/types'
 
 // Class for next transition group: KEY, DSK, BKGD, OnAir (KEY), OnAir (DSK)
@@ -195,11 +195,8 @@ export function update(state: MixEffectStateT, data: GoStreamCmd): boolean {
 			state.autoTransition.PrevState = Boolean(data.value![0])
 			break
 		case ActionId.TransitionIndex: {
-			// only change the internal state if we're not currently set to one of the pseudovalues.
-			const curStyle = state.autoTransition.style // current style
-			if (curStyle !== TransitionStyle.CUT && curStyle !== TransitionStyle.FTB) {
-				state.autoTransition.style = Number(data.value![0])
-			}
+			const selectValue = Number(data.value![0])
+			state.autoTransition.style = selectValue
 			break
 		}
 		case ActionId.TransitionRate: {
