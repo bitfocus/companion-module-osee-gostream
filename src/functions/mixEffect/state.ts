@@ -95,15 +95,13 @@ export type MixEffectStateT = {
 		AFV: boolean
 		rate: number
 	}
-	selectTransitionStyle: {
+	autoTransition: {
 		PrevState: boolean
 		style: number
 		mixrate: number
 		diprate: number
 		wiperate: number
 	}
-	pvwOnAir: boolean
-	tied: boolean
 	nextTState: nextTransitionState
 }
 
@@ -122,15 +120,13 @@ export function create(model: GoStreamModel): MixEffectStateT {
 			AFV: false,
 			rate: 0,
 		},
-		selectTransitionStyle: {
+		autoTransition: {
 			PrevState: false,
 			style: 0,
 			mixrate: 0,
 			diprate: 0,
 			wiperate: 0,
 		},
-		pvwOnAir: false,
-		tied: false,
 		nextTState: new nextTransitionState(),
 	}
 }
@@ -196,22 +192,22 @@ export function update(state: MixEffectStateT, data: GoStreamCmd): boolean {
 			state.fadeToBlack.rate = Number(data.value![0])
 			break
 		case ActionId.Prev:
-			state.selectTransitionStyle.PrevState = Boolean(data.value![0])
+			state.autoTransition.PrevState = Boolean(data.value![0])
 			break
 		case ActionId.TransitionIndex: {
 			const selectValue = Number(data.value![0])
-			state.selectTransitionStyle.style = selectValue
+			state.autoTransition.style = selectValue
 			break
 		}
 		case ActionId.TransitionRate: {
 			const type = Number(data.value![0])
 			const typeValue = Number(data.value![1])
 			if (type === 0) {
-				state.selectTransitionStyle.mixrate = typeValue
+				state.autoTransition.mixrate = typeValue
 			} else if (type === 1) {
-				state.selectTransitionStyle.diprate = typeValue
+				state.autoTransition.diprate = typeValue
 			} else if (type === 2) {
-				state.selectTransitionStyle.wiperate = typeValue
+				state.autoTransition.wiperate = typeValue
 			}
 			break
 		}

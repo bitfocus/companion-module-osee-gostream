@@ -162,7 +162,7 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionA
 				const opt = getOptNumber(action, 'prevEnable')
 				let paramOpt = 0
 				if (opt === 2) {
-					if (state.selectTransitionStyle.PrevState === true) {
+					if (state.autoTransition.PrevState === true) {
 						paramOpt = 0
 					} else {
 						paramOpt = 1
@@ -174,7 +174,7 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionA
 			},
 		},
 		[ActionId.TransitionIndex]: {
-			name: createActionName('Set transition style/pattern'),
+			name: createActionName('Set transition style'),
 			options: [
 				{
 					type: 'dropdown',
@@ -197,7 +197,7 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionA
 				if (choice === -1) {
 					// Toggle: cycle through all selected choices sequentially:
 					const sizes = action.options.TransitionStyleSequence as number[]
-					const curStyle = state.selectTransitionStyle.style
+					const curStyle = state.autoTransition.style
 					choice = nextInSequence(sizes, curStyle) as number // default order is sequential.
 				}
 				await sendCommand(ActionId.TransitionIndex, ReqType.Set, [choice])
