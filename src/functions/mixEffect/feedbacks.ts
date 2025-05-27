@@ -133,7 +133,7 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionF
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: () => {
-				return state.autoTransition.PrevState
+				return state.selectTransitionStyle.PrevState
 			},
 		},
 		[FeedbackId.TransitionStyle]: {
@@ -154,7 +154,7 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionF
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: (feedback) => {
-				if (state.autoTransition.style === feedback.options.TransitionStyle) {
+				if (state.selectTransitionStyle?.style === feedback.options.TransitionStyle) {
 					return true
 				} else {
 					return false
@@ -171,7 +171,7 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionF
 					label: 'Transition Style',
 					id: 'TransitionStyle',
 					default: TransitionStyle.MIX,
-					choices: TransitionStyleChoice.slice(0, 3), // (exclude CUT and FTB)
+					choices: TransitionStyleChoice,
 				},
 				{
 					type: 'number',
@@ -189,7 +189,7 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionF
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: (feedback) => {
-				const me = state.autoTransition
+				const me = state.selectTransitionStyle
 				if (me?.style === feedback.options.TransitionStyle) {
 					const style = Number(feedback.options.TransitionStyle)
 					const rate = Number(feedback.options.TransitionRate)
@@ -208,7 +208,7 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionF
 				return false
 			},
 			learn: (feedback) => {
-				const me = state.autoTransition
+				const me = state.selectTransitionStyle
 				if (me?.style === feedback.options.TransitionStyle) {
 					const style = Number(feedback.options.TransitionStyle)
 					switch (style) {

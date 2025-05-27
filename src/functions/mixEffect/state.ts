@@ -1,6 +1,6 @@
 import { ActionId } from './actionId'
 import { sendCommands, GoStreamCmd } from '../../connection'
-import { ReqType, TransitionStyle } from '../../enums'
+import { ReqType } from '../../enums'
 import type { GoStreamModel } from '../../models/types'
 
 // Class for next transition group: KEY, DSK, BKGD, OnAir (KEY), OnAir (DSK)
@@ -95,13 +95,15 @@ export type MixEffectStateT = {
 		AFV: boolean
 		rate: number
 	}
-	autoTransition: {
+	selectTransitionStyle: {
 		PrevState: boolean
 		style: number
 		mixrate: number
 		diprate: number
 		wiperate: number
 	}
+	pvwOnAir: boolean
+	tied: boolean
 	nextTState: nextTransitionState
 }
 
@@ -120,13 +122,15 @@ export function create(model: GoStreamModel): MixEffectStateT {
 			AFV: false,
 			rate: 0,
 		},
-		autoTransition: {
+		selectTransitionStyle: {
 			PrevState: false,
 			style: 0,
 			mixrate: 0,
 			diprate: 0,
 			wiperate: 0,
 		},
+		pvwOnAir: false,
+		tied: false,
 		nextTState: new nextTransitionState(),
 	}
 }
@@ -192,25 +196,22 @@ export function update(state: MixEffectStateT, data: GoStreamCmd): boolean {
 			state.fadeToBlack.rate = Number(data.value![0])
 			break
 		case ActionId.Prev:
-			state.autoTransition.PrevState = Boolean(data.value![0])
+			state.selectTransitionStyle.PrevState = Boolean(data.value![0])
 			break
 		case ActionId.TransitionIndex: {
-			// only change the internal state if we're not currently set to one of the pseudovalues.
-			const curStyle = state.autoTransition.style // current style
-			if (curStyle !== TransitionStyle.CUT && curStyle !== TransitionStyle.FTB) {
-				state.autoTransition.style = Number(data.value![0])
-			}
+			const selectValue = Number(data.value![0])
+			state.selectTransitionStyle.style = selectValue
 			break
 		}
 		case ActionId.TransitionRate: {
 			const type = Number(data.value![0])
 			const typeValue = Number(data.value![1])
 			if (type === 0) {
-				state.autoTransition.mixrate = typeValue
+				state.selectTransitionStyle.mixrate = typeValue
 			} else if (type === 1) {
-				state.autoTransition.diprate = typeValue
+				state.selectTransitionStyle.diprate = typeValue
 			} else if (type === 2) {
-				state.autoTransition.wiperate = typeValue
+				state.selectTransitionStyle.wiperate = typeValue
 			}
 			break
 		}

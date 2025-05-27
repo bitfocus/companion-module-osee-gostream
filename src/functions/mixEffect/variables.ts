@@ -29,7 +29,7 @@ export function getValues(state: MixEffectStateT): CompanionVariableValues {
 	const transitionStyle = TransitionStyleChoice.map((item) => item.label)
 	newValues[VariableId.PVW_Source] = inputSources[state.PvwSrc]
 	newValues[VariableId.PGM_Source] = inputSources[state.PgmSrc]
-	newValues[VariableId.TransitionStyle] = transitionStyle[state.autoTransition.style] // note we're assuming that TransitionStyleChoice is numbered consecutively from 0
+	newValues[VariableId.TransitionStyle] = transitionStyle[state.selectTransitionStyle.style]
 
 	return newValues
 }

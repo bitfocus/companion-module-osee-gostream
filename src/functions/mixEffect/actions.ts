@@ -92,18 +92,9 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionA
 		},
 		[ActionId.AutoTransition]: {
 			name: createActionName('Perform AUTO transition'),
-			description:
-				'Auto transition is set by "Set Transition Style" and can be CUT or FTB in addition to the standard MIX, DIP, WIPE.',
 			options: [],
 			callback: async () => {
-				const style = state.autoTransition.style
-				if (style == TransitionStyle.CUT) {
-					await sendCommand(ActionId.CutTransition, ReqType.Set)
-				} else if (style == TransitionStyle.FTB) {
-					await sendCommand(ActionId.FTB, ReqType.Set)
-				} else {
-					await sendCommand(ActionId.AutoTransition, ReqType.Set)
-				}
+				await sendCommand(ActionId.AutoTransition, ReqType.Set)
 			},
 		},
 		[ActionId.FTB]: {
@@ -171,7 +162,7 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionA
 				const opt = getOptNumber(action, 'prevEnable')
 				let paramOpt = 0
 				if (opt === 2) {
-					if (state.autoTransition.PrevState === true) {
+					if (state.selectTransitionStyle.PrevState === true) {
 						paramOpt = 0
 					} else {
 						paramOpt = 1
@@ -183,9 +174,7 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionA
 			},
 		},
 		[ActionId.TransitionIndex]: {
-			name: createActionName('Set transition style'),
-			description:
-				'Set to one of: MIX, DIP, WIPE, CUT, or FTB. Note that the last two are Companion-only styles: they do not affect the AUTO button on the GoStream panel.',
+			name: createActionName('Set transition style/pattern'),
 			options: [
 				{
 					type: 'dropdown',
@@ -208,18 +197,10 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionA
 				if (choice === -1) {
 					// Toggle: cycle through all selected choices sequentially:
 					const sizes = action.options.TransitionStyleSequence as number[]
-					const curStyle = state.autoTransition.style
+					const curStyle = state.selectTransitionStyle.style
 					choice = nextInSequence(sizes, curStyle) as number // default order is sequential.
 				}
-				if (choice === TransitionStyle.CUT || choice === TransitionStyle.FTB) {
-					// note, for "psuedostyles we must set state directly here
-					state.autoTransition.style = choice
-					// then request info, which will trigger updating the variable.
-					await sendCommand(ActionId.TransitionIndex, ReqType.Get)
-				} else {
-					state.autoTransition.style = -1 // reset any current state (otherwise if style was CUT or FTB it won't update)
-					await sendCommand(ActionId.TransitionIndex, ReqType.Set, [choice])
-				}
+				await sendCommand(ActionId.TransitionIndex, ReqType.Set, [choice])
 			},
 		},
 		[ActionId.TransitionRate]: {

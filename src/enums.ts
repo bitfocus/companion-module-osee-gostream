@@ -57,6 +57,4 @@ export const TransitionStyle = {
 	MIX: 0,
 	DIP: 1,
 	WIPE: 2,
-	CUT: 3,
-	FTB: 4,
 }
