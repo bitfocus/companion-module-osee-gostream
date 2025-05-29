@@ -1,11 +1,15 @@
 import { ActionId } from './actionId'
-import { getOptNumber } from '../../util'
+import { getOptNumber, getOptString } from '../../util'
 import { SwitchChoices } from '../../model'
 import { ReqType } from '../../enums'
 import { sendCommand } from '../../connection'
 import type { CompanionActionDefinitions } from '@companion-module/base'
 import { PlaybackStateT } from './state'
 import type { GoStreamModel } from '../../models/types'
+
+// dict of existing buttons that use the PlaybackGroup action
+//   tech note: one could, more generally, use CompanionOptionValues as the values here
+export const pbGroupButtons = new Map<string, string>()
 
 export function create(_model: GoStreamModel, state: PlaybackStateT): CompanionActionDefinitions {
 	return {
@@ -103,6 +107,51 @@ export function create(_model: GoStreamModel, state: PlaybackStateT): CompanionA
 			callback: async (action) => {
 				const opt = getOptNumber(action, 'PlayFileID')
 				await sendCommand(ActionId.PlayFile, ReqType.Set, [state.FileList[opt]])
+			},
+		},
+		[ActionId.PlaybackGroup]: {
+			name: 'Playback:Set selected file to the first or last video in a group',
+			options: [
+				{
+					id: 'GroupNameID',
+					type: 'dropdown',
+					label: 'GroupName',
+					choices: Array.from(state.Groups.keys()).map((s, _index) => ({
+						id: s,
+						label: s,
+					})),
+					allowCustom: true,
+					default: Array.from(state.Groups.keys())[0],
+				},
+				{
+					id: 'positionID',
+					type: 'dropdown',
+					label: 'Position in Group',
+					choices: [
+						{ id: 0, label: 'first' },
+						{ id: -1, label: 'last' },
+					],
+					default: 0,
+				},
+			],
+			callback: async (action) => {
+				const groupName = getOptString(action, 'GroupNameID')
+				const opt = getOptNumber(action, 'positionID')
+				const group = state.Groups.get(groupName)
+				if (group !== undefined && group.length > 0) {
+					let filename = group.slice(0, 1)
+					if (opt == -1) {
+						filename = group.slice(-1)
+					}
+					await sendCommand(ActionId.PlayFile, ReqType.Set, filename)
+				}
+			},
+			subscribe: async (action) => {
+				pbGroupButtons.set(action.controlId, <string>action.options.GroupNameID)
+				await sendCommand(ActionId.PlayFile, ReqType.Get) // just something to trigger the feedback
+			},
+			unsubscribe: async (action) => {
+				pbGroupButtons.delete(action.controlId) //probably not necessary?
 			},
 		},
 		[ActionId.PlaybackRepeat]: {
@@ -212,7 +261,7 @@ export function create(_model: GoStreamModel, state: PlaybackStateT): CompanionA
 				'Advance to previous video in group (if play within groups is selected; otherwise previous in the file list).',
 			options: [],
 			callback: async (_action) => {
-				await sendCommand('playbackPrev', ReqType.Set) // -- works to go back if not last in group.
+				await sendCommand('playbackPrev', ReqType.Set) // -- works to go back if not first in group.
 			},
 		},
 	}
