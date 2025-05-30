@@ -271,7 +271,7 @@ export function create(model: GoStreamModel, state: AudioMixerStateT): Companion
 			},
 		},
 		[ActionId.AudioMonitorLevel]: {
-			name: 'Audio Mixer:Set Monitor Level',
+			name: 'Audio Mixer:Set Headphone (aka Monitor) Level',
 			options: [
 				{
 					type: 'number',

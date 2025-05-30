@@ -15,6 +15,10 @@ export function create(model: GoStreamModel): CompanionVariableDefinition[] {
 			name: 'Audio: Headphones Source',
 			variableId: VariableId.HeadphoneSource,
 		},
+		{
+			name: 'Audio: Headphones Level',
+			variableId: VariableId.HeadphoneLevel,
+		},
 		...model.getChoices(ActionType.AudioFader).map(({ label }) => {
 			return { name: `Audio ${label} fader`, variableId: `${VariableId.AudioFader}${label}` }
 		}),
@@ -37,6 +41,7 @@ export function getValues(state: AudioMixerStateT): CompanionVariableValues {
 
 	newValues[VariableId.AudioEnabled] = inputSources.join(', ')
 	newValues[VariableId.HeadphoneSource] = headphoneSource[state.monitorSource]
+	newValues[VariableId.HeadphoneLevel] = state.monitorLevel
 
 	state.model.getChoices(ActionType.AudioFader).forEach(({ id, label }) => {
 		newValues[`${VariableId.AudioFader}${label}`] = state.fader[id]
