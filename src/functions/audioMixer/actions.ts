@@ -46,6 +46,12 @@ export function create(model: GoStreamModel, state: AudioMixerStateT): Companion
 					default: 0,
 				},
 				{
+					id: 'isRelative',
+					type: 'checkbox',
+					label: 'relative to current value (incremental change)',
+					default: false,
+				},
+				{
 					type: 'number',
 					label: 'Fader',
 					id: 'AudioFader',
@@ -57,10 +63,12 @@ export function create(model: GoStreamModel, state: AudioMixerStateT): Companion
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.AudioFader, ReqType.Set, [
-					getOptNumber(action, 'ASource'),
-					getOptNumber(action, 'AudioFader'),
-				])
+				const source = getOptNumber(action, 'ASource')
+				let value = getOptNumber(action, 'AudioFader')
+				if (action.options.isRelative) {
+					value += state.fader[source]
+				}
+				await sendCommand(ActionId.AudioFader, ReqType.Set, [source, value])
 			},
 		},
 		[ActionId.AudioBalance]: {
