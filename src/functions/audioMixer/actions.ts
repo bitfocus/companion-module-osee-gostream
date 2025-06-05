@@ -1,5 +1,5 @@
 import { ActionId } from './actionId'
-import { getOptNumber, nextInSequence } from '../../util'
+import { getOptNumber, getOptString, nextInSequence } from '../../util'
 import { ReqType, ActionType } from '../../enums'
 import { sendCommand } from '../../connection'
 import { AudioMixerStateT, AudioState } from './state'
@@ -46,21 +46,46 @@ export function create(model: GoStreamModel, state: AudioMixerStateT): Companion
 					default: 0,
 				},
 				{
+					id: 'isRelative',
+					type: 'checkbox',
+					label: 'relative to current value (incremental change)',
+					default: false,
+				},
+				{
 					type: 'number',
-					label: 'Fader',
+					label: 'Value',
 					id: 'AudioFader',
 					min: -75.0,
 					max: 10.0,
 					step: 0.5,
 					range: true,
 					default: 0,
+					isVisible: (options) => {
+						return !options.isRelative
+					},
+				},
+				{
+					type: 'textinput',
+					label: 'Increment ',
+					id: 'AudioFaderRel',
+					regex: '/^[-]?([.0-9]+|\\$\\(.+\\))$/',
+					default: '0.5',
+					useVariables: true,
+					isVisible: (options) => {
+						return !!options.isRelative
+					},
 				},
 			],
-			callback: async (action) => {
-				await sendCommand(ActionId.AudioFader, ReqType.Set, [
-					getOptNumber(action, 'ASource'),
-					getOptNumber(action, 'AudioFader'),
-				])
+			callback: async (action, context) => {
+				const source = getOptNumber(action, 'ASource')
+				let value = getOptNumber(action, 'AudioFader')
+				if (action.options.isRelative) {
+					let input = getOptString(action, 'AudioFaderRel') // string because it can be a variable
+					input = await context.parseVariablesInString(input)
+					const relValue = Number(input)
+					value = state.fader[source] + (isNaN(relValue) ? 0 : relValue)
+				}
+				await sendCommand(ActionId.AudioFader, ReqType.Set, [source, value])
 			},
 		},
 		[ActionId.AudioBalance]: {
@@ -263,7 +288,7 @@ export function create(model: GoStreamModel, state: AudioMixerStateT): Companion
 			},
 		},
 		[ActionId.AudioMonitorLevel]: {
-			name: 'Audio Mixer:Set Monitor Level',
+			name: 'Audio Mixer:Set Headphone (aka Monitor) Level',
 			options: [
 				{
 					type: 'number',
