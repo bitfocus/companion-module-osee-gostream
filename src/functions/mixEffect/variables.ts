@@ -1,10 +1,11 @@
 import { CompanionVariableDefinition, CompanionVariableValues } from '@companion-module/base'
 import { VariableId } from './variableId'
-import { GoStreamModel } from '../../models/types'
-import { MixEffectStateT } from './state'
 import { TransitionStyleChoice } from '../../model'
+import { StreamDeckState } from '../../connection/state'
+import { getEnumKeyByValue } from '../../util'
+import { sourceID } from '../../connection/enums'
 
-export function create(_model: GoStreamModel): CompanionVariableDefinition[] {
+export function create(_state: StreamDeckState): CompanionVariableDefinition[] {
 	return [
 		{
 			name: 'Preview Source',
@@ -21,15 +22,13 @@ export function create(_model: GoStreamModel): CompanionVariableDefinition[] {
 	]
 }
 
-export function getValues(state: MixEffectStateT): CompanionVariableValues {
+export function getValues(state: StreamDeckState): CompanionVariableValues {
 	const newValues = {}
-	// map "In #" to "in #" to improve readability because the capital "I" is too much like a 1.. (and map the rest for consistency)
-	// lowercase is also more compact, so it fits better on the buttons.
-	const inputSources = state.model.InputSources().map((item) => item.name.toLowerCase())
+	const inputSources = state.device.inputSources.map((item) =>getEnumKeyByValue(sourceID,item))
 	const transitionStyle = TransitionStyleChoice.map((item) => item.label)
-	newValues[VariableId.PVW_Source] = inputSources[state.PvwSrc]
-	newValues[VariableId.PGM_Source] = inputSources[state.PgmSrc]
-	newValues[VariableId.TransitionStyle] = transitionStyle[state.selectTransitionStyle.style]
+	newValues[VariableId.PVW_Source] = inputSources[state.effect.PvwSrc]
+	newValues[VariableId.PGM_Source] = inputSources[state.effect.PgmSrc]
+	newValues[VariableId.TransitionStyle] = transitionStyle[state.effect.selectTransitionStyle.style]
 
 	return newValues
 }

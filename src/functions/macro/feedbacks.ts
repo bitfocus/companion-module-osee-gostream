@@ -1,15 +1,14 @@
 import { combineRgb, CompanionFeedbackDefinitions } from '@companion-module/base'
 import { FeedbackId } from './feedbackId'
-import { GoStreamModel } from '../../models/types'
-import { MacroStateT } from './state'
-
+import { StreamDeck } from '../../connection/streamdeck'
+import { getChoicesByMacro } from '../../model'
 export const MacroFeedbackType = {
 	IsRunning: 'isRunning',
 	IsWaiting: 'isWaiting',
 	IsRecording: 'isRecording',
 	IsUsed: 'isUsed',
 }
-export function create(model: GoStreamModel, state: MacroStateT): CompanionFeedbackDefinitions {
+export function create(deck: StreamDeck): CompanionFeedbackDefinitions {
 	return {
 		[FeedbackId.Macro]: {
 			type: 'boolean',
@@ -21,7 +20,7 @@ export function create(model: GoStreamModel, state: MacroStateT): CompanionFeedb
 					label: 'Macro Number (1-100)',
 					id: 'MacroIndex',
 					default: 1,
-					choices: model.getChoicesByMacro(),
+					choices: getChoicesByMacro(),
 				},
 				{
 					type: 'dropdown',
@@ -44,7 +43,7 @@ export function create(model: GoStreamModel, state: MacroStateT): CompanionFeedb
 				const macroIndex = Number(feedback.options.MacroIndex)
 				if (!isNaN(macroIndex)) {
 					const type = feedback.options.state
-					const macro = state.macros.find((item) => item?.index === macroIndex)
+					const macro = deck.state?.macro.macros[macroIndex]
 					switch (type) {
 						case MacroFeedbackType.IsUsed: {
 							return !!macro?.used

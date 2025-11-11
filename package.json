@@ -1,6 +1,6 @@
 {
-	"name": "companion-module-osee-gostreamdeck",
-	"version": "1.5.1",
+	"name": "companion-module-osee-gostreamdeck-series",
+	"version": "2.0.0",
 	"main": "./dist/index.js",
 	"license": "MIT",
 	"prettier": "@companion-module/tools/.prettierrc.json",
@@ -20,11 +20,12 @@
 		"url": "git+https://github.com/bitfocus/companion-module-osee-gostream.git"
 	},
 	"engines": {
-		"node": "^18.18.2"
+		"node": "^22.16.0"
 	},
 	"dependencies": {
 		"@companion-module/base": "~1.11.0",
 		"crc": "^4.3.2",
+		"threadedclass": "^1.3.0",
 		"yarn": "^1.22.22"
 	},
 	"devDependencies": {

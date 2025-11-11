@@ -1,286 +1,302 @@
-import { ActionId } from '../actionId'
-import { getOptNumber } from './../../../util'
-import { SwitchChoices, KeyResizeSizeChoices } from './../../../model'
-import { ReqType, ActionType } from './../../../enums'
-import { sendCommand, sendCommands, GoStreamCmd } from './../../../connection'
-import type { CompanionActionDefinitions } from '@companion-module/base'
-import { UpstreamKeyerStateT, USKKeyTypes } from '../state'
-import { GoStreamModel } from '../../../models/types'
-export function createLumaKeyActions(model: GoStreamModel, state: UpstreamKeyerStateT): CompanionActionDefinitions {
-	return {
-		[ActionId.LumaKeySourceFill]: {
-			name: 'UpStream Key:Set Luma Key Source Fill',
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Source Fill',
-					id: 'KeyFill',
-					choices: model.getChoices(ActionType.LumaKeySourceKey),
-					default: 0,
-				},
-			],
-			callback: async (action) => {
-				await sendCommand(ActionId.LumaKeySourceFill, ReqType.Set, [getOptNumber(action, 'KeyFill')])
-			},
+import { USK } from "../../../connection/actionids"
+import { getEnumKeyByValue, getOptNumber } from './../../../util'
+import { KeySwitchChoices, GetKeyChoices } from './../../../model'
+import type { CompanionActionDefinitions, SomeCompanionActionInputField } from '@companion-module/base'
+import { StreamDeck } from '../../../connection/streamdeck'
+import { Model, sourceID } from '../../../connection/enums'
+export function createLumaKeyActions(deck: StreamDeck): CompanionActionDefinitions {
+
+	const _options: SomeCompanionActionInputField[] = [
+		{
+			type: 'dropdown',
+			label: 'Key',
+			id: 'keyId',
+			choices: GetKeyChoices(deck.state),
+			default: 0,
 		},
-		[ActionId.LumaKeySourceKey]: {
-			name: 'UpStream Key:Set Luma Key Source Key',
+		{
+			id: 'props',
+			type: 'multidropdown',
+			label: 'Select properties',
+			choices: [
+				{ id: 'maskEnable', label: 'MaskEnable' },
+				{ id: 'left', label: 'Left' },
+				{ id: 'top', label: 'Top' },
+				{ id: 'right', label: 'Right' },
+				{ id: 'bottom', label: 'Bottom' },
+
+				{ id: 'preMultipliedkey', label: 'preMultipliedkey' },
+				{ id: 'clip', label: 'Clip' },
+				{ id: 'gain', label: 'Gain' },
+				{ id: 'invert', label: 'Invert' },
+
+				{ id: 'sizePositionEnable', label: 'SizePositionEnable' },
+				{ id: 'size', label: 'Size' },
+				{ id: 'xPosition', label: 'XPosition' },
+				{ id: 'yPosition', label: 'YPosition' },
+			],
+			minSelection: 1,
+			default: ['maskEnable', 'left', 'top', 'right', 'bottom',
+				'preMultipliedkey', 'clip', 'gain', 'invert',
+				'sizePositionEnable', 'size', 'xPosition', 'yPosition'],
+		},
+		{
+			type: 'dropdown',
+			label: 'Mask Enable',
+			id: 'maskEnable',
+			choices: KeySwitchChoices,
+			default: 0,
+			isVisible: (options) => (<string[]>options.props!).includes('maskEnable'),
+		},
+		{
+			type: 'number',
+			label: 'Left',
+			id: 'maskHStart',
+			min: 0,
+			max: 100,
+			default: 0,
+			isVisible: (options) => (<string[]>options.props!).includes('left'),
+		},
+		{
+			type: 'number',
+			label: 'Right',
+			id: 'maskHEnd',
+			min: 0,
+			max: 100,
+			default: 100,
+			isVisible: (options) => (<string[]>options.props!).includes('right'),
+		},
+		{
+			type: 'number',
+			label: 'Top',
+			id: 'maskVStart',
+			min: 0,
+			max: 100,
+			default: 0,
+			isVisible: (options) => (<string[]>options.props!).includes('top'),
+		},
+		{
+			type: 'number',
+			label: 'Bottom',
+			id: 'maskVEnd',
+			min: 0,
+			max: 100,
+			default: 100,
+			isVisible: (options) => (<string[]>options.props!).includes('bottom'),
+		},
+		{
+			type: 'dropdown',
+			label: 'Pre Multiplied key',
+			id: 'preMultipliedkey',
+			choices: KeySwitchChoices,
+			default: 0,
+			isVisible: (options) => (<string[]>options.props!).includes('preMultipliedkey'),
+		},
+
+		{
+			type: 'number',
+			label: 'Clip',
+			id: 'clip',
+			min: 0,
+			max: 100,
+			default: 15,
+			isVisible: (options) => (<string[]>options.props!).includes('clip'),
+		},
+		{
+			type: 'number',
+			label: 'Gain',
+			id: 'gain',
+			min: 0,
+			max: 100,
+			default: 50,
+			isVisible: (options) => (<string[]>options.props!).includes('gain'),
+		},
+		{
+			type: 'dropdown',
+			label: 'Invert',
+			id: 'invert',
+			choices: KeySwitchChoices,
+			default: 0,
+			isVisible: (options) => (<string[]>options.props!).includes('invert'),
+		},
+		{
+			type: 'dropdown',
+			label: 'Size/Position Enable',
+			id: 'sizeEnable',
+			choices: KeySwitchChoices,
+			default: 0,
+			isVisible: (options) => (<string[]>options.props!).includes('sizePositionEnable'),
+		},
+		// {
+		// 	type: 'number',
+		// 	label: 'Size',
+		// 	id: 'size',
+		// 	min:  7,
+		// 	max: 100,
+		// 	default: 33,
+		// 	isVisible: (options) => (<string[]>options.props!).includes('size')
+		// },
+		// {
+		// 	type: 'dropdown',
+		// 	label: 'Size',
+		// 	id: 'size',
+		// 	choices: [
+		// 		{id:25,label:"0.25"},
+		// 		{id:33,label:"0.33"},
+		// 		{id:50,label:"0.50"}
+		// 	],
+		// 	default: 33,
+		// 	isVisible: (options) => {
+		// 		var m1=(<string[]>options.props!).includes('size');
+		// 		var m2=deck.state?.device.deviceModel!==Model.Duet_8ISO
+		// 		return m1&&m2
+		// 	}
+		// },
+		{
+			type: 'number',
+			label: 'X Position',
+			id: 'xPosition',
+			min: -16.0,
+			max: 16.0,
+			default: 10.6,
+			step: 0.1,
+			range: true,
+			isVisible: (options) => (<string[]>options.props!).includes('xPosition'),
+		},
+		{
+			type: 'number',
+			label: 'Y Position',
+			id: 'yPosition',
+			min: -9.0,
+			max: 9.0,
+			default: 7.0,
+			step: 0.1,
+			range: true,
+			isVisible: (options) => (<string[]>options.props!).includes('yPosition'),
+		},
+	]
+	if (deck.state?.device.deviceModel === Model.Duet_8ISO) {
+		_options.push(
+			{
+				type: 'number',
+				label: 'Size',
+				id: 'size',
+				min: 7,
+				max: 100,
+				default: 33,
+				range:true,
+				step:1,
+				isVisible: (options) => (<string[]>options.props!).includes('size')
+			}
+		);
+	} else {
+		_options.push(
+			{
+				type: 'dropdown',
+				label: 'Size',
+				id: 'size',
+				choices: [
+					{ id: 25, label: "0.25" },
+					{ id: 33, label: "0.33" },
+					{ id: 50, label: "0.50" }
+				],
+				default: 33,
+				isVisible: (options) => (<string[]>options.props!).includes('size')
+			}
+		)
+	}
+	return {
+		[USK.ActionId.LumaKeySourceProperties]: {
+			name: 'Key:Set Luma Source',
 			options: [
 				{
 					type: 'dropdown',
 					label: 'Key',
-					id: 'LumaKeySourceKey',
-					choices: model.getChoices(ActionType.LumaKeySourceKey),
+					id: 'keyId',
+					choices: GetKeyChoices(deck.state),
+					default: 0,
+				},
+				{
+					type: 'dropdown',
+					label: 'Fill Source',
+					id: 'fillSource',
+					choices: deck.state ? deck.state.upStreamKey.LumaFillSources.map((s) => ({ id: s, label: String(getEnumKeyByValue(sourceID, s)) })) : [],
+					default: 0,
+				},
+				{
+					type: 'dropdown',
+					label: 'Key Source',
+					id: 'KeySource',
+					choices: deck.state ? deck.state.upStreamKey.LumaKeySources.map((s) => ({ id: s, label: String(getEnumKeyByValue(sourceID, s)) })) : [],
 					default: 0,
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.LumaKeySourceKey, ReqType.Set, [getOptNumber(action, 'LumaKeySourceKey')])
+
+				const keyId = getOptNumber(action, 'keyId')
+				const fillSource = getOptNumber(action, 'fillSource')
+				const KeySource = getOptNumber(action, 'KeySource')
+				await deck.setLumaFillSource(keyId, fillSource);
+				await deck.setLumaKeySource(keyId, KeySource);
 			},
 		},
-		[ActionId.LumaKeySetMaskProperties]: {
-			name: 'UpStream Key: Set luma mask properties',
-			options: [
-				{
-					id: 'props',
-					type: 'multidropdown',
-					label: 'Select properties',
-					choices: [
-						{ id: 'enable', label: 'enable' },
-						{ id: 'hMaskStart', label: 'hMaskStart' },
-						{ id: 'hMaskEnd', label: 'hMaskEnd' },
-						{ id: 'vMaskStart', label: 'vMaskStart' },
-						{ id: 'vMaskEnd', label: 'vMaskEnd' },
-					],
-					minSelection: 1,
-					default: ['enable', 'hMaskStart', 'hMaskEnd', 'vMaskStart', 'vMaskEnd'],
-				},
-				{
-					type: 'dropdown',
-					label: 'Mask Enable',
-					id: 'maskEnable',
-					choices: SwitchChoices,
-					default: 0,
-					isVisible: (options) => (<string[]>options.props!).includes('enable'),
-				},
-				{
-					type: 'number',
-					label: 'H Start',
-					id: 'maskHStart',
-					min: 0,
-					max: 100,
-					default: 0,
-					isVisible: (options) => (<string[]>options.props!).includes('hMaskStart'),
-				},
-				{
-					type: 'number',
-					label: 'H End',
-					id: 'maskHEnd',
-					min: 0,
-					max: 100,
-					default: 100,
-					isVisible: (options) => (<string[]>options.props!).includes('hMaskEnd'),
-				},
-				{
-					type: 'number',
-					label: 'V Start',
-					id: 'maskVStart',
-					min: 0,
-					max: 100,
-					default: 0,
-					isVisible: (options) => (<string[]>options.props!).includes('vMaskStart'),
-				},
-				{
-					type: 'number',
-					label: 'V End',
-					id: 'maskVEnd',
-					min: 0,
-					max: 100,
-					default: 100,
-					isVisible: (options) => (<string[]>options.props!).includes('vMaskEnd'),
-				},
-			],
+		[USK.ActionId.LumaKeySetProperties]: {
+			name: 'Key: set Luma properties',
+			options: _options,
 			callback: async (action) => {
 				const props = <string[]>action.options.props
-				const commands: GoStreamCmd[] = []
-				if (props.includes('enable')) {
+				const keyId = getOptNumber(action, 'keyId')
+				if (props.includes('maskEnable')) {
 					let paramOpt = getOptNumber(action, 'maskEnable')
-					if (paramOpt === 2) paramOpt = state.keyInfo[USKKeyTypes.Luma].mask.enabled ? 0 : 1
-					commands.push({
-						id: ActionId.LumaKeyMaskEnable,
-						type: ReqType.Set,
-						value: [paramOpt],
-					})
+					if (paramOpt === 2) paramOpt = deck.state?.upStreamKey.USKS[keyId]?.Luma.maskInfo.enabled ? 0 : 1
+					await deck.setLumaMaskEnable(keyId, paramOpt);
 				}
-				if (props.includes('hMaskStart')) {
-					commands.push({
-						id: ActionId.LumaKeyMaskHStart,
-						type: ReqType.Set,
-						value: [getOptNumber(action, 'maskHStart')],
-					})
+				if (props.includes('left')) {
+					await deck.setLumaMaskHStart(keyId, getOptNumber(action, 'maskHStart'))
 				}
-				if (props.includes('hMaskEnd')) {
-					commands.push({
-						id: ActionId.LumaKeyMaskHEnd,
-						type: ReqType.Set,
-						value: [getOptNumber(action, 'maskHEnd')],
-					})
+				if (props.includes('right')) {
+					await deck.setLumaMaskHEnd(keyId, getOptNumber(action, 'maskHEnd'))
 				}
-				if (props.includes('vMaskStart')) {
-					commands.push({
-						id: ActionId.LumaKeyMaskVStart,
-						type: ReqType.Set,
-						value: [getOptNumber(action, 'maskVStart')],
-					})
+				if (props.includes('top')) {
+					await deck.setLumaMaskVStart(keyId, getOptNumber(action, 'maskVStart'))
 				}
-				if (props.includes('vMaskEnd')) {
-					commands.push({
-						id: ActionId.LumaKeyMaskVEnd,
-						type: ReqType.Set,
-						value: [getOptNumber(action, 'maskVEnd')],
-					})
+				if (props.includes('bottom')) {
+					await deck.setLumaMaskVEnd(keyId, getOptNumber(action, 'maskVEnd'))
 				}
 
-				if (commands.length > 0) await sendCommands(commands)
-			},
-		},
-		[ActionId.LumaKeyControlShapedKey]: {
-			name: 'UpStream Key:Set Luma Key Control ShapedKey',
-			options: [
-				{
-					type: 'dropdown',
-					label: 'ShapedKey',
-					id: 'LumaKeyControlShapedKey',
-					choices: SwitchChoices,
-					default: 0,
-				},
-			],
-			callback: async (action) => {
-				await sendCommand(ActionId.LumaKeyControlShapedKey, ReqType.Set, [
-					getOptNumber(action, 'LumaKeyControlShapedKey'),
-				])
-			},
-		},
-		[ActionId.LumaKeyControlClip]: {
-			name: 'UpStream Key:Set Luma Key Control Clip',
-			options: [
-				{
-					type: 'number',
-					label: 'Clip',
-					id: 'LumaKeyControlClip',
-					min: 0,
-					max: 100,
-					default: 0,
-				},
-			],
-			callback: async (action) => {
-				await sendCommand(ActionId.LumaKeyControlClip, ReqType.Set, [getOptNumber(action, 'LumaKeyControlClip')])
-			},
-		},
-		[ActionId.LumaKeyControlGain]: {
-			name: 'UpStream Key:Set Luma Key Control Gain',
-			options: [
-				{
-					type: 'number',
-					label: 'Gain',
-					id: 'LumaKeyControlGain',
-					min: 0,
-					max: 100,
-					default: 0,
-				},
-			],
-			callback: async (action) => {
-				await sendCommand(ActionId.LumaKeyControlGain, ReqType.Set, [getOptNumber(action, 'LumaKeyControlGain')])
-			},
-		},
-		[ActionId.LumaKeyControlInvert]: {
-			name: 'UpStream Key:Set Luma Key Control Invert',
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Invert',
-					id: 'LumaKeyControlInvert',
-					choices: SwitchChoices,
-					default: 0,
-				},
-			],
-			callback: async (action) => {
-				await sendCommand(ActionId.LumaKeyControlInvert, ReqType.Set, [getOptNumber(action, 'LumaKeyControlInvert')])
-			},
-		},
-		[ActionId.LumaKeyResizeEnable]: {
-			name: 'UpStream Key:Set Luma Key Resize Enable',
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Enable',
-					id: 'LumaKeyResizeEnable',
-					choices: SwitchChoices,
-					default: 0,
-				},
-			],
-			callback: async (action) => {
-				await sendCommand(ActionId.LumaKeyResizeEnable, ReqType.Set, [getOptNumber(action, 'LumaKeyResizeEnable')])
-			},
-		},
-		[ActionId.LumaKeyResizeSize]: {
-			name: 'UpStream Key:Set Luma Key Resize Size',
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Size',
-					id: 'LumaKeyResizeSize',
-					choices: KeyResizeSizeChoices,
-					default: 0,
-				},
-			],
-			callback: async (action) => {
-				let value = 0.25
-				const info = KeyResizeSizeChoices.find((s) => s.id === action.options.LumaKeyResizeSize)
-				if (info !== null && info !== undefined) {
-					value = Number(info.id)
+				if (props.includes('preMultipliedkey')) {
+					let paramOpt = getOptNumber(action, 'preMultipliedkey')
+					if (paramOpt === 2) paramOpt = deck.state?.upStreamKey.USKS[keyId]?.Luma.keyControl.lumaPreMultipliedKey ? 0 : 1
+					await deck.setLumaPreMultipliedKey(keyId, paramOpt)
 				}
-				await sendCommand(ActionId.LumaKeyResizeSize, ReqType.Set, [value])
-			},
-		},
-		[ActionId.LumaKeyResizeXPosition]: {
-			name: 'UpStream Key:Set Luma Key X Position',
-			options: [
-				{
-					type: 'number',
-					label: 'X Position',
-					id: 'LumaKeyResizeXPosition',
-					min: -16,
-					max: 16,
-					step: 0.2,
-					default: 0,
-					range: true,
-				},
-			],
-			callback: async (action) => {
-				await sendCommand(ActionId.LumaKeyResizeXPosition, ReqType.Set, [
-					getOptNumber(action, 'LumaKeyResizeXPosition'),
-				])
-			},
-		},
-		[ActionId.LumaKeyResizeYPosition]: {
-			name: 'UpStream Key:Set Luma Key Y Position',
-			options: [
-				{
-					type: 'number',
-					label: 'Y Position',
-					id: 'LumaKeyResizeYPosition',
-					min: -9.0,
-					max: 9.0,
-					step: 0.2,
-					default: 0,
-					range: true,
-				},
-			],
-			callback: async (action) => {
-				await sendCommand(ActionId.LumaKeyResizeYPosition, ReqType.Set, [
-					getOptNumber(action, 'LumaKeyResizeYPosition'),
-				])
+				if (props.includes('clip')) {
+					await deck.setLumaClip(keyId, getOptNumber(action, 'clip'))
+				}
+				if (props.includes('gain')) {
+					await deck.setLumaGain(keyId, getOptNumber(action, 'gain'))
+				}
+
+				if (props.includes('invert')) {
+					let paramOpt = getOptNumber(action, 'invert')
+					if (paramOpt === 2) paramOpt = deck.state?.upStreamKey.USKS[keyId]?.Luma.keyControl.invert ? 0 : 1
+					await deck.setLumaInvert(keyId, paramOpt)
+				}
+
+				if (props.includes('sizePositionEnable')) {
+					let paramOpt = getOptNumber(action, 'sizeEnable');
+					if (paramOpt === 2) paramOpt = deck.state?.upStreamKey.USKS[keyId]?.Luma.size.enable ? 0 : 1
+					await deck.setLumaResize(keyId, paramOpt)
+				}
+
+				if (props.includes('size')) {
+					await deck.setLumaSize(keyId, getOptNumber(action, 'size'))
+				}
+				if (props.includes('xPosition')) {
+					await deck.setLumaXPosition(keyId, getOptNumber(action, 'xPosition'))
+				}
+				if (props.includes('yPosition')) {
+					await deck.setLumaYPosition(keyId, getOptNumber(action, 'yPosition'))
+				}
 			},
 		},
 	}

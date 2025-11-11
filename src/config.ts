@@ -1,10 +1,13 @@
 import { Regex, SomeCompanionConfigField } from '@companion-module/base'
 import { ALL_MODEL_CHOICES } from './models/index'
-import { MODEL_AUTO_DETECT } from './models/types'
+import { Model } from './connection/enums'
 
-export interface Config {
-	host: string
-	port: number
+export interface DeckConfig {
+	bonjourHost?: string
+	host?: string
+	modelID?: string
+	autoModelName?: string
+	port?:number
 }
 
 export function GetConfigFields(): SomeCompanionConfigField[] {
@@ -28,7 +31,7 @@ export function GetConfigFields(): SomeCompanionConfigField[] {
 			label: 'Model',
 			width: 6,
 			choices: ALL_MODEL_CHOICES,
-			default: MODEL_AUTO_DETECT,
+			default: Model.Unknown,
 			isVisible: (options) => !options['bonjourDevices'],
 		},
 		{

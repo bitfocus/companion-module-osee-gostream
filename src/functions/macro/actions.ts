@@ -1,31 +1,19 @@
-import { ActionId } from './actionId'
-import { ReqType } from './../../enums'
-import { sendCommand } from './../../connection'
-import { GoStreamModel } from '../../models/types'
+import { Macro } from "../../connection/actionids"
 import { getOptNumber, getOptString } from './../../util'
-import { type CompanionActionDefinitions, Regex } from '@companion-module/base'
-import { MacroStateT } from './state'
+import { type CompanionActionDefinitions } from '@companion-module/base'
+import { StreamDeck } from '../../connection/streamdeck'
+import { getChoicesByMacro } from '../../model'
 
-export function create(model: GoStreamModel, _state: MacroStateT): CompanionActionDefinitions {
+export function create(deck: StreamDeck): CompanionActionDefinitions {
 	return {
-		[ActionId.MacroRecord]: {
-			name: 'Macro:Set Start Record',
+		[Macro.ActionId.MacroRecordStart]: {
+			name: 'macro: set start record',
 			options: [
-				{
-					type: 'dropdown',
-					label: 'Status',
-					id: 'StatusId',
-					choices: [
-						{ id: 0, label: 'start' },
-						{ id: 1, label: 'stop' },
-					],
-					default: 0,
-				},
 				{
 					type: 'dropdown',
 					label: 'Macro',
 					id: 'MacroIndex',
-					choices: model.getChoicesByMacro(),
+					choices: getChoicesByMacro(),
 					default: 0,
 				},
 				{
@@ -44,22 +32,28 @@ export function create(model: GoStreamModel, _state: MacroStateT): CompanionActi
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.MacroRecord, ReqType.Set, [
-					getOptNumber(action, 'StatusId'),
+				await deck.setMacroRecordStart(
 					getOptNumber(action, 'MacroIndex'),
 					getOptString(action, 'MacroName'),
-					getOptString(action, 'MacroRemark'),
-				])
+					getOptString(action, 'MacroRemark')
+				)
 			},
 		},
-		[ActionId.MacroInfo]: {
+		[Macro.ActionId.MacroRecordStop]: {
+			name: 'macro: set stop record',
+			options: [],
+			callback: async () => {
+				await deck.setMacroRecordStop();
+			},
+		},
+		[Macro.ActionId.MacroInfo]: {
 			name: 'Macro:Change Detail',
 			options: [
 				{
 					type: 'dropdown',
 					label: 'Macro',
 					id: 'MacroIndex',
-					choices: model.getChoicesByMacro(),
+					choices: getChoicesByMacro(),
 					default: 0,
 				},
 				{
@@ -78,70 +72,67 @@ export function create(model: GoStreamModel, _state: MacroStateT): CompanionActi
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.MacroInfo, ReqType.Set, [
+				await deck.setMacroInfo(
 					getOptNumber(action, 'MacroIndex'),
 					getOptString(action, 'MacroName'),
-					getOptString(action, 'MacroRemark'),
-				])
+					getOptString(action, 'MacroRemark')
+				)
 			},
 		},
-		[ActionId.RemoveMacro]: {
+		[Macro.ActionId.RemoveMacro]: {
 			name: 'Macro:Delete Macro',
 			options: [
 				{
 					type: 'dropdown',
 					label: 'Macro',
 					id: 'MacroIndex',
-					choices: model.getChoicesByMacro(),
+					choices: getChoicesByMacro(),
 					default: 0,
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.RemoveMacro, ReqType.Set, [getOptNumber(action, 'MacroIndex')])
+				await deck.RemoveMacro(getOptNumber(action, 'MacroIndex'))
 			},
 		},
-		[ActionId.MacroRun]: {
+		[Macro.ActionId.MacroRunStart]: {
 			name: 'Macro:Start Run',
 			options: [
 				{
 					type: 'dropdown',
-					label: 'Status',
-					id: 'StatusID',
-					choices: [
-						{ id: 1, label: 'start' },
-						{ id: 0, label: 'stop' },
-					],
-					default: 0,
-				},
-				{
-					type: 'dropdown',
 					label: 'Location',
 					id: 'MacroIndex',
-					choices: model.getChoicesByMacro(),
+					choices: getChoicesByMacro(),
 					default: 0,
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.MacroRun, ReqType.Set, [
-					getOptNumber(action, 'StatusID'),
-					getOptNumber(action, 'MacroIndex'),
-				])
+				await deck.setMacroRunStart(getOptNumber(action, 'MacroIndex'))
 			},
 		},
-		[ActionId.MacroSleep]: {
+		[Macro.ActionId.MacroRunStop]: {
+			name: 'Macro:Stop Run',
+			options: [],
+			callback: async () => {
+				await deck.setMacroRunStop();
+			},
+		},
+		[Macro.ActionId.MacroAddSleep]: {
 			name: 'Macro:Macro Sleep',
 			options: [
 				{
-					type: 'textinput',
+					type: 'number',
 					label: 'Sleep',
 					id: 'MacroSleep',
-					default: '500',
-					regex: Regex.NUMBER,
+					default: 50,
+					min:50,
+					max:10000,
+					step:50,
+					range:true,
 					required: true,
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.MacroSleep, ReqType.Set, [getOptNumber(action, 'MacroSleep')])
+				await deck.setMacroAddSleep(getOptNumber(action, 'MacroSleep'))
 			},
 		},
 	}

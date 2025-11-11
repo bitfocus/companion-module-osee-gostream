@@ -1,103 +1,31 @@
 import { combineRgb } from '@companion-module/base'
 import { CompanionPresetDefinitions } from '@companion-module/base'
-import { ActionId } from './actionId'
+import { AudioMixer } from "../../connection/actionids"
 import { FeedbackId } from './feedbackId'
-import { AudioInputSourcesChoices, AudioMicChoices } from './../../model'
-import { GoStreamModel } from '../../models/types'
+import { getEnumKeyByValue } from '../../util'
+import { StreamDeck } from '../../connection/streamdeck'
+import { sourceID } from '../../connection/enums'
 const ptzSize = '18'
-export function create(_model: GoStreamModel): CompanionPresetDefinitions {
+export function create(deck: StreamDeck): CompanionPresetDefinitions {
 	const presets = {}
-	presets[`AudioMixer_Trans`] = {
-		category: 'AudioMixer',
-		name: `Audio Mixer: Set AudioTransition Enable`,
-		type: 'button',
-		style: {
-			text: `AudioFade`,
-			size: 'auto',
-			color: combineRgb(255, 255, 255),
-			bgcolor: combineRgb(0, 0, 0),
-		},
-		feedbacks: [
-			{
-				feedbackId: FeedbackId.AudioTransition,
-				options: {},
-				style: {
-					bgcolor: combineRgb(255, 0, 0),
-					color: combineRgb(255, 255, 255),
-				},
-			},
-		],
-		steps: [
-			{
-				down: [
-					{
-						actionId: ActionId.AudioTransition,
-						options: {
-							AudioTrans: 2,
-						},
-					},
-				],
-				up: [],
-			},
-		],
-	}
-	for (const mic of AudioMicChoices) {
-		presets[`AudioMixer_Enable_${mic.id}`] = {
+	let am_sources = deck.state ? Object.keys(deck.state.audioMixer.commonChannels).map(s => ({ id: Number(s), label: String(getEnumKeyByValue(sourceID, Number(s))) })) : []
+	for (const source of am_sources) {
+		presets[`AudioMixer_Enable_${source.id}`] = {
 			category: 'AudioMixer',
-			name: `Audio Mixer: Set Audio ${mic.label} Enable`,
+			name: `Audio Mixer: Set Audio ${source.label} Enable`,
 			type: 'button',
 			style: {
-				text: `${mic.label}`,
+				text: `${source.label}`,
 				size: ptzSize,
 				color: combineRgb(255, 255, 255),
 				bgcolor: combineRgb(0, 0, 0),
 			},
 			feedbacks: [
 				{
-					feedbackId: FeedbackId.AudioEnable,
+					feedbackId: FeedbackId.AudioMixerEnable,
 					options: {
-						AudioEnable: 1,
-						ASource: mic.id,
-					},
-					style: {
-						bgcolor: combineRgb(255, 0, 0),
-						color: combineRgb(255, 255, 255),
-					},
-				},
-			],
-			steps: [
-				{
-					down: [
-						{
-							actionId: ActionId.AudioEnable,
-							options: {
-								ASource: mic.id,
-								AudioEnable: 2,
-							},
-						},
-					],
-					up: [],
-				},
-			],
-		}
-	}
-	for (const audio_in of AudioInputSourcesChoices) {
-		presets[`AudioMixer_Enable_${audio_in.id}`] = {
-			category: 'AudioMixer',
-			name: `Audio Mixer: Set Audio ${audio_in.label} Enable`,
-			type: 'button',
-			style: {
-				text: `${audio_in.label}`,
-				size: ptzSize,
-				color: combineRgb(255, 255, 255),
-				bgcolor: combineRgb(0, 0, 0),
-			},
-			feedbacks: [
-				{
-					feedbackId: FeedbackId.AudioEnable,
-					options: {
-						ASource: audio_in.id,
-						AudioEnable: 0,
+						audioMixSource: source.id,
+						audioMixEnable: 0,
 					},
 					style: {
 						bgcolor: combineRgb(0, 0, 0),
@@ -105,10 +33,10 @@ export function create(_model: GoStreamModel): CompanionPresetDefinitions {
 					},
 				},
 				{
-					feedbackId: FeedbackId.AudioEnable,
+					feedbackId: FeedbackId.AudioMixerEnable,
 					options: {
-						ASource: audio_in.id,
-						AudioEnable: 1,
+						audioMixSource: source.id,
+						audioMixEnable: 1,
 					},
 					style: {
 						bgcolor: combineRgb(255, 0, 0),
@@ -116,10 +44,10 @@ export function create(_model: GoStreamModel): CompanionPresetDefinitions {
 					},
 				},
 				{
-					feedbackId: FeedbackId.AudioEnable,
+					feedbackId: FeedbackId.AudioMixerEnable,
 					options: {
-						ASource: audio_in.id,
-						AudioEnable: 2,
+						audioMixSource: source.id,
+						audioMixEnable: 2,
 					},
 					style: {
 						bgcolor: combineRgb(255, 255, 0),
@@ -131,10 +59,10 @@ export function create(_model: GoStreamModel): CompanionPresetDefinitions {
 				{
 					down: [
 						{
-							actionId: ActionId.AudioEnable1,
+							actionId: AudioMixer.ActionId.AudioMixerEnable,
 							options: {
-								ASource: audio_in.id,
-								AudioEnable: 3,
+								audioMixerSourceID: source.id,
+								audioMixerEnable: 2,
 							},
 						},
 					],

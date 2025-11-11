@@ -1,0 +1,36 @@
+export enum ActionId {
+	PgmIndex = 'pgmIndex',
+	PvwIndex = 'pvwIndex',
+	
+	CutTransition = 'cutTransition',
+	AutoTransition = 'autoTransition',
+	TBar = 'tBar',
+	TransitionStatus = 'transitionStatus',
+	PreviewTransition = 'previewTransition',
+	TransitionStyle = 'transitionStyle',
+	TransitionRate='transitionRate',
+	TransitionMixRate = 'transitionMixRate',
+	TransitionDipRate = 'transitionDipRate',
+	TransitionDipFillSourceList = 'transitionDipFillSourceList',
+	TransitionDipFillSource = 'transitionDipFillSource',
+	TransitionWipeRate = 'transitionWipeRate',
+	TransitionWipePatternList = 'transitionWipePatternList',
+	TransitionWipePatternIndex = 'transitionWipePatternIndex',
+	TransitionWipeXPositionMinMax = 'transitionWipeXPositionMinMax',
+	TransitionWipeXPosition = 'transitionWipeXPosition',
+	TransitionWipeYPositionMinMax = 'transitionWipeYPositionMinMax',
+	TransitionWipeYPosition = 'transitionWipeYPosition',
+	TransitionWipeDirection = 'transitionWipeDirection',
+	TransitionWipeSymmetry = 'transitionWipeSymmetry',
+	TransitionWipeSoftness = 'transitionWipeSoftness',
+	TransitionWipeBorder = 'transitionWipeBorder',
+	TransitionWipeFillSourceList = 'transitionWipeFillSourceList',
+	TransitionWipeFillSource = 'transitionWipeFillSource',
+
+	Ftb='ftb',
+	FtbStatus='ftbStatus',
+	FtbAfv ='ftbAfv',
+	FtbRate='ftbRate',
+
+
+}

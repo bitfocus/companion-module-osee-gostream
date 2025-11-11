@@ -1,61 +1,139 @@
-import { ActionId } from './actionId'
-import { sendCommands } from '../../connection'
-import { ReqType, PortCaps } from '../../enums'
-import type { GoStreamModel } from '../../models/types'
-import { Range } from '../../util'
-import { GoStreamCmd } from '../../connection'
+// import { ActionId } from './actionId'
+// import { sendCommands } from '../../connection'
+// import { ReqType,sourceID } from '../../enums'
+// import type { GoStreamModel } from '../../models/types'
+// import { GoStreamCmd } from '../../connection'
 
-export enum AudioState {
-	Off = 0,
-	On = 1,
-	AFV = 2,
-}
+// export type AudioMixerState= {
+// 	sourceIndex:sourceID,
+// 	audioMixerEffectEnable:boolean,
+// 	lowCutEnable:boolean,
+// 	audioMixerEnable:AfvState,
+// 	noiseGateEnable:boolean,
+// 	compressorEnable:boolean,
+// 	EQEnable:boolean,
+// 	PGMLimiterEnable:boolean,
+// 	audioFadeSwitching:AudioFadeSwitching,
+// }
+// export enum AudioFadeSwitching
+// {
+// 	HardCut =0, 
+// 	SwitchWithEffect=1
+// }
 
-export type AudioMixerStateT = {
-	model: GoStreamModel
-	transitionEnabled: boolean
-	state: AudioState[]
-	monitorSource: number
-}
+// export enum AfvState
+// {
+// 	off =0, 
+// 	on=1,
+// 	afv=2,
+// }
 
-export function create(model: GoStreamModel): AudioMixerStateT {
-	const audioCapableInputs = model.inputs.filter((inp) => inp.caps & PortCaps.Audio).length
+// export type AudioMixerStateT = {
+// 	model: GoStreamModel
+// 	AudioMixerStates:AudioMixerState[]
+// 	HeadphoneSources:sourceID[]
+// }
 
-	return {
-		model: model,
-		transitionEnabled: false,
-		state: Array(audioCapableInputs),
-		monitorSource: 0,
-	}
-}
+// export function create(model: GoStreamModel): AudioMixerStateT {
+// 	let state:AudioMixerStateT={
+// 		model: model,
+// 		AudioMixerStates:[],
+// 		HeadphoneSources:[],
+// 	}
+// 	for (let index = 0; index < model.audioMixSources.length; index++) {
+// 		state.AudioMixerStates.push({
+// 			sourceIndex:model.audioMixSources[index],
+// 			audioMixerEffectEnable:false,
+// 			lowCutEnable:false,
+// 			audioMixerEnable:AfvState.off,
+// 			noiseGateEnable:false,
+// 			compressorEnable:false,
+// 			EQEnable:false,
+// 			PGMLimiterEnable:false,
+// 			audioFadeSwitching:AudioFadeSwitching.HardCut
+// 		});
+// 	}
+// 	return state
+// }
 
-export async function sync(model: GoStreamModel): Promise<boolean> {
-	const audioCapableInputs = model.inputs.filter((inp) => inp.caps & PortCaps.Audio).length
+// export async function sync(model: GoStreamModel): Promise<boolean> {
+// 	// const audioCapableInputs = model.inputs.filter((inp) => inp.caps & PortCaps.Audio).length
+// 	const cmds: GoStreamCmd[] = []
+// 	if(model.audioMixSources.length>0)
+// 	{
+// 		cmds.push({id:ActionId.AudioMixerHeadphoneSourceList,type:ReqType.Get});
+// 		for (let index = 0; index < model.audioMixSources.length; index++) {
+// 			const source_id =model.audioMixSources[index];
+// 			cmds.push({id:ActionId.AudioMixerCompressorEnable,type:ReqType.Get, value: [source_id]});
+// 			cmds.push({id:ActionId.AudioMixerEffectEnable,type:ReqType.Get, value: [source_id]});
+// 			cmds.push({id:ActionId.AudioMixerEnable,type:ReqType.Get, value: [source_id]});
+// 			cmds.push({id:ActionId.AudioMixerHPFEnable,type:ReqType.Get, value: [source_id]});
+// 			cmds.push({id:ActionId.AudioMixerNoiseGateEnable,type:ReqType.Get, value: [source_id]});
+// 			cmds.push({id:ActionId.AudioMixerEQEnable,type:ReqType.Get, value: [source_id]});
+// 			cmds.push({id:ActionId.AudioMixerLimiterEnable,type:ReqType.Get, value: [source_id]});
+// 			cmds.push({id:ActionId.AudioMixerSwitchType,type:ReqType.Get, value: [source_id]});
 
-	const cmds = [
-		{ id: ActionId.AudioTransition, type: ReqType.Get },
-		...Range(audioCapableInputs).map((id) => ({ id: ActionId.AudioEnable, type: ReqType.Get, value: [id] })),
-		{ id: ActionId.AudioMonitorSource, type: ReqType.Get },
-	]
-	return await sendCommands(cmds)
-}
+			
+// 		}
+// 	}
+// 	return await sendCommands(cmds)
+// }
 
-export function update(state: AudioMixerStateT, data: GoStreamCmd): boolean {
-	if (!data.value) return false
-	switch (data.id as ActionId) {
-		case ActionId.AudioTransition:
-			state.transitionEnabled = data.value[0] === 1 ? true : false
-			break
-		case ActionId.AudioEnable: {
-			const audiotype = data.value[0]
-			const audiotypeValue = data.value[1]
-			state.state[audiotype] = audiotypeValue
-			break
-		}
-		case ActionId.AudioMonitorSource: {
-			state.monitorSource = Number(data.value[0])
-			break
-		}
-	}
-	return false
-}
+// export function update(state: AudioMixerStateT, data: GoStreamCmd): boolean {
+// 	if (!data.value) return false
+// 	switch (data.id as ActionId) {
+// 		case ActionId.AudioMixerEnable:
+// 			var source=state.AudioMixerStates.find(s=>s.sourceIndex===Number(data.value![0]));
+// 			if (source) {
+// 				source.audioMixerEnable = Number(data.value![1]);
+// 			}
+// 			break;
+// 		case ActionId.AudioMixerCompressor:
+// 			var source =state.AudioMixerStates.find(s=>s.sourceIndex===Number(data.value![0]));
+// 			if (source) {
+// 				source.compressorEnable = Boolean(data.value![1]);
+// 			}
+// 			break;
+// 		case ActionId.AudioMixerEffectEnable:
+// 			var source = state.AudioMixerStates.find(s=>s.sourceIndex===Number(data.value![0]));
+// 			if (source) {
+// 				source.audioMixerEffectEnable = Boolean(data.value![1]);
+// 			}
+// 			break;
+// 		case ActionId.AudioMixerHPF:
+// 			var source = state.AudioMixerStates.find(s=>s.sourceIndex===Number(data.value![0]));
+// 			if (source) {
+// 				source.lowCutEnable = Boolean(data.value![1]);
+// 			}
+// 			break;
+// 		case ActionId.AudioMixerNoiseGate:
+// 			var source = state.AudioMixerStates.find(s=>s.sourceIndex===Number(data.value![0]));
+// 			if (source) {
+// 				source.noiseGateEnable = Boolean(data.value![1]);
+// 			}
+// 			break;
+// 		case ActionId.AudioMixerEQEnable:
+// 			var source = state.AudioMixerStates.find(s=>s.sourceIndex===Number(data.value![0]));
+// 			if (source) {
+// 				source.EQEnable = Boolean(data.value![1]);
+// 			}
+// 			break;
+// 		case ActionId.AudioMixerLimiter:
+// 			var source = state.AudioMixerStates.find(s=>s.sourceIndex===Number(data.value![0]));
+// 			if (source) {
+// 				source.PGMLimiterEnable = Boolean(data.value![1]);
+// 			}
+// 			break;
+// 		case ActionId.AudioMixerSwitchType:
+// 			var source = state.AudioMixerStates.find(s=>s.sourceIndex===Number(data.value![0]));
+// 			if (source) {
+// 				source.audioFadeSwitching = Number(data.value![1]);
+// 			}
+// 			break;
+// 		case ActionId.AudioMixerHeadphoneSourceList:
+// 			var str = String(data.value)
+// 			state.HeadphoneSources =  str ? str.split(',').map(Number) : []
+// 			break;
+// 	}
+// 	return false
+// }

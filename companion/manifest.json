@@ -1,16 +1,16 @@
 {
-	"id": "osee-gostream",
-	"name": "osee-gostream",
-	"shortname": "gostream",
+	"id": "osee-gostream-series",
+	"name": "osee-gostream-series",
+	"shortname": "gostream-series",
 	"description": "Companion module for GoStream products",
-	"version": "0.0.0",
+	"version": "2.0.0",
 	"license": "MIT",
 	"repository": "git+https://github.com/bitfocus/companion-module-osee-gostream.git",
 	"bugs": "https://github.com/bitfocus/companion-module-osee-gostream/issues",
 	"maintainers": [
 		{
-			"name": "Johan Falkenström",
-			"email": "johan.falkenstrom@gmail.com"
+			"name": "zeyu Zhou",
+			"email": "zhouzeyu@osee-dig.com"
 		}
 	],
 	"legacyIds": [],
@@ -21,8 +21,8 @@
 		"entrypoint": "../dist/index.js"
 	},
 	"manufacturer": "OSEE",
-	"products": ["GoStream"],
-	"keywords": ["GoStream", "companion"],
+	"products": ["GoStream_Series"],
+	"keywords": ["GoStream_Series", "companion"],
 	"bonjourQueries": {
 		"bonjourDevices": {
 			"type": "oseectrl",

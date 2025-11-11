@@ -1,0 +1,15 @@
+export enum ActionId {
+	PGMStartRecord='PGMStartRecord',
+	ISOStartRecord='ISOStartRecord',
+	RecordStart = 'recordStart',
+	RecordStop = 'recordStop',
+	RecordStatus = 'recordStatus',
+	RecordFormat = 'recordFormat',
+	RecordBitrate = 'recordBitrate',
+	RecordISOChannel = 'recordISOChannel',
+	RecordDuration ='recordDuration',
+	RecordFree='recordFree',
+	ISORecordFree='ISORecordFree',
+	RecordecordAlarm='recordecordAlarm',
+	ISORecordStartError='ISORecordStartError',
+}

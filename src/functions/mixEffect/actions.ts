@@ -1,114 +1,94 @@
-import { ActionId } from './actionId'
-import { getOptNumber, getOptString } from '../../util'
-import { ReqType, ActionType, TransitionStyle } from '../../enums'
-import { sendCommand, sendCommands } from '../../connection'
+import { Effect } from "../../connection/actionids"
+import { getOptNumber, getEnumKeyByValue } from '../../util'
+
 import type { CompanionActionDefinitions } from '@companion-module/base'
-import { TransitionStyleChoice, WipeDirectionChoices, SwitchChoices } from '../../model'
-import { GoStreamModel } from '../../models/types'
-import { MixEffectStateT } from './state'
+import { TransitionStyleChoice, WipeDirectionChoices, MixEfectSwitchChoices } from '../../model'
+import { StreamDeck } from '../../connection/streamdeck'
+import { EffectStyle, Model, sourceID } from '../../connection/enums'
+
 
 function createActionName(name: string): string {
 	return 'MixEffect: ' + name
 }
-export function create(model: GoStreamModel, state: MixEffectStateT): CompanionActionDefinitions {
-	return {
-		[ActionId.PgmIndex]: {
+export function create(deck: StreamDeck): CompanionActionDefinitions {
+	let actions: CompanionActionDefinitions = {
+		[Effect.ActionId.TransitionStyle]: {
+			name: createActionName('Set transition style'),
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Transition Style',
+					id: 'transitionStyle',
+					default: EffectStyle.Mix,
+					choices: TransitionStyleChoice,
+				},
+			],
+			callback: async (action) => {
+				let opt = getOptNumber(action, 'transitionStyle');
+				let style = "";
+				switch (opt) {
+					case 0:
+					default:
+						style = "Mix"
+						break;
+					case 1:
+						style = "Dip"
+						break;
+					case 2:
+						style = "Wipe"
+						break;
+
+				}
+				await deck.setTransitionStyle(style)
+			},
+		},
+		[Effect.ActionId.AutoTransition]: {
+			name: createActionName('Perform AUTO transition'),
+			options: [],
+			callback: async () => {
+				await deck.setAutoTransition();
+			},
+		},
+		[Effect.ActionId.CutTransition]: {
+			name: createActionName('Perform CUT transition'),
+			options: [],
+			callback: async () => {
+				await deck.setCutTransition();
+			},
+		},
+		[Effect.ActionId.PgmIndex]: {
 			name: createActionName('Set PGM Source'),
 			options: [
 				{
 					type: 'dropdown',
 					label: 'Source',
 					id: 'Source',
-					default: 0,
-					choices: model.InputSources().map((item) => ({ id: item.id, label: item.name })),
+					default: sourceID.IN1,
+					choices: deck.state !== undefined ? deck.state.device.inputSources.map((s) => ({ id: s, label: String(getEnumKeyByValue(sourceID, s)) })) : []
 				},
 			],
 			callback: async (action) => {
 				const id = getOptNumber(action, 'Source')
-				await sendCommand(ActionId.PgmIndex, ReqType.Set, [id])
+				await deck.changePGMIndex(id);
 			},
 		},
-		[ActionId.PvwIndex]: {
+		[Effect.ActionId.PvwIndex]: {
 			name: createActionName('Set PVW Source'),
 			options: [
 				{
 					type: 'dropdown',
 					label: 'Source',
 					id: 'Source',
-					default: 0,
-					choices: model.InputSources().map((item) => ({ id: item.id, label: item.name })),
+					default: sourceID.IN1,
+					choices: deck.state !== undefined ? deck.state.device.inputSources.map((s) => ({ id: s, label: String(getEnumKeyByValue(sourceID, s)) })) : []
 				},
 			],
 			callback: async (action) => {
 				const id = getOptNumber(action, 'Source')
-				await sendCommand(ActionId.PvwIndex, ReqType.Set, [id])
+				await deck.changePVWIndex(id);
 			},
 		},
-		[ActionId.CutTransition]: {
-			name: createActionName('Perform CUT transition'),
-			options: [],
-			callback: async () => {
-				await sendCommand(ActionId.CutTransition, ReqType.Set)
-			},
-		},
-		[ActionId.AutoTransition]: {
-			name: createActionName('Perform AUTO transition'),
-			options: [],
-			callback: async () => {
-				await sendCommand(ActionId.AutoTransition, ReqType.Set)
-			},
-		},
-		[ActionId.FTB]: {
-			name: createActionName('Perform FTB Transition'),
-			options: [],
-			callback: async () => {
-				await sendCommand(ActionId.FTB, ReqType.Set)
-			},
-		},
-		[ActionId.FtbAudioAFV]: {
-			name: createActionName('Perform FTB Transition,Audio follows video and pops in'),
-			options: [
-				{
-					type: 'dropdown',
-					label: 'FTB Audio AFV',
-					id: 'FtbAudioAFV',
-					default: 0,
-					choices: SwitchChoices,
-				},
-			],
-			callback: async (action) => {
-				const opt = getOptNumber(action, 'FtbAudioAFV')
-				let paramOpt = 0
-				if (opt === 2) {
-					if (state.fadeToBlack.AFV === true) {
-						paramOpt = 0
-					} else {
-						paramOpt = 1
-					}
-					await sendCommand(ActionId.FtbAudioAFV, ReqType.Set, [paramOpt])
-				} else {
-					await sendCommand(ActionId.FtbAudioAFV, ReqType.Set, [opt])
-				}
-			},
-		},
-		[ActionId.FtbRate]: {
-			name: createActionName('Set rate of FTB'),
-			options: [
-				{
-					type: 'number',
-					label: 'FTB Rate(s)',
-					id: 'FtbRate',
-					default: 2,
-					min: 0.5,
-					max: 8.0,
-					range: true,
-				},
-			],
-			callback: async (action) => {
-				await sendCommand(ActionId.FtbRate, ReqType.Set, [getOptNumber(action, 'FtbRate')])
-			},
-		},
-		[ActionId.Prev]: {
+		[Effect.ActionId.PreviewTransition]: {
 			name: createActionName('Preview Button'),
 			options: [
 				{
@@ -116,53 +96,29 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionA
 					label: 'PREV',
 					id: 'prevEnable',
 					default: 2,
-					choices: SwitchChoices,
+					choices: MixEfectSwitchChoices,
 				},
 			],
 			callback: async (action) => {
-				const opt = getOptNumber(action, 'prevEnable')
-				let paramOpt = 0
-				if (opt === 2) {
-					if (state.selectTransitionStyle.PrevState === true) {
-						paramOpt = 0
-					} else {
-						paramOpt = 1
-					}
-					await sendCommand(ActionId.Prev, ReqType.Set, [paramOpt])
-				} else {
-					await sendCommand(ActionId.Prev, ReqType.Set, [opt])
-				}
+				let opt = getOptNumber(action, 'prevEnable')
+				if (opt === 2) opt = deck.state?.effect.selectTransitionStyle.PrevState === true ? 0 : 1
+				await deck.setPrevEnabled(opt)
 			},
 		},
-		[ActionId.TransitionIndex]: {
-			name: createActionName('Set transition style/pattern'),
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Transition Style',
-					id: 'TransitionStyle',
-					default: TransitionStyle.MIX,
-					choices: TransitionStyleChoice,
-				},
-			],
-			callback: async (action) => {
-				await sendCommand(ActionId.TransitionIndex, ReqType.Set, [getOptNumber(action, 'TransitionStyle')])
-			},
-		},
-		[ActionId.TransitionRate]: {
+		[Effect.ActionId.TransitionRate]: {
 			name: createActionName('Change transition rate'),
 			options: [
 				{
 					type: 'dropdown',
 					label: 'Transition Style',
-					id: 'TransitionStyle',
-					default: TransitionStyle.MIX,
+					id: 'transitionStyle',
+					default: EffectStyle.Mix,
 					choices: TransitionStyleChoice,
 				},
 				{
 					type: 'number',
 					label: 'Transition Rate',
-					id: 'TransitionRate',
+					id: 'transitionRate',
 					default: 2,
 					min: 0.5,
 					max: 8.0,
@@ -171,52 +127,92 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionA
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.TransitionRate, ReqType.Set, [
-					getOptNumber(action, 'TransitionStyle'),
-					getOptNumber(action, 'TransitionRate'),
-				])
+				const style = getOptNumber(action, 'transitionStyle')
+				const rate = getOptNumber(action, 'transitionRate')
+				await deck.setStyleRate(style, rate);
 			},
 		},
-		[ActionId.TransitionDipSource]: {
-			name: createActionName('Change transition dip source'),
+		[Effect.ActionId.TransitionDipFillSource]: {
+			name: createActionName('set dip source'),
 			options: [
 				{
 					type: 'dropdown',
-					label: 'Change Dip Source',
-					id: 'TransitionDipSource',
-					default: 0,
-					choices: model.getChoices(ActionType.TransitionDipSource),
+					label: 'Source',
+					id: 'transitionDipSource',
+					default: sourceID.Color,
+					choices: deck.state !== undefined ? deck.state.effect.dipFillSources.map((s) => ({ id: s, label: String(getEnumKeyByValue(sourceID, s)) })) : []
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.TransitionDipSource, ReqType.Set, [getOptNumber(action, 'TransitionDipSource')])
+				let id = getOptNumber(action, 'transitionDipSource');
+				await deck.setTranstionDipFillSource(id);
 			},
 		},
-		[ActionId.TransitionWipePattern]: {
-			name: createActionName('Change transition wipe pattern'),
+		[Effect.ActionId.TransitionWipeDirection]: {
+			name: createActionName('Change transition wipe style direction'),
+			options: [
+				{
+					type: 'dropdown',
+					label: 'set wipe direction',
+					id: 'wipeDirection',
+					default: 0,
+					choices: WipeDirectionChoices,
+				},
+			],
+			callback: async (action) => {
+				await deck.setTransitionWipeDirection(getOptNumber(action, 'wipeDirection'));
+			},
+		},
+	}
+	if (deck.state?.device.deviceModel !== Model.Duet_8ISO) {
+		actions[Effect.ActionId.Ftb] = {
+			name: createActionName('Perform FTB Transition'),
+			options: [],
+			callback: async () => {
+				await deck.setFtbTransition();
+			},
+		}
+		actions[Effect.ActionId.FtbRate] = {
+			name: createActionName('set FTB rate'),
 			options: [
 				{
 					type: 'number',
-					label: 'Wipe Pattern',
-					id: 'WipePatternID',
-					min: 0,
-					max: 17,
-					default: 0,
+					label: 'FTB Rate(s)',
+					id: 'ftbRate',
+					default: 2,
+					min: 0.5,
+					max: 8.0,
 					range: true,
-					step: 1,
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.TransitionWipePattern, ReqType.Set, [getOptNumber(action, 'WipePatternID')])
+				await deck.setFtbRate(getOptNumber(action, 'ftbRate'));
 			},
-		},
-		[ActionId.TransitionWipeXPosition]: {
-			name: createActionName('Change transition wipe X position'),
+		}
+		actions[Effect.ActionId.FtbAfv] = {
+			name: createActionName('set FTB AFV'),
+			options: [
+				{
+					type: 'dropdown',
+					label: 'AFV',
+					id: 'ftbAudioAFV',
+					default: 0,
+					choices: MixEfectSwitchChoices,
+				},
+			],
+			callback: async (action) => {
+				let opt = getOptNumber(action, 'ftbAudioAFV')
+				if (opt === 2) opt = deck.state?.effect.fadeToBlack.AFV === true ? 0 : 1
+				await deck.setFtbAfvEnabled(opt);
+			},
+		}
+		actions[Effect.ActionId.TransitionWipeXPosition] = {
+			name: createActionName('set Wipe X Position'),
 			options: [
 				{
 					type: 'number',
 					label: 'X Position',
-					id: 'XPosition',
+					id: 'xPosition',
 					default: 0,
 					min: -16.0,
 					max: 16.0,
@@ -225,16 +221,17 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionA
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.TransitionWipeXPosition, ReqType.Set, [getOptNumber(action, 'XPosition')])
+				let opt = getOptNumber(action, 'xPosition')
+				await deck.setTransitionWipeXPosition(opt);
 			},
-		},
-		[ActionId.TransitionWipeYPosition]: {
-			name: createActionName('Change transition wipe Y position'),
+		}
+		actions[Effect.ActionId.TransitionWipeYPosition] = {
+			name: createActionName('set Wipe Y Position'),
 			options: [
 				{
 					type: 'number',
 					label: 'Y Position',
-					id: 'YPosition',
+					id: 'yPosition',
 					default: 0,
 					min: -9.0,
 					max: 9.0,
@@ -243,228 +240,83 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionA
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.TransitionWipeYPosition, ReqType.Set, [getOptNumber(action, 'YPosition')])
+				let opt = getOptNumber(action, 'yPosition')
+				await deck.setTransitionWipeYPosition(opt);
 			},
-		},
-		[ActionId.TransitionWipeDirection]: {
-			name: createActionName('Change transition wipe style direction'),
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Change Wipe Style Direction',
-					id: 'WipeDirection',
-					default: 0,
-					choices: WipeDirectionChoices,
-				},
-			],
-			callback: async (action) => {
-				await sendCommand(ActionId.TransitionWipeDirection, ReqType.Set, [getOptNumber(action, 'WipeDirection')])
-			},
-		},
-		[ActionId.TransitionWipeSymmetry]: {
-			name: createActionName('Change transition wipe style symmetry'),
+		}
+		actions[Effect.ActionId.TransitionWipeSymmetry] = {
+			name: createActionName('set wipe symmetry'),
 			options: [
 				{
 					type: 'number',
 					label: 'Symmetry',
-					id: 'WipeSymmetry',
-					default: 50,
+					id: 'symmetry',
+					default: 0,
 					min: 0,
 					max: 100,
+					step: 1,
 					range: true,
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.TransitionWipeSymmetry, ReqType.Set, [getOptNumber(action, 'WipeSymmetry')])
+				let opt = getOptNumber(action, 'symmetry')
+				await deck.setTransitionWipeSymmetry(opt);
 			},
-		},
-		[ActionId.TransitionWipeSoftness]: {
-			name: createActionName('Change transition wipe style softness'),
+		}
+		actions[Effect.ActionId.TransitionWipeSoftness] = {
+			name: createActionName('set wipe Softness'),
 			options: [
 				{
 					type: 'number',
 					label: 'Softness',
-					id: 'WipeSoftness',
+					id: 'softness',
 					default: 0,
 					min: 0,
 					max: 100,
+					step: 1,
 					range: true,
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.TransitionWipeSoftness, ReqType.Set, [getOptNumber(action, 'WipeSoftness')])
+				let opt = getOptNumber(action, 'softness')
+				await deck.setTransitionWipeSoftness(opt);
 			},
-		},
-		[ActionId.TransitionWipeBorder]: {
-			name: createActionName('Change transitions wipe style border'),
+		}
+		actions[Effect.ActionId.TransitionWipeBorder] = {
+			name: createActionName('set wipe border'),
 			options: [
 				{
 					type: 'number',
 					label: 'Border',
-					id: 'WipeBorder',
+					id: 'border',
 					default: 0,
 					min: 0,
 					max: 100,
+					step: 1,
 					range: true,
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.TransitionWipeBorder, ReqType.Set, [getOptNumber(action, 'WipeBorder')])
+				let opt = getOptNumber(action, 'border')
+				await deck.setTransitionWipeBorder(opt);
 			},
-		},
-		[ActionId.TransitionWipeFillSource]: {
-			name: createActionName('Change transition wipe style fill source'),
+		}
+		actions[Effect.ActionId.TransitionWipeFillSource] = {
+			name: createActionName('set wipe Fill Source'),
 			options: [
 				{
 					type: 'dropdown',
-					label: 'Fill Source',
-					id: 'WipeFillSource',
-					default: 0,
-					choices: model.getChoices(ActionType.TransitionWipeFillSource),
+					label: 'Source',
+					id: 'transitionWipeSource',
+					default: sourceID.Color,
+					choices: deck.state !== undefined ? deck.state.effect.wipeFillSource.map((s) => ({ id: s, label: String(getEnumKeyByValue(sourceID, s)) })) : []
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.TransitionWipeFillSource, ReqType.Set, [getOptNumber(action, 'WipeFillSource')])
+				let opt = getOptNumber(action, 'transitionWipeSource')
+				await deck.setTransitionWipeFillSource(opt);
 			},
-		},
-		//---------------------------------------------------------------------------------------
-		//  Next Transition block of buttons: On Air (USK), On Air (DSK), KEY (USK), DSK, BKGD
-		//----------------->>>>>>
-		[ActionId.NextTransitionButtons]: {
-			name: createActionName('Set "Next Transition" Button (KEY, DSK, or BKGD)'),
-			description:
-				'Set a button in the Next Transition group: On/Off/Toggle is the normal "Tie" behavior: its effect on PVW depends on the state of "On Air". The last two options ensure that the key is On/Off PVW regardless of the state of "On Air"',
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Layer',
-					id: 'KeyButton',
-					choices: state.nextTState.getChoices(true),
-					default: state.nextTState.getDefaultChoice(),
-				},
-				{
-					type: 'dropdown',
-					label: 'Action',
-					id: 'ButtonAction',
-					choices: [
-						{ id: 0, label: 'Off' },
-						{ id: 1, label: 'On' },
-						{ id: 2, label: 'Toggle' },
-						{ id: 3, label: 'Off PVW' },
-						{ id: 4, label: 'On PVW' },
-					],
-					default: 0,
-					isVisible: (options) => options.KeyButton != 'BKGD',
-				},
-				{
-					type: 'dropdown',
-					label: 'Action',
-					id: 'BKGDAction',
-					choices: [
-						{ id: 0, label: 'Off' },
-						{ id: 1, label: 'On' },
-						{ id: 2, label: 'Toggle' },
-					],
-					default: 0,
-					isVisible: (options) => options.KeyButton === 'BKGD',
-				},
-			],
-			callback: async (action) => {
-				const keyName = getOptString(action, 'KeyButton')
-				let operation = 0
-				const ntState = state.nextTState.copy()
-
-				if (action.options.KeyButton === 'BKGD') {
-					operation = getOptNumber(action, 'BKGDAction')
-				} else {
-					operation = getOptNumber(action, 'ButtonAction')
-				}
-
-				if (isNaN(operation) || operation === undefined || operation < 0 || operation > 4) {
-					console.log('Next Transition:Tie key to next transition - Unknown ButtonAction: ' + action.options.operation)
-					return
-				} else if (keyName === undefined || !state.nextTState.isChoiceValid(keyName, true)) {
-					console.log('Next Transition:Tie key to next transition - Unknown KeyButton: ' + action.options.KeyButton)
-					return
-				} else if (operation === 0) {
-					// Off
-					ntState[keyName] = false
-				} else if (operation === 1) {
-					// On
-					ntState[keyName] = true
-				} else if (operation === 2) {
-					// Toggle
-					ntState[keyName] = !ntState[keyName]
-				} else if (ntState.getOnAirStatus(keyName)) {
-					// Off/On in PVW (ops 3, 4)
-					// if OnAir, "Key" logic is reversed, so correct for it here
-					ntState[keyName] = operation === 3
-				} else {
-					ntState[keyName] = operation === 4
-				}
-
-				await sendCommand(ActionId.NextTransitionButtons, ReqType.Set, [ntState.pack()])
-			},
-		},
-		[ActionId.OnAirButtons]: {
-			name: createActionName('Set "On Air" Button (KEY or DSK)'),
-			description:
-				'Set an "On Air" button. On/Off/Toggle is the "normal" behavior, showing/hiding in PGM and flipping the visibility in PVW. The last three options ensure that the action affects PGM only (although PVW may flicker)',
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Layer',
-					id: 'KeyButton',
-					choices: state.nextTState.getChoices(true),
-					default: state.nextTState.getDefaultChoice(),
-				},
-				{
-					type: 'dropdown',
-					label: 'Action',
-					id: 'ButtonAction',
-					choices: [
-						{ id: 0, label: 'Off' },
-						{ id: 1, label: 'On' },
-						{ id: 2, label: 'Toggle' },
-						{ id: 3, label: 'Off PGM only' },
-						{ id: 4, label: 'On PGM only' },
-						{ id: 5, label: 'Toggle PGM only' }, // needed here unlike NextTransition
-					],
-					default: 0,
-				},
-			],
-			callback: async (action) => {
-				const keyName = getOptString(action, 'KeyButton')
-				const operation = getOptNumber(action, 'ButtonAction')
-				const ntState = state.nextTState.copy()
-
-				if (isNaN(operation) || operation === undefined || operation < 0 || operation > 5) {
-					console.log('Next Transition:Key On Air - Unknown ButtonAction: ' + action.options.operation)
-					return
-				} else if (keyName === undefined || !state.nextTState.isChoiceValid(keyName, false)) {
-					console.log('Next Transition:Key On Air - Unknown KeyButton: ' + action.options.KeyButton)
-					return
-				} else if (operation === 0 || operation == 3) {
-					// Off
-					ntState.setOnAirStatus(keyName, false)
-				} else if (operation === 1 || operation == 4) {
-					// On
-					ntState.setOnAirStatus(keyName, true)
-				} else if (operation === 2 || operation == 5) {
-					// Toggle
-					ntState.setOnAirStatus(keyName, !ntState.getOnAirStatus(keyName))
-				}
-
-				const commands = [ntState.getOnAirCommand(keyName)]
-				if (operation >= 3 && ntState.getOnAirStatus(keyName) != state.nextTState.getOnAirStatus(keyName)) {
-					// Off/On in PGM (ops 3 - 5): if we're changing the On Air value then:
-					//  we need to flip the status of the "next transition" key
-					ntState[keyName] = !ntState[keyName]
-					commands.push({ id: ActionId.NextTransitionButtons, type: ReqType.Set, value: [ntState.pack()] })
-				}
-
-				await sendCommands(commands)
-			},
-		},
+		}
 	}
+	return actions;
 }

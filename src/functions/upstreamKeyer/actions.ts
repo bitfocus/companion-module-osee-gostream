@@ -1,68 +1,109 @@
-import { ActionId } from './actionId'
-import { getOptNumber, getOptString, makeChoices } from './../../util'
-import { ReqType, ActionType } from './../../enums'
-import { sendCommand } from './../../connection'
+import { USK } from "../../connection/actionids"
+import { getOptNumber } from './../../util'
 import { createLumaKeyActions } from './keyTypes/lumaKey'
 import { createChromaKeyActions } from './keyTypes/chromaKey'
-import { createKeyPatternActions } from './keyTypes/keyPattern'
-import { createPIPActions } from './keyTypes/pip'
+import { createPatternKeyActions } from './keyTypes/patternKey'
+import { createPipActions } from './keyTypes/pipKey'
 import type { CompanionActionDefinitions } from '@companion-module/base'
-import { UpstreamKeyerStateT } from './state'
-import { GoStreamModel } from '../../models/types'
+import { GetKeyChoices, KeySwitchChoices, KeyTypeChoices } from '../../model'
+import { StreamDeck } from '../../connection/streamdeck'
 
-export function create(model: GoStreamModel, state: UpstreamKeyerStateT): CompanionActionDefinitions {
-	return {
-		[ActionId.UpStreamKeyFillKeyType]: {
-			name: 'UpStream Key:Set inputs',
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Fill Source',
-					id: 'FillSource',
-					choices: model.getChoices(ActionType.LumaKeySourceKey),
-					default: 0,
-				},
-				{
-					type: 'dropdown',
-					label: 'Key Source',
-					id: 'KeySource',
-					choices: model.getChoices(ActionType.LumaKeySourceKey),
-					default: 0,
-				},
-			],
-			callback: async (action) => {
-				await sendCommand(ActionId.UpStreamKeyFillKeyType, ReqType.Set, [
-					state.encodeKeyType(),
-					getOptNumber(action, 'FillSource'),
-					getOptNumber(action, 'KeySource'),
-				])
-			},
-		},
-		[ActionId.UpStreamKeyType]: {
-			name: 'UpStream Key:Set Key Type',
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Key Type:',
-					id: 'USKType',
-					...makeChoices(state.keyTypes()),
-				},
-			],
-			callback: async (action) => {
-				const keyType = getOptString(action, 'USKType')
-				// --> the following is for backwards compatibility before upgrade scripts are written
-				let encoded = Number(keyType)
-				if (isNaN(encoded)) {
-					encoded = state.encodeKeyType(keyType)
-				}
-				//<--
+export function create(deck: StreamDeck): CompanionActionDefinitions {
+    return {
+        [USK.ActionId.KeyOnAir]: {
+            name: 'Key: set On Air',
+            options: [
+                {
+                    type: 'dropdown',
+                    label: 'Key',
+                    id: 'keyId',
+                    choices: GetKeyChoices(deck.state),
+                    default: 0,
+                },
+                {
+                    type: 'dropdown',
+                    label: 'On Air',
+                    id: 'onAir',
+                    choices: KeySwitchChoices,
+                    default: 0,
+                },
+            ],
+            callback: async (action) => {
+                let keyId = getOptNumber(action, 'keyId')
+                let paramOpt = getOptNumber(action, 'onAir')
+                if (paramOpt === 2) paramOpt = deck.state?.upStreamKey.USKS[keyId]?.onAir ? 0 : 1
+                await deck.setKeyOnAir(keyId, Boolean(paramOpt))
+            },
+        },
+        [USK.ActionId.KeyEnable]: {
+            name: 'Key:set PVW Enable',
+            options: [
+                {
+                    type: 'dropdown',
+                    label: 'Key',
+                    id: 'keyId',
+                    choices: GetKeyChoices(deck.state),
+                    default: 0,
+                },
+                {
+                    type: 'dropdown',
+                    label: 'Enable',
+                    id: 'enable',
+                    choices: KeySwitchChoices,
+                    default: 0,
+                },
+            ],
+            callback: async (action) => {
+                let keyId = getOptNumber(action, 'keyId')
+                let paramOpt = getOptNumber(action, 'enable')
+                if (paramOpt === 2) paramOpt = deck.state?.upStreamKey.USKS[keyId]?.enabled ? 0 : 1
+                await deck.setKeyEnable(keyId, Boolean(paramOpt))
+            },
+        },
+        [USK.ActionId.KeyType]: {
+            name: 'Key:set key type',
+            options: [
+                {
+                    type: 'dropdown',
+                    label: 'Key',
+                    id: 'keyId',
+                    choices: GetKeyChoices(deck.state),
+                    default: 0,
+                },
+                {
+                    type: 'dropdown',
+                    label: 'Type',
+                    id: 'type',
+                    choices: KeyTypeChoices,
+                    default: 0,
+                },
+            ],
+            callback: async (action) => {
+                // range {"Luma","Chroma","Pattern","PIP"}
 
-				await sendCommand(ActionId.UpStreamKeyType, ReqType.Set, [encoded])
-			},
-		},
-		...createLumaKeyActions(model, state),
-		...createChromaKeyActions(model, state),
-		...createKeyPatternActions(model, state),
-		...createPIPActions(model, state),
-	}
+                let type = "";
+                let opt = getOptNumber(action, 'type');
+                switch (opt) {
+                    case 0:
+                    default:
+                        type = "Luma";
+                        break;
+                    case 1:
+                        type = "Chroma";
+                        break;
+                    case 2:
+                        type = "Pattern";
+                        break;
+                    case 3:
+                        type = "PIP";
+                        break;
+                }
+                await deck.setKeyType(getOptNumber(action, 'keyId'), type)
+            },
+        },
+        ...createLumaKeyActions(deck),
+        ...createChromaKeyActions(deck),
+        ...createPatternKeyActions(deck),
+        ...createPipActions(deck),
+    }
 }

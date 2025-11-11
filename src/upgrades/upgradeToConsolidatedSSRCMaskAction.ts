@@ -1,4 +1,4 @@
-import { Config } from '../config'
+import { DeckConfig } from '../config'
 import {
 	CompanionStaticUpgradeResult,
 	CompanionUpgradeContext,
@@ -8,10 +8,10 @@ import {
 } from '@companion-module/base'
 
 export function getScripts(
-	_context: CompanionUpgradeContext<Config>,
-	props: CompanionStaticUpgradeProps<Config>,
-): CompanionStaticUpgradeResult<Config> {
-	const result: CompanionStaticUpgradeResult<Config> = {
+	_context: CompanionUpgradeContext<DeckConfig>,
+	props: CompanionStaticUpgradeProps<DeckConfig>,
+): CompanionStaticUpgradeResult<DeckConfig> {
+	const result: CompanionStaticUpgradeResult<DeckConfig> = {
 		updatedActions: [],
 		updatedConfig: null,
 		updatedFeedbacks: [],

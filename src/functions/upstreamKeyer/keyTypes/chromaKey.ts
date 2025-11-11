@@ -1,332 +1,311 @@
-import { ActionId } from '../actionId'
-import { getOptNumber } from './../../../util'
-import { SwitchChoices, KeyResizeSizeChoices } from './../../../model'
-import { ReqType, ActionType } from './../../../enums'
-import { sendCommand, sendCommands, GoStreamCmd } from './../../../connection'
-import type { CompanionActionDefinitions } from '@companion-module/base'
-import { UpstreamKeyerStateT, USKKeyTypes } from '../state'
-import { GoStreamModel } from '../../../models/types'
-export function createChromaKeyActions(model: GoStreamModel, state: UpstreamKeyerStateT): CompanionActionDefinitions {
+import { USK } from "../../../connection/actionids"
+import { getEnumKeyByValue, getOptNumber } from './../../../util'
+import { KeySwitchChoices, GetKeyChoices } from './../../../model'
+import type { CompanionActionDefinitions, SomeCompanionActionInputField } from '@companion-module/base'
+import { StreamDeck } from '../../../connection/streamdeck'
+import { Model, sourceID } from '../../../connection/enums'
+export function createChromaKeyActions(deck: StreamDeck): CompanionActionDefinitions {
+	const _options: SomeCompanionActionInputField[] = [
+		{
+			type: 'dropdown',
+			label: 'Key',
+			id: 'keyId',
+			choices: GetKeyChoices(deck.state),
+			default: 0,
+		},
+		{
+			id: 'props',
+			type: 'multidropdown',
+			label: 'Select properties',
+			choices: [
+				{ id: 'maskEnable', label: 'maskEnable' },
+				{ id: 'left', label: 'left' },
+				{ id: 'top', label: 'top' },
+				{ id: 'right', label: 'right' },
+				{ id: 'bottom', label: 'bottom' },
+				{ id: 'Size/Position Enable', label: 'Size/Position Enable' },
+				{ id: 'Size', label: 'Size' },
+				{ id: 'XPosition', label: 'XPosition' },
+				{ id: 'YPosition', label: 'YPosition' },
+			],
+			minSelection: 1,
+			default: ['maskEnable', 'left', 'top', 'right', 'bottom', 'Size/Position Enable', 'Size', 'XPosition', 'YPosition'],
+		},
+		{
+			type: 'dropdown',
+			label: 'Mask Enable',
+			id: 'maskEnable',
+			choices: KeySwitchChoices,
+			default: 0,
+			isVisible: (options) => (<string[]>options.props!).includes('maskEnable'),
+		},
+		{
+			type: 'number',
+			label: 'Left',
+			id: 'maskHStart',
+			min: 0,
+			max: 100,
+			default: 0,
+			isVisible: (options) => (<string[]>options.props!).includes('left'),
+		},
+		{
+			type: 'number',
+			label: 'Right',
+			id: 'maskHEnd',
+			min: 0,
+			max: 100,
+			default: 100,
+			isVisible: (options) => (<string[]>options.props!).includes('right'),
+		},
+		{
+			type: 'number',
+			label: 'Top',
+			id: 'maskVStart',
+			min: 0,
+			max: 100,
+			default: 0,
+			isVisible: (options) => (<string[]>options.props!).includes('top'),
+		},
+		{
+			type: 'number',
+			label: 'Bottom',
+			id: 'maskVEnd',
+			min: 0,
+			max: 100,
+			default: 100,
+			isVisible: (options) => (<string[]>options.props!).includes('bottom'),
+		},
+		{
+			type: 'dropdown',
+			label: 'Size/Position Enable',
+			id: 'sizeEnable',
+			choices: KeySwitchChoices,
+			default: 0,
+			isVisible: (options) => (<string[]>options.props!).includes('Size/Position Enable'),
+		},
+
+		{
+			type: 'number',
+			label: 'X Position',
+			id: 'xPosition',
+			min: -16.0,
+			max: 16.0,
+			default: 10.6,
+			step: 0.1,
+			range: true,
+			isVisible: (options) => (<string[]>options.props!).includes('XPosition'),
+		},
+		{
+			type: 'number',
+			label: 'Y Position',
+			id: 'yPosition',
+			min: -9.0,
+			max: 9.0,
+			default: 7.0,
+			step: 0.1,
+			range: true,
+			isVisible: (options) => (<string[]>options.props!).includes('YPosition'),
+		},
+	]
+	if (deck.state?.device.deviceModel === Model.Duet_8ISO) {
+		_options.push(
+			{
+				type: 'number',
+				label: 'Size',
+				id: 'size',
+				min: 7,
+				max: 100,
+				default: 33,
+				isVisible: (options) => (<string[]>options.props!).includes('Size'),
+			},
+		)
+	} else {
+		_options.push(
+			{
+				type: 'dropdown',
+				label: 'Size',
+				id: 'size',
+				choices: [
+					{ id: 25, label: "0.25" },
+					{ id: 33, label: "0.33" },
+					{ id: 50, label: "0.50" }
+				],
+				default: 33,
+				isVisible: (options) => (<string[]>options.props!).includes('Size')
+			}
+		)
+	}
 	return {
-		[ActionId.ChromaKeyFill]: {
-			name: 'UpStream Key:Set Chroma Key Source Fill',
+		[USK.ActionId.ChromaFillSource]: {
+			name: 'Key: set Chroma source',
 			options: [
 				{
 					type: 'dropdown',
-					label: 'Source Fill',
-					id: 'KeyFill',
-					choices: model.getChoices(ActionType.ChromaKeySourceKey),
+					label: 'Key',
+					id: 'keyId',
+					choices: GetKeyChoices(deck.state),
 					default: 0,
+				},
+				{
+					type: 'dropdown',
+					label: 'Source Fill',
+					id: 'keyFill',
+					choices: deck.state ? deck.state.upStreamKey.ChromaFillSource.map((s) => ({ id: s, label: String(getEnumKeyByValue(sourceID, s)) })) : [],
+					default: sourceID.IN1,
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.ChromaKeyFill, ReqType.Set, [getOptNumber(action, 'KeyFill')])
+				let keyId = getOptNumber(action, 'keyId')
+				let sourceid = getOptNumber(action, 'keyFill')
+				await deck.setChromaFillSource(keyId, sourceid);
 			},
 		},
-		[ActionId.ChromaKeySetMaskProperties]: {
-			name: 'UpStream Key: Set chroma mask properties',
+		[USK.ActionId.ChromaKeySetMaskProperties]: {
+			name: 'Key:set Chroma properties',
+			options: _options,
+			callback: async (action) => {
+				const props = <string[]>action.options.props
+				const keyId = getOptNumber(action, 'keyId')
+				if (props.includes('maskEnable')) {
+					let paramOpt = getOptNumber(action, 'maskEnable')
+					if (paramOpt === 2) paramOpt = deck.state?.upStreamKey.USKS[keyId]?.Chroma.maskInfo.enabled ? 0 : 1
+					await deck.setChromaMaskEnable(keyId, paramOpt)
+				}
+				if (props.includes('left')) {
+					await deck.setChromaMaskHStart(keyId, getOptNumber(action, 'maskHStart'))
+				}
+				if (props.includes('right')) {
+					await deck.setChromaMaskHEnd(keyId, getOptNumber(action, 'maskHEnd'))
+				}
+				if (props.includes('top')) {
+					await deck.setChromaMaskVStart(keyId, getOptNumber(action, 'maskVStart'))
+				}
+				if (props.includes('bottom')) {
+					await deck.setChromaMaskVEnd(keyId, getOptNumber(action, 'maskVEnd'))
+				}
+				if (props.includes('Size/Position Enable')) {
+					let paramOpt = getOptNumber(action, 'sizeEnable');
+					if (paramOpt === 2) paramOpt = deck.state?.upStreamKey.USKS[keyId]?.Chroma.size.enable ? 0 : 1
+					await deck.setChromaResize(keyId, paramOpt)
+
+				}
+				if (props.includes('Size')) {
+					await deck.setChromaSize(keyId, getOptNumber(action, 'size'))
+				}
+				if (props.includes('XPosition')) {
+					deck.setChromaXPosition(keyId, getOptNumber(action, 'xPosition'))
+				}
+				if (props.includes('YPosition')) {
+					deck.setChromaYPosition(keyId, getOptNumber(action, 'yPosition'))
+				}
+			},
+		},
+		[USK.ActionId.ChromaKeySetControlProperties]: {
+			name: 'Key: set Chroma control properties',
 			options: [
+				{
+					type: 'dropdown',
+					label: 'Key',
+					id: 'keyId',
+					choices: GetKeyChoices(deck.state),
+					default: 0,
+				},
 				{
 					id: 'props',
 					type: 'multidropdown',
 					label: 'Select properties',
 					choices: [
-						{ id: 'enable', label: 'enable' },
-						{ id: 'hMaskStart', label: 'hMaskStart' },
-						{ id: 'hMaskEnd', label: 'hMaskEnd' },
-						{ id: 'vMaskStart', label: 'vMaskStart' },
-						{ id: 'vMaskEnd', label: 'vMaskEnd' },
+						{ id: 'sMPXPosition', label: 'SMPXPosition' },
+						{ id: 'sMPYPosition', label: 'SMPYPosition' },
+						{ id: 'sample', label: 'Sample' },
+						{ id: 'foreground', label: 'Foreground' },
+						{ id: 'background', label: 'Background' },
+						{ id: 'keyEdge', label: 'KeyEdge' },
 					],
 					minSelection: 1,
-					default: ['enable', 'hMaskStart', 'hMaskEnd', 'vMaskStart', 'vMaskEnd'],
+					default: ['sMPXPosition', 'sMPYPosition', 'sample', 'foreground', 'background', 'keyEdge'],
+				},
+				{
+					type: 'number',
+					label: 'SMPXPosition',
+					id: 'sMPXPosition',
+					min: -16.0,
+					max: 16.0,
+					default: -14.0,
+					range: true,
+					step: 0.1,
+					isVisible: (options) => (<string[]>options.props!).includes('sMPXPosition'),
+				},
+				{
+					type: 'number',
+					label: 'SMPYPosition',
+					id: 'sMPYPosition',
+					min: -9.0,
+					max: 9.0,
+					default: -7.0,
+					range: true,
+					step: 0.1,
+					isVisible: (options) => (<string[]>options.props!).includes('sMPYPosition'),
 				},
 				{
 					type: 'dropdown',
-					label: 'Mask Enable',
-					id: 'maskEnable',
-					choices: SwitchChoices,
+					label: 'Sample',
+					id: 'sample',
+					choices: KeySwitchChoices,
 					default: 0,
-					isVisible: (options) => (<string[]>options.props!).includes('enable'),
+					isVisible: (options) => (<string[]>options.props!).includes('sample'),
 				},
 				{
 					type: 'number',
-					label: 'H Start',
-					id: 'maskHStart',
+					label: 'Foreground',
+					id: 'foreground',
 					min: 0,
 					max: 100,
 					default: 0,
-					isVisible: (options) => (<string[]>options.props!).includes('hMaskStart'),
+					isVisible: (options) => (<string[]>options.props!).includes('foreground'),
 				},
 				{
 					type: 'number',
-					label: 'H End',
-					id: 'maskHEnd',
+					label: 'Background',
+					id: 'background',
 					min: 0,
 					max: 100,
 					default: 100,
-					isVisible: (options) => (<string[]>options.props!).includes('hMaskEnd'),
+					isVisible: (options) => (<string[]>options.props!).includes('background'),
 				},
 				{
 					type: 'number',
-					label: 'V Start',
-					id: 'maskVStart',
+					label: 'KeyEdge',
+					id: 'keyEdge',
 					min: 0,
 					max: 100,
 					default: 0,
-					isVisible: (options) => (<string[]>options.props!).includes('vMaskStart'),
-				},
-				{
-					type: 'number',
-					label: 'V End',
-					id: 'maskVEnd',
-					min: 0,
-					max: 100,
-					default: 100,
-					isVisible: (options) => (<string[]>options.props!).includes('vMaskEnd'),
+					isVisible: (options) => (<string[]>options.props!).includes('keyEdge'),
 				},
 			],
 			callback: async (action) => {
 				const props = <string[]>action.options.props
-				const commands: GoStreamCmd[] = []
-				if (props.includes('enable')) {
-					let paramOpt = getOptNumber(action, 'maskEnable')
-					if (paramOpt === 2) paramOpt = state.keyInfo[USKKeyTypes.Chroma].mask.enabled ? 0 : 1
-					commands.push({
-						id: ActionId.ChromaKeyMaskEnable,
-						type: ReqType.Set,
-						value: [paramOpt],
-					})
+				const keyId = getOptNumber(action, 'keyId')
+				if (props.includes('sMPXPosition')) {
+					deck.setChromaSMPXPosition(keyId, getOptNumber(action, 'sMPXPosition'))
 				}
-				if (props.includes('hMaskStart')) {
-					commands.push({
-						id: ActionId.ChromaKeyMaskHStart,
-						type: ReqType.Set,
-						value: [getOptNumber(action, 'maskHStart')],
-					})
+				if (props.includes('sMPYPosition')) {
+					deck.setChromaSMPYPosition(keyId, getOptNumber(action, 'sMPYPosition'))
 				}
-				if (props.includes('hMaskEnd')) {
-					commands.push({
-						id: ActionId.ChromaKeyMaskHEnd,
-						type: ReqType.Set,
-						value: [getOptNumber(action, 'maskHEnd')],
-					})
+				if (props.includes('sample')) {
+					let paramOpt = getOptNumber(action, 'sample')
+					if (paramOpt === 2) paramOpt = deck.state?.upStreamKey.USKS[keyId]?.Chroma.control.sample ? 0 : 1
+					await deck.setChromaSample(keyId, paramOpt)
 				}
-				if (props.includes('vMaskStart')) {
-					commands.push({
-						id: ActionId.ChromaKeyMaskVStart,
-						type: ReqType.Set,
-						value: [getOptNumber(action, 'maskVStart')],
-					})
+				if (props.includes('foreground')) {
+					deck.setChromaForeground(keyId, getOptNumber(action, 'foreground'))
 				}
-				if (props.includes('vMaskEnd')) {
-					commands.push({
-						id: ActionId.ChromaKeyMaskVEnd,
-						type: ReqType.Set,
-						value: [getOptNumber(action, 'maskVEnd')],
-					})
+				if (props.includes('background')) {
+					deck.setChromaBackground(keyId, getOptNumber(action, 'background'))
 				}
-
-				if (commands.length > 0) await sendCommands(commands)
-			},
-		},
-		[ActionId.ChromaKeyResizeEnable]: {
-			name: 'UpStream Key:Set Chroma Key Resize Enable',
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Enable',
-					id: 'ChromaKeyResizeEnable',
-					choices: SwitchChoices,
-					default: 0,
-				},
-			],
-			callback: async (action) => {
-				await sendCommand(ActionId.ChromaKeyResizeEnable, ReqType.Set, [getOptNumber(action, 'ChromaKeyResizeEnable')])
-			},
-		},
-		[ActionId.ChromaKeyResizeSize]: {
-			name: 'UpStream Key:Set Chroma Key Resize Size',
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Size',
-					id: 'ChromaKeyResizeSize',
-					choices: KeyResizeSizeChoices,
-					default: 0,
-				},
-			],
-			callback: async (action) => {
-				let value = 0.25
-				const info = KeyResizeSizeChoices.find((s) => s.id === action.options.ChromaKeyResizeSize)
-				if (info !== null && info !== undefined) {
-					value = Number(info.id)
+				if (props.includes('keyEdge')) {
+					deck.setKeyEdge(keyId, getOptNumber(action, 'keyEdge'))
 				}
-				await sendCommand(ActionId.ChromaKeyResizeSize, ReqType.Set, [value])
-			},
-		},
-		[ActionId.ChromaKeyResizeXPosition]: {
-			name: 'UpStream Key:Set Chroma Key X Position',
-			options: [
-				{
-					type: 'number',
-					label: 'X Position',
-					id: 'ChromaKeyResizeXPosition',
-					min: -16,
-					max: 16,
-					step: 0.2,
-					default: 0,
-					range: true,
-				},
-			],
-			callback: async (action) => {
-				await sendCommand(ActionId.ChromaKeyResizeXPosition, ReqType.Set, [
-					getOptNumber(action, 'ChromaKeyResizeXPosition'),
-				])
-			},
-		},
-		[ActionId.ChromaKeyResizeYPosition]: {
-			name: 'UpStream Key:Set Chroma Key Y Position',
-			options: [
-				{
-					type: 'number',
-					label: 'Y Position',
-					id: 'ChromaKeyResizeYPosition',
-					min: -9.0,
-					max: 9.0,
-					step: 0.2,
-					default: 0,
-					range: true,
-				},
-			],
-			callback: async (action) => {
-				await sendCommand(ActionId.ChromaKeyResizeYPosition, ReqType.Set, [
-					getOptNumber(action, 'ChromaKeyResizeYPosition'),
-				])
-			},
-		},
-		[ActionId.ChromaKeyControlSMPXPosition]: {
-			name: 'UpStream Key:Set Chroma Key SMP X Position',
-			options: [
-				{
-					type: 'number',
-					label: 'SMP X Position',
-					id: 'ChromaKeyControlSMPXPosition',
-					min: -16.0,
-					max: 16.0,
-					step: 0.2,
-					default: 0,
-					range: true,
-				},
-			],
-			callback: async (action) => {
-				await sendCommand(ActionId.ChromaKeyControlSMPXPosition, ReqType.Set, [
-					getOptNumber(action, 'ChromaKeyControlSMPXPosition'),
-				])
-			},
-		},
-		[ActionId.ChromaKeyControlSMPYPosition]: {
-			name: 'UpStream Key:Set Chroma Key SMP Y Position',
-			options: [
-				{
-					type: 'number',
-					label: 'SMP Y Position',
-					id: 'ChromaKeyControlSMPYPosition',
-					min: -9.0,
-					max: 9.0,
-					step: 0.2,
-					default: 0,
-					range: true,
-				},
-			],
-			callback: async (action) => {
-				await sendCommand(ActionId.ChromaKeyControlSMPYPosition, ReqType.Set, [
-					getOptNumber(action, 'ChromaKeyControlSMPYPosition'),
-				])
-			},
-		},
-		[ActionId.ChromaKeyControlSample]: {
-			name: 'UpStream Key:Set Chroma Key Control Sample Enable',
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Sample Enable',
-					id: 'ChromaKeyControlSample',
-					choices: SwitchChoices,
-					default: 0,
-				},
-			],
-			callback: async (action) => {
-				await sendCommand(ActionId.ChromaKeyControlSample, ReqType.Set, [
-					getOptNumber(action, 'ChromaKeyControlSample'),
-				])
-			},
-		},
-		[ActionId.ChromaKeyControlColor]: {
-			name: 'UpStream Key:Set Chroma Key Control Color',
-			options: [
-				{
-					type: 'colorpicker',
-					label: 'Control Color',
-					id: 'ChromaKeyControlColor',
-					default: 0,
-				},
-			],
-			callback: async () => {
-				//await sendCommand( ActionId.ChromaKeyControlSample, ReqType.Set, [getOptNumber(action, 'ChromaKeyControlSample')]);
-			},
-		},
-		[ActionId.ChromaKeyControlForeground]: {
-			name: 'UpStream Key:Set Chroma Key Foreground',
-			options: [
-				{
-					type: 'number',
-					label: 'Foreground',
-					id: 'ChromaKeyControlForeground',
-					min: 0,
-					max: 100,
-					default: 0,
-				},
-			],
-			callback: async (action) => {
-				await sendCommand(ActionId.ChromaKeyControlForeground, ReqType.Set, [
-					getOptNumber(action, 'ChromaKeyControlForeground'),
-				])
-			},
-		},
-		[ActionId.ChromaKeyControlBackground]: {
-			name: 'UpStream Key:Set Chroma Key Background',
-			options: [
-				{
-					type: 'number',
-					label: 'Background',
-					id: 'ChromaKeyControlBackground',
-					min: 0,
-					max: 100,
-					default: 0,
-				},
-			],
-			callback: async (action) => {
-				await sendCommand(ActionId.ChromaKeyControlBackground, ReqType.Set, [
-					getOptNumber(action, 'ChromaKeyControlBackground'),
-				])
-			},
-		},
-		[ActionId.ChromaKeyControlKeyEdge]: {
-			name: 'UpStream Key:Set Chroma Key Edge',
-			options: [
-				{
-					type: 'number',
-					label: 'Key Edge',
-					id: 'ChromaKeyControlKeyEdge',
-					min: 0,
-					max: 100,
-					default: 0,
-				},
-			],
-			callback: async (action) => {
-				await sendCommand(ActionId.ChromaKeyControlKeyEdge, ReqType.Set, [
-					getOptNumber(action, 'ChromaKeyControlKeyEdge'),
-				])
 			},
 		},
 	}

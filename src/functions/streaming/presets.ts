@@ -1,15 +1,15 @@
 import { combineRgb } from '@companion-module/base'
 import { CompanionPresetDefinitions } from '@companion-module/base'
-import { ActionId } from './actionId'
+import { Stream } from "../../connection/actionids"
 import { FeedbackId } from './feedbackId'
-import { StreamingChoices } from '../../model'
-import { GoStreamModel } from '../../models/types'
+import { StreamingOptionChoices } from '../../model'
+import { StreamDeck } from '../../connection/streamdeck'
 
 const ptzSize = '18'
-export function create(_model: GoStreamModel): CompanionPresetDefinitions {
+export function create(deck: StreamDeck): CompanionPresetDefinitions {
+	let streams = StreamingOptionChoices(deck.state);
 	const presets = {}
-
-	for (const st of StreamingChoices) {
+	for (const st of streams) {
 		presets[`StreamingSwitch_${st.id}`] = {
 			type: 'button',
 			category: 'Streaming',
@@ -24,10 +24,10 @@ export function create(_model: GoStreamModel): CompanionPresetDefinitions {
 				{
 					down: [
 						{
-							actionId: ActionId.StreamOutput,
+							actionId: Stream.ActionId.LiveStreamOutputEnable,
 							options: {
-								StreamID: st.id,
-								EnableId: 2,
+								streamID: st.id,
+								enableId: 2,
 							},
 						},
 					],
@@ -36,7 +36,7 @@ export function create(_model: GoStreamModel): CompanionPresetDefinitions {
 			],
 			feedbacks: [
 				{
-					feedbackId: FeedbackId.StreamOutput,
+					feedbackId: FeedbackId.LiveStreamOutputEnable,
 					options: {
 						StreamID: st.id,
 					},
@@ -51,7 +51,7 @@ export function create(_model: GoStreamModel): CompanionPresetDefinitions {
 
 	presets[`Live_0`] = {
 		type: 'button',
-		category: 'Live',
+		category: 'Streaming',
 		name: 'Live',
 		style: {
 			text: `Live`,
@@ -63,7 +63,7 @@ export function create(_model: GoStreamModel): CompanionPresetDefinitions {
 			{
 				down: [
 					{
-						actionId: ActionId.Live,
+						actionId: Stream.ActionId.Live,
 						options: {
 							LiveEnable: 2,
 						},

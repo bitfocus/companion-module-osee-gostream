@@ -1,14 +1,10 @@
-import { MODEL_AUTO_DETECT, GoStreamModel } from './types'
+import { Model } from '../connection/enums'
+import { StreamModelSpec } from './types'
 
-export class AutoModel extends GoStreamModel {
+export class ModelSpecAuto extends StreamModelSpec {
 	constructor() {
 		super()
-		this.id = MODEL_AUTO_DETECT
+		this.id = Model.Unknown
 		this.label = 'Auto Detect'
-		this.outputs = []
-		this.inputs = []
-		this.streams = 0
-		this.transitionTypes = 0
-		this.stillSlots = 0
 	}
 }

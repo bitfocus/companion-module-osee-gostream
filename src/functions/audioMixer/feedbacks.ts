@@ -1,27 +1,29 @@
 import { combineRgb, CompanionFeedbackDefinitions } from '@companion-module/base'
 import { FeedbackId } from './feedbackId'
-import { ActionType } from '../../enums'
-import { AudioMixerStateT, AudioState } from './state'
-import { GoStreamModel } from '../../models/types'
-export function create(model: GoStreamModel, state: AudioMixerStateT): CompanionFeedbackDefinitions {
+import { getEnumKeyByValue } from '../../util'
+import { AudioMixAFVChoices, AudioMixSwichEnableChoices } from '../../model'
+import { StreamDeck } from '../../connection/streamdeck'
+import { sourceID } from '../../connection/enums'
+
+export function create(deck: StreamDeck): CompanionFeedbackDefinitions {
 	return {
-		[FeedbackId.AudioEnable]: {
+		[FeedbackId.AudioMixerEffectEnable]: {
 			type: 'boolean',
-			name: 'Audio Mixer: Set Audio Enabled',
-			description: 'If audio source is enabled change style of button',
+			name: 'Audio Mixer: set audio effects enable',
+			description: 'If audio effects is enabled change style of button',
 			options: [
 				{
 					type: 'dropdown',
 					label: 'Source',
-					id: 'ASource',
-					choices: model.getChoices(ActionType.AudioEnableSource),
+					id: 'audioMixSource',
+					choices: deck.state?Object.keys(deck.state.audioMixer.commonChannels).map(s=>({id:Number(s),label:String(getEnumKeyByValue(sourceID,Number(s)))})):[],
 					default: 0,
 				},
-				{
+				{ 
 					type: 'dropdown',
 					label: 'Enable',
-					id: 'AudioEnable',
-					choices: model.getChoices(ActionType.AudioEnable),
+					id: 'audioMixEnable',
+					choices: AudioMixSwichEnableChoices,
 					default: 0,
 				},
 			],
@@ -30,35 +32,29 @@ export function create(model: GoStreamModel, state: AudioMixerStateT): Companion
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: (feedback) => {
-				const typeid = Number(feedback.options.ASource)
-				const t_enable = <AudioState>feedback.options.AudioEnable
-				return state.state[typeid] === t_enable
+				const sourceid = Number(feedback.options.audioMixSource)
+				const t_enable = feedback.options.audioMixEnable
+				return deck.state?.audioMixer.commonChannels[sourceid]?.audioMixerEffectEnable === t_enable
 			},
 		},
-		[FeedbackId.AudioTransition]: {
+		[FeedbackId.AudioMixerEnable]:{
 			type: 'boolean',
-			name: 'Audio Mixer: Set AudioTransition	Enable',
-			description: 'If you turn on AudioTransition, change style of the button',
-			options: [],
-			defaultStyle: {
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(255, 255, 0),
-			},
-			callback: () => {
-				return state.transitionEnabled
-			},
-		},
-		[FeedbackId.AudioMonitorSource]: {
-			type: 'boolean',
-			name: 'Audio Mixer: Set Monitor Source',
-			description: 'If monitor (headphone) is set to selected value, change the button style',
+			name: 'Audio Mixer: set audio mix enable',
+			description: 'If audio mix is enabled change style of button',
 			options: [
 				{
 					type: 'dropdown',
 					label: 'Source',
-					id: 'AudioSource',
-					choices: model.getChoices(ActionType.AudioMonitorSource),
-					default: model.getChoices(ActionType.AudioMonitorSource)[0].id,
+					id: 'audioMixSource',
+					choices: deck.state?Object.keys(deck.state.audioMixer.commonChannels).map(s=>({id:Number(s),label:String(getEnumKeyByValue(sourceID,Number(s)))})):[],
+					default: 0,
+				},
+				{ 
+					type: 'dropdown',
+					label: 'Enable',
+					id: 'audioMixEnable',
+					choices: AudioMixAFVChoices,
+					default: 0,
 				},
 			],
 			defaultStyle: {
@@ -66,13 +62,9 @@ export function create(model: GoStreamModel, state: AudioMixerStateT): Companion
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: (feedback) => {
-				return state.monitorSource === Number(feedback.options.AudioSource)
-			},
-			learn: (feedback) => {
-				return {
-					...feedback.options,
-					AudioSource: state.monitorSource,
-				}
+				const sourceid = Number(feedback.options.audioMixSource)
+				const t_enable = feedback.options.audioMixEnable
+				return deck.state?.audioMixer.commonChannels[sourceid]?.audioMixerEnable === t_enable
 			},
 		},
 	}

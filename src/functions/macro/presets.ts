@@ -1,11 +1,11 @@
 import { combineRgb } from '@companion-module/base'
 import { CompanionPresetDefinitions } from '@companion-module/base'
-import { ActionId } from './actionId'
+import { Macro } from "../../connection/actionids"
 import { FeedbackId } from './feedbackId'
 import { MacroFeedbackType } from './feedbacks'
-import { GoStreamModel } from '../../models/types'
-const ptzSize = '14'
-export function create(_model: GoStreamModel): CompanionPresetDefinitions {
+import { StreamDeck } from '../../connection/streamdeck'
+const ptzSize = '16'
+export function create(_deck: StreamDeck): CompanionPresetDefinitions {
 	const presets = {}
 	for (let macro = 0; macro < 100; macro++) {
 		presets[`macro_run_${macro}`] = {
@@ -68,9 +68,8 @@ export function create(_model: GoStreamModel): CompanionPresetDefinitions {
 				{
 					down: [
 						{
-							actionId: ActionId.MacroRun,
+							actionId: Macro.ActionId.MacroRunStart,
 							options: {
-								StatusID: 1,
 								MacroIndex: macro,
 							},
 						},

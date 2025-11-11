@@ -47,3 +47,14 @@ export function makeChoices(values: (number | string)[]): DropdownSpec {
 		default: values[0],
 	}
 }
+
+export function getEnumKeyByValue(enumObj:any, value:any) {
+    for (const key in enumObj) {
+        if (enumObj[key] === value) {
+            return key;
+        }
+    }
+    return ''; 
+}
+
+

@@ -1,4 +1,4 @@
-import { Config } from '../config'
+import { DeckConfig } from '../config'
 import {
 	CompanionUpgradeContext,
 	CompanionStaticUpgradeProps,
@@ -21,12 +21,12 @@ import {
 // used with permission
 type actionUpgradeFn = (action: CompanionMigrationAction) => boolean
 type feedbackUpgradeFn = (action: CompanionMigrationFeedback) => boolean
-type configUpgradeFn = (config: Config | null) => boolean
+type configUpgradeFn = (config: DeckConfig | null) => boolean
 const falseFn = () => false
 
-type UpdateScript = CompanionStaticUpgradeScript<Config>
-type UpdContext = CompanionUpgradeContext<Config>
-type UpdConfig = CompanionStaticUpgradeProps<Config>
+type UpdateScript = CompanionStaticUpgradeScript<DeckConfig>
+type UpdContext = CompanionUpgradeContext<DeckConfig>
+type UpdConfig = CompanionStaticUpgradeProps<DeckConfig>
 
 // return a function that will receive a set of actions,feedbacks and config and must return the upgraded ones.
 // This returned function sends each action/feedback to the functions passed in here as `actionsUpgrader` and `feedbackUpgrader`.
@@ -51,7 +51,7 @@ export function ModuleUpgrader(
 // The list of upgrade scripts that will be passed to Companion's init method...
 // Note: the number of items in this list must grow monotonically, and new items must be added to the end for this to work properly
 // (In some cases very old upgraders can be replaced by EmptyUpgradeScript)
-export const UpgradeScriptList: CompanionStaticUpgradeScript<Config>[] = [
+export const UpgradeScriptList: CompanionStaticUpgradeScript<DeckConfig>[] = [
 	EmptyUpgradeScript,
 	UpgradeToV15.getScripts,
 	UpgradeToConsolidatedSSRCMaskAction.getScripts,

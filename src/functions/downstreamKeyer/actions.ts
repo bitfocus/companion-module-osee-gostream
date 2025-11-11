@@ -1,292 +1,459 @@
-import { ActionId } from './actionId'
-import { getOptNumber } from './../../util'
-import { SwitchChoices } from './../../model'
-import { ReqType } from './../../enums'
-import { sendCommand, sendCommands, GoStreamCmd } from './../../connection'
-import { GoStreamModel } from '../../models/types'
+import { DSK } from "../../connection/actionids"
+import { getEnumKeyByValue, getOptNumber } from './../../util'
 import type { CompanionActionDefinitions } from '@companion-module/base'
-import { DownstreamKeyerStateT } from './state'
+import { GetDSKChoices, DSKSwitchChoices } from '../../model'
+import { StreamDeck } from '../../connection/streamdeck'
+import { Model, sourceID } from '../../connection/enums'
 
-function createActionName(name: string): string {
-	return 'DownstreamKeyer: ' + name
-}
-export function create(model: GoStreamModel, state: DownstreamKeyerStateT): CompanionActionDefinitions {
-	return {
-		[ActionId.DskSourceFillKey]: {
-			name: createActionName('Set source and key'),
+export function create(deck: StreamDeck): CompanionActionDefinitions {
+	let actions: CompanionActionDefinitions =
+	{
+		[DSK.ActionId.DskOnAir]: {
+			name: 'DSK: set DSK On Air',
 			options: [
-				{
-					type: 'dropdown',
-					label: 'Fill',
-					id: 'DSKFill',
-					choices: model.FillKeySources().map((item) => ({ id: item.id, label: item.name })),
-					default: 0,
-				},
 				{
 					type: 'dropdown',
 					label: 'Key',
-					id: 'DSKKey',
-					choices: model.FillKeySources().map((item) => ({ id: item.id, label: item.name })),
+					id: 'keyId',
+					choices: GetDSKChoices(deck.state),
+					default: 0,
+				},
+				{
+					type: 'dropdown',
+					label: 'Enable',
+					id: 'enable',
+					choices: DSKSwitchChoices,
 					default: 0,
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.DskSourceFillKey, ReqType.Set, [
-					getOptNumber(action, 'DSKFill'),
-					getOptNumber(action, 'DSKKey'),
-				])
+				let keyId = getOptNumber(action, 'keyId')
+				let paramOpt = getOptNumber(action, 'enable')
+				if (paramOpt === 2) paramOpt = deck.state?.downStreamKey.DSKS[keyId]?.keyOnAir ? 0 : 1
+				await deck.setDskOnAir(keyId, paramOpt)
 			},
 		},
-		[ActionId.DskSourceFill]: {
-			name: createActionName('Set fill source'),
+		[DSK.ActionId.DskEnable]: {
+			name: 'DSK: set DSK enable',
 			options: [
 				{
 					type: 'dropdown',
-					label: 'DSK Fill',
-					id: 'DSKFill',
-					choices: model.FillKeySources().map((item) => ({ id: item.id, label: item.name })),
+					label: 'Key',
+					id: 'keyId',
+					choices: GetDSKChoices(deck.state),
+					default: 0,
+				},
+				{
+					type: 'dropdown',
+					label: 'Enable',
+					id: 'enable',
+					choices: DSKSwitchChoices,
 					default: 0,
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.DskSourceFill, ReqType.Set, [getOptNumber(action, 'DSKFill')])
+				let keyId = getOptNumber(action, 'keyId')
+				let paramOpt = getOptNumber(action, 'enable')
+				if (paramOpt === 2) paramOpt = deck.state?.downStreamKey.DSKS[keyId]?.keyEnable ? 0 : 1
+				await deck.setDskEnable(keyId, paramOpt)
 			},
 		},
-		[ActionId.DskSourceKey]: {
-			name: createActionName('Set key'),
+		[DSK.ActionId.DSKSourceProperties]: {
+			name: 'DSK: set DSK Source',
 			options: [
 				{
 					type: 'dropdown',
-					label: 'DSK Key',
-					id: 'DSKKey',
-					choices: model.FillKeySources().map((item) => ({ id: item.id, label: item.name })),
+					label: 'Key',
+					id: 'keyId',
+					choices: GetDSKChoices(deck.state),
 					default: 0,
+				},
+				{
+					type: 'dropdown',
+					label: 'Key Source',
+					id: 'keySource',
+					choices: deck.state ? deck.state.downStreamKey.KeySources.map((s) => ({ id: s, label: String(getEnumKeyByValue(sourceID, s)) })) : [],
+					default: sourceID.IN1,
+				},
+				{
+					type: 'dropdown',
+					label: 'Fill Source',
+					id: 'fillSource',
+					choices: deck.state ? deck.state.downStreamKey.FillSources.map((s) => ({ id: s, label: String(getEnumKeyByValue(sourceID, s)) })) : [],
+					default: sourceID.IN1,
 				},
 			],
 			callback: async (action) => {
-				await sendCommand(ActionId.DskSourceKey, ReqType.Set, [getOptNumber(action, 'DSKKey')])
+				const keyId = getOptNumber(action, 'keyId')
+				const fillSource = getOptNumber(action, 'fillSource')
+				const KeySource = getOptNumber(action, 'keySource')
+				await deck.setDskFillSource(keyId, fillSource);
+				await deck.setDskKeySource(keyId, KeySource);
 			},
 		},
-		[ActionId.DskSetMaskProperties]: {
-			name: createActionName('Set mask properties'),
+		[DSK.ActionId.DSKSetAllProperties]: {
+			name: 'DSK: set DSK properties',
 			options: [
+				{
+					type: 'dropdown',
+					label: 'Key',
+					id: 'keyId',
+					choices: GetDSKChoices(deck.state),
+					default: 0,
+				},
 				{
 					id: 'props',
 					type: 'multidropdown',
 					label: 'Select properties',
 					choices: [
-						{ id: 'enable', label: 'enable' },
-						{ id: 'hMaskStart', label: 'hMaskStart' },
-						{ id: 'hMaskEnd', label: 'hMaskEnd' },
-						{ id: 'vMaskStart', label: 'vMaskStart' },
-						{ id: 'vMaskEnd', label: 'vMaskEnd' },
+						{ id: 'maskEnable', label: 'MaskEnable' },
+						{ id: 'left', label: 'Left' },
+						{ id: 'top', label: 'Top' },
+						{ id: 'right', label: 'Right' },
+						{ id: 'bottom', label: 'Bottom' },
+
+						{ id: 'preMultipliedkey', label: 'preMultipliedkey' },
+						{ id: 'clip', label: 'Clip' },
+						{ id: 'gain', label: 'Gain' },
+						{ id: 'invert', label: 'Invert' },
 					],
 					minSelection: 1,
-					default: ['enable', 'hMaskStart', 'hMaskEnd', 'vMaskStart', 'vMaskEnd'],
+					default: ['maskEnable', 'left', 'top', 'right', 'bottom',
+						'preMultipliedkey', 'clip', 'gain', 'invert'],
 				},
 				{
 					type: 'dropdown',
 					label: 'Mask Enable',
 					id: 'maskEnable',
-					choices: SwitchChoices,
+					choices: DSKSwitchChoices,
 					default: 0,
-					isVisible: (options) => (<string[]>options.props!).includes('enable'),
+					isVisible: (options) => (<string[]>options.props!).includes('maskEnable'),
 				},
 				{
 					type: 'number',
-					label: 'H Start',
+					label: 'Left',
 					id: 'maskHStart',
 					min: 0,
 					max: 100,
 					default: 0,
-					isVisible: (options) => (<string[]>options.props!).includes('hMaskStart'),
+					isVisible: (options) => (<string[]>options.props!).includes('left'),
 				},
 				{
 					type: 'number',
-					label: 'H End',
+					label: 'Right',
 					id: 'maskHEnd',
 					min: 0,
 					max: 100,
 					default: 100,
-					isVisible: (options) => (<string[]>options.props!).includes('hMaskEnd'),
+					isVisible: (options) => (<string[]>options.props!).includes('right'),
 				},
 				{
 					type: 'number',
-					label: 'V Start',
+					label: 'Top',
 					id: 'maskVStart',
 					min: 0,
 					max: 100,
 					default: 0,
-					isVisible: (options) => (<string[]>options.props!).includes('vMaskStart'),
+					isVisible: (options) => (<string[]>options.props!).includes('top'),
 				},
 				{
 					type: 'number',
-					label: 'V End',
+					label: 'Bottom',
 					id: 'maskVEnd',
 					min: 0,
 					max: 100,
 					default: 100,
-					isVisible: (options) => (<string[]>options.props!).includes('vMaskEnd'),
+					isVisible: (options) => (<string[]>options.props!).includes('bottom'),
+				},
+				{
+					type: 'dropdown',
+					label: 'Pre Multiplied key',
+					id: 'preMultipliedkey',
+					choices: DSKSwitchChoices,
+					default: 0,
+					isVisible: (options) => (<string[]>options.props!).includes('preMultipliedkey'),
+				},
+
+				{
+					type: 'number',
+					label: 'Clip',
+					id: 'clip',
+					min: 0,
+					max: 100,
+					default: 15,
+					isVisible: (options) => (<string[]>options.props!).includes('clip'),
+				},
+				{
+					type: 'number',
+					label: 'Gain',
+					id: 'gain',
+					min: 0,
+					max: 100,
+					default: 50,
+					isVisible: (options) => (<string[]>options.props!).includes('gain'),
+				},
+				{
+					type: 'dropdown',
+					label: 'Invert',
+					id: 'invert',
+					choices: DSKSwitchChoices,
+					default: 0,
+					isVisible: (options) => (<string[]>options.props!).includes('invert'),
 				},
 			],
 			callback: async (action) => {
 				const props = <string[]>action.options.props
-				const commands: GoStreamCmd[] = []
-				if (props.includes('enable')) {
-					const opt = getOptNumber(action, 'maskEnable')
-					let paramOpt = 0
-					if (opt === 2) {
-						if (state.mask.enabled === true) {
-							paramOpt = 0
-						} else {
-							paramOpt = 1
-						}
-						commands.push({
-							id: ActionId.DskMaskEnable,
-							type: ReqType.Set,
-							value: [paramOpt],
-						})
-					} else {
-						commands.push({
-							id: ActionId.DskMaskEnable,
-							type: ReqType.Set,
-							value: [opt],
-						})
-					}
+				const keyId = getOptNumber(action, 'keyId')
+				// const commands: GoStreamCmd[] = []
+				if (props.includes('maskEnable')) {
+					let paramOpt = getOptNumber(action, 'maskEnable')
+					if (paramOpt === 2) paramOpt = deck.state?.downStreamKey.DSKS[keyId]?.mask.enabled ? 0 : 1
+					await deck.setDskMaskEnable(keyId, paramOpt)
 				}
-				if (props.includes('hMaskStart')) {
-					commands.push({
-						id: ActionId.DskMaskHStart,
-						type: ReqType.Set,
-						value: [getOptNumber(action, 'maskHStart')],
-					})
+				if (props.includes('left')) {
+					await deck.setDskMaskHStart(keyId, getOptNumber(action, 'maskHStart'))
 				}
-				if (props.includes('hMaskEnd')) {
-					commands.push({
-						id: ActionId.DskMaskHEnd,
-						type: ReqType.Set,
-						value: [getOptNumber(action, 'maskHEnd')],
-					})
+				if (props.includes('right')) {
+					await deck.setDskMaskHEnd(keyId, getOptNumber(action, 'maskHEnd'))
 				}
-				if (props.includes('vMaskStart')) {
-					commands.push({
-						id: ActionId.DskMaskVStart,
-						type: ReqType.Set,
-						value: [getOptNumber(action, 'maskVStart')],
-					})
+				if (props.includes('top')) {
+					await deck.setDskMaskVStart(keyId, getOptNumber(action, 'maskVStart'))
 				}
-				if (props.includes('vMaskEnd')) {
-					commands.push({
-						id: ActionId.DskMaskVEnd,
-						type: ReqType.Set,
-						value: [getOptNumber(action, 'maskVEnd')],
-					})
+				if (props.includes('bottom')) {
+					await deck.setDskMaskVEnd(keyId, getOptNumber(action, 'maskVEnd'))
 				}
 
-				if (commands.length > 0) await sendCommands(commands)
-			},
-		},
-		[ActionId.DskControlShapedKey]: {
-			name: createActionName('Set shaped key'),
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Shaped Key',
-					id: 'ShapedKey',
-					default: 0,
-					choices: SwitchChoices,
-				},
-			],
-			callback: async (action) => {
-				const opt = getOptNumber(action, 'ShapedKey')
-				let paramOpt = 0
-				if (opt === 2) {
-					if (state.control.shapedKey === true) {
-						paramOpt = 0
-					} else {
-						paramOpt = 1
-					}
-					await sendCommand(ActionId.DskControlShapedKey, ReqType.Set, [paramOpt])
-				} else {
-					await sendCommand(ActionId.DskControlShapedKey, ReqType.Set, [opt])
+				if (props.includes('preMultipliedkey')) {
+					let paramOpt = getOptNumber(action, 'preMultipliedkey')
+					if (paramOpt === 2) paramOpt = deck.state?.downStreamKey.DSKS[keyId]?.control.preMultipliedKey ? 0 : 1
+					await deck.setDskPreMultipliedKey(keyId, paramOpt)
 				}
-			},
-		},
-		[ActionId.DskControlClip]: {
-			name: createActionName('Set clip'),
-			options: [
-				{
-					type: 'number',
-					label: 'Clip',
-					id: 'Clip',
-					default: 15,
-					min: 0,
-					max: 100,
-				},
-			],
-			callback: async (action) => {
-				await sendCommand(ActionId.DskControlClip, ReqType.Set, [getOptNumber(action, 'Clip')])
-			},
-		},
-		[ActionId.DskControlGain]: {
-			name: createActionName('Set gain'),
-			options: [
-				{
-					type: 'number',
-					label: 'Gain',
-					id: 'Gain',
-					default: 50,
-					min: 0,
-					max: 100,
-				},
-			],
-			callback: async (action) => {
-				await sendCommand(ActionId.DskControlGain, ReqType.Set, [getOptNumber(action, 'Gain')])
-			},
-		},
-		[ActionId.DskControlInvert]: {
-			name: createActionName('Set invert'),
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Invert',
-					id: 'Invert',
-					default: 0,
-					choices: SwitchChoices,
-				},
-			],
-			callback: async (action) => {
-				const opt = getOptNumber(action, 'Invert')
-				let paramOpt = 0
-				if (opt === 2) {
-					if (state.control.invert === true) {
-						paramOpt = 0
-					} else {
-						paramOpt = 1
-					}
-					await sendCommand(ActionId.DskControlInvert, ReqType.Set, [paramOpt])
-				} else {
-					await sendCommand(ActionId.DskControlInvert, ReqType.Set, [opt])
+				if (props.includes('clip')) {
+					await deck.setDskClip(keyId, getOptNumber(action, 'clip'));
 				}
-			},
-		},
-		[ActionId.DskRate]: {
-			name: createActionName('Set rate'),
-			options: [
-				{
-					type: 'number',
-					label: 'dskRate',
-					id: 'dskRate',
-					default: 0,
-					min: 0.5,
-					max: 8.0,
-					range: true,
-					step: 0.5,
-				},
-			],
-			callback: async (action) => {
-				await sendCommand(ActionId.DskRate, ReqType.Set, [getOptNumber(action, 'dskRate')])
+				if (props.includes('gain')) {
+					await deck.setDskGain(keyId, getOptNumber(action, 'gain'))
+				}
+				if (props.includes('invert')) {
+					let paramOpt = getOptNumber(action, 'invert')
+					if (paramOpt === 2) paramOpt = deck.state?.downStreamKey.DSKS[keyId]?.control.invert ? 0 : 1
+					await deck.setDskInvert(keyId, paramOpt)
+				}
 			},
 		},
 	}
+	if (deck.state?.device.deviceModel === Model.Duet_8ISO) {
+		actions[DSK.ActionId.DSKSetAllProperties] = {
+			name: 'DSK: set DSK properties',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Key',
+					id: 'keyId',
+					choices: GetDSKChoices(deck.state),
+					default: 0,
+				},
+				{
+					id: 'props',
+					type: 'multidropdown',
+					label: 'Select properties',
+					choices: [
+						{ id: 'maskEnable', label: 'MaskEnable' },
+						{ id: 'left', label: 'Left' },
+						{ id: 'top', label: 'Top' },
+						{ id: 'right', label: 'Right' },
+						{ id: 'bottom', label: 'Bottom' },
+
+						{ id: 'preMultipliedkey', label: 'preMultipliedkey' },
+						{ id: 'clip', label: 'Clip' },
+						{ id: 'gain', label: 'Gain' },
+						{ id: 'invert', label: 'Invert' },
+
+						{ id: 'sizePositionEnable', label: 'SizePositionEnable' },
+						{ id: 'size', label: 'Size' },
+						{ id: 'xPosition', label: 'XPosition' },
+						{ id: 'yPosition', label: 'YPosition' },
+					],
+					minSelection: 1,
+					default: ['maskEnable', 'left', 'top', 'right', 'bottom',
+						'preMultipliedkey', 'clip', 'gain', 'invert',
+						'sizePositionEnable', 'size', 'xPosition', 'yPosition'],
+				},
+				{
+					type: 'dropdown',
+					label: 'Mask Enable',
+					id: 'maskEnable',
+					choices: DSKSwitchChoices,
+					default: 0,
+					isVisible: (options) => (<string[]>options.props!).includes('maskEnable'),
+				},
+				{
+					type: 'number',
+					label: 'Left',
+					id: 'maskHStart',
+					min: 0,
+					max: 100,
+					default: 0,
+					isVisible: (options) => (<string[]>options.props!).includes('left'),
+				},
+				{
+					type: 'number',
+					label: 'Right',
+					id: 'maskHEnd',
+					min: 0,
+					max: 100,
+					default: 100,
+					isVisible: (options) => (<string[]>options.props!).includes('right'),
+				},
+				{
+					type: 'number',
+					label: 'Top',
+					id: 'maskVStart',
+					min: 0,
+					max: 100,
+					default: 0,
+					isVisible: (options) => (<string[]>options.props!).includes('top'),
+				},
+				{
+					type: 'number',
+					label: 'Bottom',
+					id: 'maskVEnd',
+					min: 0,
+					max: 100,
+					default: 100,
+					isVisible: (options) => (<string[]>options.props!).includes('bottom'),
+				},
+				{
+					type: 'dropdown',
+					label: 'Pre Multiplied key',
+					id: 'preMultipliedkey',
+					choices: DSKSwitchChoices,
+					default: 0,
+					isVisible: (options) => (<string[]>options.props!).includes('preMultipliedkey'),
+				},
+
+				{
+					type: 'number',
+					label: 'Clip',
+					id: 'clip',
+					min: 0,
+					max: 100,
+					default: 15,
+					isVisible: (options) => (<string[]>options.props!).includes('clip'),
+				},
+				{
+					type: 'number',
+					label: 'Gain',
+					id: 'gain',
+					min: 0,
+					max: 100,
+					default: 50,
+					isVisible: (options) => (<string[]>options.props!).includes('gain'),
+				},
+				{
+					type: 'dropdown',
+					label: 'Invert',
+					id: 'invert',
+					choices: DSKSwitchChoices,
+					default: 0,
+					isVisible: (options) => (<string[]>options.props!).includes('invert'),
+				},
+				{
+					type: 'dropdown',
+					label: 'Size/Position Enable',
+					id: 'sizeEnable',
+					choices: DSKSwitchChoices,
+					default: 0,
+					isVisible: (options) => (<string[]>options.props!).includes('sizePositionEnable'),
+				},
+				{
+					type: 'number',
+					label: 'Size',
+					id: 'size',
+					min: 7,
+					max: 100,
+					default: 33,
+					isVisible: (options) => (<string[]>options.props!).includes('size'),
+				},
+				{
+					type: 'number',
+					label: 'X Position',
+					id: 'xPosition',
+					min: -16.0,
+					max: 16.0,
+					default: 10.6,
+					step: 0.1,
+					range: true,
+					isVisible: (options) => (<string[]>options.props!).includes('xPosition'),
+				},
+				{
+					type: 'number',
+					label: 'Y Position',
+					id: 'yPosition',
+					min: -9.0,
+					max: 9.0,
+					default: 7.0,
+					step: 0.1,
+					range: true,
+					isVisible: (options) => (<string[]>options.props!).includes('yPosition'),
+				},
+			],
+			callback: async (action) => {
+				const props = <string[]>action.options.props
+				const keyId = getOptNumber(action, 'keyId')
+				// const commands: GoStreamCmd[] = []
+				if (props.includes('maskEnable')) {
+					let paramOpt = getOptNumber(action, 'maskEnable')
+					if (paramOpt === 2) paramOpt = deck.state?.downStreamKey.DSKS[keyId]?.mask.enabled ? 0 : 1
+					await deck.setDskMaskEnable(keyId, paramOpt)
+				}
+				if (props.includes('left')) {
+					await deck.setDskMaskHStart(keyId, getOptNumber(action, 'maskHStart'))
+				}
+				if (props.includes('right')) {
+					await deck.setDskMaskHEnd(keyId, getOptNumber(action, 'maskHEnd'))
+				}
+				if (props.includes('top')) {
+					await deck.setDskMaskVStart(keyId, getOptNumber(action, 'maskVStart'))
+				}
+				if (props.includes('bottom')) {
+					await deck.setDskMaskVEnd(keyId, getOptNumber(action, 'maskVEnd'))
+				}
+
+				if (props.includes('preMultipliedkey')) {
+					let paramOpt = getOptNumber(action, 'preMultipliedkey')
+					if (paramOpt === 2) paramOpt = deck.state?.downStreamKey.DSKS[keyId]?.control.preMultipliedKey ? 0 : 1
+					await deck.setDskPreMultipliedKey(keyId, paramOpt)
+				}
+				if (props.includes('clip')) {
+					await deck.setDskClip(keyId, getOptNumber(action, 'clip'));
+				}
+				if (props.includes('gain')) {
+					await deck.setDskGain(keyId, getOptNumber(action, 'gain'))
+				}
+				if (props.includes('invert')) {
+					let paramOpt = getOptNumber(action, 'invert')
+					if (paramOpt === 2) paramOpt = deck.state?.downStreamKey.DSKS[keyId]?.control.invert ? 0 : 1
+					await deck.setDskInvert(keyId, paramOpt)
+				}
+
+				if (props.includes('sizePositionEnable')) {
+					let paramOpt = getOptNumber(action, 'sizeEnable');
+					if (paramOpt === 2) paramOpt = deck.state?.downStreamKey.DSKS[keyId]?.sizePosition.enable ? 0 : 1
+					await deck.setDskResize(keyId, paramOpt)
+				}
+
+				if (props.includes('size')) {
+					await deck.setDskSize(keyId, getOptNumber(action, 'size'))
+				}
+				if (props.includes('xPosition')) {
+					await deck.setDskXPosition(keyId, getOptNumber(action, 'xPosition'))
+				}
+				if (props.includes('yPosition')) {
+					await deck.setDskYPosition(keyId, getOptNumber(action, 'yPosition'))
+				}
+			},
+		}
+	}
+	return actions;
 }

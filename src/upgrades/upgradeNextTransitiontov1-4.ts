@@ -1,6 +1,6 @@
 import { CompanionMigrationAction, CompanionMigrationFeedback, InputValue } from '@companion-module/base'
 
-import { ActionId } from '../functions/mixEffect/actionId'
+// import { ActionId } from '../functions/mixEffect/actionId'
 import { FeedbackId } from '../functions/mixEffect/feedbackId'
 
 // note: use string constants rather than variables for the comparisons
@@ -20,7 +20,7 @@ export function tryUpdateNTAction(action: CompanionMigrationAction): boolean {
 			// in 1.3.1 option type was incorrectly set to dropdown, so it didn't work. This is a bit of handwaving...
 			// If it was, indeed, a single-choice dropdown it would only turn the key on; never off...
 			if (Object.keys(options).includes('KeySwitch')) {
-				action.actionId = ActionId.NextTransitionButtons // this is a no-op
+				// action.actionId = ActionId.NextTransitionButtons // this is a no-op
 				keyName = keyswitchMap[String(options['KeySwitch'])]
 				action.options = { KeyButton: keyName, ButtonAction: 1, BKGDAction: 1 }
 				return true
@@ -29,12 +29,12 @@ export function tryUpdateNTAction(action: CompanionMigrationAction): boolean {
 				return false
 			}
 		case 'transitionSourceBG':
-			action.actionId = ActionId.NextTransitionButtons
+			// action.actionId = ActionId.NextTransitionButtons
 			action.options = { KeyButton: 'BKGD', ButtonAction: 0, BKGDAction: options['Background'] ? 1 : 0 }
 			return true
 		case 'uskOnPreview':
 			// upgrade from 1.3.1 (ignore changes made before 1.4.0 was released)
-			action.actionId = ActionId.NextTransitionButtons
+			// action.actionId = ActionId.NextTransitionButtons
 			action.options = {
 				KeyButton: 'KEY',
 				ButtonAction: uskOnPvwMapping[Number(options['USKPvwState'])],
@@ -42,11 +42,11 @@ export function tryUpdateNTAction(action: CompanionMigrationAction): boolean {
 			}
 			return true
 		case 'keyOnAir':
-			action.actionId = ActionId.OnAirButtons
+			// action.actionId = ActionId.OnAirButtons
 			action.options = { KeyButton: 'KEY', ButtonAction: options['KeyOnAir'] }
 			return true
 		case 'dskOnAir':
-			action.actionId = ActionId.OnAirButtons
+			// action.actionId = ActionId.OnAirButtons
 			action.options = { KeyButton: 'DSK', ButtonAction: options['DSKOnAir'] }
 			return true
 		default:

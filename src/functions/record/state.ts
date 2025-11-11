@@ -1,122 +1,120 @@
-import { sendCommand, sendCommands } from '../../connection'
-import { ReqType } from '../../enums'
-import type { GoStreamModel } from '../../models/types'
-import { GoStreamCmd } from '../../connection'
+// import { sendCommands } from '../../connection'
+// import { ReqType, sourceID } from '../../enums'
+// import type { GoStreamModel } from '../../models/types'
+// import { GoStreamCmd } from '../../connection'
+// import { ActionId } from './actionId'
 
-// note: this is intentionally NOT exported: CommunicationID should not be accessible to the action/feedback definitions
-// whether it ultimately remains here in state.ts or is bumped down to a lower level.
-enum CommunicationId {
-	Record = 'record',
-	RecordTime = 'recordTime',
-	RecordFileName = 'recordFileName',
-	// It needs to be 'quality' for the communication protocol
-	RecordQuality = 'quality',
-	RecordFreeSpace = 'sdFreeSpace',
-	RecordFreeTime = 'sdFreeTime',
-	RecordFree = 'sdFree',
-	RecordMediaPresent = 'sdCardStatus',
-	BuildInfo = 'buildInfo',
-}
-export class RecordStateT {
-	model: GoStreamModel
-	isRecording = false
-	recordTime = ''
-	fwVersion: number | undefined // this is a temporary fix for determining quality
-	quality: string | undefined
-	freeSpace: string | undefined
-	freeTime: string | undefined
-	freeSpaceTime: string | undefined
-	storageMediaPresent = false
-	constructor(model: GoStreamModel) {
-		this.model = model
-	}
 
-	// Start/Stop recording
-	async setRecordState(recording: boolean): Promise<boolean> {
-		return sendCommand(CommunicationId.Record, ReqType.Set, [recording ? 1 : 0])
-	}
-	// Recording-file name
-	async setRecordFilename(newName: string): Promise<boolean> {
-		// allow but replace ":" and other invalid chars, so user can specify system time in the variable
-		return sendCommand(CommunicationId.RecordFileName, ReqType.Set, [newName.replaceAll(/[\\/:*?"<>|]/g, '_')])
-	}
+// export enum recodingFormat{
+// 	H264=0,
+// 	H265=1,
+// }
+// export enum recodingQuality{
+// 	High=0,
+// 	Good=1,
+// 	Medium=2, 
+// 	Low=3,
+// }
 
-	// Recording Quality
-	qualityValues(_protocolOrder = false): string[] {
-		// setting protocolOrder to true guarantees it will correspond to the
-		//  Osee communication protocol's index numbers. In this case it's a noop
-		if (this.fwVersion && this.fwVersion <= 0x0b663530) {
-			return ['high', 'medium', 'low']
-		} else {
-			return ['high', 'good', 'medium', 'low']
-		}
-	}
+// export type recordFreeT=
+// {
+// 	freeSpace:string | undefined,
+// 	freeTime:string | undefined
+// }
 
-	async setRecordingQuality(quality: string): Promise<boolean> {
-		// the first value is 0 = recording, 1 = streaming
-		return sendCommand(CommunicationId.RecordQuality, ReqType.Set, [0, this.qualityValues(true).indexOf(quality)])
-	}
+// export type SourceInfoT={
+// 	ID:sourceID,
+// 	enable:boolean
+// }
 
-	decodeRecordingQuality(vals: number[]): string | undefined {
-		// only save it if it's a recording quality
-		if (vals[0] === 0 && vals.length === 2) {
-			const qualities = this.qualityValues(true)
-			return qualities[vals[1]]
-		} else {
-			return undefined
-		}
-	}
-}
+// export type RecordT = {
+// 	format:recodingFormat
+// 	quality:recodingQuality
 
-export async function sync(_model: GoStreamModel): Promise<boolean> {
-	const cmds: GoStreamCmd[] = [
-		{ id: CommunicationId.Record, type: ReqType.Get },
-		{ id: CommunicationId.RecordQuality, type: ReqType.Get, value: [0] },
-		{ id: CommunicationId.RecordFreeSpace, type: ReqType.Get, value: [0] },
-		{ id: CommunicationId.RecordFreeTime, type: ReqType.Get, value: [0] },
-		{ id: CommunicationId.RecordFree, type: ReqType.Get, value: [0] },
-		{ id: CommunicationId.RecordMediaPresent, type: ReqType.Get, value: [0] },
-	]
-	return sendCommands(cmds)
-}
+// 	isRecording:number //0关 1：pgm 开 2： iso开
+// 	recordTime :string | undefined,
+// 	recordFree:recordFreeT
+// 	ISORecordFree:recordFreeT
+// 	sources:SourceInfoT[]
+// 	//目前只有一种 errCode:0  没有插入USB存储设备 pgm录制无
+// 	isoErrCode:number
+// }
 
-export function update(state: RecordStateT, data: GoStreamCmd): boolean {
-	let version
-	let quality
-	switch (data.id as CommunicationId) {
-		case CommunicationId.Record:
-			state.isRecording = Boolean(data.value![0])
-			break
-		case CommunicationId.RecordTime:
-			state.recordTime = String(data.value![0])
-			break
-		case CommunicationId.BuildInfo: // note 'version' is not as reliable, since 2.2 betas were given 1.0 version numbers
-			version = state.fwVersion
-			state.fwVersion = parseInt('0x' + String(data.value![0]))
-			if (version != state.fwVersion) {
-				// solve problems arising from the fact that state.fwVersion is initially undefined...
-				void sync(state.model) // this forces state and variables to update.
-				return true // rebuild actions, if buildInfo changed
-			}
-			break
-		case CommunicationId.RecordQuality:
-			quality = state.decodeRecordingQuality(<number[]>data.value)
-			if (quality != undefined) {
-				state.quality = quality
-			}
-			break
-		case CommunicationId.RecordFreeSpace:
-			state.freeSpace = String(data.value![0])
-			break
-		case CommunicationId.RecordFreeTime:
-			state.freeTime = String(data.value![0])
-			break
-		case CommunicationId.RecordFree:
-			state.freeSpaceTime = String(data.value![0])
-			break
-		case CommunicationId.RecordMediaPresent:
-			state.storageMediaPresent = Boolean(data.value![0])
-			break
-	}
-	return false
-}
+// export class RecordStateT {
+// 	model: GoStreamModel
+// 	recordState:RecordT
+// 	constructor(model: GoStreamModel) {
+// 		this.model = model
+// 		this.recordState= {
+// 			format:recodingFormat.H264,
+// 			quality:recodingQuality.Low,
+
+// 			isRecording:0, //0关 1：pgm 开 2： iso开
+// 			recordTime :'',
+// 			recordFree:{
+// 				freeSpace:'',
+// 				freeTime:'',
+// 			},
+// 			ISORecordFree:{
+// 				freeSpace:'',
+// 				freeTime:'',
+// 			},
+// 			sources:[],
+// 			isoErrCode:0,
+// 		}
+// 		for (let index = 0; index < model.RecordISOChannels.length; index++) {
+// 			this.recordState.sources.push({ID:model.RecordISOChannels[index],enable:false});
+// 		}
+		
+// 	}
+// }
+
+// export async function sync(model: GoStreamModel): Promise<boolean> {
+// 	const cmds: GoStreamCmd[] = [
+// 		{ id: ActionId.RecordStatus, type: ReqType.Get },
+// 		{ id: ActionId.RecordFormat, type: ReqType.Get },
+// 		{ id: ActionId.RecordBitrate, type: ReqType.Get },
+// 		{ id: ActionId.RecordDuration, type: ReqType.Get },
+// 		{ id: ActionId.RecordFree, type: ReqType.Get },
+// 		{ id: ActionId.ISORecordFree, type: ReqType.Get },
+// 	]
+// 	for (let index = 0; index < model.RecordISOChannels.length; index++) {
+// 		cmds.push({ id: ActionId.RecordISOChannel, type: ReqType.Get,value:[model.RecordISOChannels[index]]});
+// 	}
+// 	return sendCommands(cmds)
+// }
+
+// export function update(state: RecordStateT, data: GoStreamCmd): boolean {
+// 	switch (data.id as ActionId) {
+// 		case ActionId.RecordStatus:
+// 			state.recordState.isRecording = Number(data.value![0])
+// 			break
+// 		case ActionId.RecordFormat:
+// 			state.recordState.format = Number(data.value![0])
+// 			break
+// 		case ActionId.RecordBitrate:
+// 			state.recordState.quality = Number(data.value![0])
+// 			break
+// 		case ActionId.RecordFree:
+// 			state.recordState.recordFree.freeSpace = String(data.value![0])
+// 			state.recordState.recordFree.freeTime = String(data.value![1])
+// 			break
+// 		case ActionId.ISORecordFree:
+// 			state.recordState.ISORecordFree.freeSpace = String(data.value![0])
+// 			state.recordState.ISORecordFree.freeTime = String(data.value![1])
+// 			break
+// 		case ActionId.RecordDuration:
+// 			state.recordState.recordTime = String(data.value![0])
+// 			break
+// 		case ActionId.RecordISOChannel:
+// 			const source = state.recordState.sources.find(s => s.ID === Number(data.value![0]));
+// 			if (source !== undefined) {
+// 				source.enable = Boolean(data.value![1]);
+// 			}
+// 			break;
+// 		case ActionId.ISORecordStartError:
+// 			state.recordState.isoErrCode= data.value![0] as number
+// 			break;
+// 	}
+// 	return false
+// }

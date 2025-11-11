@@ -1,19 +1,27 @@
 import { FeedbackId } from './feedbackId'
 import { combineRgb, CompanionFeedbackDefinitions } from '@companion-module/base'
-import { ActionType } from '../../enums'
-import { GoStreamModel } from '../../models/types'
-import { DownstreamKeyerStateT } from './state'
+import {GetDSKChoices,DSKSwitchChoices} from '../../model'
+import { StreamDeck } from '../../connection/streamdeck'
+import { getEnumKeyByValue } from '../../util'
+import { sourceID } from '../../connection/enums'
 
 function createFeedbackName(name: string): string {
 	return 'DownstreamKeyer: ' + name
 }
-export function create(model: GoStreamModel, state: DownstreamKeyerStateT): CompanionFeedbackDefinitions {
+export function create(deck: StreamDeck): CompanionFeedbackDefinitions {
 	return {
 		[FeedbackId.DskSourceFillKey]: {
 			type: 'boolean',
 			name: createFeedbackName('fill or key source'),
 			description: 'Change style of button depending on DSK fill or key source',
 			options: [
+				{
+					type: 'dropdown',
+					label: 'Key',
+					id: 'keyId',
+					choices: GetDSKChoices(deck.state),
+					default: 0,
+				},
 				{
 					type: 'dropdown',
 					label: 'Type',
@@ -28,7 +36,7 @@ export function create(model: GoStreamModel, state: DownstreamKeyerStateT): Comp
 					type: 'dropdown',
 					label: 'Source',
 					id: 'DSKSource',
-					choices: model.getChoices(ActionType.DskSourceFill),
+					choices: deck.state?deck.state.downStreamKey.FillSources.map(s=>({id:s,label:String(getEnumKeyByValue(sourceID,s))})):[],
 					default: 0,
 				},
 			],
@@ -37,19 +45,22 @@ export function create(model: GoStreamModel, state: DownstreamKeyerStateT): Comp
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: (feedback) => {
+				const keyId=Number(feedback.options.keyId)
 				const typeId = Number(feedback.options.TypeID)
 				const dsk_source = Number(feedback.options.DSKSource)
+				
 				if (typeId === 0) {
-					return state.source.key === dsk_source
+					return deck.state?.downStreamKey.DSKS[keyId]?.source.key===dsk_source
 				} else {
-					return state.source.fill === dsk_source
+					return  deck.state?.downStreamKey.DSKS[keyId]?.source.fill===dsk_source
 				}
 			},
 			learn: (feedback) => {
 				const typeId = Number(feedback.options.TypeID)
+				const keyId=Number(feedback.options.keyId)
 				return {
 					...feedback.options,
-					DSKSource: typeId === 0 ? state.source.key : state.source.fill,
+					DSKSource: typeId === 0 ?  deck.state?.downStreamKey.DSKS[keyId]?.source.key :  deck.state?.downStreamKey.DSKS[keyId]?.source.key
 				}
 			},
 		},
@@ -57,13 +68,22 @@ export function create(model: GoStreamModel, state: DownstreamKeyerStateT): Comp
 			type: 'boolean',
 			name: createFeedbackName('mask enabled'),
 			description: 'Change style of button when mask is enabled',
-			options: [],
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Key',
+					id: 'keyId',
+					choices: GetDSKChoices(deck.state),
+					default: 0,
+				},
+			],
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),
 				bgcolor: combineRgb(255, 255, 0),
 			},
-			callback: () => {
-				return state.mask.enabled
+			callback: (feedback) => {
+				const keyId=Number(feedback.options.keyId)
+				return  deck.state?.downStreamKey.DSKS[keyId]?.mask.enabled ===true
 			},
 		},
 		[FeedbackId.DskMaskHStart]: {
@@ -71,6 +91,13 @@ export function create(model: GoStreamModel, state: DownstreamKeyerStateT): Comp
 			name: createFeedbackName('mask horizontal start'),
 			description: 'Change style of button depending on horizontal start value of mask',
 			options: [
+				{
+					type: 'dropdown',
+					label: 'Key',
+					id: 'keyId',
+					choices: GetDSKChoices(deck.state),
+					default: 0,
+				},
 				{
 					type: 'number',
 					label: 'H Start',
@@ -85,13 +112,15 @@ export function create(model: GoStreamModel, state: DownstreamKeyerStateT): Comp
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: (feedback) => {
+				const keyId=Number(feedback.options.keyId)
 				const hStart = Number(feedback.options.HStart)
-				return state.mask.hStart === hStart
+				return  deck.state?.downStreamKey.DSKS[keyId]?.mask.hStart === hStart
 			},
 			learn: (feedback) => {
+				const keyId=Number(feedback.options.keyId)
 				return {
 					...feedback.options,
-					HStart: state.mask.hStart,
+					HStart:  deck.state?.downStreamKey.DSKS[keyId]?.mask.hStart,
 				}
 			},
 		},
@@ -100,6 +129,13 @@ export function create(model: GoStreamModel, state: DownstreamKeyerStateT): Comp
 			name: createFeedbackName('mask vertical start'),
 			description: 'Change style of button depending on vertical start value of mask',
 			options: [
+				{
+					type: 'dropdown',
+					label: 'Key',
+					id: 'keyId',
+					choices: GetDSKChoices(deck.state),
+					default: 0,
+				},
 				{
 					type: 'number',
 					label: 'V Start',
@@ -114,13 +150,15 @@ export function create(model: GoStreamModel, state: DownstreamKeyerStateT): Comp
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: (feedback) => {
+				const keyId=Number(feedback.options.keyId)
 				const vStart = Number(feedback.options.VStart)
-				return state.mask.vStart === vStart
+				return deck.state?.downStreamKey.DSKS[keyId]?.mask.vStart === vStart
 			},
 			learn: (feedback) => {
+				const keyId=Number(feedback.options.keyId)
 				return {
 					...feedback.options,
-					VStart: state.mask.vStart,
+					VStart:deck.state?.downStreamKey.DSKS[keyId]?.mask.vStart,
 				}
 			},
 		},
@@ -129,6 +167,13 @@ export function create(model: GoStreamModel, state: DownstreamKeyerStateT): Comp
 			name: createFeedbackName('mask horizontal end'),
 			description: 'Change style of button depending on horizontal end value of mask',
 			options: [
+				{
+					type: 'dropdown',
+					label: 'Key',
+					id: 'keyId',
+					choices: GetDSKChoices(deck.state),
+					default: 0,
+				},
 				{
 					type: 'number',
 					label: 'H End',
@@ -143,13 +188,15 @@ export function create(model: GoStreamModel, state: DownstreamKeyerStateT): Comp
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: (feedback) => {
+				const keyId=Number(feedback.options.keyId)
 				const hEnd = Number(feedback.options.HEnd)
-				return state.mask.hEnd === hEnd
+				return  deck.state?.downStreamKey.DSKS[keyId]?.mask.hEnd === hEnd
 			},
 			learn: (feedback) => {
+				const keyId=Number(feedback.options.keyId)
 				return {
 					...feedback.options,
-					HEnd: state.mask.hEnd,
+					HEnd:  deck.state?.downStreamKey.DSKS[keyId]?.mask.hEnd,
 				}
 			},
 		},
@@ -158,6 +205,13 @@ export function create(model: GoStreamModel, state: DownstreamKeyerStateT): Comp
 			name: createFeedbackName('mask vertical end'),
 			description: 'Change style of button depending on vertical end value of mask',
 			options: [
+				{
+					type: 'dropdown',
+					label: 'Key',
+					id: 'keyId',
+					choices: GetDSKChoices(deck.state),
+					default: 0,
+				},
 				{
 					type: 'number',
 					label: 'V End',
@@ -172,13 +226,15 @@ export function create(model: GoStreamModel, state: DownstreamKeyerStateT): Comp
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: (feedback) => {
+				const keyId=Number(feedback.options.keyId)
 				const vEnd = Number(feedback.options.VEnd)
-				return state.mask.vEnd === vEnd
+				return  deck.state?.downStreamKey.DSKS[keyId]?.mask.vEnd === vEnd
 			},
 			learn: (feedback) => {
+				const keyId=Number(feedback.options.keyId)
 				return {
 					...feedback.options,
-					VEnd: state.mask.vEnd,
+					VEnd:  deck.state?.downStreamKey.DSKS[keyId]?.mask.vEnd,
 				}
 			},
 		},
@@ -186,13 +242,22 @@ export function create(model: GoStreamModel, state: DownstreamKeyerStateT): Comp
 			type: 'boolean',
 			name: createFeedbackName('shaped key enabled'),
 			description: 'Change style of button if shaped key is enabled',
-			options: [],
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Key',
+					id: 'keyId',
+					choices: GetDSKChoices(deck.state),
+					default: 0,
+				},
+			],
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),
 				bgcolor: combineRgb(255, 255, 0),
 			},
-			callback: () => {
-				return state.control.shapedKey
+			callback: (feedback) => {
+				const keyId=Number(feedback.options.keyId)
+				return  deck.state?.downStreamKey.DSKS[keyId]?.control.preMultipliedKey===true
 			},
 		},
 		[FeedbackId.DskControlInvert]: {
@@ -200,6 +265,13 @@ export function create(model: GoStreamModel, state: DownstreamKeyerStateT): Comp
 			name: createFeedbackName('shaped key invert'),
 			description: 'Change style of button depending on status of shaped key invert',
 			options: [
+				{
+					type: 'dropdown',
+					label: 'Key',
+					id: 'keyId',
+					choices: GetDSKChoices(deck.state),
+					default: 0,
+				},
 				{
 					type: 'dropdown',
 					label: 'Shaped key invert status',
@@ -216,13 +288,15 @@ export function create(model: GoStreamModel, state: DownstreamKeyerStateT): Comp
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: (feedback) => {
+				const keyId=Number(feedback.options.keyId)
 				const skeyinvEnabledChoice = Boolean(feedback.options.skeyinvEnabled)
-				return state.control.invert === skeyinvEnabledChoice
+				return   deck.state?.downStreamKey.DSKS[keyId]?.control.invert === skeyinvEnabledChoice
 			},
 			learn: (feedback) => {
+				const keyId=Number(feedback.options.keyId)
 				return {
 					...feedback.options,
-					skeyinvEnabled: state.control.invert,
+					skeyinvEnabled:  deck.state?.downStreamKey.DSKS[keyId]?.control.invert,
 				}
 			},
 		},
@@ -231,6 +305,13 @@ export function create(model: GoStreamModel, state: DownstreamKeyerStateT): Comp
 			name: createFeedbackName('shaped key clip'),
 			description: 'Change style of button depending on clip value of shaped key',
 			options: [
+				{
+					type: 'dropdown',
+					label: 'Key',
+					id: 'keyId',
+					choices: GetDSKChoices(deck.state),
+					default: 0,
+				},
 				{
 					type: 'number',
 					label: 'Clip',
@@ -245,13 +326,15 @@ export function create(model: GoStreamModel, state: DownstreamKeyerStateT): Comp
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: (feedback) => {
+				const keyId=Number(feedback.options.keyId)
 				const clip = Number(feedback.options.Clip)
-				return state.control.clip === clip
+				return   deck.state?.downStreamKey.DSKS[keyId]?.control.clip === clip
 			},
 			learn: (feedback) => {
+				const keyId=Number(feedback.options.keyId)
 				return {
 					...feedback.options,
-					Clip: state.control.clip,
+					Clip:   deck.state?.downStreamKey.DSKS[keyId]?.control.clip,
 				}
 			},
 		},
@@ -260,6 +343,13 @@ export function create(model: GoStreamModel, state: DownstreamKeyerStateT): Comp
 			name: createFeedbackName('shaped key gain'),
 			description: 'Change style of button depending on gain value of shaped key',
 			options: [
+				{
+					type: 'dropdown',
+					label: 'Key',
+					id: 'keyId',
+					choices: GetDSKChoices(deck.state),
+					default: 0,
+				},
 				{
 					type: 'number',
 					label: 'Gain',
@@ -274,29 +364,36 @@ export function create(model: GoStreamModel, state: DownstreamKeyerStateT): Comp
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: (feedback) => {
+				const keyId=Number(feedback.options.keyId)
 				const gain = Number(feedback.options.Gain)
-				return state.control.gain === gain
+				return  deck.state?.downStreamKey.DSKS[keyId]?.control.gain === gain
 			},
 			learn: (feedback) => {
+				const keyId=Number(feedback.options.keyId)
 				return {
 					...feedback.options,
-					Gain: state.control.gain,
+					Gain:   deck.state?.downStreamKey.DSKS[keyId]?.control.gain,
 				}
 			},
 		},
-		[FeedbackId.DskRate]: {
+		[FeedbackId.DskEnable]: {
 			type: 'boolean',
-			name: createFeedbackName('rate'),
-			description: 'Change style of button depending on rate value',
+			name: 'DSK:Enable',
+			description: 'Set the special effect DSK Enable',
 			options: [
 				{
-					type: 'number',
-					label: 'Rate',
-					id: 'Rate',
-					default: 1.0,
-					min: 0.5,
-					max: 8.0,
-					step: 0.5,
+					type: 'dropdown',
+					label: 'Key',
+					id: 'keyId',
+					choices: GetDSKChoices(deck.state),
+					default: 0,
+				},
+				{
+					type: 'dropdown',
+					label: 'Enable',
+					id: 'enable',
+					choices: DSKSwitchChoices,
+					default: 0,
 				},
 			],
 			defaultStyle: {
@@ -304,14 +401,39 @@ export function create(model: GoStreamModel, state: DownstreamKeyerStateT): Comp
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: (feedback) => {
-				const rate = Number(feedback.options.Rate)
-				return state.rate.rate === rate
+				const keyId = Number(feedback.options.keyId)
+				const enable = Boolean(feedback.options.enable)
+				return  deck.state?.downStreamKey.DSKS[keyId]?.keyEnable === enable
 			},
-			learn: (feedback) => {
-				return {
-					...feedback.options,
-					Rate: state.rate.rate,
-				}
+		},
+		[FeedbackId.DskOnAir]: {
+			type: 'boolean',
+			name: 'DSK:On Air',
+			description: 'Set the special effect DSK On Air',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Key',
+					id: 'keyId',
+					choices: GetDSKChoices(deck.state),
+					default: 0,
+				},
+				{
+					type: 'dropdown',
+					label: 'Enable',
+					id: 'enable',
+					choices: DSKSwitchChoices,
+					default: 0,
+				},
+			],
+			defaultStyle: {
+				color: combineRgb(0, 0, 0),
+				bgcolor: combineRgb(255, 255, 0),
+			},
+			callback: (feedback) => {
+				const keyId = Number(feedback.options.keyId)
+				const enable = Boolean(feedback.options.enable)
+				return  deck.state?.downStreamKey.DSKS[keyId]?.keyOnAir === enable
 			},
 		},
 	}

@@ -1,5 +1,5 @@
 export enum FeedbackId {
-	StreamOutput = 'streamOutput',
+	LiveStreamOutputEnable = 'liveStreamOutputEnable',
 	LiveInfo = 'liveInfo',
 	StreamQuality = 'streamQuality',
 }

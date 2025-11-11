@@ -10,4 +10,6 @@ export enum FeedbackId {
 	DskControlGain = 'dskControlGain',
 	DskControlInvert = 'dskControlInvert',
 	DskRate = 'dskRate',
+	DskEnable='dskEnable',
+	DskOnAir='dskOnAir',
 }

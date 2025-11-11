@@ -1,5 +1,7 @@
 export enum FeedbackId {
-	Record = 'record',
+	PGMRecord = 'PGMRecord',
+	ISORecord = 'ISORecord',
 	Quality = 'recordQuality',
-	mediaAbsent = 'recordMediaPresent',
+	RecordSSDAbnormalInfo='recordSSDAbnormalInfo',
+	ISORecordSSDAbnormalInfo='isoRecordSSDAbnormalInfo'
 }

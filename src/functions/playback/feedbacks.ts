@@ -1,8 +1,8 @@
 import { FeedbackId } from './feedbackId'
 import { combineRgb, CompanionFeedbackDefinitions } from '@companion-module/base'
-import { PlaybackStateT } from './state'
-import type { GoStreamModel } from '../../models/types'
-export function create(_model: GoStreamModel, state: PlaybackStateT): CompanionFeedbackDefinitions {
+import {GetPlayerSourceChoices} from '../../model'
+import { StreamDeck } from '../../connection/streamdeck';
+export function create(deck: StreamDeck): CompanionFeedbackDefinitions {
 	return {
 		[FeedbackId.PlaybackMode]: {
 			type: 'boolean',
@@ -11,13 +11,17 @@ export function create(_model: GoStreamModel, state: PlaybackStateT): CompanionF
 			options: [
 				{
 					type: 'dropdown',
+					label: 'Player',
+					id: 'playerID',
+					choices: GetPlayerSourceChoices(deck.state),
+					default: 0,
+				},
+				{
+					type: 'dropdown',
 					label: 'Mode',
 					id: 'ModeID',
-					choices: [
-						{ id: 0, label: 'play in one group' },
-						{ id: 1, label: 'play cross groups' },
-					],
-					default: 0,
+					choices:deck.state? deck.state.playBack.modeRanges.map(s => ({ id:s, label: s })):[],
+					default:deck.state? deck.state.playBack.modeRanges[0]:'',
 				},
 			],
 			defaultStyle: {
@@ -25,61 +29,20 @@ export function create(_model: GoStreamModel, state: PlaybackStateT): CompanionF
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: (feedback) => {
-				return feedback.options.ModeID === state.Mode
-			},
-		},
-		[FeedbackId.PlaybackRepeat]: {
-			type: 'boolean',
-			name: 'Playback: Set Playback Repeat',
-			description: 'If you turn on Playback Repeat, change style of the button',
-			options: [],
-			defaultStyle: {
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(255, 255, 0),
-			},
-			callback: () => {
-				return state.Repeat
+				const playerID = Number( feedback.options.playerID);
+				return deck.state?.playBack.config[playerID]=== feedback.options.ModeID
 			},
 		},
 		[FeedbackId.PlaybackPause]: {
 			type: 'boolean',
 			name: 'Playback: Set Playback Pause',
 			description: 'If you turn on Playback Pause, change style of the button',
-			options: [],
-			defaultStyle: {
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(255, 255, 0),
-			},
-			callback: () => {
-				return state.Pause
-			},
-		},
-		[FeedbackId.PlaybackBar]: {
-			type: 'boolean',
-			name: 'Playback: Set Playback Bar',
-			description: 'If you turn on Playback Bar, change style of the button',
-			options: [],
-			defaultStyle: {
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(255, 255, 0),
-			},
-			callback: () => {
-				return state.Bar
-			},
-		},
-		[FeedbackId.PlayFile]: {
-			type: 'boolean',
-			name: 'PlayFile: feedback based on current loaded video file',
-			description: 'Change style of button if video file is loaded',
 			options: [
 				{
 					type: 'dropdown',
-					label: 'Video file',
-					id: 'PlayFileID',
-					choices: state.FileList.map((s, index) => ({
-						id: index,
-						label: s,
-					})),
+					label: 'Player',
+					id: 'playerID',
+					choices: GetPlayerSourceChoices(deck.state),
 					default: 0,
 				},
 			],
@@ -88,7 +51,8 @@ export function create(_model: GoStreamModel, state: PlaybackStateT): CompanionF
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: (feedback) => {
-				return feedback.options.PlayFileID === state.File
+				const playerID = Number(feedback.options.playerID);
+				return deck.state?.playBack.config[playerID]?.playStatus === 1
 			},
 		},
 	}

@@ -8,8 +8,17 @@ This module is created for use with GoStream Devices.
 - [Read the docs](./How%20to%20connect%20to%20computer%20software%20and%20companion.pdf)
 - [Follow on github](https://github.com/bitfocus/companion-module-osee-gostream)
 
-## Notes on some oddities
+## Tips:
 
+The Companion module in this 2.0.0 release adds support for the latest firmware of the GoStream Deck, GoStream Duet, and GoStream Duet 8 ISO switchers.
+
+Companion module v2.0.0 requires GoStream Deck/Duet firmware v2.3.0 or higher.
+
+Companion module v2.0.0 requires GoStream Duet 8 ISO firmware v2.1.0 or higher.
+
+Please ensure your GoStream switcher is updated to the latest firmware for full compatibility.
+
+## Notes on some oddities
 Due to the client/server asyncrounous approach of communicating with the Osee device there will be some delay
 (~a few tens of milliseconds) before Companions internal state matches the requested state from an action. This
 can is some cases put restrictions on which actions can be used in sequence, if e.g. one action updates an internal

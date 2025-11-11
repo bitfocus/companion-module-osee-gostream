@@ -1,19 +1,24 @@
 import { combineRgb } from '@companion-module/base'
 import { CompanionPresetDefinitions } from '@companion-module/base'
-import { ActionId } from './actionId'
+import { Effect } from "../../connection/actionids"
 import { FeedbackId } from './feedbackId'
-import { nextTransitionState } from './state'
+// import { nextTransitionState } from './state'
 import { TransitionStyleChoice } from '../../model'
-import { GoStreamModel } from '../../models/types'
+// import { GoStreamState } from '../../state'
+import { getEnumKeyByValue } from '../../util'
+import { StreamDeck } from '../../connection/streamdeck'
+import { sourceID } from '../../connection/enums'
+// import { sourceID } from '../../enums'
 
-const NTState = new nextTransitionState()
+
+// const NTState = new nextTransitionState()
 
 const rateOptions = [0.5, 1.0, 1.5, 2.0, 2.5, 3.0]
 const ptzSize = '18'
-export function create(model: GoStreamModel): CompanionPresetDefinitions {
+export function create(deck: StreamDeck): CompanionPresetDefinitions {
 	const presets = {}
 
-	const InputSources = model.InputSources().map((item) => ({ id: item.id, label: item.name }))
+	const InputSources = deck.state?deck.state.device.inputSources?.map((s) => ({ id: s, label: String(getEnumKeyByValue(sourceID, s))})):[];
 	for (const src of InputSources) {
 		presets[`Preview_${src.id}`] = {
 			type: 'button',
@@ -31,7 +36,7 @@ export function create(model: GoStreamModel): CompanionPresetDefinitions {
 				{
 					down: [
 						{
-							actionId: ActionId.PvwIndex,
+							actionId:Effect. ActionId.PvwIndex,
 							options: {
 								Source: src.id,
 							},
@@ -69,7 +74,7 @@ export function create(model: GoStreamModel): CompanionPresetDefinitions {
 				{
 					down: [
 						{
-							actionId: ActionId.PgmIndex,
+							actionId: Effect.ActionId.PgmIndex,
 							options: {
 								Source: src.id,
 							},
@@ -107,7 +112,7 @@ export function create(model: GoStreamModel): CompanionPresetDefinitions {
 			{
 				down: [
 					{
-						actionId: ActionId.CutTransition,
+						actionId: Effect.ActionId.CutTransition,
 						options: {},
 					},
 				],
@@ -139,7 +144,7 @@ export function create(model: GoStreamModel): CompanionPresetDefinitions {
 			{
 				down: [
 					{
-						actionId: ActionId.AutoTransition,
+						actionId: Effect.ActionId.AutoTransition,
 						options: {},
 					},
 				],
@@ -163,7 +168,7 @@ export function create(model: GoStreamModel): CompanionPresetDefinitions {
 				{
 					feedbackId: FeedbackId.TransitionStyle,
 					options: {
-						TransitionStyle: opt.id,
+						transitionStyle: opt.id,
 					},
 					style: {
 						bgcolor: combineRgb(255, 255, 0),
@@ -175,9 +180,9 @@ export function create(model: GoStreamModel): CompanionPresetDefinitions {
 				{
 					down: [
 						{
-							actionId: ActionId.TransitionIndex,
+							actionId: Effect.ActionId.TransitionStyle,
 							options: {
-								TransitionStyle: opt.id,
+								transitionStyle: opt.id,
 							},
 						},
 					],
@@ -200,8 +205,8 @@ export function create(model: GoStreamModel): CompanionPresetDefinitions {
 					{
 						feedbackId: FeedbackId.TransitionRate,
 						options: {
-							TransitionStyle: opt.id,
-							TransitionRate: rate,
+							transitionStyle: opt.id,
+							transitionRate: rate,
 						},
 						style: {
 							bgcolor: combineRgb(255, 255, 0),
@@ -213,10 +218,10 @@ export function create(model: GoStreamModel): CompanionPresetDefinitions {
 					{
 						down: [
 							{
-								actionId: ActionId.TransitionRate,
+								actionId: Effect.ActionId.TransitionRate,
 								options: {
-									TransitionStyle: opt.id,
-									TransitionRate: rate,
+									transitionStyle: opt.id,
+									transitionRate: rate,
 								},
 							},
 						],
@@ -250,7 +255,7 @@ export function create(model: GoStreamModel): CompanionPresetDefinitions {
 			{
 				down: [
 					{
-						actionId: ActionId.Prev,
+						actionId: Effect.ActionId.PreviewTransition,
 						options: { prevEnable: 2 },
 					},
 				],
@@ -273,8 +278,8 @@ export function create(model: GoStreamModel): CompanionPresetDefinitions {
 			{
 				down: [
 					{
-						actionId: ActionId.FtbAudioAFV,
-						options: { FtbAudioAFV: 2 },
+						actionId: Effect.ActionId.FtbAfv,
+						options: { ftbAudioAFV: 2 },
 					},
 				],
 				up: [],
@@ -296,7 +301,7 @@ export function create(model: GoStreamModel): CompanionPresetDefinitions {
 			{
 				down: [
 					{
-						actionId: ActionId.FTB,
+						actionId: Effect.ActionId.Ftb,
 						options: {},
 					},
 				],
@@ -315,42 +320,11 @@ export function create(model: GoStreamModel): CompanionPresetDefinitions {
 				color: combineRgb(255, 255, 255),
 				bgcolor: combineRgb(0, 0, 0),
 			},
-			feedbacks: [],
-			steps: [
-				{
-					down: [
-						{
-							actionId: ActionId.FtbRate,
-							options: {
-								FtbRate: rate,
-							},
-						},
-					],
-					up: [],
-				},
-			],
-		}
-	}
-	// -------------------------------------------------------
-	// ----- Next Transitions groups
-	// Key/DSK on Air
-	for (const key of NTState.getChoices(false)) {
-		presets[`keys_Next_Air_${key.id}`] = {
-			category: 'Keys On Air',
-			name: `Toggle ${key.label} On Air`,
-			type: 'button',
-			style: {
-				text: `${key.label} On Air`,
-				size: ptzSize,
-				color: combineRgb(255, 255, 255),
-				bgcolor: combineRgb(0, 0, 0),
-			},
 			feedbacks: [
 				{
-					feedbackId: FeedbackId.KeysVisibility,
+					feedbackId: FeedbackId.FTBRate,
 					options: {
-						KeyButton: key.id,
-						LayerState: 2,
+						ftbRate: rate,
 					},
 					style: {
 						bgcolor: combineRgb(255, 255, 0),
@@ -362,101 +336,9 @@ export function create(model: GoStreamModel): CompanionPresetDefinitions {
 				{
 					down: [
 						{
-							actionId: ActionId.OnAirButtons,
+							actionId: Effect.ActionId.FtbRate,
 							options: {
-								KeyButton: key.id,
-								ButtonAction: 2,
-							},
-						},
-					],
-					up: [],
-				},
-			],
-		}
-	}
-
-	// Keys on Preview (note "Toggle" doesn't make sense in this context,
-	// so make both "on" and "off" buttons:
-	for (const key of NTState.getChoices(false)) {
-		for (const keystate of [3, 4]) {
-			const statename = keystate === 3 ? 'off' : 'on'
-			presets[`keys_${statename}_PVW_${key.id}`] = {
-				category: 'Keys On PVW',
-				name: `Show ${key.label} ${statename} preview`,
-				type: 'button',
-				style: {
-					text: `${key.label} ${statename} PVW`,
-					size: ptzSize,
-					color: combineRgb(255, 255, 255),
-					bgcolor: combineRgb(0, 0, 0),
-				},
-				feedbacks: [
-					{
-						feedbackId: FeedbackId.KeysVisibility,
-						options: {
-							KeyButton: key.id,
-							LayerState: 3,
-						},
-						style: {
-							bgcolor: keystate === 3 ? combineRgb(180, 0, 180) : combineRgb(255, 255, 0),
-							color: combineRgb(0, 0, 0),
-						},
-						isInverted: keystate === 3,
-					},
-				],
-				steps: [
-					{
-						down: [
-							{
-								actionId: ActionId.NextTransitionButtons,
-								options: {
-									KeyButton: key.id,
-									ButtonAction: keystate,
-									BKGDAction: keystate, // not strictly necessary
-								},
-							},
-						],
-						up: [],
-					},
-				],
-			}
-		}
-	}
-
-	// Next Transitions:
-	for (const key of NTState.getChoices(true)) {
-		presets[`keys_Next_Trans_${key.id}`] = {
-			category: 'Keys Next Transition',
-			name: `Toggle ${key.label} (Next Transition)`,
-			type: 'button',
-			style: {
-				text: `${key.label}`,
-				size: ptzSize,
-				color: combineRgb(255, 255, 255),
-				bgcolor: combineRgb(0, 0, 0),
-			},
-			feedbacks: [
-				{
-					feedbackId: FeedbackId.KeysVisibility,
-					options: {
-						KeyButton: key.id,
-						LayerState: 0,
-					},
-					style: {
-						bgcolor: combineRgb(255, 255, 0),
-						color: combineRgb(0, 0, 0),
-					},
-				},
-			],
-			steps: [
-				{
-					down: [
-						{
-							actionId: ActionId.NextTransitionButtons,
-							options: {
-								KeyButton: key.id,
-								ButtonAction: 2,
-								BKGDAction: 2,
+								ftbRate: rate,
 							},
 						},
 					],

@@ -1,55 +1,58 @@
-import { MixEffectState } from './functions/mixEffect'
-import { StreamingState } from './functions/streaming'
-import { StillGeneratorState } from './functions/stillGenerator'
-import { PlaybackState } from './functions/playback'
-import { RecordState } from './functions/record'
-import { SuperSourceState } from './functions/superSource'
-import { AudioMixerState } from './functions/audioMixer'
-import { DownstreamKeyerState } from './functions/downstreamKeyer'
-import { SettingsState } from './functions/settings'
-import { MacroState } from './functions/macro'
-import { UpstreamKeyerState } from './functions/upstreamKeyer'
-import { ColorBackState } from './functions/colorBack'
-import type { GoStreamModel } from './models/types'
+// import { DeviceInfoState } from './functions/device'
+// import { MixEffectState } from './functions/mixEffect'
+// import { StreamingState } from './functions/streaming'
+// import { PlaybackState } from './functions/playback'
+// import { RecordState } from './functions/record'
+// import { MultiSourceState } from './functions/multiSource'
+// import { AudioMixerState } from './functions/audioMixer'
+// import { DownstreamKeyerState } from './functions/downstreamKeyer'
+// import { MutiViewState } from './functions/mutiview'
+// import { MacroState } from './functions/macro'
+// import { KeyerState } from './functions/upstreamKeyer'
+// import { ColorBackState } from './functions/colorBack'
+// import {AutoSwitchingState} from './functions/autoSwitching'
+// import {MediaPlayerState} from './functions/mediaPlayer'
+// import {OutPutState} from './functions/output'
 
-export type GoStreamState = {
-	MixEffect: MixEffectState.MixEffectStateT
-	Streaming: StreamingState.StreamingStateT
-	StillGenerator: StillGeneratorState.StillGeneratorStateT
-	Playback: PlaybackState.PlaybackStateT
-	Record: RecordState.RecordStateT
-	SuperSource: SuperSourceState.SuperSourceStateT
-	AudioMixer: AudioMixerState.AudioMixerStateT
-	DownstreamKeyer: DownstreamKeyerState.DownstreamKeyerStateT
-	Settings: SettingsState.SettingsStateT
-	Macro: MacroState.MacroStateT
-	UpstreamKeyer: UpstreamKeyerState.UpstreamKeyerStateT
-	ColorBack: ColorBackState.ColorBackStateT
-	infos: {
-		protocolVersion: string
-		deviceType: number
-	}
-	selectOutputs: object
-}
+// // import type { GoStreamModel } from './models/types'
+// import { InputState } from './functions/input'
 
-export function create(model: GoStreamModel): GoStreamState {
-	return {
-		MixEffect: MixEffectState.create(model),
-		Streaming: StreamingState.create(model),
-		StillGenerator: StillGeneratorState.create(model),
-		Playback: PlaybackState.create(model),
-		Record: new RecordState.RecordStateT(model),
-		SuperSource: SuperSourceState.create(model),
-		AudioMixer: AudioMixerState.create(model),
-		DownstreamKeyer: DownstreamKeyerState.create(model),
-		Settings: SettingsState.create(model),
-		Macro: MacroState.create(model),
-		UpstreamKeyer: new UpstreamKeyerState.UpstreamKeyerStateT(model),
-		ColorBack: ColorBackState.create(model),
-		infos: {
-			protocolVersion: '1.0',
-			deviceType: 0,
-		},
-		selectOutputs: {},
-	}
-}
+// export type GoStreamState = {
+// 	InfoState:DeviceInfoState.deviceInfo
+// 	MixEffect: MixEffectState.MixEffectStateT
+// 	// Streaming: StreamingState.StreamingStateT
+// 	// Playback: PlaybackState.PlaybackStateT
+// 	// Record: RecordState.RecordStateT
+// 	// MultiSource: MultiSourceState.MultiSourceStateT
+// 	// AudioMixer: AudioMixerState.AudioMixerStateT
+// 	// DownStreamKeyerState: DownstreamKeyerState.DSKStateT
+// 	// MutiView: MutiViewState.MutiViewStateT
+// 	// Macro: MacroState.MacroStateT
+// 	// UpstreamKeyer: KeyerState.KeyerStateT
+// 	AutoSwitching: AutoSwitchingState.AutoSwitchingStateT
+// 	// ColorBack: ColorBackState.ColorBackStateT
+// 	// MediaPalyer:MediaPlayerState.mediaT
+// 	// OutPutState:OutPutState.OutPutStateT
+// 	// InputState:InputState.inputStateT
+// }
+
+// // export function create(model: GoStreamModel): GoStreamState {
+// // 	return {
+// // 		InfoState:DeviceInfoState.create(model),
+// // 		MixEffect: MixEffectState.create(model),
+// // 		// Streaming: StreamingState.create(model),
+// // 		// Playback: PlaybackState.create(model),
+// // 		// Record: new RecordState.RecordStateT(model),
+// // 		// MultiSource: MultiSourceState.create(model),
+// // 		// AudioMixer: AudioMixerState.create(model),
+// // 		// DownStreamKeyerState: DownstreamKeyerState.create(model),
+// // 		// MutiView: MutiViewState.create(model),
+// // 		// Macro: MacroState.create(model),
+// // 		// UpstreamKeyer: new KeyerState.KeyerStateT(model),
+// // 		// AutoSwitching:new AutoSwitchingState.AutoSwitchingStateT(model),
+// // 		// ColorBack: ColorBackState.create(model),
+// // 		// MediaPalyer:MediaPlayerState.create(model),
+// // 		// OutPutState:OutPutState.create(model),
+// // 		// InputState:InputState.create(model),
+// // 	}
+// // }

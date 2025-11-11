@@ -3,22 +3,23 @@ import { MixEffectVariables } from './functions/mixEffect'
 import { PlaybackVariables } from './functions/playback'
 import { RecordVariables } from './functions/record'
 import { StreamingVariables } from './functions/streaming'
-import { SettingsVariables } from './functions/settings'
-import { SuperSourceVariables } from './functions/superSource'
-import { UpstreamKeyerVariables } from './functions/upstreamKeyer'
+import { MutiViewVariables } from './functions/mutiview'
+import { MultiSourceVariables } from './functions/multiSource'
+import { KeyerVariables } from './functions/upstreamKeyer'
 import type { GoStreamInstance } from './index'
+
 import { CompanionVariableDefinition, CompanionVariableValues } from '@companion-module/base'
 
 export function variables(instance: GoStreamInstance): CompanionVariableDefinition[] {
 	const vars: CompanionVariableDefinition[] = [
-		...AudioMixerVariables.create(instance.model),
-		...MixEffectVariables.create(instance.model),
-		...PlaybackVariables.create(instance.model),
-		...RecordVariables.create(instance.model),
-		...StreamingVariables.create(instance.model),
-		...SettingsVariables.create(instance.model),
-		...SuperSourceVariables.create(instance.model),
-		...UpstreamKeyerVariables.create(instance.model),
+		...AudioMixerVariables.create(instance.deck.state),
+		...MixEffectVariables.create(instance.deck.state),
+		...PlaybackVariables.create(instance.deck.state),
+		...RecordVariables.create(instance.deck.state),
+		...StreamingVariables.create(instance.deck.state),
+		...MutiViewVariables.create(instance.deck.state),
+		...MultiSourceVariables.create(instance.deck.state),
+		...KeyerVariables.create(instance.deck.state),
 	]
 
 	vars.push({
@@ -31,14 +32,14 @@ export function variables(instance: GoStreamInstance): CompanionVariableDefiniti
 
 export function updateVariables(instance: GoStreamInstance): void {
 	const newValues: CompanionVariableValues = {
-		...AudioMixerVariables.getValues(instance.states.AudioMixer),
-		...MixEffectVariables.getValues(instance.states.MixEffect),
-		...PlaybackVariables.getValues(instance.states.Playback),
-		...RecordVariables.getValues(instance.states.Record),
-		...StreamingVariables.getValues(instance.states.Streaming),
-		...SettingsVariables.getValues(instance.states.Settings),
-		...SuperSourceVariables.getValues(instance.states.SuperSource),
-		...UpstreamKeyerVariables.getValues(instance.states.UpstreamKeyer),
+		...AudioMixerVariables.getValues(instance.deck.state),
+		...MixEffectVariables.getValues(instance.deck.state),
+		...PlaybackVariables.getValues(instance.deck.state),
+		...RecordVariables.getValues(instance.deck.state),
+		...StreamingVariables.getValues(instance.deck.state),
+		...MutiViewVariables.getValues(instance.deck.state),
+		...MultiSourceVariables.getValues(instance.deck.state),
+		...KeyerVariables.getValues(instance.deck.state),
 	}
 
 	instance.setVariableValues(newValues)

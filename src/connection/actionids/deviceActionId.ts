@@ -1,0 +1,16 @@
+export enum ActionId {
+	DeviceType = 'deviceType',
+	FWVersion = 'version',
+	BuildInfo = 'buildInfo',
+	DeviceId = 'deviceId',
+	DeviceName = 'deviceName',
+	InputList = 'inputList',
+	AudioMixerInputSourceList = 'audioMixerInputSourceList',
+	MultiSourceWindowCount = 'multiSourceWindowCount',
+	KeyCount = 'keyCount',
+	DskCount = 'dskCount',
+	PlayCount = 'playCount',
+	RecordISOChannelList = 'recordISOChannelList',
+	VideoOutSourceList = 'outSourceList',
+	AudioOutSourceList = 'audioMixerOutSourceList',
+}

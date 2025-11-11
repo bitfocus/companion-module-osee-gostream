@@ -1,12 +1,11 @@
 import { combineRgb, CompanionFeedbackDefinitions } from '@companion-module/base'
 import { FeedbackId } from './feedbackId'
-import { StreamingChoices } from '../../model'
-import { StreamingStateT } from './state'
-import { GoStreamModel } from '../../models/types'
+import { StreamingOptionChoices, StreamQualityChoices } from '../../model'
+import { StreamDeck } from '../../connection/streamdeck'
 
-export function create(model: GoStreamModel, state: StreamingStateT): CompanionFeedbackDefinitions {
+export function create(deck: StreamDeck): CompanionFeedbackDefinitions {
 	return {
-		[FeedbackId.StreamOutput]: {
+		[FeedbackId.LiveStreamOutputEnable]: {
 			type: 'boolean',
 			name: 'Streaming: Set Stream Enable',
 			description: 'If you turn on Stream Enable, change style of the button',
@@ -15,7 +14,7 @@ export function create(model: GoStreamModel, state: StreamingStateT): CompanionF
 					type: 'dropdown',
 					label: 'Stream',
 					id: 'StreamID',
-					choices: StreamingChoices,
+					choices: StreamingOptionChoices(deck.state),
 					default: 0,
 				},
 			],
@@ -24,7 +23,7 @@ export function create(model: GoStreamModel, state: StreamingStateT): CompanionF
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: (feedback) => {
-				return state.streamInfo[Number(feedback.options.StreamID)].enabled
+				return deck.state?.stream.streamInfos[Number(feedback.options.StreamID)]?.enabled===true
 			},
 		},
 		[FeedbackId.LiveInfo]: {
@@ -38,7 +37,7 @@ export function create(model: GoStreamModel, state: StreamingStateT): CompanionF
 					id: 'statesId',
 					choices: [
 						{ id: 0, label: 'off' },
-						{ id: 1, label: 'on air' },
+						{ id: 1, label: 'On' },
 						{ id: 2, label: 'abnormal' },
 					],
 					default: 0,
@@ -49,7 +48,7 @@ export function create(model: GoStreamModel, state: StreamingStateT): CompanionF
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: (feedback) => {
-				return state.status === feedback.options.statesId
+				return deck.state?.stream.status === Number(feedback.options.statesId)
 			},
 		},
 		[FeedbackId.StreamQuality]: {
@@ -60,8 +59,8 @@ export function create(model: GoStreamModel, state: StreamingStateT): CompanionF
 				{
 					type: 'dropdown',
 					label: 'Quality',
-					id: 'Quality',
-					choices: model.StreamQualityChoices(),
+					id: 'quality',
+					choices: StreamQualityChoices,
 					default: 0,
 				},
 			],
@@ -70,8 +69,8 @@ export function create(model: GoStreamModel, state: StreamingStateT): CompanionF
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: (feedback) => {
-				const qualityIndex = Number(feedback.options.Quality)
-				return state.quality === Number(model.RecordQualityChoices()[qualityIndex].id)
+				const qualityIndex = Number(feedback.options.quality)
+				return deck.state?.stream.quality === Number(StreamQualityChoices[qualityIndex].id)
 			},
 		},
 	}

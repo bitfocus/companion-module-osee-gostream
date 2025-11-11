@@ -1,0 +1,11 @@
+node_modules/
+package-lock.json
+/pkg
+/pkg.tgz
+dist/
+DEBUG-*
+/.yarn
+/docs
+/.vs
+/.vscode
+/coverage

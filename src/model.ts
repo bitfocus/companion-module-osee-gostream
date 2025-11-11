@@ -1,186 +1,212 @@
-import { TransitionStyle } from './enums'
+import { EffectStyle } from './connection/enums'
+import { StreamDeckState } from './connection/state'
+import type { DropdownChoice } from '@companion-module/base'
 
-export const SourceModels = [
-	{ inputId: 0, longName: 'Input1', shortName: 'In1' },
-	{ inputId: 1, longName: 'Input2', shortName: 'In2' },
-	{ inputId: 2, longName: 'Input3', shortName: 'In3' },
-	{ inputId: 3, longName: 'Input4', shortName: 'In4' },
+//base
+
+const ColorSwitchChoices = [
+	{ id: 0, label: 'Color1' },
+	{ id: 1, label: 'Color2' },
 ]
-export const OtherSourceModels = [
-	{ inputId: 4, longName: 'Aux', shortName: 'Aux' },
-	{ inputId: 5, longName: 'S/SRC', shortName: 'SSRC' },
-	{ inputId: 6, longName: 'Still1', shortName: 'STL1' },
-	{ inputId: 7, longName: 'Still2', shortName: 'STL2' },
+
+const EnableChoices = [
+	{ id: 0, label: 'off' },
+	{ id: 1, label: 'on' },
 ]
-export const OtherDSKSourceModels = [
-	{ inputId: 4, longName: 'Aux', shortName: 'Aux' },
-	{ inputId: 5, longName: 'Still1', shortName: 'STL1' },
-	{ inputId: 6, longName: 'Still1 Key', shortName: 'STL1 Key' },
-	{ inputId: 7, longName: 'Still2', shortName: 'STL2' },
-	{ inputId: 8, longName: 'Still2 Key', shortName: 'STL2 Key' },
-	{ inputId: 9, longName: 'Color1', shortName: 'Col1' },
-	{ inputId: 10, longName: 'Color2', shortName: 'Col2' },
-	{ inputId: 11, longName: 'Color Bar', shortName: 'Bar' },
-	{ inputId: 12, longName: 'Black', shortName: 'BLK' },
-]
-export const OtherDipSourceModels = [
-	{ inputId: 4, longName: 'Aux', shortName: 'Aux' },
-	{ inputId: 5, longName: 'Black', shortName: 'BLK' },
-	{ inputId: 6, longName: 'Still1', shortName: 'STL1' },
-	{ inputId: 7, longName: 'Still2', shortName: 'STL2' },
-	{ inputId: 8, longName: 'Color1', shortName: 'Col1' },
-	{ inputId: 9, longName: 'Color2', shortName: 'Col2' },
-	{ inputId: 10, longName: 'Color Bar', shortName: 'Bar' },
-]
-export const TransitionStyleChoice = [
-	{ id: TransitionStyle.MIX, label: 'MIX' },
-	{ id: TransitionStyle.DIP, label: 'DIP' },
-	{ id: TransitionStyle.WIPE, label: 'WIPE' },
-]
-export const SwitchChoices = [
+
+const SwitchChoices = [
 	{ id: 0, label: 'Off' },
 	{ id: 1, label: 'On' },
 	{ id: 2, label: 'Toggle' },
 ]
-export const WipeDirectionChoices = [
-	{ id: 0, label: 'Normal' },
-	{ id: 1, label: 'Inverse' },
-]
-export const SuperSourceChoices = [
-	{ id: 0, label: 'Source 1' },
-	{ id: 1, label: 'Source 2' },
-	{ id: 2, label: 'Background' },
-]
-export const ColorSwitchChoices = [
-	{ id: 0, label: 'Color1' },
-	{ id: 1, label: 'Color2' },
-]
-export const SuperSourceStyleChoices = [
-	{ id: 0, label: 'zoom out' },
-	{ id: 1, label: 'crop-zoom out' },
-	{ id: 2, label: 'zoom out-crop' },
-	{ id: 3, label: 'crop' },
-]
-export const SuperSourceMaskChoices = [
-	{ id: 0, label: 'mask1' },
-	{ id: 1, label: 'mask2' },
-]
-export const SuperSourceBorderChoices = [
-	{ id: 0, label: 'border1' },
-	{ id: 1, label: 'border2' },
-]
-export const UpStreamKeyTypeChoices = [
+
+const KeyType = [
 	{ id: 0, label: 'Luma Key' },
 	{ id: 1, label: 'Chroma Key' },
 	{ id: 2, label: 'Pattern' },
 	{ id: 3, label: 'PIP' },
 ]
-export const KeyResizeSizeChoices = [
-	{ id: 0, label: '0.25' },
-	{ id: 1, label: '0.33' },
-	{ id: 2, label: '0.50' },
+
+
+//ISO
+
+///Setting
+export const SettingEnableChoices = [
+	...SwitchChoices
 ]
-export const AudioMicChoices = [
-	{ id: 0, label: 'mic1' },
-	{ id: 1, label: 'mic2' },
-]
-export const AudioInputSourcesChoices = [
-	{ id: 2, label: 'in1' },
-	{ id: 3, label: 'in2' },
-	{ id: 4, label: 'in3' },
-	{ id: 5, label: 'in4' },
-	{ id: 6, label: 'aux' },
-]
-export const AudioSourcesEnableChoices = [
-	{ id: 0, label: 'off' },
-	{ id: 1, label: 'on' },
-]
-export const OtherAudioSourcesEnableChoices = [{ id: 2, label: 'afv' }]
-export const HeadphoneSourceChoices = [
-	{ id: 5, label: 'mic1' },
-	{ id: 6, label: 'mic2' },
-	{ id: 0, label: 'in1' },
-	{ id: 1, label: 'in2' },
-	{ id: 2, label: 'in3' },
-	{ id: 3, label: 'in4' },
-	{ id: 4, label: 'aux' },
-	{ id: 7, label: 'pgm' },
-]
-export const StreamingChoices = [
-	{ id: 0, label: 'Stream1' },
-	{ id: 1, label: 'Stream2' },
-	{ id: 2, label: 'Stream3' },
-]
-export const SettingsUMDSrcChoices = [
-	{ id: 0, label: 'pgm' },
-	{ id: 1, label: 'pvw' },
-	{ id: 2, label: 'in1' },
-	{ id: 3, label: 'in2' },
-	{ id: 4, label: 'in3' },
-	{ id: 5, label: 'in4' },
-	{ id: 6, label: 'aux' },
-	{ id: 7, label: 'still 1' },
-	{ id: 8, label: 'still 2' },
-]
-export const SettingsMvMeterChoices = [
-	{ id: 0, label: 'pgm' },
-	{ id: 1, label: 'in1' },
-	{ id: 2, label: 'in2' },
-	{ id: 3, label: 'in3' },
-	{ id: 4, label: 'in4' },
-	{ id: 5, label: 'aux' },
-]
-export const SettingsMvLayoutChoices = [
-	{ id: 0, label: 'PVW|PGM' },
-	{ id: 1, label: 'PGM|PVW' },
-]
-export const SettingsInputWindowLayoutChoices = [
+
+//MutiView
+export const WindowLayoutChoices = [
 	{ id: 0, label: 'Style 1' },
 	{ id: 1, label: 'Style 2' },
 ]
-export const SettingsMic1InputChoices = [
-	{ id: 0, label: 'Mic+power' },
-	{ id: 1, label: 'Mic' },
-	{ id: 2, label: 'Line' },
+
+///Streaming
+export function StreamingOptionChoices(state: StreamDeckState | undefined): DropdownChoice[] {
+	const streamCount = state ? state.device.streamCount : 0;
+	const streams: DropdownChoice[] = [];
+	for (let index = 0; index < streamCount; index++) {
+		streams.push({ id: index, label: `Stream${index + 1}` });
+	}
+	return streams;
+}
+
+export const StreamingEnableChoices = [
+	...SwitchChoices
 ]
-export const SettingsMic2InputChoices = [
-	{ id: 0, label: 'Mic' },
-	{ id: 1, label: 'Line' },
+
+export const StreamQualityChoices = [
+	{ id: 0, label: 'low' },
+	{ id: 1, label: 'medium' },
+	{ id: 2, label: 'height' },
+	{ id: 3, label: 'user defined' }
 ]
-export const SettingsColorChoices = [
-	{ id: 0, label: 'HDMI Auto' },
-	{ id: 1, label: 'HDMI RGB Full' },
-	{ id: 2, label: 'HDMI RGB Limit' },
-	{ id: 3, label: 'HDMI YC422 Full' },
-	{ id: 4, label: 'HDMI YC422 Limit' },
-	{ id: 5, label: 'HDMI YC444 Full' },
-	{ id: 6, label: 'HDMI YC444 Limit' },
+
+//playback
+export function GetPlayerSourceChoices(state: StreamDeckState | undefined): DropdownChoice[] {
+	let count = state ? state.device.playCount : 0;
+	const players: DropdownChoice[] = [];
+	for (let index = 0; index < count; index++) {
+		// const element = array[index];
+		players.push({ id: index, label: `Player${index + 1}` })
+	}
+	return players;
+}
+export const PlayBackEnableChoices = [
+	...SwitchChoices
 ]
-export const SettingsAuxSourceChoices = [
-	//0~2，sd card,usb camera,ndi
-	{ id: 0, label: 'Player' },
-	{ id: 1, label: 'USB Camera' },
-	{ id: 2, label: 'NDI' },
+
+//Macro
+export function getChoicesByMacro(): DropdownChoice[] {
+	const Source: DropdownChoice[] = []
+	for (let i = 0; i < 100; i++) {
+		Source.push({ id: i, label: 'Macro' + (i + 1).toString() })
+	}
+	return Source
+}
+
+
+//MediaPlayer
+export const MediaTypeChoice = [
+	{ id: 0, label: 'Strill' },
+	{ id: 1, label: 'Browser' },
 ]
-export const SettingsOutFormatChoices = [
-	{ id: 0, label: '1080p23.98' },
-	{ id: 1, label: '1080p24' },
-	{ id: 2, label: '1080p25' },
-	{ id: 3, label: '1080p29.97' },
-	{ id: 4, label: '1080p30' },
-	{ id: 5, label: '1080p50' },
-	{ id: 6, label: '1080p59.94' },
-	{ id: 7, label: '1080p60' },
+
+//AutoSwitching
+export const AutoSwitchingChoices = {
+	...SwitchChoices
+}
+export const PeriodChoice = [
+	{ id: 0, label: 'Fast' },
+	{ id: 1, label: 'Normal' },
+	{ id: 2, label: 'Slow' },
 ]
-export const SettingsOutSourceParamChoices = [
-	{ id: 0, label: 'HDMI1' },
-	{ id: 1, label: 'HDMI2' },
-	{ id: 2, label: 'UVC' },
+export const PriorityChoice = [
+	{ id: 0, label: 'Low' },
+	{ id: 1, label: 'Balance' },
+	{ id: 2, label: 'Hight' },
 ]
-export const SettingsOutSourceChoices = [
-	//0~4，1080p24,1080p25,1080p30,
-	{ id: 4, label: 'aux' },
-	{ id: 5, label: 'pgm' },
-	{ id: 6, label: 'pvw' },
-	{ id: 7, label: 'multiview' },
+
+//Mixeffect
+export const TransitionStyleChoice = [
+	{ id: EffectStyle.Mix, label: 'MIX' },
+	{ id: EffectStyle.Dip, label: 'DIP' },
+	{ id: EffectStyle.Wipe, label: 'WIPE' },
 ]
+export const WipeDirectionChoices = [
+	{ id: 0, label: 'Normal' },
+	{ id: 1, label: 'Inverse' },
+]
+
+export const MixEfectSwitchChoices = {
+	...SwitchChoices
+}
+
+
+//Key
+export const KeySwitchChoices = [
+	...SwitchChoices
+]
+export function GetKeyChoices(state: StreamDeckState | undefined): DropdownChoice[] {
+	const keyCount = state ? state.device.keyCount : 0;
+	const keys: DropdownChoice[] = [];
+	for (let index = 0; index < keyCount; index++) {
+		keys.push({ id: index, label: `Key${index + 1}` });
+	}
+	return keys;
+}
+
+export const KeyTypeChoices = [
+	...KeyType
+]
+
+//DSK
+export function GetDSKChoices(state: StreamDeckState | undefined): DropdownChoice[] {
+	const keyCount = state ? state?.device.dskCount : 0;
+	const keys: DropdownChoice[] = [];
+	for (let index = 0; index < keyCount; index++) {
+		keys.push({ id: index, label: `DSK${index + 1}` });
+	}
+	return keys;
+}
+
+export const DSKSwitchChoices = [
+	...SwitchChoices
+]
+
+//Color Back
+export const ColorSourceChoices = [
+	...ColorSwitchChoices
+]
+
+
+//audioMix
+export const AudioMixHeadphoneChoices = [
+	{ id: 2301, label: 'Headphone' },
+]
+
+export const AudioMixSwitchTypeChoices = [
+	{ id: 0, label: 'Hard Cut' },
+	{ id: 1, label: 'Switch with effect' },
+]
+
+export const AudioMixSwichEnableChoices = {
+	...SwitchChoices
+}
+
+export const AudioMixAFVChoices = [
+	{ id: 0, label: 'Off' },
+	{ id: 1, label: 'On' },
+	{ id: 2, label: 'Afv' },
+]
+
+
+
+export const AudioSourcesEnableChoices = [
+	...EnableChoices
+]
+
+//MultiSource:
+export const MultiSourceEnableChoices = {
+	...SwitchChoices
+}
+
+export function GetMultiSourceWindowChoices(state: StreamDeckState | undefined): DropdownChoice[] {
+	const winCount = state ? state.device.multiSourceWindowCount : 0;
+	const windows: DropdownChoice[] = [];
+	for (let index = 0; index < winCount; index++) {
+		windows.push({ id: index, label: `window${index + 1}` });
+	}
+	return windows;
+}
+
+export const MultiSourceStyleChoices = [
+	{ id: 0, label: 'zoomOut' },
+	{ id: 1, label: 'cropZoomOut' },
+	{ id: 2, label: 'zoomOutCrop' },
+	{ id: 3, label: 'crop' },
+	{ id: 4, label: 'CropZoomOut2_3' },
+	{ id: 5, label: 'ZoomOutCrop2_3' },
+]
+
+

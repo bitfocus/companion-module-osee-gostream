@@ -1,16 +1,15 @@
 import { combineRgb, CompanionFeedbackDefinitions } from '@companion-module/base'
-import { getOptNumber, getOptString } from '../../util'
-import { TransitionStyle } from '../../enums'
+import { getEnumKeyByValue } from '../../util'
 import { FeedbackId } from './feedbackId'
 import { TransitionStyleChoice } from '../../model'
-import { GoStreamModel } from '../../models/types'
-import { MixEffectStateT } from './state'
+import { StreamDeck } from '../../connection/streamdeck'
+import { EffectStyle, sourceID } from '../../connection/enums'
 
 function createFeedbackName(name: string): string {
 	return 'MixEffect: ' + name
 }
 
-export function create(model: GoStreamModel, state: MixEffectStateT): CompanionFeedbackDefinitions {
+export function create(deck: StreamDeck): CompanionFeedbackDefinitions {
 	return {
 		[FeedbackId.PreviewBG]: {
 			type: 'boolean',
@@ -26,11 +25,11 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionF
 					label: 'Source',
 					id: 'Source',
 					default: 0,
-					choices: model.InputSources().map((item) => ({ id: item.id, label: item.name })),
+					choices: deck.state?deck.state.device.inputSources.map((s) => ({ id: s, label: String(getEnumKeyByValue(sourceID, s))})):[],
 				},
 			],
 			callback: (feedback) => {
-				if (state.PvwSrc === feedback.options.Source) {
+				if (deck.state?.effect.PvwSrc === feedback.options.Source) {
 					return true
 				} else {
 					return false
@@ -51,62 +50,14 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionF
 					label: 'Source',
 					id: 'Source',
 					default: 0,
-					choices: model.InputSources().map((item) => ({ id: item.id, label: item.name })),
+					choices: deck.state?deck.state.device.inputSources?.map((s) => ({ id: s, label: String(getEnumKeyByValue(sourceID, s))})):[],
 				},
 			],
 			callback: (feedback) => {
-				if (state.PgmSrc === feedback.options.Source) {
+				if (deck.state?.effect.PgmSrc === feedback.options.Source) {
 					return true
 				} else {
 					return false
-				}
-			},
-		},
-		[FeedbackId.KeysVisibility]: {
-			type: 'boolean',
-			name: createFeedbackName('"Next Transition" / "On Air" state (KEY, DSK, BKGD)'),
-			description:
-				'Change button style based on state of "next transition" (KEY, DSK, BKGD). The first options refers to the button states; the last one refers to the actual visibility PVW, which depends on two button-states',
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Layer',
-					id: 'KeyButton',
-					choices: state.nextTState.getChoices(true),
-					default: state.nextTState.getDefaultChoice(),
-				},
-				{
-					type: 'dropdown',
-					label: 'Status',
-					id: 'LayerState',
-					choices: [
-						{ id: 0, label: 'Next Transition Button On' },
-						{ id: 2, label: 'On Air' },
-						{ id: 3, label: 'Showing in PVW' },
-					],
-					default: 0,
-					isVisible: (options) => options.KeyButton != 'BKGD',
-				},
-			],
-			defaultStyle: {
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(255, 255, 0),
-			},
-			callback: (feedback) => {
-				const keyName = getOptString(feedback, 'KeyButton')
-				const keystate = getOptNumber(feedback, 'LayerState')
-
-				if (keystate === 1) {
-					// for compatibility with previous versions.
-					return !state.nextTState[keyName]
-				} else if (keystate === 0) {
-					return state.nextTState[keyName]
-				} else if (keystate === 3) {
-					return state.nextTState[keyName] != state.nextTState.getOnAirStatus(keyName)
-				} else if (keystate === 2) {
-					return state.nextTState.getOnAirStatus(keyName)
-				} else {
-					console.log('Feedback: Next Transition state received illegal option: ' + keystate)
 				}
 			},
 		},
@@ -120,7 +71,7 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionF
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: () => {
-				return !!state.transitionPosition.inTransition
+				return !!deck.state?.effect.transitionPosition.inTransition
 			},
 		},
 		[FeedbackId.Prev]: {
@@ -133,7 +84,7 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionF
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: () => {
-				return state.selectTransitionStyle.PrevState
+				return deck.state?.effect.selectTransitionStyle.PrevState===true
 			},
 		},
 		[FeedbackId.TransitionStyle]: {
@@ -144,8 +95,8 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionF
 				{
 					type: 'dropdown',
 					label: 'TransitionStyle',
-					id: 'TransitionStyle',
-					default: TransitionStyle.MIX,
+					id: 'transitionStyle',
+					default: EffectStyle.Mix,
 					choices: TransitionStyleChoice,
 				},
 			],
@@ -154,11 +105,7 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionF
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: (feedback) => {
-				if (state.selectTransitionStyle?.style === feedback.options.TransitionStyle) {
-					return true
-				} else {
-					return false
-				}
+				return deck.state?.effect.selectTransitionStyle.style === Number(feedback.options.transitionStyle)
 			},
 		},
 		[FeedbackId.TransitionRate]: {
@@ -169,14 +116,14 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionF
 				{
 					type: 'dropdown',
 					label: 'Transition Style',
-					id: 'TransitionStyle',
-					default: TransitionStyle.MIX,
+					id: 'transitionStyle',
+					default: EffectStyle.Mix,
 					choices: TransitionStyleChoice,
 				},
 				{
 					type: 'number',
 					label: 'Transition Rate',
-					id: 'TransitionRate',
+					id: 'transitionRate',
 					default: 2,
 					min: 0.5,
 					max: 8.0,
@@ -189,43 +136,42 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionF
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: (feedback) => {
-				const me = state.selectTransitionStyle
-				if (me?.style === feedback.options.TransitionStyle) {
-					const style = Number(feedback.options.TransitionStyle)
-					const rate = Number(feedback.options.TransitionRate)
-					switch (style) {
+				const me = deck.state?.effect.selectTransitionStyle
+				const opt_rate= Number(feedback.options.transitionRate)
+				const opt_style = Number(feedback.options.transitionStyle)
+				if (me?.style === opt_style) {
+					switch (opt_style) {
 						case 0:
-							return me?.mixrate === rate
+							return me.mix.rate === opt_rate
 						case 1:
-							return me?.diprate === rate
+							return me.dip.rate === opt_rate
 						case 2:
-							return me?.wiperate === rate
+							return me.wipe.rate === opt_rate
 						default:
 							return false
-							break
 					}
 				}
 				return false
 			},
 			learn: (feedback) => {
-				const me = state.selectTransitionStyle
-				if (me?.style === feedback.options.TransitionStyle) {
-					const style = Number(feedback.options.TransitionStyle)
-					switch (style) {
+				const me = deck.state?.effect.selectTransitionStyle
+				const opt_style = Number(feedback.options.transitionStyle)
+				if (me?.style === opt_style) {
+					switch (opt_style) {
 						case 0:
 							return {
 								...feedback.options,
-								TransitionRate: me?.mixrate,
+								TransitionRate: me?.mix.rate,
 							}
 						case 1:
 							return {
 								...feedback.options,
-								TransitionRate: me?.diprate,
+								TransitionRate: me.dip.rate,
 							}
 						case 2:
 							return {
 								...feedback.options,
-								TransitionRate: me?.wiperate,
+								TransitionRate: me?.wipe.rate,
 							}
 						default:
 							return undefined
@@ -235,5 +181,37 @@ export function create(model: GoStreamModel, state: MixEffectStateT): CompanionF
 				}
 			},
 		},
+		[FeedbackId.FTBRate]:{
+			type: 'boolean',
+			name: createFeedbackName('FTB rate'),
+			description: 'If the specified transition rate is active, change style of the button',
+			options: [
+				{
+					type: 'number',
+					label: 'ftb Rate',
+					id: 'ftbRate',
+					default: 2,
+					min: 0.5,
+					max: 8.0,
+					step: 0.5,
+					range: true,
+				},
+			],
+			defaultStyle: {
+				color: combineRgb(0, 0, 0),
+				bgcolor: combineRgb(255, 255, 0),
+			},
+			callback: (feedback) => {
+				const rate = Number(feedback.options.ftbRate)
+					return rate===deck.state?.effect.fadeToBlack.rate
+			},
+			learn: (feedback) => {
+				const rate = deck.state?.effect.fadeToBlack.rate
+				return {
+					...feedback.options,
+					ftbRate: rate
+				}
+			},
+		}
 	}
 }

@@ -23,7 +23,6 @@ export enum ReqType {
 	Set = 'set',
 	Push = 'pus',
 }
-
 export enum ActionType {
 	Unknown = 'Unknown',
 	Heart = 'Heart',
@@ -45,16 +44,4 @@ export enum ActionType {
 	AudioEnableSource = '17',
 }
 
-export const SourceType = {
-	Input1: 'Input1',
-	Input2: 'Input2',
-	Input3: 'Input3',
-	Input4: 'Input4',
-	Aux: 'Aux',
-}
 
-export const TransitionStyle = {
-	MIX: 0,
-	DIP: 1,
-	WIPE: 2,
-}
