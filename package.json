@@ -1,5 +1,5 @@
 {
-	"name": "companion-module-osee-gostreamdeck-series",
+	"name": "osee-gostream-series",
 	"version": "2.0.0",
 	"main": "./dist/index.js",
 	"license": "MIT",
@@ -17,7 +17,7 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/bitfocus/companion-module-osee-gostream.git"
+		"url": "git+https://github.com/bitfocus/companion-module-osee-gostream-series.git"
 	},
 	"engines": {
 		"node": "^22.16.0"

@@ -1,4 +1,4 @@
-## GoStreamDeck
+## OSEE GoStream_Series
 
 Should work with all models of GoStream devices; Deck and Duet.
 
